@@ -1,0 +1,14 @@
+# Jekyll configuration
+exclude:
+  - papers/
+  - README.md
+  - .gitignore
+  
+# Since we're using a static HTML site, we don't need Jekyll processing
+plugins: []
+
+# Disable Jekyll processing for specific file types
+keep_files:
+  - assets/
+  - style.css
+  - index.html
