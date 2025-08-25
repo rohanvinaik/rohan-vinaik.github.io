@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Paper Viewer - Rohan Vinaik</title>
+  <meta name="description" content="Research paper viewer">
+  <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .viewer-container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+    .paper-content {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 40px;
+      box-shadow: var(--shadow);
+      line-height: 1.8;
+    }
+    .paper-content h1 {
+      font-size: 32px;
+      margin-bottom: 24px;
+      color: var(--ink);
+      border-bottom: 2px solid var(--line);
+      padding-bottom: 12px;
+    }
+    .paper-content h2 {
+      font-size: 24px;
+      margin-top: 32px;
+      margin-bottom: 16px;
+      color: var(--ink);
+    }
+    .paper-content h3 {
+      font-size: 20px;
+      margin-top: 24px;
+      margin-bottom: 12px;
+      color: var(--ink);
+    }
+    .paper-content p {
+      margin-bottom: 16px;
+      color: var(--ink);
+    }
+    .paper-content ul, .paper-content ol {
+      margin-bottom: 16px;
+      padding-left: 30px;
+    }
+    .paper-content li {
+      margin-bottom: 8px;
+    }
+    .paper-content code {
+      background: var(--pill);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.9em;
+    }
+    .paper-content pre {
+      background: var(--pill);
+      padding: 16px;
+      border-radius: 8px;
+      overflow-x: auto;
+      margin-bottom: 16px;
+    }
+    .paper-content pre code {
+      background: none;
+      padding: 0;
+    }
+    .paper-content blockquote {
+      border-left: 4px solid var(--accent);
+      padding-left: 20px;
+      margin: 20px 0;
+      color: var(--muted);
+      font-style: italic;
+    }
+    .paper-content table {
+      border-collapse: collapse;
+      width: 100%;
+      margin-bottom: 16px;
+    }
+    .paper-content th, .paper-content td {
+      border: 1px solid var(--line);
+      padding: 8px 12px;
+      text-align: left;
+    }
+    .paper-content th {
+      background: var(--pill);
+      font-weight: 600;
+    }
+    .paper-content a {
+      color: var(--accent);
+    }
+    .paper-content a:hover {
+      color: var(--accent-ink);
+    }
+    .paper-content strong {
+      font-weight: 600;
+      color: var(--ink);
+    }
+    .paper-content em {
+      font-style: italic;
+    }
+    .paper-content hr {
+      border: none;
+      border-top: 1px solid var(--line);
+      margin: 24px 0;
+    }
+    .loading {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--muted);
+    }
+    .error {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--accent);
+    }
+    .back-link {
+      display: inline-block;
+      margin-bottom: 20px;
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .back-link:hover {
+      color: var(--accent-ink);
+    }
+    /* Math rendering support */
+    .paper-content .math {
+      overflow-x: auto;
+      margin: 16px 0;
+    }
+    .paper-content .math-inline {
+      display: inline;
+    }
+    .paper-content .math-display {
+      display: block;
+      text-align: center;
+      margin: 20px 0;
+    }
+  </style>
+  <!-- Marked.js for markdown parsing -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="/">
+      <img src="assets/logo.svg" alt="RV" width="32" height="32" />
+      <span class="brand-name">Rohan Vinaik</span>
+    </a>
+    <nav class="nav">
+      <a href="/#projects">Projects</a>
+      <a href="/#papers">Papers</a>
+      <a href="/#about">About</a>
+      <a href="/#contact">Contact</a>
+    </nav>
+  </header>
+
+  <main>
+    <div class="viewer-container">
+      <a href="/" class="back-link">← Back to Portfolio</a>
+      <div id="content" class="paper-content">
+        <div class="loading">Loading paper...</div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <small>© <span id="y"></span> Rohan Vinaik · <a href="/">rohanv.me</a></small>
+  </footer>
+
+  <script>
+    document.getElementById('y').textContent = new Date().getFullYear();
+
+    // Get the paper path from URL parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    const paperPath = urlParams.get('paper');
+    
+    if (paperPath) {
+      // Fetch and render the markdown file
+      fetch(paperPath)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Paper not found');
+          }
+          return response.text();
+        })
+        .then(markdown => {
+          // Configure marked options
+          marked.setOptions({
+            breaks: true,
+            gfm: true,
+            headerIds: true,
+            mangle: false,
+            pedantic: false,
+            smartLists: true,
+            smartypants: true
+          });
+          
+          // Render markdown to HTML
+          const html = marked.parse(markdown);
+          document.getElementById('content').innerHTML = html;
+          
+          // Update page title based on first h1
+          const firstH1 = document.querySelector('.paper-content h1');
+          if (firstH1) {
+            document.title = firstH1.textContent + ' - Rohan Vinaik';
+          }
+        })
+        .catch(error => {
+          document.getElementById('content').innerHTML = `
+            <div class="error">
+              <h2>Error loading paper</h2>
+              <p>The requested paper could not be loaded.</p>
+              <p style="color: var(--muted); font-size: 14px;">${error.message}</p>
+            </div>
+          `;
+        });
+    } else {
+      document.getElementById('content').innerHTML = `
+        <div class="error">
+          <h2>No paper specified</h2>
+          <p>Please select a paper from the <a href="/">portfolio page</a>.</p>
+        </div>
+      `;
+    }
+  </script>
+</body>
+</html>
