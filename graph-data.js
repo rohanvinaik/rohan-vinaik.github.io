@@ -10,7 +10,7 @@ const GRAPH_DATA = {
       type: 'theory',
       status: 'published',
       tags: ['ONTOLOGY', 'FRAMEWORK', 'EPISTEMOLOGY'],
-      position: { x: 400, y: 100 }
+      position: { x: 350, y: 100 }
     },
     {
       id: 'machine-ethics',
@@ -20,7 +20,7 @@ const GRAPH_DATA = {
       type: 'theory',
       status: 'preprint',
       tags: ['PHILOSOPHY', 'AI-ETHICS', 'NARRATIVE-LEARNING'],
-      position: { x: 700, y: 100 }
+      position: { x: 650, y: 100 }
     },
 
     // TIER 2: Infrastructure & Technology Platforms
@@ -32,7 +32,7 @@ const GRAPH_DATA = {
       type: 'infrastructure',
       status: 'development',
       tags: ['PDE-SOLVERS', 'DISTRIBUTED'],
-      position: { x: 100, y: 300 }
+      position: { x: 200, y: 300 }
     },
     {
       id: 'hdc-survey',
@@ -42,7 +42,7 @@ const GRAPH_DATA = {
       type: 'theory',
       status: 'published',
       tags: ['HDC', 'VECTOR-SYMBOLIC', 'SURVEY'],
-      position: { x: 250, y: 300 }
+      position: { x: 400, y: 300 }
     },
     {
       id: 'genomevault',
@@ -52,7 +52,7 @@ const GRAPH_DATA = {
       type: 'bio-crypto',
       status: 'published',
       tags: ['HDC', 'ZERO-KNOWLEDGE', 'GENOMICS'],
-      position: { x: 450, y: 300 }
+      position: { x: 600, y: 300 }
     },
     {
       id: 'behavioral-holography',
@@ -62,7 +62,7 @@ const GRAPH_DATA = {
       type: 'ai-security',
       status: 'published',
       tags: ['AI-SECURITY', 'VERIFICATION', 'CRYPTOGRAPHY'],
-      position: { x: 700, y: 300 }
+      position: { x: 800, y: 300 }
     },
 
     // TIER 3: Domain Applications
@@ -74,7 +74,7 @@ const GRAPH_DATA = {
       type: 'biology',
       status: 'active',
       tags: ['STEM-CELLS', 'TDA', 'NETWORK-FLOW'],
-      position: { x: 150, y: 500 }
+      position: { x: 170, y: 500 }
     },
     {
       id: 'audhd',
@@ -84,7 +84,7 @@ const GRAPH_DATA = {
       type: 'biology',
       status: 'active',
       tags: ['GENOMICS', 'STATISTICAL-GENETICS', 'CLINICAL'],
-      position: { x: 400, y: 500 }
+      position: { x: 390, y: 500 }
     },
     {
       id: 'biocomputing',
@@ -94,7 +94,7 @@ const GRAPH_DATA = {
       type: 'biology',
       status: 'research',
       tags: ['HDC', 'WETWARE', 'TDA'],
-      position: { x: 650, y: 500 }
+      position: { x: 610, y: 500 }
     },
     {
       id: 'ad-mvp',
@@ -104,7 +104,7 @@ const GRAPH_DATA = {
       type: 'exploratory',
       status: 'research',
       tags: ['COMPUTATIONAL-PHOTOGRAPHY', 'MACHINE-LEARNING'],
-      position: { x: 850, y: 500 }
+      position: { x: 830, y: 500 }
     },
 
     // TIER 4: Refined Methods & Iterations
@@ -116,7 +116,7 @@ const GRAPH_DATA = {
       type: 'ai-security',
       status: 'active',
       tags: ['AI-SECURITY', 'VERIFICATION'],
-      position: { x: 250, y: 700 }
+      position: { x: 350, y: 700 }
     },
     {
       id: 'hbt',
@@ -126,7 +126,7 @@ const GRAPH_DATA = {
       type: 'ai-security',
       status: 'active',
       tags: ['AI-SECURITY', 'HDC', 'ZERO-KNOWLEDGE'],
-      position: { x: 550, y: 700 }
+      position: { x: 650, y: 700 }
     },
 
     // TIER 5: Final Applications (BOTTOM - most specific)
@@ -138,7 +138,7 @@ const GRAPH_DATA = {
       type: 'tools',
       status: 'active',
       tags: ['CODE-ANALYSIS', 'HDC'],
-      position: { x: 300, y: 900 }
+      position: { x: 350, y: 900 }
     },
     {
       id: 'vintageoptics',
@@ -148,7 +148,7 @@ const GRAPH_DATA = {
       type: 'tools',
       status: 'active',
       tags: ['COMPUTER-VISION', 'HDC', 'OPTICS'],
-      position: { x: 600, y: 900 }
+      position: { x: 650, y: 900 }
     }
   ],
 
