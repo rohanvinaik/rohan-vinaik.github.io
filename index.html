@@ -10,6 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="research-graph.css">
 </head>
 <body>
 
@@ -72,6 +73,9 @@
         </a>
         <a href="#projects" class="nav-item" data-section="projects">
           <span class="nav-icon">▸</span> <span data-translate="nav-projects">projects</span>
+        </a>
+        <a href="#research-graph" class="nav-item" data-section="research-graph">
+          <span class="nav-icon">▸</span> research_graph
         </a>
         <a href="#papers" class="nav-item" data-section="papers">
           <span class="nav-icon">▸</span> <span data-translate="nav-papers">papers</span>
@@ -383,6 +387,37 @@
                   <span class="tag">[OPTICS]</span>
                 </div>
               </div>
+            </div>
+          </section>
+
+          <!-- Research Graph Section -->
+          <section class="content-section" id="section-research-graph">
+            <div class="term-output">
+              <div class="term-line">> loading research_graph.txt...</div>
+              <div class="term-line">> initializing visualization...</div>
+              <div class="term-line">> done.</div>
+            </div>
+
+            <h2 class="section-title">RESEARCH GRAPH</h2>
+
+            <div class="text-content">
+              <p style="margin-bottom: 16px;">
+                Interactive visualization of project dependencies and shared technologies.
+                <strong>Click nodes</strong> to highlight connections, <strong>use filters</strong> to explore domains,
+                <strong>zoom/pan</strong> to navigate.
+              </p>
+            </div>
+
+            <!-- Graph Container -->
+            <div id="research-graph-container" class="graph-container"></div>
+
+            <!-- Key Insights -->
+            <div class="term-output" style="margin-top: 24px;">
+              <div class="term-line">> Key insights from the graph:</div>
+              <div class="term-line">  ▸ HDC serves as shared technology across genomics, AI verification, and code analysis</div>
+              <div class="term-line">  ▸ Constraint Theory (COEC) provides theoretical foundation for multiple projects</div>
+              <div class="term-line">  ▸ Verification methods evolved through 3 iterations: Behavioral Holography → REV → HBT</div>
+              <div class="term-line">  ▸ FDSC infrastructure enables large-scale biological simulations for KIMAIYA and Biocomputing</div>
             </div>
           </section>
 
@@ -972,5 +1007,7 @@
   <script src="skill-project-map.js"></script>
   <script src="filter-system.js"></script>
   <script src="terminal-bar.js"></script>
+  <script src="graph-data.js"></script>
+  <script src="research-graph.js"></script>
 </body>
 </html>

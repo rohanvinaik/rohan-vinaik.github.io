@@ -475,6 +475,7 @@
       const titleMap = {
         home: 'HOME.TXT',
         projects: 'PROJECTS.TXT',
+        'research-graph': 'RESEARCH_GRAPH.TXT',
         papers: 'PAPERS.TXT',
         about: 'ABOUT.TXT',
         contact: 'CONTACT.TXT',
@@ -537,7 +538,7 @@
 
     // Handle initial hash
     const initialHash = window.location.hash.slice(1);
-    if (initialHash && ['home', 'projects', 'papers', 'about', 'contact', 'skills', 'timeline', 'tools'].includes(initialHash)) {
+    if (initialHash && ['home', 'projects', 'research-graph', 'papers', 'about', 'contact', 'skills', 'timeline', 'tools'].includes(initialHash)) {
       switchSection(initialHash);
     } else {
       switchSection('home');
