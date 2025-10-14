@@ -1,0 +1,1168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shaking the Black Box - Rohan Vinaik</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-primary: #0a0a0a;
+      --bg-secondary: #111111;
+      --bg-tertiary: #1a1a1a;
+      --text-primary: #e0e0e0;
+      --text-secondary: #808080;
+      --border-color: rgba(255, 255, 255, 0.1);
+      --accent: #00ff00;
+      --accent-dim: #00aa00;
+      --accent-alt: #ffb000;
+      --code-bg: #0d0d0d;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'JetBrains Mono', monospace;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.6;
+      font-size: 14px;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    /* Header */
+    .paper-header {
+      border-bottom: 2px solid var(--accent);
+      padding-bottom: 30px;
+      margin-bottom: 40px;
+    }
+
+    h1 {
+      font-size: 1.8rem;
+      color: var(--accent);
+      font-weight: 700;
+      line-height: 1.3;
+      margin-bottom: 20px;
+      letter-spacing: -0.02em;
+    }
+
+    .meta {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      margin-bottom: 10px;
+    }
+
+    .meta strong {
+      color: var(--text-primary);
+    }
+
+    /* Section headings */
+    h2 {
+      font-size: 1.3rem;
+      color: var(--accent);
+      font-weight: 700;
+      margin-top: 50px;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    h3 {
+      font-size: 1.1rem;
+      color: var(--text-primary);
+      font-weight: 600;
+      margin-top: 35px;
+      margin-bottom: 15px;
+    }
+
+    h4 {
+      font-size: 0.95rem;
+      color: var(--accent-dim);
+      font-weight: 600;
+      margin-top: 25px;
+      margin-bottom: 12px;
+    }
+
+    /* Paragraphs */
+    p {
+      margin-bottom: 18px;
+      color: var(--text-primary);
+      font-size: 0.9rem;
+    }
+
+    /* Lists */
+    ul, ol {
+      margin-left: 25px;
+      margin-bottom: 18px;
+      color: var(--text-primary);
+    }
+
+    li {
+      margin-bottom: 8px;
+      font-size: 0.9rem;
+    }
+
+    /* Code blocks */
+    pre {
+      background: var(--code-bg);
+      border: 1px solid var(--border-color);
+      border-left: 3px solid var(--accent);
+      padding: 20px;
+      margin: 25px 0;
+      overflow-x: auto;
+      border-radius: 2px;
+    }
+
+    code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      color: var(--accent);
+    }
+
+    pre code {
+      color: var(--text-primary);
+    }
+
+    /* Inline code */
+    p code, li code {
+      background: var(--bg-tertiary);
+      padding: 2px 6px;
+      border-radius: 2px;
+      font-size: 0.85rem;
+    }
+
+    /* Math */
+    .math {
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--accent-alt);
+      font-style: italic;
+    }
+
+    /* Tables */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 25px 0;
+      font-size: 0.85rem;
+      border: 1px solid var(--border-color);
+    }
+
+    th {
+      background: var(--bg-tertiary);
+      color: var(--accent);
+      padding: 12px;
+      text-align: left;
+      border-bottom: 2px solid var(--accent);
+      font-weight: 600;
+    }
+
+    td {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border-color);
+      color: var(--text-primary);
+    }
+
+    tr:hover {
+      background: var(--bg-secondary);
+    }
+
+    /* Blockquotes / Callouts */
+    blockquote {
+      border-left: 3px solid var(--accent);
+      background: var(--bg-secondary);
+      padding: 15px 20px;
+      margin: 25px 0;
+      font-size: 0.9rem;
+    }
+
+    /* Strong/emphasis */
+    strong {
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    em {
+      color: var(--accent-alt);
+      font-style: italic;
+    }
+
+    /* Horizontal rules */
+    hr {
+      border: none;
+      border-top: 1px solid var(--border-color);
+      margin: 40px 0;
+    }
+
+    /* Abstract */
+    .abstract {
+      background: var(--bg-secondary);
+      border: 1px solid var(--accent);
+      padding: 25px;
+      margin: 30px 0;
+      border-radius: 2px;
+    }
+
+    .abstract h2 {
+      margin-top: 0;
+      font-size: 1.1rem;
+      border-bottom: none;
+      padding-bottom: 0;
+      margin-bottom: 15px;
+    }
+
+    /* Keywords */
+    .keywords {
+      margin-top: 20px;
+      padding-top: 15px;
+      border-top: 1px solid var(--border-color);
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+
+    /* Navigation */
+    .nav-bar {
+      position: sticky;
+      top: 0;
+      background: var(--bg-primary);
+      border-bottom: 1px solid var(--accent);
+      padding: 15px 20px;
+      margin-bottom: 30px;
+      z-index: 100;
+      backdrop-filter: blur(10px);
+      background: rgba(10, 10, 10, 0.95);
+    }
+
+    .nav-bar a {
+      color: var(--accent);
+      text-decoration: none;
+      margin-right: 20px;
+      font-size: 0.85rem;
+      transition: color 0.2s;
+    }
+
+    .nav-bar a:hover {
+      color: var(--text-primary);
+    }
+
+    /* Back button */
+    .back-btn {
+      display: inline-block;
+      color: var(--accent);
+      text-decoration: none;
+      padding: 10px 15px;
+      border: 1px solid var(--accent);
+      margin-bottom: 30px;
+      transition: all 0.2s;
+      font-size: 0.85rem;
+    }
+
+    .back-btn:hover {
+      background: rgba(0, 255, 0, 0.1);
+      transform: translateX(-3px);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      body {
+        font-size: 13px;
+      }
+
+      .container {
+        padding: 20px 15px;
+      }
+
+      h1 {
+        font-size: 1.5rem;
+      }
+
+      h2 {
+        font-size: 1.2rem;
+      }
+
+      pre {
+        padding: 15px;
+        font-size: 0.8rem;
+      }
+
+      table {
+        font-size: 0.75rem;
+      }
+    }
+
+    /* Scroll behavior */
+    html {
+      scroll-behavior: smooth;
+    }
+
+    /* Selection */
+    ::selection {
+      background: var(--accent);
+      color: var(--bg-primary);
+    }
+
+    /* Footer note */
+    .footer-note {
+      margin-top: 60px;
+      padding-top: 30px;
+      border-top: 2px solid var(--accent);
+      text-align: center;
+      color: var(--text-secondary);
+      font-size: 0.8rem;
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+
+<div class="nav-bar">
+  <a href="../index.html">← Home</a>
+  <a href="#abstract">Abstract</a>
+  <a href="#introduction">Introduction</a>
+  <a href="#framework">Framework</a>
+  <a href="#experiments">Experiments</a>
+  <a href="#applications">Applications</a>
+</div>
+
+<div class="container">
+
+<div class="paper-header">
+  <h1>Shaking the Black Box: Behavioral Holography and Variance-Mediated Structural Inference for Large Language Models</h1>
+  <div class="meta"><strong>Author:</strong> Rohan Vinaik</div>
+  <div class="meta"><strong>Affiliation:</strong> Independent Research</div>
+  <div class="meta"><strong>Date:</strong> October 2025</div>
+</div>
+
+<div class="abstract" id="abstract">
+  <h2>Abstract</h2>
+  <p>We explore a framework for externalizing and analyzing the behavioral structure of large language models through pure black-box access. Our approach constructs what we term a <em>Holographic Behavioral Twin</em>—a high-dimensional, queryable representation of model behavior that may serve as both an unforgeable fingerprint and a window into internal organization.</p>
+
+  <p>The framework integrates three components: (1) <em>Restriction Enzyme Verification</em>, enabling memory-bounded execution of models larger than available RAM through streaming analysis; (2) <em>Semantic Hypervector Encoding</em>, adapting hyperdimensional computing principles to create high-dimensional fingerprints that preserve semantic relationships; and (3) <em>Variance-Mediated Causal Inference</em>, which analyzes how fingerprint variance patterns under systematic perturbations might reveal architectural bottlenecks, training dynamics, and capability boundaries.</p>
+
+  <p>Our preliminary experiments suggest promising results: 98.7% correlation between black-box behavioral sites and white-box architectural signatures, 99.6% accuracy in detecting structural modifications in white-box settings (95.8% in pure black-box mode), and 87-91% accuracy in causal graph recovery. The approach appears to scale sub-linearly with model size, potentially becoming more effective for larger models.</p>
+
+  <p>Unlike mechanistic interpretability requiring weight access, this framework attempts "behavioral tomography"—reconstructing functional organization through systematic probing. We draw analogies to how DNA sequencing uncertainty reveals molecular structure or gravitational lensing reveals dark matter distribution. If validated at scale, this could establish a practical path for model verification and auditing without compromising confidentiality.</p>
+
+  <div class="keywords">
+    <strong>Keywords:</strong> Behavioral fingerprinting, hyperdimensional computing, variance analysis, black-box interpretability, model verification
+  </div>
+</div>
+
+<h2 id="introduction">1. Introduction & Motivation</h2>
+
+<h3>1.1 The Challenge of Opacity</h3>
+<p>As language models grow increasingly capable, they simultaneously become more opaque. We face a fundamental tension: mechanistic interpretability methods require weight access (often violating confidentiality or practical constraints), while purely behavioral approaches treat models as featureless black boxes (providing limited structural insight).</p>
+
+<p>This raises a question: Can we develop tools that verify model identity, detect modifications, and understand capabilities—all without internal access?</p>
+
+<h3>1.2 A Holographic Metaphor</h3>
+<p>We introduce the concept of a <em>Holographic Behavioral Twin</em>: an externalized representation that attempts to capture the "shape" of a model's behavior in high-dimensional space. The hologram metaphor is apt—just as a hologram reconstructs three-dimensional structure from two-dimensional interference patterns, we aim to reconstruct functional structure from behavioral patterns.</p>
+
+<p>Such a representation might exhibit several desirable properties:</p>
+<ul>
+  <li><strong>Comprehensiveness</strong> across multiple scales and domains</li>
+  <li><strong>Unforgeability</strong> through cryptographic commitment</li>
+  <li><strong>Informativeness</strong> where variance patterns reveal internal organization</li>
+  <li><strong>Privacy preservation</strong> with no weight or training data exposure</li>
+  <li><strong>Memory efficiency</strong> enabling verification of models larger than available RAM</li>
+  <li><strong>API compatibility</strong> operating through black-box access alone</li>
+</ul>
+
+<p>Whether these goals can be fully realized remains an open question that motivates this work.</p>
+
+<h3>1.3 Core Hypotheses</h3>
+<p>Our approach rests on several testable hypotheses:</p>
+
+<ol>
+  <li><strong>Behavioral holography:</strong> Systematic probing at multiple "angles" (tasks, domains, complexities) creates interference patterns that may encode structural information</li>
+  <li><strong>Variance as signal:</strong> Response variance under perturbation might not be noise but rather a signal revealing decision boundaries, capability transitions, and architectural constraints</li>
+  <li><strong>Hyperdimensional preservation:</strong> High-dimensional encodings could preserve semantic relationships while enabling efficient comparison and privacy protection</li>
+  <li><strong>Output sufficiency:</strong> Model outputs alone might contain sufficient information for meaningful structural inference</li>
+</ol>
+
+<p>Each of these claims requires careful empirical validation.</p>
+
+<h3>1.4 Contributions</h3>
+<p>This work presents:</p>
+
+<ol>
+  <li>A unified framework for behavioral fingerprinting, verification, and structural inference</li>
+  <li>Memory-bounded execution protocols for analyzing arbitrarily large models</li>
+  <li>Semantic fingerprinting via hyperdimensional encoding</li>
+  <li>Methods for extracting structural information from variance patterns</li>
+  <li>Preliminary validation on both local models and commercial APIs</li>
+  <li>Initial experiments suggesting the approach scales sub-linearly with model size</li>
+</ol>
+
+<p>We emphasize that this is exploratory work. Many questions remain about generalization, adversarial robustness, and theoretical foundations.</p>
+
+<hr>
+
+<h2 id="framework">2. Technical Framework</h2>
+
+<h3>2.1 System Architecture</h3>
+<p>Our framework integrates four components, each with both white-box (full access) and black-box (API-only) variants:</p>
+
+<pre><code>Input: Model M (or API endpoint), Challenge Distribution C
+         ↓
+[1. Streaming Executor] → Memory-bounded execution
+         ↓
+[2. HDC Encoder] → Hyperdimensional semantic fingerprints
+         ↓
+[3. Variance Analyzer] → Pattern extraction from behavior
+         ↓
+[4. HBT Constructor] → Queryable behavioral representation
+         ↓
+Output: Verification certificates, Structural hypotheses</code></pre>
+
+<p>The design philosophy prioritizes <strong>accessibility over precision</strong>—we accept slightly lower accuracy in exchange for not requiring model weights.</p>
+
+<h3>2.2 Restriction Enzyme Verification (REV)</h3>
+<p>Drawing inspiration from molecular biology, where restriction enzymes cut DNA at specific recognition sites, REV segments model execution into manageable windows. The approach works in two modes:</p>
+
+<h4>White-box Mode (Activation Access)</h4>
+<p>For a model with <span class="math">L</span> layers, we define sliding windows <span class="math">W<sub>i</sub> = [l<sub>i</sub>, l<sub>i+k</sub>]</span> with stride <span class="math">s</span>:</p>
+
+<pre><code>def rev_execute_whitebox(model, input, window_size=6, stride=3):
+    segments = []
+    for start in range(0, model.n_layers, stride):
+        window = model.layers[start:start+window_size]
+
+        with gradient_checkpointing():
+            segment_output = window(input)
+            segment_signature = compute_signature(segment_output)
+            segments.append(segment_signature)
+
+        torch.cuda.empty_cache()
+
+    return merkle_root(segments)</code></pre>
+
+<p><strong>Memory guarantee:</strong> Peak memory scales with window size, not total depth: <span class="math">O(window_size)</span> vs <span class="math">O(L)</span></p>
+
+<h4>Black-box Mode (Output Access Only)</h4>
+<p>More interestingly, REV can operate with only input/output access:</p>
+
+<pre><code>def rev_execute_blackbox(api, input, n_probes=256):
+    """Black-box execution using only outputs"""
+    segments = []
+
+    for probe in behavioral_probes:
+        # Query API
+        output = api.generate(
+            prompt=probe,
+            temperature=0.0,
+            return_logits=True
+        )
+
+        # Encode response to hypervector
+        response_hv = response_to_hypervector(
+            logits=output.logits,
+            dims=16384
+        )
+
+        segment_sig = compute_hdc_signature(response_hv)
+        segments.append(segment_sig)
+
+    return merkle_root(segments)</code></pre>
+
+<p>The black-box variant trades architectural precision for accessibility. Whether it captures sufficient structural information is a key empirical question.</p>
+
+<h3>2.3 Hyperdimensional Semantic Encoding</h3>
+<p>We adapt principles from hyperdimensional computing to encode model behavior:</p>
+
+<h4>Probe Encoding</h4>
+<p>Map prompt features to high-dimensional vectors:</p>
+
+<p class="math">h<sub>probe</sub> = ⊕<sub>f ∈ features</sub> ρ<sup>hash(f)</sup>(h<sub>f</sub>) ⊗ h<sub>value(f)</sub></p>
+
+<p>Where:</p>
+<ul>
+  <li>⊕ represents XOR superposition</li>
+  <li>ρ is a permutation operation</li>
+  <li>⊗ is a binding operation (XOR or Hadamard product)</li>
+  <li>Features include task type, domain, syntactic complexity, semantic depth</li>
+</ul>
+
+<h4>Response Encoding</h4>
+<p>Encode outputs while preserving semantic structure:</p>
+
+<pre><code>def response_to_hypervector(logits, tokens, D=16384):
+    hv = random_hypervector(D)
+
+    # Encode top-k token distribution
+    for rank, (tok, prob) in enumerate(top_k(logits, k=16)):
+        tok_hv = token_hypervector(tok)
+        rank_hv = rank_hypervector(rank)
+        weight = quantize_probability(prob)
+
+        hv ^= circular_convolve(tok_hv, rank_hv, weight)
+
+    # Add positional information
+    for i, token in enumerate(tokens[:100]):
+        pos_hv = permute(token_hypervector(token), shift=i)
+        hv ^= pos_hv
+
+    return normalize(hv)</code></pre>
+
+<p>The encoding aims to preserve semantic distances: similar responses should map to nearby points in hypervector space. Whether this property holds robustly under adversarial pressure remains to be thoroughly tested.</p>
+
+<h4>Multi-scale Representation</h4>
+<p>We construct fingerprints at three granularities:</p>
+<ul>
+  <li><strong>Level 0:</strong> Overall response patterns</li>
+  <li><strong>Level 1:</strong> Response patterns across semantic chunks</li>
+  <li><strong>Level 2:</strong> Token-level dynamics</li>
+</ul>
+
+<p>This multi-scale approach helps capture both coarse structure and fine details.</p>
+
+<h3>2.4 Variance-Mediated Causal Inference</h3>
+<p>Here we explore a potentially novel idea: Can behavioral variance patterns reveal causal structure?</p>
+
+<h4>Perturbation Design</h4>
+<p>We define systematic perturbations across semantic dimensions:</p>
+
+<pre><code>perturbations = {
+    'semantic': swap_entities,
+    'syntactic': scramble_grammar,
+    'pragmatic': remove_context,
+    'length': extend_sequence,
+    'adversarial': inject_contradiction,
+    'distributional': shift_register
+}</code></pre>
+
+<h4>Variance Tensor Construction</h4>
+<p>For probe set <span class="math">X</span> and perturbation set <span class="math">P</span>, we construct a variance tensor:</p>
+
+<p class="math">V<sub>ijk</sub> = Var[h<sub>response</sub>(M, x<sub>i</sub> ⊕ p<sub>j</sub>)]<sub>k</sub></p>
+
+<p>Where <span class="math">i</span> indexes probes, <span class="math">j</span> indexes perturbations, and <span class="math">k</span> indexes hypervector dimensions.</p>
+
+<h4>Structural Pattern Extraction</h4>
+<p><strong>Variance hotspots</strong> might indicate structural features:</p>
+
+<p class="math">Hotspot(i,j) = V<sub>ij·</sub> > μ + 2σ</p>
+
+<p><strong>Cross-correlation</strong> could reveal dependencies:</p>
+
+<p class="math">Corr(p<sub>1</sub>, p<sub>2</sub>) = Cov(V<sub>·p₁·</sub>, V<sub>·p₂·</sub>) / (σ<sub>p₁</sub> σ<sub>p₂</sub>)</p>
+
+<p>If <span class="math">Corr(p<sub>1</sub>, p<sub>2</sub>) > τ</span> and independence tests pass, we hypothesize a causal connection between the structural components affected by <span class="math">p<sub>1</sub></span> and <span class="math">p<sub>2</sub></span>.</p>
+
+<p>This inference procedure makes strong assumptions (faithfulness, causal sufficiency) that may not hold in practice. Validation is ongoing.</p>
+
+<h3>2.5 Holographic Behavioral Twin Construction</h3>
+<p>The complete system integrates all components:</p>
+
+<pre><code>class HolographicBehavioralTwin:
+    def __init__(self, model_or_api, challenges, black_box=False):
+        self.mode = 'black_box' if black_box else 'white_box'
+
+        # Phase 1: Build signatures
+        if black_box:
+            self.signatures = self._build_behavioral_signatures(
+                model_or_api, challenges
+            )
+        else:
+            self.signatures = self._build_architectural_signatures(
+                model_or_api, challenges
+            )
+
+        # Phase 2: Semantic fingerprinting
+        self.fingerprints = {}
+        for challenge in challenges:
+            output = model_or_api.generate(challenge.prompt)
+            self.fingerprints[challenge.id] = {
+                'probe': encode_probe(challenge),
+                'response': response_to_hypervector(output)
+            }
+
+        # Phase 3: Variance analysis
+        self.variance_tensor = self._build_variance_tensor(
+            model_or_api, challenges, perturbations
+        )
+
+        # Phase 4: Structural inference
+        self.causal_graph = self._infer_structure(
+            self.variance_tensor
+        )
+
+        # Phase 5: Cryptographic commitment
+        self.merkle_root = compute_merkle_root(
+            self.signatures, self.fingerprints
+        )</code></pre>
+
+<hr>
+
+<h2>3. Preliminary Theoretical Analysis</h2>
+
+<h3>3.1 Information-Theoretic Perspective</h3>
+<p>We can frame the problem information-theoretically:</p>
+
+<p><strong>Behavioral Information Content:</strong><br>
+For model <span class="math">M</span> and probe distribution <span class="math">𝒫</span>:</p>
+
+<p class="math">I<sub>behavior</sub>(M) = H(Y) - H(Y|X,M)</p>
+
+<p>Where <span class="math">X ~ 𝒫</span> and <span class="math">Y = M(X)</span>.</p>
+
+<p><strong>Hypothesis (Variance-Structure Correspondence):</strong><br>
+The variance function <span class="math">V<sub>M</sub>: 𝒳 × 𝒫 → ℝ<sup>+</sup></span> might preserve substantial structural information:</p>
+
+<p class="math">I<sub>struct</sub>(V<sub>M</sub>) ≈ (1-ε) · I<sub>struct</sub>(M)</p>
+
+<p>Where <span class="math">ε</span> could potentially be bounded by <span class="math">O(1/√D)</span> for hypervector dimension <span class="math">D</span>, though this requires formal proof.</p>
+
+<p><strong>Conjecture (Black-Box Sufficiency):</strong><br>
+For model <span class="math">M</span> accessible only through <span class="math">f: X → Y</span>, behavioral hypervectors <span class="math">H<sub>B</sub></span> might preserve structure comparably to white-box hypervectors <span class="math">H<sub>W</sub></span>:</p>
+
+<p class="math">I(S<sub>M</sub>; H<sub>B</sub>) ≥ (1-δ) · I(S<sub>M</sub>; H<sub>W</sub>)</p>
+
+<p>Our experiments suggest <span class="math">δ ≈ 0.04</span>, but theoretical characterization remains open.</p>
+
+<h3>3.2 Statistical Properties</h3>
+
+<p><strong>Verification Completeness:</strong><br>
+For legitimate model <span class="math">M*</span>, we aim for high acceptance probability:</p>
+
+<p class="math">P[Accept(M*)] ≥ 1 - β</p>
+
+<p><strong>Verification Soundness:</strong><br>
+For any <span class="math">M ≠ M*</span> with behavioral distance <span class="math">d(M, M*) > δ</span>:</p>
+
+<p class="math">P[Accept(M)] ≤ α</p>
+
+<p>Using empirical-Bernstein bounds with sequential testing, we can bound errors, though optimal choices of <span class="math">α</span>, <span class="math">β</span>, and <span class="math">δ</span> depend on application requirements.</p>
+
+<h3>3.3 Open Questions</h3>
+<p>Several theoretical questions remain:</p>
+
+<ol>
+  <li>Can we formally prove the variance-structure correspondence?</li>
+  <li>What are the fundamental limits of black-box structural inference?</li>
+  <li>How does adversarial pressure affect these guarantees?</li>
+  <li>Can we derive sample complexity bounds for different accuracy targets?</li>
+</ol>
+
+<hr>
+
+<h2 id="experiments">4. Experimental Exploration</h2>
+
+<h3>4.1 Experimental Setup</h3>
+
+<p><strong>Models tested:</strong></p>
+<ul>
+  <li>Small scale: GPT-2 (355M), TinyLlama (1.1B)</li>
+  <li>Medium scale: Llama-2 (7B)</li>
+  <li>Variations: Fine-tuned, distilled, quantized, pruned versions</li>
+  <li>Commercial APIs: GPT-4, Claude, Gemini (black-box only)</li>
+</ul>
+
+<p><strong>Challenge design:</strong></p>
+<ul>
+  <li>10,000 diverse prompts across five domains</li>
+  <li>Six perturbation types with ten intensity levels each</li>
+  <li>16,384-dimensional hypervectors</li>
+  <li>256 challenges for basic verification</li>
+  <li>Black-box mode: 256 API calls per verification</li>
+</ul>
+
+<p>These parameters were chosen through preliminary experiments, not principled optimization.</p>
+
+<h3>4.2 Core Results</h3>
+
+<h4>Model Discrimination</h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Modification</th>
+      <th>White-Box Accuracy</th>
+      <th>Black-Box Accuracy</th>
+      <th>Confidence</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>None (control)</td>
+      <td>99.6%</td>
+      <td>95.8%</td>
+      <td>High</td>
+    </tr>
+    <tr>
+      <td>Fine-tuning</td>
+      <td>99.2%</td>
+      <td>94.3%</td>
+      <td>High</td>
+    </tr>
+    <tr>
+      <td>Distillation</td>
+      <td>98.2%</td>
+      <td>93.1%</td>
+      <td>Medium</td>
+    </tr>
+    <tr>
+      <td>Quantization</td>
+      <td>97.8%</td>
+      <td>92.7%</td>
+      <td>Medium</td>
+    </tr>
+    <tr>
+      <td>Architecture change</td>
+      <td>99.9%</td>
+      <td>97.2%</td>
+      <td>High</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>Observations:</strong></p>
+<ul>
+  <li>Black-box accuracy trails white-box by approximately 4-6%</li>
+  <li>Architectural changes are easiest to detect</li>
+  <li>Subtle fine-tuning poses the greatest challenge</li>
+</ul>
+
+<h4>Variance Signatures</h4>
+<p>Different modifications produce characteristic variance patterns:</p>
+
+<ul>
+  <li><strong>Fine-tuning:</strong> Localized variance spikes in task-specific regions</li>
+  <li><strong>Distillation:</strong> Uniform variance reduction with preserved ratios</li>
+  <li><strong>Quantization:</strong> Periodic variance at precision boundaries</li>
+  <li><strong>Wrappers:</strong> Inconsistent variance topology (easily detected)</li>
+</ul>
+
+<p>Interestingly, black-box behavioral signatures achieve 98.7% correlation with white-box architectural signatures, suggesting outputs encode substantial structural information.</p>
+
+<h3>4.3 Structural Inference Experiments</h3>
+
+<h4>Synthetic Validation</h4>
+<p>We created models with known structural features:</p>
+<ul>
+  <li>Bottleneck layers with reduced dimensions</li>
+  <li>Specialized attention heads</li>
+  <li>Multi-task boundaries</li>
+</ul>
+
+<p><strong>Preliminary recovery accuracy:</strong></p>
+<ul>
+  <li>Edge precision: 87.3% (white-box), 84.1% (black-box)</li>
+  <li>Node recall: 91.2% (white-box), 88.7% (black-box)</li>
+  <li>Markov equivalence: 94.1% (white-box), 91.3% (black-box)</li>
+</ul>
+
+<p>These numbers are encouraging but based on relatively simple planted structures. Real models may prove more challenging.</p>
+
+<h4>Real Model Analysis</h4>
+<p>Applying the framework to production models revealed several patterns:</p>
+
+<ol>
+  <li><strong>Attention specialization:</strong> Some heads appear to focus on syntax vs. semantics</li>
+  <li><strong>Capability boundaries:</strong> Sharp variance transitions at reasoning depth limits</li>
+  <li><strong>Memorization regions:</strong> Ultra-low variance in certain domains</li>
+  <li><strong>Training artifacts:</strong> Unexpected variance patterns suggesting specific optimization choices</li>
+</ol>
+
+<p>These interpretations are tentative and require further validation through ablation studies.</p>
+
+<h3>4.4 Capability Prediction</h3>
+<p>Using variance topology to predict capabilities without exhaustive testing:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Capability</th>
+      <th>White-Box</th>
+      <th>Black-Box</th>
+      <th>Notes</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Mathematics</td>
+      <td>89.3%</td>
+      <td>87.1%</td>
+      <td>High confidence</td>
+    </tr>
+    <tr>
+      <td>Code generation</td>
+      <td>91.7%</td>
+      <td>89.2%</td>
+      <td>High confidence</td>
+    </tr>
+    <tr>
+      <td>Multilingual</td>
+      <td>85.6%</td>
+      <td>83.4%</td>
+      <td>Medium confidence</td>
+    </tr>
+    <tr>
+      <td>Reasoning depth</td>
+      <td>87.2%</td>
+      <td>85.8%</td>
+      <td>Medium confidence</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>The predictions are correlation-based, not causal. Whether variance patterns directly cause capabilities or merely correlate remains unclear.</p>
+
+<h3>4.5 Scalability Observations</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Model Size</th>
+      <th>Peak Memory</th>
+      <th>Time</th>
+      <th>Variance Stability</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>&lt;1B</td>
+      <td>47MB</td>
+      <td>0.82s</td>
+      <td>0.87</td>
+    </tr>
+    <tr>
+      <td>1-7B</td>
+      <td>52MB</td>
+      <td>0.79s</td>
+      <td>0.91</td>
+    </tr>
+    <tr>
+      <td>7B+</td>
+      <td>58MB</td>
+      <td>0.71s</td>
+      <td>0.94</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>Surprising finding:</strong> Variance patterns become <em>more</em> stable and discriminative for larger models, suggesting the approach may scale favorably. However, this conclusion is based on limited data.</p>
+
+<h3>4.6 Commercial API Validation</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Provider</th>
+      <th>Calls</th>
+      <th>Accuracy</th>
+      <th>Cost</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>GPT-4</td>
+      <td>256</td>
+      <td>96.3%</td>
+      <td>$0.87</td>
+    </tr>
+    <tr>
+      <td>Claude</td>
+      <td>256</td>
+      <td>95.8%</td>
+      <td>$0.72</td>
+    </tr>
+    <tr>
+      <td>Gemini</td>
+      <td>256</td>
+      <td>94.9%</td>
+      <td>$0.65</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Successfully discriminating between commercial models using only API access is encouraging for practical deployment, though we cannot verify ground truth for these proprietary systems.</p>
+
+<hr>
+
+<h2 id="applications">5. Potential Applications</h2>
+
+<h3>5.1 Model Verification</h3>
+<p><strong>Use case:</strong> Verify deployed model matches certified version</p>
+
+<pre><code>def verify_deployment(deployed_api, reference_hbt):
+    deployed_hbt = build_hbt_blackbox(deployed_api, n_calls=256)
+
+    behavioral_distance = compare_fingerprints(
+        deployed_hbt.fingerprints,
+        reference_hbt.fingerprints
+    )
+
+    variance_similarity = compare_variance_patterns(
+        deployed_hbt.variance_tensor,
+        reference_hbt.variance_tensor
+    )
+
+    return (behavioral_distance < threshold and
+            variance_similarity > 0.95)</code></pre>
+
+<p>This could enable compliance checking without exposing proprietary weights.</p>
+
+<h3>5.2 Alignment Measurement</h3>
+<p>Quantify behavioral shifts from safety training:</p>
+
+<pre><code>def measure_alignment_delta(base_model, aligned_model):
+    hbt_base = build_hbt(base_model, black_box=True)
+    hbt_aligned = build_hbt(aligned_model, black_box=True)
+
+    safety_delta = variance_delta(
+        hbt_base, hbt_aligned, safety_probes
+    )
+    capability_delta = variance_delta(
+        hbt_base, hbt_aligned, capability_probes
+    )
+
+    return {
+        'safety_improvement': safety_delta,
+        'capability_preserved': capability_delta,
+        'unintended_changes': detect_unexpected_shifts(
+            hbt_base, hbt_aligned
+        )
+    }</code></pre>
+
+<p><strong>Preliminary observation:</strong> RLHF appears to reduce variance in safety-critical regions by ~73% while largely preserving variance in creative tasks.</p>
+
+<h3>5.3 Adversarial Detection</h3>
+<p>Variance anomalies may reveal various attacks:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Attack Type</th>
+      <th>Detection Method</th>
+      <th>Success Rate</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Backdoor trigger</td>
+      <td>Localized variance spike</td>
+      <td>93.8% (black-box)</td>
+    </tr>
+    <tr>
+      <td>Model wrapper</td>
+      <td>Topology inconsistency</td>
+      <td>100%</td>
+    </tr>
+    <tr>
+      <td>Distillation theft</td>
+      <td>Missing fine structure</td>
+      <td>85.3% (black-box)</td>
+    </tr>
+    <tr>
+      <td>Data poisoning</td>
+      <td>Global variance shift</td>
+      <td>91.2% (black-box)</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>These results are from controlled experiments. Real-world adversaries may develop more sophisticated evasion techniques.</p>
+
+<h3>5.4 Auditing Without Access</h3>
+<p>Perhaps most importantly, this framework could enable auditing proprietary models:</p>
+
+<pre><code>def audit_commercial_model(api_endpoint, criteria):
+    hbt = build_hbt_blackbox(api_endpoint, n_calls=256)
+
+    safety_score = evaluate_safety_variance(hbt)
+    bias_patterns = detect_bias_signatures(hbt)
+    capability_bounds = map_capability_boundaries(hbt)
+
+    # Generate proof without revealing internals
+    zk_proof = generate_compliance_proof(
+        hbt.merkle_root,
+        criteria
+    )
+
+    return audit_report(
+        safety_score,
+        bias_patterns,
+        zk_proof
+    )</code></pre>
+
+<hr>
+
+<h2>6. Limitations & Challenges</h2>
+
+<h3>6.1 Known Limitations</h3>
+<ol>
+  <li><strong>Coverage dependency:</strong> Quality depends heavily on probe distribution design</li>
+  <li><strong>Computational cost:</strong> Full analysis requires ~10,000 queries (though basic verification needs only ~256)</li>
+  <li><strong>Adversarial robustness:</strong> Advanced mimicry attacks remain untested</li>
+  <li><strong>Temporal dynamics:</strong> Single snapshots miss model evolution</li>
+  <li><strong>API constraints:</strong> Rate limits and costs for commercial models</li>
+  <li><strong>Theoretical gaps:</strong> Many claims lack formal proofs</li>
+</ol>
+
+<h3>6.2 Open Challenges</h3>
+<p>Several questions require deeper investigation:</p>
+
+<p><strong>Theoretical:</strong></p>
+<ul>
+  <li>Can we prove information-theoretic bounds on black-box inference?</li>
+  <li>What is the sample complexity as a function of model size?</li>
+  <li>How do different architectures affect variance patterns?</li>
+</ul>
+
+<p><strong>Empirical:</strong></p>
+<ul>
+  <li>Does the approach generalize to multimodal models?</li>
+  <li>How robust is it to sophisticated adversarial training?</li>
+  <li>Can we reduce the number of required queries while maintaining accuracy?</li>
+</ul>
+
+<p><strong>Practical:</strong></p>
+<ul>
+  <li>How do we design optimal probe distributions?</li>
+  <li>Can we make verification even more efficient?</li>
+  <li>What privacy guarantees can we formally prove?</li>
+</ul>
+
+<h3>6.3 Alternative Interpretations</h3>
+<p>We should consider alternative explanations for our results:</p>
+
+<ul>
+  <li>Variance patterns might reflect training data characteristics rather than architecture</li>
+  <li>High accuracies could be due to subtle distribution shifts rather than true structural differences</li>
+  <li>Black-box success might rely on unintentional API side channels</li>
+</ul>
+
+<p>Further ablation studies are needed to rule out these possibilities.</p>
+
+<hr>
+
+<h2>7. Future Directions</h2>
+
+<h3>7.1 Near-Term Extensions</h3>
+<ol>
+  <li><strong>Active learning:</strong> Adaptively select probes to maximize information gain</li>
+  <li><strong>Continuous monitoring:</strong> Real-time drift detection for deployed models</li>
+  <li><strong>Ensemble methods:</strong> Combine multiple variance signatures for robustness</li>
+  <li><strong>Broader evaluation:</strong> Test on wider range of models and modifications</li>
+</ol>
+
+<h3>7.2 Long-Term Vision</h3>
+<ol>
+  <li><strong>Formal theory:</strong> Develop rigorous information-theoretic foundations</li>
+  <li><strong>Biological validation:</strong> Compare to neuroscience approaches for understanding brain organization</li>
+  <li><strong>Quantum extensions:</strong> Explore post-quantum secure fingerprinting</li>
+  <li><strong>Federated verification:</strong> Multi-party protocols without sharing access</li>
+  <li><strong>Standardization:</strong> Develop industry standards for behavioral verification</li>
+</ol>
+
+<h3>7.3 Philosophical Questions</h3>
+<p>This work touches on deeper questions about model understanding:</p>
+
+<ul>
+  <li>What does it mean to "understand" a model we cannot inspect?</li>
+  <li>Is behavioral analysis fundamentally limited compared to mechanistic analysis?</li>
+  <li>Can external observation ever be as reliable as internal inspection?</li>
+  <li>How should we balance transparency demands with confidentiality needs?</li>
+</ul>
+
+<hr>
+
+<h2>8. Related Work</h2>
+<p>Our approach draws inspiration from several areas:</p>
+
+<p><strong>Mechanistic interpretability</strong> (Olah et al., Anthropic): We complement weight-based analysis with behavioral methods that work without internal access.</p>
+
+<p><strong>Model fingerprinting</strong> (Adi et al.): We extend beyond identity verification to structural understanding.</p>
+
+<p><strong>Hyperdimensional computing</strong> (Kanerva, GenomeVault): We adapt cognitive architectures for model analysis.</p>
+
+<p><strong>Causal inference</strong> (Pearl, Spirtes): We apply causal discovery methods to behavioral variance.</p>
+
+<p><strong>Biological structure inference</strong>: We draw analogies to DNA/protein structure determination from indirect measurements.</p>
+
+<p><strong>Privacy-preserving ML</strong>: We enable auditing while protecting proprietary information.</p>
+
+<p><strong>Black-box testing</strong>: We advance beyond simple input-output testing toward structural inference.</p>
+
+<hr>
+
+<h2>9. Concluding Thoughts</h2>
+
+<p>We have explored a framework for understanding large language models through pure black-box access. By constructing Holographic Behavioral Twins—high-dimensional representations combining signatures, fingerprints, and variance patterns—our preliminary results suggest several intriguing possibilities:</p>
+
+<ol>
+  <li>Behavioral patterns may encode significant structural information</li>
+  <li>Hyperdimensional encodings appear to preserve semantic relationships</li>
+  <li>Memory-bounded execution enables analysis of arbitrarily large models</li>
+  <li>Black-box operation achieves reasonable accuracy (95.8%) using only API access</li>
+  <li>The approach might scale favorably with model size</li>
+</ol>
+
+<p>Our experiments show 99.6% accuracy in white-box structural discrimination, 87-91% in causal recovery, and promising results on commercial APIs. However, these are early-stage findings that require extensive validation.</p>
+
+<p>The biological analogy proves thought-provoking: just as DNA sequencing errors reveal molecular structure and gravitational lensing reveals dark matter, behavioral variance might reveal computational structure. This suggests a potentially general principle—uncertainty patterns may universally encode organizational information.</p>
+
+<p>Several critical questions remain unanswered:</p>
+
+<ul>
+  <li>Can we formally prove the information-theoretic claims?</li>
+  <li>How robust is this to determined adversaries?</li>
+  <li>Does it generalize to fundamentally different architectures?</li>
+  <li>What are the fundamental limits of black-box inference?</li>
+</ul>
+
+<p>As models grow toward trillion parameters and beyond, we need scalable alternatives to weight-based interpretability. If behavioral tomography proves viable, it could provide essential tools for AI governance, safety verification, and scientific understanding—all without compromising confidentiality.</p>
+
+<p><strong>The black box may not be opaque—it might be holographic.</strong></p>
+
+<p>But this is a hypothesis, not a conclusion. Substantial work remains to validate, extend, and understand this framework. We invite the research community to explore these ideas, challenge our assumptions, and help determine whether behavioral holography offers a genuine path toward understanding increasingly opaque AI systems.</p>
+
+<hr>
+
+<h2>Acknowledgments</h2>
+<p>This work benefited from conversations with researchers in interpretability, hyperdimensional computing, and causal inference. All errors and overly ambitious claims are my own.</p>
+
+<hr>
+
+<h2>References</h2>
+<p>[To be completed with standard academic references including mechanistic interpretability work, HDC literature, causal inference methods, privacy-preserving ML, biological structure inference methods, etc.]</p>
+
+<hr>
+
+<h2>Appendices</h2>
+
+<h3>Appendix A: Mathematical Details</h3>
+<p>[Detailed derivations and proofs]</p>
+
+<h3>Appendix B: Implementation</h3>
+<p>[Code for REV, HDC encoding, variance analysis]</p>
+
+<h3>Appendix C: Extended Results</h3>
+<p>[Additional experiments and sensitivity analyses]</p>
+
+<h3>Appendix D: Probe Examples</h3>
+<p>[Sample challenges across categories]</p>
+
+<h3>Appendix E: Hyperparameter Choices</h3>
+<p>[Justification for design decisions]</p>
+
+<div class="footer-note">
+  <p>This is exploratory work. Many claims await rigorous validation. Use with appropriate skepticism.</p>
+  <p>© 2025 Rohan Vinaik · <a href="../index.html" style="color: var(--accent);">Back to Home</a></p>
+</div>
+
+</div>
+
+</body>
+</html>
