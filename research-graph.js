@@ -446,12 +446,15 @@ class ResearchGraph {
     const containerWidth = this.container.clientWidth;
     const containerHeight = this.container.clientHeight;
 
-    const scaleX = containerWidth / (graphWidth + 100);
-    const scaleY = containerHeight / (graphHeight + 100);
+    // Add padding around the graph
+    const padding = 50;
+    const scaleX = (containerWidth - padding * 2) / graphWidth;
+    const scaleY = (containerHeight - padding * 2) / graphHeight;
     this.scale = Math.min(scaleX, scaleY, 1);
 
+    // Center both horizontally and vertically
     this.panX = (containerWidth - graphWidth * this.scale) / 2 - minX * this.scale;
-    this.panY = 50;
+    this.panY = (containerHeight - graphHeight * this.scale) / 2 - minY * this.scale;
 
     this.applyTransform();
   }
@@ -463,6 +466,17 @@ class ResearchGraph {
         this.fitToScreen();
       });
     });
+
+    // Also re-center when the section becomes visible
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting && entry.intersectionRatio > 0.5) {
+          setTimeout(() => this.fitToScreen(), 100);
+        }
+      });
+    }, { threshold: 0.5 });
+
+    observer.observe(this.container);
   }
 
   startDrag(e) {
