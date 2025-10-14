@@ -1113,3 +1113,523 @@ h1.section-title {
 ::-webkit-scrollbar-thumb:hover {
   background: var(--text-secondary);
 }
+
+/* ============================================
+   ACHIEVEMENT POPUP SYSTEM
+   ============================================ */
+
+.achievement-popup {
+  position: fixed;
+  top: 20px;
+  right: -420px;
+  width: 400px;
+  background: var(--bg-secondary);
+  border: 2px solid var(--accent);
+  box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+  z-index: 2000;
+  font-family: 'JetBrains Mono', monospace;
+  transition: right 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.achievement-popup.show {
+  right: 20px;
+}
+
+.achievement-header {
+  background: var(--bg-primary);
+  border-bottom: 1px solid var(--accent);
+  padding: calc(var(--grid-unit) * 1.5);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+  text-align: center;
+}
+
+.achievement-content {
+  padding: calc(var(--grid-unit) * 2.5);
+  text-align: center;
+}
+
+.achievement-emoji {
+  font-size: 3rem;
+  margin-bottom: calc(var(--grid-unit) * 1.5);
+  animation: bounce 0.6s;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.achievement-name {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--accent);
+  margin-bottom: calc(var(--grid-unit) * 1.5);
+  letter-spacing: 0.05em;
+}
+
+.achievement-description {
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin-bottom: calc(var(--grid-unit) * 2);
+}
+
+.achievement-buttons {
+  display: flex;
+  gap: calc(var(--grid-unit) * 1.5);
+  margin-top: calc(var(--grid-unit) * 2);
+}
+
+.achievement-btn {
+  flex: 1;
+  padding: calc(var(--grid-unit) * 1);
+  background: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  cursor: pointer;
+  transition: all 0.1s ease;
+}
+
+.achievement-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: rgba(0, 255, 0, 0.05);
+}
+
+.achievement-btn.primary {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: rgba(0, 255, 0, 0.1);
+}
+
+/* ============================================
+   ACHIEVEMENTS MODAL
+   ============================================ */
+
+.achievements-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(8px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 1500;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.achievements-overlay.active {
+  display: flex;
+  opacity: 1;
+}
+
+.achievements-modal {
+  background: var(--bg-secondary);
+  border: 2px solid var(--accent);
+  width: 90%;
+  max-width: 500px;
+  max-height: 70vh;
+  overflow-y: auto;
+  box-shadow: 0 0 30px rgba(0, 255, 0, 0.3);
+}
+
+.achievements-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: calc(var(--grid-unit) * 2);
+  border-bottom: 1px solid var(--accent);
+  background: var(--bg-primary);
+}
+
+.achievements-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+}
+
+.achievements-close {
+  background: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1.2rem;
+  padding: calc(var(--grid-unit) * 0.5) calc(var(--grid-unit) * 1);
+  cursor: pointer;
+  transition: all 0.1s ease;
+  line-height: 1;
+}
+
+.achievements-close:hover {
+  border-color: var(--error);
+  color: var(--error);
+}
+
+.achievements-list {
+  padding: calc(var(--grid-unit) * 2);
+}
+
+.achievement-item {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--grid-unit) * 1.5);
+  padding: calc(var(--grid-unit) * 1.2);
+  margin-bottom: calc(var(--grid-unit) * 0.7);
+  border: 1px solid var(--border-color);
+  font-size: 0.75rem;
+}
+
+.achievement-item.unlocked {
+  background: rgba(0, 255, 0, 0.05);
+  border-color: var(--accent);
+}
+
+.achievement-item.locked {
+  opacity: 0.5;
+}
+
+.achievement-icon {
+  font-size: 1rem;
+}
+
+.achievement-text {
+  flex: 1;
+}
+
+/* ============================================
+   ASCII DOG
+   ============================================ */
+
+.ascii-dog {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  pointer-events: auto;
+  z-index: 500;
+  cursor: pointer;
+  transition: all 0.05s ease-out;
+  user-select: none;
+}
+
+.ascii-dog pre {
+  margin: 0;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  line-height: 1.2;
+  color: var(--accent);
+  text-align: center;
+  white-space: pre;
+  filter: drop-shadow(0 0 4px var(--accent));
+}
+
+.ascii-dog:hover pre {
+  color: var(--text-primary);
+}
+
+/* ============================================
+   PHYSICS TROPHY
+   ============================================ */
+
+.physics-trophy {
+  position: fixed;
+  font-size: 40px;
+  cursor: grab;
+  user-select: none;
+  z-index: 600;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+  transition: transform 0.05s ease-out;
+}
+
+.physics-trophy:active {
+  cursor: grabbing;
+  transform: scale(1.1);
+}
+
+/* ============================================
+   MATRIX RAIN CANVAS
+   ============================================ */
+
+.matrix-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  opacity: 0.2;
+  pointer-events: none;
+}
+
+/* ============================================
+   FLASHLIGHT CURSOR EFFECT
+   ============================================ */
+
+.flashlight-cursor {
+  cursor: none !important;
+}
+
+.flashlight-cursor * {
+  cursor: none !important;
+}
+
+.flashlight-cursor::after {
+  content: '🔦';
+  position: fixed;
+  font-size: 24px;
+  pointer-events: none;
+  z-index: 9999;
+  left: var(--mouse-x, 50%);
+  top: var(--mouse-y, 50%);
+  transform: translate(-50%, -50%);
+}
+
+.flashlight-cursor .output-content {
+  position: relative;
+}
+
+.flashlight-cursor .output-content::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(
+    circle 150px at var(--mouse-x, 50%) var(--mouse-y, 50%),
+    rgba(255, 255, 255, 0.15),
+    transparent 70%
+  );
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* ============================================
+   CRT SCANLINE EFFECT
+   ============================================ */
+
+.crt-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 9998;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.15),
+    rgba(0, 0, 0, 0.15) 1px,
+    transparent 1px,
+    transparent 2px
+  );
+  animation: scanlines 8s linear infinite;
+}
+
+@keyframes scanlines {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(100px); }
+}
+
+/* ============================================
+   CHECKBOX CONTROLS
+   ============================================ */
+
+.checkbox-group {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--grid-unit) * 1);
+}
+
+.checkbox-option {
+  display: flex;
+  align-items: center;
+  padding: calc(var(--grid-unit) * 1);
+  border: 1px solid var(--border-color);
+  cursor: pointer;
+  transition: all 0.1s ease;
+}
+
+.checkbox-option:hover {
+  background: rgba(255, 255, 255, 0.03);
+  border-color: var(--accent);
+}
+
+.checkbox-option input[type="checkbox"] {
+  margin-right: calc(var(--grid-unit) * 1);
+  width: 14px;
+  height: 14px;
+  border: 1px solid var(--border-color);
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+  position: relative;
+  background: var(--bg-primary);
+}
+
+.checkbox-option input[type="checkbox"]:checked {
+  border-color: var(--accent);
+  background: var(--accent);
+}
+
+.checkbox-option input[type="checkbox"]:checked::before {
+  content: '✓';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: var(--bg-primary);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.checkbox-label {
+  font-size: 0.75rem;
+  color: var(--text-primary);
+}
+
+/* ============================================
+   DEVELOPER MODE MODAL
+   ============================================ */
+
+.developer-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.9);
+  backdrop-filter: blur(10px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 3000;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.developer-overlay.active {
+  display: flex;
+  opacity: 1;
+}
+
+.developer-modal {
+  background: var(--bg-secondary);
+  border: 2px solid #ff00ff;
+  width: 90%;
+  max-width: 600px;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 0 30px rgba(255, 0, 255, 0.3);
+}
+
+.developer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: calc(var(--grid-unit) * 2);
+  border-bottom: 1px solid #ff00ff;
+  background: var(--bg-primary);
+  color: #ff00ff;
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+}
+
+.developer-close {
+  background: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1.2rem;
+  padding: calc(var(--grid-unit) * 0.5) calc(var(--grid-unit) * 1);
+  cursor: pointer;
+  transition: all 0.1s ease;
+  line-height: 1;
+}
+
+.developer-close:hover {
+  border-color: var(--error);
+  color: var(--error);
+}
+
+.developer-content {
+  padding: calc(var(--grid-unit) * 3);
+}
+
+.developer-content h3 {
+  font-size: 0.85rem;
+  color: #ff00ff;
+  margin-bottom: calc(var(--grid-unit) * 2);
+  text-align: center;
+  letter-spacing: 0.1em;
+}
+
+.developer-content h4 {
+  font-size: 0.75rem;
+  color: var(--accent);
+  margin-bottom: calc(var(--grid-unit) * 1.5);
+  letter-spacing: 0.05em;
+}
+
+.developer-section {
+  margin-bottom: calc(var(--grid-unit) * 3);
+  padding-bottom: calc(var(--grid-unit) * 3);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.developer-section:last-child {
+  border-bottom: none;
+}
+
+.developer-section button {
+  width: 100%;
+  padding: calc(var(--grid-unit) * 1.2);
+  margin-bottom: calc(var(--grid-unit) * 0.7);
+  background: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  cursor: pointer;
+  transition: all 0.1s ease;
+}
+
+.developer-section button:hover {
+  border-color: #ff00ff;
+  color: #ff00ff;
+  background: rgba(255, 0, 255, 0.05);
+}
+
+/* ============================================
+   ADDITIONAL RESPONSIVE TWEAKS
+   ============================================ */
+
+@media (max-width: 768px) {
+  .achievement-popup {
+    width: 90%;
+    right: -100%;
+  }
+
+  .achievement-popup.show {
+    right: 5%;
+  }
+
+  .ascii-dog {
+    font-size: 0.6rem;
+  }
+
+  .physics-trophy {
+    font-size: 30px;
+  }
+}

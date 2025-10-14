@@ -457,6 +457,33 @@
           </select>
         </div>
 
+        <!-- Fun Stuff Section -->
+        <div class="setting-group">
+          <label class="setting-label">FUN STUFF</label>
+          <div class="setting-description">Enable interactive easter eggs and animations</div>
+          <div class="checkbox-group">
+            <label class="checkbox-option">
+              <input type="checkbox" id="enable-dog">
+              <span class="checkbox-label">🐕 ASCII Dog Companion</span>
+            </label>
+            <label class="checkbox-option">
+              <input type="checkbox" id="enable-trophy">
+              <span class="checkbox-label">🏆 Physics Trophy</span>
+            </label>
+            <label class="checkbox-option">
+              <input type="checkbox" id="enable-matrix">
+              <span class="checkbox-label">☔ Matrix Rain</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Achievements Button -->
+        <div class="setting-group">
+          <button class="settings-btn primary" id="view-achievements" style="width: 100%;">
+            🏆 VIEW ACHIEVEMENTS
+          </button>
+        </div>
+
       </div>
 
       <div class="settings-footer">
@@ -467,6 +494,30 @@
     </div>
   </div>
 
+  <!-- Achievement Container -->
+  <div id="achievement-container"></div>
+
+  <!-- Matrix Canvas (behind everything) -->
+  <canvas id="matrix-canvas" class="matrix-canvas" style="display:none;"></canvas>
+
+  <!-- ASCII Dog -->
+  <div id="ascii-dog" class="ascii-dog" style="display:none;">
+    <pre>     /\_/\
+    ( o.o )
+     > ^ <
+    /|   |\
+   (_|   |_)</pre>
+  </div>
+
+  <!-- Physics Trophy -->
+  <div id="physics-trophy" class="physics-trophy" style="display:none;">🏆</div>
+
+  <!-- Scripts -->
   <script src="terminal.js"></script>
+  <script src="achievements.js"></script>
+  <script src="dog.js"></script>
+  <script src="physics.js"></script>
+  <script src="matrix.js"></script>
+  <script src="easter-eggs.js"></script>
 </body>
 </html>
