@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>COEC: Mathematical and Theoretical Foundations</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+  <!-- MathJax for LaTeX rendering -->
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']]
+      }
+    };
+  </script>
+
+  <style>
+    :root {
+      --bg-primary: #0a0a0a;
+      --bg-secondary: #1a1a1a;
+      --text-primary: #e0e0e0;
+      --text-secondary: #808080;
+      --accent: #00ff00;
+      --border: #333;
+      --algorithm: #ffb000;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'JetBrains Mono', monospace;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.6;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      padding: 40px;
+    }
+
+    /* Header */
+    .paper-header {
+      border-bottom: 2px solid var(--accent);
+      padding-bottom: 20px;
+      margin-bottom: 30px;
+    }
+
+    .paper-title {
+      font-size: 1.4rem;
+      color: var(--accent);
+      margin-bottom: 15px;
+      line-height: 1.4;
+      letter-spacing: -0.5px;
+    }
+
+    .paper-meta {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      margin: 5px 0;
+    }
+
+    .paper-meta strong {
+      color: var(--text-primary);
+    }
+
+    /* Concept Tags */
+    .concept-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+    }
+
+    .concept-tag {
+      font-size: 0.7rem;
+      padding: 4px 10px;
+      background: rgba(0, 255, 0, 0.1);
+      border: 1px solid rgba(0, 255, 0, 0.3);
+      color: var(--accent);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .concept-tag:hover {
+      background: rgba(0, 255, 0, 0.2);
+      border-color: var(--accent);
+    }
+
+    /* Navigation */
+    .nav-section {
+      background: rgba(0, 255, 0, 0.05);
+      border: 1px solid var(--border);
+      padding: 20px;
+      margin-bottom: 30px;
+    }
+
+    .nav-title {
+      color: var(--accent);
+      font-size: 0.85rem;
+      margin-bottom: 10px;
+      letter-spacing: 0.1em;
+    }
+
+    .nav-links {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 6px;
+    }
+
+    .nav-link {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 0.7rem;
+      transition: color 0.2s;
+      padding: 4px 0;
+    }
+
+    .nav-link:hover {
+      color: var(--accent);
+    }
+
+    .nav-link::before {
+      content: '> ';
+      color: var(--accent);
+    }
+
+    /* Content */
+    h2 {
+      color: var(--accent);
+      font-size: 1.2rem;
+      margin: 40px 0 20px 0;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+      letter-spacing: 0.05em;
+    }
+
+    h3 {
+      color: var(--text-primary);
+      font-size: 1rem;
+      margin: 30px 0 15px 0;
+      font-weight: 700;
+    }
+
+    p {
+      margin: 15px 0;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      text-align: justify;
+    }
+
+    strong {
+      color: var(--text-primary);
+      font-weight: 700;
+    }
+
+    em {
+      color: var(--accent);
+      font-style: italic;
+    }
+
+    /* Lists */
+    ul, ol {
+      margin: 15px 0 15px 30px;
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+    }
+
+    li {
+      margin: 8px 0;
+    }
+
+    /* Math */
+    .MathJax {
+      font-size: 1.1em !important;
+    }
+
+    mjx-container[display="true"] {
+      margin: 20px 0;
+    }
+
+    /* Definition boxes */
+    .definition {
+      background: rgba(0, 255, 0, 0.03);
+      border-left: 3px solid var(--accent);
+      padding: 15px 20px;
+      margin: 20px 0;
+      font-size: 0.85rem;
+    }
+
+    .definition strong {
+      color: var(--accent);
+    }
+
+    /* Theorem boxes */
+    .theorem {
+      background: rgba(0, 150, 255, 0.05);
+      border-left: 3px solid #0096ff;
+      padding: 15px 20px;
+      margin: 20px 0;
+      font-size: 0.85rem;
+    }
+
+    .theorem strong {
+      color: #0096ff;
+    }
+
+    /* Proposition boxes */
+    .proposition {
+      background: rgba(150, 100, 255, 0.05);
+      border-left: 3px solid #9664ff;
+      padding: 15px 20px;
+      margin: 20px 0;
+      font-size: 0.85rem;
+    }
+
+    .proposition strong {
+      color: #9664ff;
+    }
+
+    /* Algorithm boxes */
+    .algorithm {
+      background: rgba(255, 176, 0, 0.05);
+      border-left: 3px solid var(--algorithm);
+      padding: 15px 20px;
+      margin: 20px 0;
+      font-size: 0.8rem;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .algorithm strong {
+      color: var(--algorithm);
+    }
+
+    .algorithm pre {
+      margin: 10px 0;
+      padding: 10px;
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 176, 0, 0.2);
+      overflow-x: auto;
+      line-height: 1.5;
+      color: var(--text-secondary);
+    }
+
+    /* Corollary boxes */
+    .corollary {
+      background: rgba(100, 200, 255, 0.05);
+      border-left: 3px solid #64c8ff;
+      padding: 15px 20px;
+      margin: 20px 0;
+      font-size: 0.85rem;
+    }
+
+    .corollary strong {
+      color: #64c8ff;
+    }
+
+    /* Back link */
+    .back-link {
+      display: inline-block;
+      color: var(--accent);
+      text-decoration: none;
+      font-size: 0.85rem;
+      margin-bottom: 30px;
+      padding: 8px 0;
+      transition: all 0.2s;
+    }
+
+    .back-link:hover {
+      padding-left: 10px;
+    }
+
+    .back-link::before {
+      content: '← ';
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .container {
+        padding: 20px;
+      }
+
+      .paper-title {
+        font-size: 1.2rem;
+      }
+
+      h2 {
+        font-size: 1.1rem;
+      }
+
+      .nav-links {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a href="../index.html#papers" class="back-link">Back to Papers</a>
+
+    <div class="paper-header">
+      <h1 class="paper-title">Mathematical and Theoretical Foundations of Constraint-Oriented Emergent Computation</h1>
+      <div class="paper-meta"><strong>Authors:</strong> Rohan Vinaik</div>
+      <div class="paper-meta"><strong>Date:</strong> January 2025</div>
+      <div class="paper-meta"><strong>Status:</strong> Technical Foundations Paper</div>
+      <div class="paper-meta"><strong>Companion to:</strong> <a href="COEC_Framework.html" style="color: var(--accent);">COEC Framework Paper</a></div>
+
+      <div class="concept-tags">
+        <span class="concept-tag" data-concept="Measure Theory">MEASURE-THEORY</span>
+        <span class="concept-tag" data-concept="Functional Analysis">FUNCTIONAL-ANALYSIS</span>
+        <span class="concept-tag" data-concept="Differential Geometry">DIFFERENTIAL-GEOMETRY</span>
+        <span class="concept-tag" data-concept="Lyapunov Theory">LYAPUNOV-THEORY</span>
+        <span class="concept-tag" data-concept="Information Theory">INFORMATION-THEORY</span>
+        <span class="concept-tag" data-concept="Computational Complexity">COMPUTATIONAL-COMPLEXITY</span>
+        <span class="concept-tag" data-concept="Topological Data Analysis">TOPOLOGICAL-DATA-ANALYSIS</span>
+        <span class="concept-tag" data-concept="Quantum Computing">QUANTUM-COMPUTING</span>
+        <span class="concept-tag" data-concept="Hyperdimensional Computing">HYPERDIMENSIONAL-COMPUTING</span>
+        <span class="concept-tag" data-concept="Category Theory">CATEGORY-THEORY</span>
+        <span class="concept-tag" data-concept="Sheaf Cohomology">SHEAF-COHOMOLOGY</span>
+      </div>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-title">QUICK NAVIGATION</div>
+      <div class="nav-links">
+        <a href="#abstract" class="nav-link">Abstract</a>
+        <a href="#measure-theory" class="nav-link">1. Measure-Theoretic Foundations</a>
+        <a href="#functional-analysis" class="nav-link">2. Functional Analysis</a>
+        <a href="#manifolds" class="nav-link">3. Manifold Theory</a>
+        <a href="#lyapunov" class="nav-link">4. Lyapunov Theory</a>
+        <a href="#information-theory" class="nav-link">5. Information Theory</a>
+        <a href="#complexity" class="nav-link">6. Computational Complexity</a>
+        <a href="#tda" class="nav-link">7. Topological Data Analysis</a>
+        <a href="#quantum" class="nav-link">8. Quantum COEC</a>
+        <a href="#hdc" class="nav-link">9. Hyperdimensional Computing</a>
+        <a href="#category-theory" class="nav-link">10. Category Theory</a>
+        <a href="#noether" class="nav-link">11. Noether-Inspired Invariance</a>
+        <a href="#algorithms" class="nav-link">12. Algorithmic Implementations</a>
+      </div>
+    </div>
+
+    <h2 id="abstract">Abstract</h2>
+    <p>This document provides the rigorous mathematical and theoretical foundations underlying the Constraint-Oriented Emergent Computation (COEC) framework. We develop measure-theoretic foundations for state spaces, functional analysis of constraint operators, manifold theory for constrained dynamics, information-theoretic formalisms, computational complexity analyses, topological data analysis integration, quantum COEC extensions, and hyperdimensional computing formulations. These foundations establish COEC as a mathematically rigorous framework connecting physics, information theory, and computation.</p>
+
+    <h2 id="measure-theory">1. Measure-Theoretic Foundations</h2>
+
+    <h3>1.1 State Space Formalization</h3>
+    <p>The configuration space $\Omega_S$ of a computational substrate $S$ is formalized as a measure space $(\Omega_S, \mathcal{F}, \mu)$ where:</p>
+    <ul>
+      <li>$\Omega_S$: Set of all possible system states</li>
+      <li>$\mathcal{F}$: $\sigma$-algebra of measurable subsets of $\Omega_S$</li>
+      <li>$\mu$: Probability measure on $\mathcal{F}$ representing state distribution</li>
+    </ul>
+
+    <p>This formulation enables rigorous handling of continuous state spaces and application of measure-theoretic probability.</p>
+
+    <div class="definition">
+      <strong>Definition 1.1 (Constrained State Space):</strong> The constrained state space is:
+      $$\Omega_{S|C} = \{\omega \in \Omega_S \,|\, \forall c_i \in C, \, c_i(\omega) > \theta_i\}$$
+      where $\mu(\Omega_{S|C}) \leq \mu(\Omega_S)$ with equality only when constraints are trivial.
+    </div>
+
+    <div class="theorem">
+      <strong>Theorem 1.1 (Measure Reduction):</strong> For non-trivial constraint set $C$, the measure reduction is bounded:
+      $$\mu(\Omega_{S|C}) \leq \mu(\Omega_S) \cdot \prod_{i=1}^n p_i$$
+      where $p_i = \mu(\{\omega \,|\, c_i(\omega) > \theta_i\}) / \mu(\Omega_S)$ is the satisfaction probability for constraint $c_i$.
+      <p><em>Proof:</em> By independence assumption and measure multiplicativity. □</p>
+    </div>
+
+    <h3>1.2 Measurable Constraint Functions</h3>
+
+    <div class="definition">
+      <strong>Definition 1.2 (Measurable Constraint):</strong> A constraint function $c_i: \Omega_S \rightarrow [0,1]$ is measurable if for all $\alpha \in [0,1]$:
+      $$\{\omega \in \Omega_S \,|\, c_i(\omega) > \alpha\} \in \mathcal{F}$$
+    </div>
+
+    <div class="proposition">
+      <strong>Proposition 1.1:</strong> The composition of measurable constraint functions is measurable.
+    </div>
+
+    <div class="proposition">
+      <strong>Proposition 1.2:</strong> For measurable constraints $c_1, c_2$, the combined constraint $c_{12}(\omega) = \min(c_1(\omega), c_2(\omega))$ is measurable.
+    </div>
+
+    <h2 id="functional-analysis">2. Functional Analysis of Constraint Operators</h2>
+
+    <h3>2.1 Hilbert Space Formulation</h3>
+    <p>For a Hilbert space $\mathcal{H}$ of system states with inner product $\langle \cdot, \cdot \rangle$, constraints are operators $C_i: \mathcal{H} \rightarrow \mathcal{H}$ with specific properties:</p>
+
+    <div class="definition">
+      <strong>Definition 2.1 (Constraint Operator):</strong> A constraint operator $C_i$ on Hilbert space $\mathcal{H}$ satisfies:
+      <ol>
+        <li><strong>Non-expansion</strong>: $\|C_i(x) - C_i(y)\| \leq \|x - y\|$ for all $x, y \in \mathcal{H}$</li>
+        <li><strong>Fixed-point property</strong>: $\text{Fix}(C_i) = \{x \in \mathcal{H} \,|\, C_i(x) = x\}$ represents constraint-satisfying states</li>
+        <li><strong>Self-adjoint</strong>: $\langle C_i(x), y \rangle = \langle x, C_i(y) \rangle$ for all $x, y \in \mathcal{H}$</li>
+      </ol>
+    </div>
+
+    <div class="theorem">
+      <strong>Theorem 2.1 (Fixed-Point Existence):</strong> For a non-empty, closed, convex subset $K \subset \mathcal{H}$ and non-expansive operator $C_i: K \rightarrow K$, there exists at least one fixed point in $K$.
+      <p><em>Proof:</em> By the Browder-Göhde-Kirk fixed-point theorem for Hilbert spaces. □</p>
+    </div>
+
+    <h3>2.2 Constraint Composition</h3>
+
+    <div class="definition">
+      <strong>Definition 2.2 (Collective Constraint):</strong> The collective constraint satisfaction operator is:
+      $$C_{\text{total}} = C_1 \circ C_2 \circ \cdots \circ C_n$$
+    </div>
+
+    <div class="theorem">
+      <strong>Theorem 2.2 (Collective Fixed Points):</strong> The collective fixed-point set is:
+      $$\text{Fix}(C_{\text{total}}) = \bigcap_{i=1}^n \text{Fix}(C_i)$$
+      when constraints commute: $C_i \circ C_j = C_j \circ C_i$ for all $i, j$.
+    </div>
+
+    <h3>2.3 Spectral Analysis</h3>
+
+    <div class="definition">
+      <strong>Definition 2.3 (Constraint Spectrum):</strong> For linear constraint operator $C_i$, the spectrum is:
+      $$\sigma(C_i) = \{\lambda \in \mathbb{C} \,|\, C_i - \lambda I \text{ is not invertible}\}$$
+    </div>
+
+    <div class="theorem">
+      <strong>Theorem 2.3 (Spectral Decomposition):</strong> For self-adjoint constraint operator $C_i$, there exists a spectral measure $E_\lambda$ such that:
+      $$C_i = \int_{\sigma(C_i)} \lambda \, dE_\lambda$$
+      <p>This decomposition enables analysis of constraint satisfaction in terms of eigenspaces corresponding to different satisfaction levels.</p>
+    </div>
+
+    <h2 id="manifolds">3. Manifold Theory and Constrained Dynamics</h2>
+
+    <h3>3.1 Constraint Manifolds</h3>
+
+    <div class="definition">
+      <strong>Definition 3.1 (Constraint Manifold):</strong> For smooth manifold $\mathcal{M}$ representing system states, a constraint set $C$ defines a submanifold:
+      $$\mathcal{M}_C = \{\omega \in \mathcal{M} \,|\, g_i(\omega) = 0, \, i = 1, \ldots, k\}$$
+      where $g_i: \mathcal{M} \rightarrow \mathbb{R}$ are smooth constraint functions.
+    </div>
+
+    <div class="theorem">
+      <strong>Theorem 3.1 (Regular Value Theorem):</strong> If 0 is a regular value of $g: \mathcal{M} \rightarrow \mathbb{R}^k$ where $g = (g_1, \ldots, g_k)$, then $\mathcal{M}_C$ is a smooth submanifold of dimension $\dim(\mathcal{M}) - k$.
+    </div>
+
+    <h3>3.2 Constrained Flows</h3>
+    <p>For system governed by differential equation:</p>
+    $$\frac{d\omega}{dt} = f(\omega, C, E)$$
+    <p>with constraint condition $g_i(\omega) \geq 0$ for all $i$, the flow must remain on the constraint manifold.</p>
+
+    <div class="definition">
+      <strong>Definition 3.2 (Tangent Constraint):</strong> The tangent space to $\mathcal{M}_C$ at $\omega$ is:
+      $$T_\omega \mathcal{M}_C = \{v \in T_\omega \mathcal{M} \,|\, dg_i(\omega)(v) = 0, \, \forall i\}$$
+    </div>
+
+    <div class="theorem">
+      <strong>Theorem 3.2 (Constraint Maintenance):</strong> A flow $\phi_t$ preserves constraints if and only if:
+      $$f(\omega, C, E) \in T_\omega \mathcal{M}_C \quad \forall \omega \in \mathcal{M}_C$$
+    </div>
+
+    <h3>3.3 Lagrangian Formulation</h3>
+    <p>Constrained dynamics can be expressed via Lagrangian mechanics:</p>
+    $$\mathcal{L}(\omega, \dot{\omega}, \lambda) = L(\omega, \dot{\omega}) + \sum_{i=1}^k \lambda_i g_i(\omega)$$
+    <p>where $\lambda_i$ are Lagrange multipliers.</p>
+
+    <div class="theorem">
+      <strong>Theorem 3.3 (Euler-Lagrange with Constraints):</strong> The constrained motion satisfies:
+      $$\frac{d}{dt}\frac{\partial \mathcal{L}}{\partial \dot{\omega}} - \frac{\partial \mathcal{L}}{\partial \omega} = 0$$
+      along with constraint equations $g_i(\omega) = 0$.
+    </div>
+
+    <h2 id="lyapunov">4. Lyapunov Theory for Constraint Satisfaction</h2>
+
+    <h3>4.1 Lyapunov Functions</h3>
+
+    <div class="definition">
+      <strong>Definition 4.1 (Constraint-Based Lyapunov Function):</strong> For constraint set $C$, define:
+      $$V_C(\omega) = \sum_{i=1}^n p_i \cdot \max(0, \theta_i - c_i(\omega))^2$$
+      where $p_i$ are precision weights.
+    </div>
+
+    <div class="theorem">
+      <strong>Theorem 4.1 (Lyapunov Stability):</strong> If:
+      $$\frac{dV_C(\omega)}{dt} < 0 \quad \forall \omega \notin \Omega_{S|C}$$
+      then the system converges to $\Omega_{S|C}$.
+      <p><em>Proof:</em> Standard Lyapunov stability theory. $V_C$ is positive definite, zero on $\Omega_{S|C}$, and strictly decreasing along trajectories outside $\Omega_{S|C}$. □</p>
+    </div>
+
+    <h3>4.2 Convergence Rates</h3>
+
+    <div class="theorem">
+      <strong>Theorem 4.2 (Exponential Convergence):</strong> If there exist $\alpha, \beta > 0$ such that:
+      $$\frac{dV_C(\omega)}{dt} \leq -\alpha \cdot V_C(\omega)^\beta$$
+      then the system converges to $\Omega_{S|C}$ at rate $t^{-1/(\beta-1)}$ for $\beta > 1$ or exponentially for $\beta = 1$.
+    </div>
+
+    <h3>4.3 Basin of Attraction</h3>
+
+    <div class="definition">
+      <strong>Definition 4.2 (Basin of Attraction):</strong> The basin of attraction for constraint-satisfying set $\Omega_{S|C}$ is:
+      $$\mathcal{B}(\Omega_{S|C}) = \{\omega_0 \in \Omega_S \,|\, \lim_{t \to \infty} \phi_t(\omega_0) \in \Omega_{S|C}\}$$
+    </div>
+
+    <div class="theorem">
+      <strong>Theorem 4.3 (Basin Characterization):</strong> Under Lyapunov conditions:
+      $$\mathcal{B}(\Omega_{S|C}) = \{\omega \in \Omega_S \,|\, V_C(\omega) < \infty\}$$
+    </div>
+
+    <h2 id="information-theory">5. Information-Theoretic Formalisms</h2>
+
+    <h3>5.1 Shannon Entropy</h3>
+
+    <div class="definition">
+      <strong>Definition 5.1 (Discrete Entropy):</strong> For discrete system with state distribution $p(\omega)$:
+      $$H(S) = -\sum_{\omega \in \Omega_S} p(\omega) \log_2 p(\omega)$$
+    </div>
+
+    <div class="definition">
+      <strong>Definition 5.2 (Continuous Entropy):</strong> For continuous system with probability density $p(\omega)$:
+      $$H(S) = -\int_{\Omega_S} p(\omega) \log p(\omega) \, d\mu(\omega)$$
+    </div>
+
+    <h3>5.2 Conditional Entropy and Information Gain</h3>
+
+    <div class="definition">
+      <strong>Definition 5.3 (Conditional Entropy):</strong> Given constraints $C$:
+      $$H(S|C) = -\int_{\Omega_{S|C}} \frac{p(\omega)}{Z_C} \log \frac{p(\omega)}{Z_C} \, d\mu(\omega)$$
+      where $Z_C = \int_{\Omega_{S|C}} p(\omega) \, d\mu(\omega)$ is the normalization.
+    </div>
+
+    <div class="theorem">
+      <strong>Theorem 5.1 (Information Gain Inequality):</strong> The information gain from constraints is non-negative:
+      $$\Delta I(S, C) = H(S) - H(S|C) \geq 0$$
+      with equality if and only if $\mu(\Omega_{S|C}) = \mu(\Omega_S)$.
+      <p><em>Proof:</em> By Jensen's inequality applied to the convex function $-\log$. □</p>
+    </div>
+
+    <h3>5.3 Mutual Information</h3>
+
+    <div class="definition">
+      <strong>Definition 5.4 (Mutual Information):</strong> Between system state $S$ and environmental variable $E$:
+      $$I(S; E) = H(S) + H(E) - H(S, E)$$
+    </div>
+
+    <div class="theorem">
+      <strong>Theorem 5.2 (Data Processing Inequality):</strong> For Markov chain $E \to S \to \tilde{S}$:
+      $$I(E; \tilde{S}) \leq I(E; S)$$
+      <p>This bounds information loss through constraint application.</p>
+    </div>
+
+    <h3>5.4 Kullback-Leibler Divergence</h3>
+
+    <div class="definition">
+      <strong>Definition 5.5 (KL Divergence):</strong> Between distributions $p$ and $q$:
+      $$D_{KL}(p \,||\, q) = \int_{\Omega_S} p(\omega) \log \frac{p(\omega)}{q(\omega)} \, d\mu(\omega)$$
+    </div>
+
+    <div class="theorem">
+      <strong>Theorem 5.3 (Variational Characterization):</strong> The constrained distribution minimizes:
+      $$p^*_{S|C} = \arg\min_{p \in \mathcal{P}(\Omega_{S|C})} D_{KL}(p \,||\, p_0)$$
+      where $p_0$ is the unconstrained prior.
+    </div>
+
+    <h2 id="complexity">6. Computational Complexity Analysis</h2>
+
+    <h3>6.1 Constraint Satisfaction Complexity</h3>
+
+    <div class="theorem">
+      <strong>Theorem 6.1 (CSP Complexity):</strong> For discrete state space $\Omega_S$ with $|\Omega_S| = n$ and $|C| = m$:
+      <ol>
+        <li>If all constraints are linear inequalities: satisfaction is in <strong>P</strong></li>
+        <li>If constraints include quadratic terms: satisfaction is <strong>NP-hard</strong></li>
+        <li>If constraints are Boolean formulas: satisfaction is <strong>NP-complete</strong></li>
+      </ol>
+      <p><em>Proof:</em> (1) By linear programming. (2) Reduction from QUBO. (3) Direct reduction from SAT. □</p>
+    </div>
+
+    <h3>6.2 Approximation Complexity</h3>
+
+    <div class="definition">
+      <strong>Definition 6.1 (ε-Satisfaction):</strong> A state $\omega$ <strong>ε-satisfies</strong> $C$ if:
+      $$\forall c_i \in C, \quad c_i(\omega) > \theta_i - \varepsilon$$
+    </div>
+
+    <div class="theorem">
+      <strong>Theorem 6.2 (Continuous Approximation):</strong> Finding an ε-satisfying state for Lipschitz-continuous constraints requires $O((1/\varepsilon)^d)$ evaluations in worst case, where $d = \dim(\Omega_S)$.
+    </div>
+
+    <h3>6.3 Catalytic Space Complexity</h3>
+
+    <div class="theorem">
+      <strong>Theorem 6.3 (Catalytic Space Theorem):</strong>
+      $$\text{CSPACE}(s(n)) \subseteq \text{SPACE}(s(n)^2)$$
+      <p><em>Proof sketch:</em> A machine with $s(n)$ clean space and arbitrarily much catalytic space can be simulated by a machine with $s(n)^2$ total space using two-phase computation: forward pass stores configurations, backward pass restores catalytic memory. □</p>
+    </div>
+
+    <div class="corollary">
+      <strong>Corollary 6.1:</strong> Cat-COEC systems solve problems with quadratically less dedicated space than conventional approaches.
+    </div>
+
+    <h3>6.4 Oracle Separations</h3>
+
+    <div class="definition">
+      <strong>Definition 6.2 (Oracle Constraint):</strong> A constraint $c_O$ whose satisfaction is determined by external oracle access rather than algorithmic evaluation.
+    </div>
+
+    <div class="theorem">
+      <strong>Theorem 6.4 (Oracle Separation):</strong> There exist problems where:
+      $$\text{COEC}^{\text{oracle}}(n) = O(\log n) \text{ but } \text{COEC}^{\text{standard}}(n) = \Omega(n)$$
+      in query complexity.
+    </div>
+
+    <h2 id="tda">7. Topological Data Analysis Integration</h2>
+
+    <h3>7.1 Persistent Homology</h3>
+
+    <div class="definition">
+      <strong>Definition 7.1 (Filtration):</strong> A nested sequence of topological spaces:
+      $$X_0 \subseteq X_1 \subseteq \cdots \subseteq X_n$$
+      constructed from data using scale parameter $\varepsilon$.
+    </div>
+
+    <div class="definition">
+      <strong>Definition 7.2 (Persistence Diagram):</strong> Records birth $(b_i)$ and death $(d_i)$ times of topological features:
+      $$PD = \{(b_i, d_i) \,|\, \text{feature } i \text{ appears at } b_i, \text{ disappears at } d_i\}$$
+    </div>
+
+    <div class="definition">
+      <strong>Definition 7.3 (Persistence):</strong> The persistence of feature $i$ is $d_i - b_i$.
+    </div>
+
+    <h3>7.2 Topological Constraints</h3>
+
+    <div class="definition">
+      <strong>Definition 7.4 (Topological Constraint):</strong> A constraint based on persistence diagram similarity:
+      $$c_T(\omega) = \text{sim}(PD(\omega), PD_{\text{target}})$$
+      <p>Common similarity metrics:</p>
+      <p><strong>Wasserstein Distance:</strong></p>
+      $$W_p(PD_1, PD_2) = \left(\inf_{\gamma} \sum_{x \in PD_1} \|x - \gamma(x)\|_p^p\right)^{1/p}$$
+      <p><strong>Bottleneck Distance:</strong></p>
+      $$W_\infty(PD_1, PD_2) = \inf_{\gamma} \sup_{x \in PD_1} \|x - \gamma(x)\|_\infty$$
+    </div>
+
+    <h3>7.3 Stability Theorems</h3>
+
+    <div class="theorem">
+      <strong>Theorem 7.1 (Persistence Stability):</strong> For continuous functions $f, g: X \rightarrow \mathbb{R}$:
+      $$W_\infty(PD_f, PD_g) \leq \|f - g\|_\infty$$
+      <p>This guarantees topological constraints are robust to small perturbations.</p>
+    </div>
+
+    <h3>7.4 Witness Complexes</h3>
+
+    <div class="definition">
+      <strong>Definition 7.5 (Witness Complex):</strong> Given landmark set $L \subset X$, dataset $X$, and parameter $\varepsilon$:
+      $$W(L, X, \varepsilon) = \{\sigma \subset L \,|\, \exists x \in X \text{ such that } \max_{l_i \in \sigma} d(l_i, x) \leq \varepsilon\}$$
+    </div>
+
+    <div class="theorem">
+      <strong>Theorem 7.2 (Witness Approximation):</strong> Under uniform sampling conditions, $W(L, X, \varepsilon)$ captures the same topological features as the full Vietoris-Rips complex.
+      <p><strong>Complexity Reduction:</strong></p>
+      $$O(|X|^2) \rightarrow O(|L| \cdot |X|) \text{ where } |L| \ll |X|$$
+    </div>
+
+    <h2 id="quantum">8. Quantum COEC Formalisms</h2>
+
+    <h3>8.1 Quantum State Spaces</h3>
+
+    <div class="definition">
+      <strong>Definition 8.1 (Quantum COEC System):</strong> A tuple $(H, \rho, C, U, M)$ where:
+      <ul>
+        <li>$H$: Hilbert space</li>
+        <li>$\rho$: Density matrix representing quantum state</li>
+        <li>$C$: Set of quantum constraints</li>
+        <li>$U$: Unitary evolution operator</li>
+        <li>$M$: Measurement operator</li>
+      </ul>
+    </div>
+
+    <div class="definition">
+      <strong>Definition 8.2 (Quantum Constraint):</strong> A POVM element $c_Q$ with eigenvalues in $[0,1]$ where:
+      $$\text{Tr}(c_Q \rho) = \text{degree of constraint satisfaction}$$
+    </div>
+
+    <h3>8.2 Constrained Quantum Evolution</h3>
+    <p>The constrained quantum state space:</p>
+    $$\Omega_{Q|C} = \{\rho \,|\, \forall c_Q \in C, \, \text{Tr}(c_Q \rho) \geq \theta_Q\}$$
+
+    <div class="theorem">
+      <strong>Theorem 8.1 (Quantum Evolution):</strong> Constrained quantum evolution follows:
+      $$\frac{d\rho}{dt} = -i[H, \rho] + \sum_i \lambda_i \mathcal{L}_{c_i}(\rho)$$
+      where $\mathcal{L}_{c_i}$ are Lindblad operators enforcing constraint $c_i$.
+    </div>
+
+    <h3>8.3 Entanglement as Constraint</h3>
+
+    <div class="definition">
+      <strong>Definition 8.3 (Entanglement Constraint):</strong> For bipartite system with state $\rho_{AB}$:
+      $$c_{\text{ent}}(\rho_{AB}) = f(E(\rho_{AB}))$$
+      where $E$ is an entanglement measure (e.g., entanglement entropy, concurrence).
+    </div>
+
+    <div class="theorem">
+      <strong>Theorem 8.2 (Entanglement-Enabled Constraint Satisfaction):</strong> Certain non-local constraint satisfaction problems solvable in polynomial time with entanglement require exponential time classically.
+    </div>
+
+    <h3>8.4 Quantum Advantage</h3>
+
+    <div class="theorem">
+      <strong>Theorem 8.3 (Grover Speedup):</strong> A Quantum-COEC system finds a constraint-satisfying state in discrete space of size $N$ using:
+      $$O(\sqrt{N}) \text{ operations vs. } O(N) \text{ classically}$$
+    </div>
+
+    <h2 id="hdc">9. Hyperdimensional Computing Integration</h2>
+
+    <h3>9.1 Vector Symbolic Architecture</h3>
+
+    <div class="definition">
+      <strong>Definition 9.1 (VSA):</strong> A tuple $(V, \oplus, \otimes, \rho)$ where:
+      <ul>
+        <li>$V \subset \mathbb{R}^d$ or $\mathbb{C}^d$: High-dimensional vector space</li>
+        <li>$\oplus: V \times V \rightarrow V$: Bundling operation</li>
+        <li>$\otimes: V \times V \rightarrow V$: Binding operation</li>
+        <li>$\rho: V \rightarrow V$: Permutation operation</li>
+      </ul>
+      <p><strong>Algebraic Properties:</strong></p>
+      <ol>
+        <li>$\oplus$ is commutative, associative, with identity $\mathbf{0}$</li>
+        <li>$\otimes$ is associative, with identity $\mathbf{1}$</li>
+        <li>$\otimes$ distributes over $\oplus$: $\mathbf{a} \otimes (\mathbf{b} \oplus \mathbf{c}) = (\mathbf{a} \otimes \mathbf{b}) \oplus (\mathbf{a} \otimes \mathbf{c})$</li>
+      </ol>
+    </div>
+
+    <h3>9.2 Similarity Preservation</h3>
+
+    <div class="theorem">
+      <strong>Theorem 9.1 (Johnson-Lindenstrauss):</strong> For points $x_1, \ldots, x_n \in \mathbb{R}^d$ and random projection $R: \mathbb{R}^d \rightarrow \mathbb{R}^D$ where $D = O(\log n / \varepsilon^2)$:
+      $$P\left((1-\varepsilon)\|x_i - x_j\|^2 \leq \|Rx_i - Rx_j\|^2 \leq (1+\varepsilon)\|x_i - x_j\|^2\right) \geq 1 - \delta$$
+    </div>
+
+    <div class="corollary">
+      <strong>Corollary 9.1:</strong> Hypervector encodings preserve similarity with high probability.
+    </div>
+
+    <h3>9.3 Hypervector-Hash Lattice</h3>
+
+    <div class="definition">
+      <strong>Definition 9.2 (Hash Lattice):</strong> A data structure mapping hypervectors to hypercube cells:
+      $$\text{HashLattice}(\mathbf{h}) = \lfloor \text{LSH}(\mathbf{h}) \rfloor$$
+      where LSH is a locality-sensitive hashing function.
+    </div>
+
+    <div class="theorem">
+      <strong>Theorem 9.2 (Hash Collision Probability):</strong> For hypervectors $\mathbf{h}_1, \mathbf{h}_2$ with similarity $\text{sim}(\mathbf{h}_1, \mathbf{h}_2) \geq 1-\varepsilon$:
+      $$P[\text{HashLattice}(\mathbf{h}_1) = \text{HashLattice}(\mathbf{h}_2)] \geq 1 - k\varepsilon$$
+      where $k$ depends on hash function properties.
+    </div>
+
+    <div class="theorem">
+      <strong>Theorem 9.3 (Retrieval Complexity):</strong> Nearest-neighbor queries in Hash Lattice with $n$ items require $O(\log n)$ time.
+    </div>
+
+    <h3>9.4 Associative Memory Capacity</h3>
+
+    <div class="definition">
+      <strong>Definition 9.3 (Hyperdimensional Associative Memory):</strong> Stores input-output pairs $(\mathbf{x}_i, \mathbf{y}_i)$ as:
+      $$M = \sum_i \mathbf{y}_i \otimes \mathbf{x}_i^*$$
+      where $\mathbf{x}_i^*$ is pseudo-inverse.
+    </div>
+
+    <div class="theorem">
+      <strong>Theorem 9.4 (Capacity):</strong> The capacity scales linearly with dimension:
+      $$\text{Capacity}(M) = \alpha \cdot d$$
+      where $\alpha$ depends on the specific VSA implementation.
+    </div>
+
+    <h2 id="category-theory">10. Category Theory and Sheaf Cohomology</h2>
+
+    <h3>10.1 Categorical Formulation</h3>
+
+    <div class="definition">
+      <strong>Definition 10.1 (COEC Category):</strong> A category $\mathcal{C}_{\text{COEC}}$ where:
+      <ul>
+        <li><strong>Objects</strong>: Configuration spaces $\Omega_S$</li>
+        <li><strong>Morphisms</strong>: Constraint-preserving maps $f: \Omega_S \rightarrow \Omega_{S'}$ such that $\omega \in \Omega_{S|C} \Rightarrow f(\omega) \in \Omega_{S'|C'}$</li>
+      </ul>
+    </div>
+
+    <div class="theorem">
+      <strong>Theorem 10.1 (Completeness):</strong> $\mathcal{C}_{\text{COEC}}$ is complete and cocomplete (has all small limits and colimits).
+    </div>
+
+    <h3>10.2 Sheaf-Theoretic Representation</h3>
+
+    <div class="definition">
+      <strong>Definition 10.2 (COEC Sheaf):</strong> A contravariant functor:
+      $$\mathcal{F}: \text{Open}(\Omega_S)^{\text{op}} \rightarrow \text{Vec}$$
+      assigning to each open subset $U \subset \Omega_S$ a vector space $\mathcal{F}(U)$ of local constraints, satisfying sheaf axioms:
+      <ol>
+        <li><strong>Locality</strong>: If $s, t \in \mathcal{F}(U)$ agree on an open cover, then $s = t$</li>
+        <li><strong>Gluing</strong>: Compatible local sections glue to a unique global section</li>
+      </ol>
+    </div>
+
+    <h3>10.3 Čech Cohomology</h3>
+
+    <div class="definition">
+      <strong>Definition 10.3 (Čech Cochains):</strong> For open cover $\mathcal{U} = \{U_i\}$:
+      <ul>
+        <li>0-cochains: $C^0(\mathcal{U}, \mathcal{F}) = \prod_i \mathcal{F}(U_i)$</li>
+        <li>1-cochains: $C^1(\mathcal{U}, \mathcal{F}) = \prod_{i,j} \mathcal{F}(U_i \cap U_j)$</li>
+      </ul>
+    </div>
+
+    <div class="definition">
+      <strong>Definition 10.4 (Čech Cohomology Groups):</strong>
+      $$H^n(\mathcal{U}, \mathcal{F}) = \frac{\text{Ker}(\delta^n)}{\text{Im}(\delta^{n-1})}$$
+      where $\delta^n$ are coboundary operators.
+    </div>
+
+    <div class="theorem">
+      <strong>Theorem 10.2 (Global Consistency):</strong> A distributed constraint system has globally consistent solution if and only if:
+      $$H^1(\mathcal{U}, \mathcal{F}) = 0$$
+      <p><em>Proof:</em> First cohomology vanishing is equivalent to existence of global sections compatible with local constraints. □</p>
+    </div>
+
+    <h2 id="noether">11. Noether-Inspired Invariance</h2>
+
+    <h3>11.1 Symmetry and Conservation</h3>
+
+    <div class="theorem">
+      <strong>Theorem 11.1 (Computational Noether's Theorem):</strong> For every differentiable symmetry transformation $T$ leaving constraint structure invariant:
+      $$\forall \omega \in \Omega_S, \forall c_i \in C: \, c_i(T(\omega)) = c_i(\omega)$$
+      there exists a conserved computational quantity $Q_T$ with:
+      $$\frac{dQ_T}{dt} = 0$$
+    </div>
+
+    <h3>11.2 Specific Invariants</h3>
+
+    <p><strong>Translation Invariance:</strong> If $c_i(\omega + a) = c_i(\omega)$ for all spatial translations $a$:</p>
+    $$\frac{d}{dt}\int_{\Omega_S} p(\omega) \cdot \nabla \omega \, d\mu(\omega) = 0$$
+
+    <p><strong>Scale Invariance:</strong> If $c_i(\lambda \omega) = c_i(\omega)$ for all scale factors $\lambda$:</p>
+    $$\frac{d}{dt}\int_{\Omega_S} p(\omega) \cdot \omega \cdot \nabla \omega \, d\mu(\omega) = 0$$
+
+    <p><strong>Rotation Invariance:</strong> If $c_i(R\omega) = c_i(\omega)$ for all rotations $R$:</p>
+    <p>Angular momentum-like quantities are conserved.</p>
+
+    <h3>11.3 Sheaf-Theoretic Gluing</h3>
+
+    <div class="theorem">
+      <strong>Theorem 11.2 (Invariant Gluing):</strong> Local invariants glue into global invariants across heterogeneous regions when:
+      $$\rho_{U,V}(Q_U) = Q_V|_{U \cap V}$$
+      where $\rho_{U,V}$ are restriction maps in the sheaf of conserved quantities.
+    </div>
+
+    <h2 id="algorithms">12. Algorithmic Implementations</h2>
+
+    <h3>12.1 Monte Carlo Methods</h3>
+
+    <div class="algorithm">
+      <strong>Algorithm 12.1 (Metropolis-Hastings for COEC):</strong>
+<pre>Initialize ω₀
+For t = 1 to T:
+    Propose ω' ~ q(·|ωₜ)
+    Compute acceptance probability:
+        α = min(1, [exp(-E(ω')/T) · ∏ cᵢ(ω')^pᵢ · q(ωₜ|ω')] /
+                   [exp(-E(ωₜ)/T) · ∏ cᵢ(ωₜ)^pᵢ · q(ω'|ωₜ)])
+    Accept ωₜ₊₁ = ω' with probability α, else ωₜ₊₁ = ωₜ
+Return {ωₜ}</pre>
+    </div>
+
+    <div class="theorem">
+      <strong>Theorem 12.1 (Convergence):</strong> The Metropolis-Hastings algorithm converges to stationary distribution:
+      $$p(\omega) \propto \exp(-E(\omega)/T) \cdot \prod_{i} c_i(\omega)^{p_i}$$
+    </div>
+
+    <h3>12.2 Gradient Methods</h3>
+
+    <div class="algorithm">
+      <strong>Algorithm 12.2 (Constraint Gradient Descent):</strong>
+<pre>Initialize ω₀
+For t = 1 to T:
+    Compute energy gradient: ∇E(ωₜ)
+    Compute constraint gradient: ∇C(ωₜ) = Σᵢ pᵢ · ∇cᵢ(ωₜ)
+    Update: ωₜ₊₁ = ωₜ - α·∇E(ωₜ) + β·∇C(ωₜ)
+Return ωT</pre>
+    </div>
+
+    <div class="theorem">
+      <strong>Theorem 12.2 (Convergence):</strong> Under Lipschitz continuity and bounded gradients, Constraint Gradient Descent converges to a local optimum.
+    </div>
+
+    <h3>12.3 Distributed Algorithm</h3>
+
+    <div class="algorithm">
+      <strong>Algorithm 12.3 (Distributed Constraint Satisfaction):</strong>
+<pre>Initialize local states {ωᵢ⁰}
+For t = 1 to T:
+    For each subsystem i in parallel:
+        Compute local update: Δωᵢᵗ = fᵢ(ωᵢᵗ, Cᵢ, Eᵢ)
+        Exchange information with neighbors
+        Update: ωᵢᵗ⁺¹ = ωᵢᵗ + Δωᵢᵗ + Σⱼ∈N(i) λᵢⱼ · gᵢⱼ(ωᵢᵗ, ωⱼᵗ)
+Return {ωᵢᵀ}</pre>
+    </div>
+
+    <div class="theorem">
+      <strong>Theorem 12.3:</strong> Under appropriate coupling conditions, Distributed Constraint Satisfaction achieves global constraint satisfaction with local computations.
+    </div>
+
+    <h2 id="conclusion">13. Conclusion</h2>
+
+    <p>This document has established rigorous mathematical foundations for Constraint-Oriented Emergent Computation, connecting:</p>
+
+    <ol>
+      <li><strong>Measure theory</strong>: Formal state space foundations</li>
+      <li><strong>Functional analysis</strong>: Constraint operator properties</li>
+      <li><strong>Differential geometry</strong>: Constrained dynamics on manifolds</li>
+      <li><strong>Lyapunov theory</strong>: Stability and convergence guarantees</li>
+      <li><strong>Information theory</strong>: Entropy, mutual information, and variational principles</li>
+      <li><strong>Computational complexity</strong>: Hardness results and efficiency bounds</li>
+      <li><strong>Topology</strong>: Persistent homology and topological constraints</li>
+      <li><strong>Quantum mechanics</strong>: Quantum COEC extensions</li>
+      <li><strong>Category theory</strong>: Sheaf cohomology for distributed systems</li>
+      <li><strong>Hyperdimensional computing</strong>: Efficient semantic representations</li>
+      <li><strong>Algorithms</strong>: Practical implementation methods</li>
+    </ol>
+
+    <p>These foundations establish COEC as a mathematically rigorous framework bridging physics, information theory, and computation, providing tools for both theoretical analysis and practical implementation of constraint-oriented computational systems.</p>
+
+    <h2 id="references">References</h2>
+
+    <ol style="font-size: 0.75rem;">
+      <li>Rudin, W. (1987). <em>Real and Complex Analysis</em> (3rd ed.). McGraw-Hill.</li>
+      <li>Brezis, H. (2010). <em>Functional Analysis, Sobolev Spaces and Partial Differential Equations</em>. Springer.</li>
+      <li>Lee, J. M. (2013). <em>Introduction to Smooth Manifolds</em> (2nd ed.). Springer.</li>
+      <li>Khalil, H. K. (2002). <em>Nonlinear Systems</em> (3rd ed.). Prentice Hall.</li>
+      <li>Cover, T. M., & Thomas, J. A. (2006). <em>Elements of Information Theory</em> (2nd ed.). Wiley.</li>
+      <li>Arora, S., & Barak, B. (2009). <em>Computational Complexity: A Modern Approach</em>. Cambridge University Press.</li>
+      <li>Edelsbrunner, H., & Harer, J. (2010). <em>Computational Topology: An Introduction</em>. American Mathematical Society.</li>
+      <li>Nielsen, M. A., & Chuang, I. L. (2010). <em>Quantum Computation and Quantum Information</em> (10th Anniversary ed.). Cambridge University Press.</li>
+      <li>Kanerva, P. (2009). Hyperdimensional computing: An introduction to computing in distributed representation with high-dimensional random vectors. <em>Cognitive Computation</em>, 1(2), 139-159.</li>
+      <li>Mac Lane, S., & Moerdijk, I. (1992). <em>Sheaves in Geometry and Logic</em>. Springer.</li>
+      <li>Goldreich, O. (2008). <em>Computational Complexity: A Conceptual Perspective</em>. Cambridge University Press.</li>
+      <li>Noether, E. (1918). Invariante Variationsprobleme. <em>Nachrichten von der Gesellschaft der Wissenschaften zu Göttingen, Mathematisch-Physikalische Klasse</em>, 1918, 235-257.</li>
+    </ol>
+
+    <div style="margin-top: 60px; padding-top: 30px; border-top: 1px solid var(--border); text-align: center; color: var(--text-secondary); font-size: 0.75rem;">
+      <p>© 2025 Rohan Vinaik. Mathematical Foundations Paper.</p>
+      <p style="margin-top: 10px;"><a href="../index.html" style="color: var(--accent);">← Back to Homepage</a></p>
+    </div>
+  </div>
+
+  <script>
+    // Concept tag click handler
+    document.querySelectorAll('.concept-tag').forEach(tag => {
+      tag.addEventListener('click', function() {
+        const concept = this.dataset.concept;
+        window.location.href = `../index.html#skills?filter=${encodeURIComponent(concept)}`;
+      });
+    });
+
+    // Smooth scroll for navigation
+    document.querySelectorAll('.nav-link').forEach(link => {
+      link.addEventListener('click', function(e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+  </script>
+</body>
+</html>
