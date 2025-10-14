@@ -71,9 +71,6 @@
         <a href="#home" class="nav-item active" data-section="home">
           <span class="nav-icon">▸</span> <span data-translate="nav-home">home</span>
         </a>
-        <a href="#projects" class="nav-item" data-section="projects">
-          <span class="nav-icon">▸</span> <span data-translate="nav-projects">projects</span>
-        </a>
         <a href="#research-graph" class="nav-item" data-section="research-graph">
           <span class="nav-icon">▸</span> research_graph
         </a>
@@ -155,7 +152,7 @@
                 </div>
               </div>
               <div class="highlight-footer">
-                <a href="#projects" class="highlight-link" data-section="projects">> view all projects</a>
+                <a href="#research-graph" class="highlight-link" data-section="research-graph">> view research graph</a>
               </div>
             </div>
 
@@ -210,7 +207,7 @@
             <div class="quick-actions-home">
               <div class="action-group">
                 <span class="action-prompt">$</span>
-                <a href="#projects" class="action-link" data-section="projects">explore_projects</a>
+                <a href="#research-graph" class="action-link" data-section="research-graph">view_graph</a>
                 <span class="action-separator">|</span>
                 <a href="#papers" class="action-link" data-section="papers">read_papers</a>
                 <span class="action-separator">|</span>
@@ -230,170 +227,6 @@
                 <span>Last updated: 2025-01-14</span>
                 <span class="separator">·</span>
                 <span>Reproducible research · Open source</span>
-              </div>
-            </div>
-          </section>
-
-          <!-- Projects Section -->
-          <section class="content-section" id="section-projects">
-            <div class="term-output">
-              <div class="term-line">> loading projects.txt...</div>
-              <div class="term-line">> done.</div>
-            </div>
-
-            <h2 class="section-title" data-translate="nav-projects">PROJECTS</h2>
-
-            <div class="items-grid">
-              <!-- Featured Project -->
-              <div class="item-box featured-project">
-                <div class="item-title">BEHAVIORAL_HOLOGRAPHY</div>
-                <div class="item-desc">Cryptographically pre-committed, anytime behavioral verifier for LLM identity. Perfect discrimination (8/8) with just 14-40 queries using Empirical-Bernstein confidence sequences. Achieves 30×-60× speedup over baselines (17-92s for small models, 22 min for 7B). Sharded verification handles 34B-class models (≈206 GB) on consumer hardware with ≈52% peak RAM.</div>
-                <div class="item-tags">
-                  <span class="tag">[AI-SECURITY]</span>
-                  <span class="tag">[VERIFICATION]</span>
-                  <span class="tag">[CRYPTOGRAPHY]</span>
-                  <span class="tag">[ANYTIME-VALID]</span>
-                </div>
-                <div class="item-actions">
-                  <a href="papers/Shaking_the_Black_Box.html" target="_blank">> paper</a>
-                  <a href="papers/pot_neurips2025.html" target="_blank">> verifier</a>
-                </div>
-              </div>
-
-              <div class="item-box">
-                <div class="item-title">GENOMEVAULT</div>
-                <div class="item-desc">Privacy-preserving genomic computing platform combining hyperdimensional encoding (8,192 dimensions, 1.49ms, 2,116× compression), zero-knowledge proofs (Groth16/PLONK/Halo2, 603ms generation), and private information retrieval (CPIR: 590ms, IT-PIR: 6.4s). Perfect biometric identification (AUC=1.000, D'=38.43) with <7 bits information leakage per query. Production deployment at $167-3,439/month (70-85% savings vs traditional platforms). Enables secure large-scale genetic analysis with cryptographic guarantees.</div>
-                <div class="item-tags">
-                  <span class="tag">[HYPERDIMENSIONAL-COMPUTING]</span>
-                  <span class="tag">[ZERO-KNOWLEDGE-PROOFS]</span>
-                  <span class="tag">[PRIVATE-INFORMATION-RETRIEVAL]</span>
-                  <span class="tag">[BIOMETRIC-IDENTIFICATION]</span>
-                  <span class="tag">[GENOMICS]</span>
-                </div>
-                <div class="item-actions">
-                  <a href="papers/GenomeVault_Paper.html" target="_blank">> paper</a>
-                  <a href="papers/AppendixA_Hypervector_Security.pdf" target="_blank">> appendix_a</a>
-                  <a href="papers/AppendixB_ZK_Proofs.pdf" target="_blank">> appendix_b</a>
-                  <a href="papers/AppendixC_Cost_Analysis.pdf" target="_blank">> appendix_c</a>
-                </div>
-              </div>
-
-              <div class="item-box">
-                <div class="item-title">FDSC</div>
-                <div class="item-desc">Theoretical framework for privacy-preserving collaborative data analysis combining geometric feature extraction (persistent homology, topological data analysis) with hyperdimensional computing. Designed for distributed computation across organizations without sharing raw data. Proposed applications in healthcare (federated patient analysis), finance (fraud detection), and IoT (sensor networks). Leverages landmark-based approximation for scalability, TEEs and selective cryptography for privacy-performance balance. Theoretical framework requiring experimental validation.</div>
-                <div class="item-tags">
-                  <span class="tag">[DISTRIBUTED-COMPUTING]</span>
-                  <span class="tag">[PRIVACY-PRESERVING]</span>
-                  <span class="tag">[TOPOLOGICAL-DATA-ANALYSIS]</span>
-                  <span class="tag">[HYPERDIMENSIONAL-COMPUTING]</span>
-                </div>
-                <div class="item-actions">
-                  <a href="papers/FDSC_Framework.html" target="_blank">> framework</a>
-                </div>
-              </div>
-
-              <div class="item-box">
-                <div class="item-title">KIMAIYA</div>
-                <div class="item-desc">Integrated platform for scalable iPSC differentiation combining large-scale equation solvers, network-flow optimization, topological data analysis, and pruned neural networks. Beta cell proof-of-concept demonstrates automated protocol optimization with quality control. Enabling therapeutic cell manufacturing through computational modeling of gene regulatory networks and bioreactor control.</div>
-                <div class="item-tags">
-                  <span class="tag">[STEM-CELLS]</span>
-                  <span class="tag">[TOPOLOGICAL-DATA-ANALYSIS]</span>
-                  <span class="tag">[NETWORK-FLOW]</span>
-                  <span class="tag">[BIOPROCESS]</span>
-                </div>
-                <div class="item-actions">
-                  <a href="papers/Kimaiya.html" target="_blank">> read</a>
-                </div>
-              </div>
-
-              <div class="item-box">
-                <div class="item-title">CONSTRAINT_THEORY</div>
-                <div class="item-desc">Ontological framework explaining how meaning, knowledge, and intelligence arise across minds, media, and institutions. Models systems as networks of semantic agents under constraints (K), coupled by interaction topology (T), and oriented by intentional vectors (I). Predicts five meaning modes—Sacred Silence, Emergent Chaos, Positive Construction, Generative Constraint, and Semantic Vampirism—with measurable signatures in semantic density, alignment, and topological coherence. Provides diagnostics to resist semantic vampirism and cultivate generative meaning in AI-mediated systems.</div>
-                <div class="item-tags">
-                  <span class="tag">[ONTOLOGY]</span>
-                  <span class="tag">[SEMANTIC-AGENTS]</span>
-                  <span class="tag">[PHASE-TRANSITIONS]</span>
-                  <span class="tag">[MEANING-MODES]</span>
-                  <span class="tag">[EPISTEMOLOGY]</span>
-                </div>
-                <div class="item-actions">
-                  <a href="papers/COEC_Framework.html" target="_blank">> framework</a>
-                  <a href="papers/COEC_Proofs_Roadmap.html" target="_blank">> proofs</a>
-                  <a href="papers/COEC_Mathematical_Foundations.html" target="_blank">> mathematics</a>
-                </div>
-              </div>
-
-              <div class="item-box">
-                <div class="item-title">BIOCOMPUTING</div>
-                <div class="item-desc">Multi-substrate hyperdimensional framework integrating proteins (with synthetic amino acids), DNA, RNA, viruses, organelles, and neural tissue for parallel biological information processing. Combines large-scale equation solvers, network-flow optimization, topological data analysis, and pruned neural networks. Applications in biosensing, adaptive therapeutics, cryptography, neuromorphic computing, and intelligent biomanufacturing.</div>
-                <div class="item-tags">
-                  <span class="tag">[HYPERDIMENSIONAL-COMPUTING]</span>
-                  <span class="tag">[MULTI-SUBSTRATE]</span>
-                  <span class="tag">[TOPOLOGICAL-DATA-ANALYSIS]</span>
-                  <span class="tag">[NETWORK-FLOW]</span>
-                  <span class="tag">[WETWARE]</span>
-                </div>
-                <div class="item-actions">
-                  <a href="papers/Biocomputing_Integrated.html" target="_blank">> read</a>
-                </div>
-              </div>
-
-              <div class="item-box">
-                <div class="item-title">REV</div>
-                <div class="item-desc">Restriction Enzyme Verification — Black-box LLM fingerprinting using behavioral signatures. Achieves 95% accuracy with 15-20x speedup via reference library, verifying models across 80x size differences without weight access.</div>
-                <div class="item-tags">
-                  <span class="tag">[AI-SECURITY]</span>
-                  <span class="tag">[VERIFICATION]</span>
-                  <span class="tag">[MEMORY-EFFICIENT]</span>
-                  <span class="tag">[LLM-TESTING]</span>
-                </div>
-              </div>
-
-              <div class="item-box">
-                <div class="item-title">HBT</div>
-                <div class="item-desc">Holographic Behavioral Twin — 95.8% black-box model verification using hyperdimensional fingerprints (16K-100K dimensions) with zero-knowledge proofs. API-only access, cryptographic authentication.</div>
-                <div class="item-tags">
-                  <span class="tag">[AI-SECURITY]</span>
-                  <span class="tag">[VERIFICATION]</span>
-                  <span class="tag">[HDC]</span>
-                  <span class="tag">[ZERO-KNOWLEDGE]</span>
-                </div>
-              </div>
-
-              <div class="item-box">
-                <div class="item-title">AUDHD</div>
-                <div class="item-desc">Shared ADHD-autism genetic architecture analysis across 36 neurotransmitter genes. Identified continuous stratification with 5 density peaks: glutamatergic-extreme, GABAergic, serotonergic, dopaminergic, and polygenic-background. Strong cross-disorder validation (r=0.898, p<10⁻¹³, N=18,381 autism cases, 38,691 ADHD cases). Gene-level association patterns prioritize glutamatergic and GABAergic systems for mechanistic investigation of comorbidity.</div>
-                <div class="item-tags">
-                  <span class="tag">[GENOMICS]</span>
-                  <span class="tag">[BIOINFORMATICS]</span>
-                  <span class="tag">[STATISTICAL-GENETICS]</span>
-                  <span class="tag">[CLINICAL-TRANSLATION]</span>
-                </div>
-                <div class="item-actions">
-                  <a href="papers/AuDHD_Genetic_Architecture.html" target="_blank">> read</a>
-                </div>
-              </div>
-
-              <div class="item-box">
-                <div class="item-title">TAILCHASING</div>
-                <div class="item-desc">TailChasingFixer — Detects LLM-induced code anti-patterns using 1024-dimensional hypervector analysis. Identifies redundant abstraction and over-generalization with 60% reduction in false positives.</div>
-                <div class="item-tags">
-                  <span class="tag">[CODE-ANALYSIS]</span>
-                  <span class="tag">[HDC]</span>
-                  <span class="tag">[STATIC-ANALYSIS]</span>
-                  <span class="tag">[AI-TOOLS]</span>
-                </div>
-              </div>
-
-              <div class="item-box">
-                <div class="item-title">VINTAGEOPTICS</div>
-                <div class="item-desc">VintageOptics — HDC-based vintage lens correction using 10,000-dimensional representations. Topological defect analysis for automatic optical aberration correction.</div>
-                <div class="item-tags">
-                  <span class="tag">[COMPUTER-VISION]</span>
-                  <span class="tag">[HDC]</span>
-                  <span class="tag">[IMAGE-PROCESSING]</span>
-                  <span class="tag">[OPTICS]</span>
-                </div>
               </div>
             </div>
           </section>
