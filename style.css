@@ -176,6 +176,35 @@ body {
   word-wrap: break-word;
 }
 
+.status-settings-btn {
+  width: 100%;
+  margin-top: calc(var(--grid-unit) * 2);
+  padding: calc(var(--grid-unit) * 1.5);
+  background: rgba(0, 255, 0, 0.05);
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: all 0.1s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: calc(var(--grid-unit));
+}
+
+.status-settings-btn:hover {
+  background: rgba(0, 255, 0, 0.1);
+  border-color: var(--accent);
+  box-shadow: 0 0 10px rgba(0, 255, 0, 0.2);
+}
+
+.status-settings-btn .settings-icon {
+  font-size: 0.9rem;
+}
+
 /* NAVIGATION SECTION */
 
 .nav-section {

@@ -319,9 +319,10 @@
   function initSettingsModal() {
     const overlay = document.getElementById('settings-overlay');
     const openBtn = document.getElementById('settings-btn');
-    const closeBtn = document.querySelector('.settings-close');
-    const applyBtn = document.getElementById('apply-settings');
-    const resetBtn = document.getElementById('reset-settings');
+    const closeHeaderBtn = document.querySelector('.settings-close');
+    const closeFooterBtn = document.getElementById('close-btn');
+    const applyBtn = document.getElementById('apply-btn');
+    const resetBtn = document.getElementById('reset-btn');
 
     if (!overlay || !openBtn) return;
 
@@ -331,9 +332,18 @@
       updateSettingsUI();
     });
 
-    // Close modal
-    if (closeBtn) {
-      closeBtn.addEventListener('click', () => {
+    // Close modal (header X button)
+    if (closeHeaderBtn) {
+      closeHeaderBtn.addEventListener('click', () => {
+        saveSettings();
+        overlay.classList.remove('active');
+      });
+    }
+
+    // Close modal (footer CLOSE button)
+    if (closeFooterBtn) {
+      closeFooterBtn.addEventListener('click', () => {
+        saveSettings();
         overlay.classList.remove('active');
       });
     }
