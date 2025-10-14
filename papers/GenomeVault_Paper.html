@@ -47,12 +47,10 @@
       padding: 20px;
       margin-bottom: 40px;
       z-index: 100;
-      max-height: 85vh;
-      overflow-y: auto;
     }
 
     nav h1 {
-      font-size: 14px;
+      font-size: 18px;
       color: var(--accent);
       margin-bottom: 15px;
       text-transform: uppercase;
@@ -62,14 +60,14 @@
     nav ul {
       list-style: none;
       display: flex;
-      flex-direction: column;
-      gap: 6px;
+      flex-wrap: wrap;
+      gap: 20px;
     }
 
     nav a {
       color: var(--text-secondary);
       text-decoration: none;
-      font-size: 10px;
+      font-size: 12px;
       transition: color 0.2s;
     }
 
@@ -244,15 +242,16 @@
         font-size: 16px;
       }
 
-      nav {
-        max-height: 60vh;
+      nav ul {
+        flex-direction: column;
+        gap: 10px;
       }
     }
   </style>
 </head>
 <body>
   <nav>
-    <h1>GenomeVault</h1>
+    <h1>GenomeVault: Privacy-Preserving Genomic Computing Platform</h1>
     <ul>
       <li><a href="#abstract">Abstract</a></li>
       <li><a href="#intro">1. Introduction</a></li>

@@ -47,12 +47,10 @@
       padding: 20px;
       margin-bottom: 40px;
       z-index: 100;
-      max-height: 35vh;
-      overflow-y: auto;
     }
 
     nav h1 {
-      font-size: 16px;
+      font-size: 18px;
       color: var(--accent);
       margin-bottom: 15px;
       text-transform: uppercase;
@@ -62,14 +60,14 @@
     nav ul {
       list-style: none;
       display: flex;
-      flex-direction: column;
-      gap: 8px;
+      flex-wrap: wrap;
+      gap: 20px;
     }
 
     nav a {
       color: var(--text-secondary);
       text-decoration: none;
-      font-size: 11px;
+      font-size: 12px;
       transition: color 0.2s;
     }
 
@@ -212,15 +210,16 @@
         font-size: 16px;
       }
 
-      nav {
-        max-height: 30vh;
+      nav ul {
+        flex-direction: column;
+        gap: 10px;
       }
     }
   </style>
 </head>
 <body>
   <nav>
-    <h1>Ontological Framework</h1>
+    <h1>An Ontological Framework for Meaning, Knowledge, and Intelligence</h1>
     <ul>
       <li><a href="#abstract">Abstract</a></li>
       <li><a href="#problem">Problem</a></li>
