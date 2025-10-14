@@ -50,7 +50,11 @@
       'COMPRESSION',     // GENOMEVAULT - HDC compression
       'CRYPTOGRAPHY',    // GENOMEVAULT - HDC security
       'THEORY',          // Theoretical HDC
-      'GENOMICS'         // GENOMEVAULT - genomic HDC
+      'GENOMICS',        // GENOMEVAULT - genomic HDC
+      'LLM-TESTING',     // REV - HDC for LLM fingerprinting
+      'HDC',             // HBT - hyperdimensional fingerprints
+      'CODE-ANALYSIS',   // TAILCHASING - HDC pattern detection
+      'COMPUTER-VISION'  // VINTAGEOPTICS - HDC lens correction
     ],
 
     'Information Theory': [
@@ -70,6 +74,34 @@
       'AI-SECURITY',     // BEHAVIORAL_HOLOGRAPHY - anytime confidence
       'VERIFICATION',    // BEHAVIORAL_HOLOGRAPHY
       'STATISTICS'       // Statistical sequences
+    ],
+
+    'Behavioral Analysis': [
+      'LLM-TESTING',     // REV - behavioral fingerprinting
+      'HDC',             // HBT - hyperdimensional behavioral signatures
+      'AI-SECURITY',     // Black-box verification
+      'VERIFICATION'     // Behavioral verification methods
+    ],
+
+    'Memory-Bounded Algorithms': [
+      'LLM-TESTING',     // REV - memory-efficient verification
+      'MEMORY-EFFICIENT', // REV - streaming & sharding
+      'HDC',             // HBT - compressed representations
+      'AI-SECURITY'      // REV - scalable verification
+    ],
+
+    'Zero-Knowledge Proofs': [
+      'HDC',             // HBT - ZK proofs for verification
+      'CRYPTOGRAPHY',    // GENOMEVAULT - ZK-SNARKs
+      'ZERO-KNOWLEDGE',  // HBT - cryptographic verification
+      'AI-SECURITY'      // Secure model verification
+    ],
+
+    'Static Code Analysis': [
+      'CODE-ANALYSIS',   // TAILCHASING - AST analysis
+      'AI-TOOLS',        // TAILCHASING - AI-assisted development
+      'STATIC-ANALYSIS', // TAILCHASING - pattern detection
+      'HDC'              // TAILCHASING - hypervector analysis
     ],
 
     'Topology & Sheaf Theory': [
@@ -106,7 +138,22 @@
       'STATISTICS',      // MODEL_VERIFICATION
       'VALIDATION',      // MODEL_VERIFICATION - Bayesian validation
       'ML-TOOLS',        // MODEL_VERIFICATION - probabilistic ML
-      'GENOMICS'         // GENOMEVAULT - statistical genomics
+      'GENOMICS',        // GENOMEVAULT - statistical genomics
+      'BIOINFORMATICS'   // AUDHD - statistical genetics
+    ],
+
+    'Statistical Genetics': [
+      'BIOINFORMATICS',  // AUDHD - GWAS analysis
+      'STATISTICAL-GENETICS', // AUDHD - genetic architecture
+      'GENOMICS',        // AUDHD - genomic analysis
+      'CLINICAL-TRANSLATION' // AUDHD - treatment stratification
+    ],
+
+    'GWAS Analysis': [
+      'BIOINFORMATICS',  // AUDHD - genome-wide association
+      'STATISTICAL-GENETICS', // AUDHD - primary focus
+      'GENOMICS',        // AUDHD - genetic data
+      'STATISTICS'       // Statistical methods
     ],
 
     'Optimization': [
@@ -148,14 +195,21 @@
       'CRYPTOGRAPHY',    // GENOMEVAULT - Python crypto
       'GENOMICS',        // GENOMEVAULT - bioinformatics
       'PDE-SOLVERS',     // FDSC - Python PDE libs
-      'SIMULATION'       // FDSC - Python simulation
+      'SIMULATION',      // FDSC - Python simulation
+      'LLM-TESTING',     // REV - Python implementation
+      'HDC',             // HBT - Python HDC
+      'CODE-ANALYSIS',   // TAILCHASING - Python AST
+      'COMPUTER-VISION', // VINTAGEOPTICS - Python CV
+      'BIOINFORMATICS'   // AUDHD - Python genomics
     ],
 
     'R': [
       'STATISTICS',      // MODEL_VERIFICATION - R stats
       'VALIDATION',      // MODEL_VERIFICATION - R validation
       'GENOMICS',        // GENOMEVAULT - Bioconductor
-      'CELL-BIOLOGY'     // KIMAIYA - single-cell analysis in R
+      'CELL-BIOLOGY',    // KIMAIYA - single-cell analysis in R
+      'BIOINFORMATICS',  // AUDHD - R genomics
+      'STATISTICAL-GENETICS' // AUDHD - genetic analysis in R
     ],
 
     'Julia': [
@@ -329,6 +383,33 @@
       'PDE-MODELS'       // KIMAIYA
     ],
 
+    'Computer Vision': [
+      'COMPUTER-VISION',  // VINTAGEOPTICS - primary domain
+      'IMAGE-PROCESSING', // VINTAGEOPTICS
+      'HDC',             // VINTAGEOPTICS - HDC-based CV
+      'OPTICS'           // VINTAGEOPTICS - lens systems
+    ],
+
+    'Image Processing': [
+      'COMPUTER-VISION',  // VINTAGEOPTICS
+      'IMAGE-PROCESSING', // VINTAGEOPTICS - defect correction
+      'HDC',             // VINTAGEOPTICS - HDC processing
+      'OPTICS'           // VINTAGEOPTICS
+    ],
+
+    'Optical Systems': [
+      'OPTICS',          // VINTAGEOPTICS - lens systems
+      'IMAGE-PROCESSING', // VINTAGEOPTICS
+      'COMPUTER-VISION'  // VINTAGEOPTICS
+    ],
+
+    'Clinical Translation': [
+      'CLINICAL-TRANSLATION', // AUDHD - treatment stratification
+      'BIOINFORMATICS',  // AUDHD - translational genomics
+      'GENOMICS',        // AUDHD - genomic medicine
+      'STATISTICAL-GENETICS' // AUDHD - clinical genetics
+    ],
+
     // ==========================================
     // ADDITIONAL COMPUTATIONAL SKILLS
     // ==========================================
@@ -369,10 +450,12 @@
       'MOLECULAR-BIO'    // BIOCOMPUTING - emergent computation
     ],
 
-    'Topology': [
+    'Topological Data Analysis': [
       'THEORY',          // CONSTRAINT_THEORY
       'SYSTEMS',         // Network topology
-      'EMERGENCE'        // Topological emergence
+      'EMERGENCE',       // Topological emergence
+      'COMPUTER-VISION', // VINTAGEOPTICS - topological defects
+      'IMAGE-PROCESSING' // VINTAGEOPTICS - defect analysis
     ],
 
     'Information Theory': [
@@ -403,7 +486,12 @@
     'FDSC': ['PDE-SOLVERS', 'DISTRIBUTED', 'SIMULATION'],
     'KIMAIYA': ['CELL-BIOLOGY', 'PDE-MODELS', 'AI-CONTROL'],
     'CONSTRAINT_THEORY': ['THEORY', 'EMERGENCE', 'SYSTEMS'],
-    'BIOCOMPUTING': ['THEORY', 'MOLECULAR-BIO', 'WETWARE']
+    'BIOCOMPUTING': ['THEORY', 'MOLECULAR-BIO', 'WETWARE'],
+    'REV': ['AI-SECURITY', 'VERIFICATION', 'MEMORY-EFFICIENT', 'LLM-TESTING'],
+    'HBT': ['AI-SECURITY', 'VERIFICATION', 'HDC', 'ZERO-KNOWLEDGE'],
+    'TAILCHASING': ['CODE-ANALYSIS', 'HDC', 'STATIC-ANALYSIS', 'AI-TOOLS'],
+    'VINTAGEOPTICS': ['COMPUTER-VISION', 'HDC', 'IMAGE-PROCESSING', 'OPTICS'],
+    'AUDHD': ['GENOMICS', 'BIOINFORMATICS', 'STATISTICAL-GENETICS', 'CLINICAL-TRANSLATION']
   };
 
   // Helper function: Get all tags for a skill
