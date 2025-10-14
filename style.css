@@ -2008,3 +2008,335 @@ h1.section-title {
     font-size: 30px;
   }
 }
+
+/* ============================================
+   SKILL-PROJECT FILTERING SYSTEM
+   ============================================ */
+
+/* Filter Bar - Terminal-styled floating bar */
+.filter-bar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.95);
+  border-bottom: 1px solid var(--border-color);
+  backdrop-filter: blur(10px);
+  transform: translateY(-100%);
+  opacity: 0;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.filter-bar-visible {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.filter-bar-content {
+  padding: calc(var(--grid-unit) * 2);
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.filter-bar-header {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--grid-unit) * 1);
+  margin-bottom: calc(var(--grid-unit) * 1.5);
+  color: var(--accent);
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+}
+
+.filter-bar-icon {
+  font-size: 1rem;
+}
+
+.filter-bar-title {
+  font-weight: 700;
+}
+
+.filter-bar-body {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: calc(var(--grid-unit) * 2);
+  flex-wrap: wrap;
+}
+
+.filter-tags-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: calc(var(--grid-unit) * 1);
+  flex: 1;
+}
+
+.filter-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: calc(var(--grid-unit) * 0.5);
+  padding: calc(var(--grid-unit) * 0.5) calc(var(--grid-unit) * 1);
+  background: rgba(0, 255, 0, 0.1);
+  border: 1px solid var(--accent);
+  border-radius: 2px;
+  font-size: 0.7rem;
+  transition: all 0.2s ease;
+}
+
+.filter-tag:hover {
+  background: rgba(0, 255, 0, 0.2);
+  transform: scale(1.05);
+}
+
+.filter-tag-label {
+  color: var(--accent);
+}
+
+.filter-tag-remove {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 1.2rem;
+  line-height: 1;
+  padding: 0;
+  margin: 0;
+  transition: color 0.2s ease;
+}
+
+.filter-tag-remove:hover {
+  color: #ff4444;
+}
+
+.filter-controls {
+  display: flex;
+  gap: calc(var(--grid-unit) * 1);
+}
+
+.filter-btn {
+  padding: calc(var(--grid-unit) * 0.75) calc(var(--grid-unit) * 1.5);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  letter-spacing: 0.05em;
+}
+
+.filter-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.filter-btn:active {
+  transform: scale(0.98);
+}
+
+#filter-mode-btn {
+  min-width: 60px;
+  font-weight: 700;
+}
+
+.filter-bar-footer {
+  margin-top: calc(var(--grid-unit) * 1.5);
+  padding-top: calc(var(--grid-unit) * 1.5);
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.filter-count {
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+}
+
+/* Clickable Skills */
+.skill-clickable {
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.skill-clickable:hover {
+  color: var(--accent) !important;
+  transform: translateX(2px);
+}
+
+.skill-clickable::before {
+  content: '▸';
+  position: absolute;
+  left: -12px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  color: var(--accent);
+}
+
+.skill-clickable:hover::before {
+  opacity: 1;
+}
+
+.skill-active {
+  color: var(--accent) !important;
+  font-weight: 700;
+}
+
+.skill-active::after {
+  content: ' ✓';
+  color: var(--accent);
+  font-size: 0.8em;
+}
+
+.skill-project-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: calc(var(--grid-unit) * 0.5);
+  padding: 2px 6px;
+  background: rgba(0, 255, 0, 0.1);
+  border: 1px solid var(--accent);
+  border-radius: 10px;
+  font-size: 0.65em;
+  color: var(--accent);
+  font-weight: 700;
+  min-width: 20px;
+  transition: all 0.2s ease;
+}
+
+.skill-clickable:hover .skill-project-count {
+  background: rgba(0, 255, 0, 0.2);
+  transform: scale(1.1);
+}
+
+/* Clickable Project Tags */
+.tag-clickable {
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.tag-clickable:hover {
+  background: rgba(0, 255, 0, 0.1);
+  border-color: var(--accent);
+  color: var(--accent);
+  transform: scale(1.05);
+}
+
+/* Project Card Filter States */
+.item-box {
+  transition: opacity 0.3s ease, transform 0.3s ease, border-color 0.3s ease;
+}
+
+.item-box.filtered-out {
+  opacity: 0.3;
+  transform: scale(0.98);
+  pointer-events: none;
+  filter: grayscale(50%);
+}
+
+.item-box.filtered-in {
+  opacity: 1;
+  transform: scale(1);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
+}
+
+.item-box.filtered-in .item-title {
+  color: var(--accent);
+}
+
+/* Skill Category Titles - Make category-level filtering possible in future */
+.category-title {
+  user-select: none;
+}
+
+/* Tool tags in grid format */
+.tool-tag.skill-clickable {
+  display: inline-block;
+  padding: calc(var(--grid-unit) * 0.75) calc(var(--grid-unit) * 1);
+}
+
+/* Skill bars - make skill names clickable */
+.skill-bar .skill-name.skill-clickable {
+  cursor: pointer;
+}
+
+.skill-bar .skill-name.skill-clickable:hover {
+  color: var(--accent);
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .filter-bar-body {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filter-tags-container {
+    width: 100%;
+  }
+
+  .filter-controls {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .filter-btn {
+    flex: 1;
+  }
+
+  .skill-clickable::before {
+    display: none;
+  }
+
+  .skill-project-count {
+    position: static;
+    margin-left: calc(var(--grid-unit) * 0.5);
+  }
+}
+
+/* Loading/Animation States */
+@keyframes filterPulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.filter-bar-content.loading {
+  animation: filterPulse 1s ease-in-out infinite;
+}
+
+/* Tooltip Enhancement (Optional) */
+.skill-clickable[title]:hover::after {
+  content: attr(title);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: calc(var(--grid-unit) * 0.5) calc(var(--grid-unit) * 1);
+  background: rgba(0, 0, 0, 0.9);
+  border: 1px solid var(--accent);
+  color: var(--text-primary);
+  font-size: 0.7rem;
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 1000;
+  margin-bottom: calc(var(--grid-unit) * 0.5);
+}
+
+/* Terminal Command Aesthetic */
+.filter-bar-content::before {
+  content: '$ filter --active';
+  position: absolute;
+  top: calc(var(--grid-unit) * 0.5);
+  left: calc(var(--grid-unit) * 2);
+  font-size: 0.6rem;
+  color: var(--text-secondary);
+  opacity: 0.5;
+  font-family: var(--font-mono);
+}
