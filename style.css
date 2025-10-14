@@ -1016,22 +1016,9 @@ h1.section-title {
    ============================================ */
 
 @media (max-width: 1024px) {
-  .dashboard-container {
-    flex-direction: column;
-    height: auto;
-  }
-
   .control-panel {
-    flex: 0 0 auto;
-    width: 100%;
-    border-right: none;
-    border-bottom: 1px solid var(--border-color);
-    max-height: 40vh;
-  }
-
-  .output-area {
-    flex: 1;
-    min-height: 60vh;
+    flex: 0 0 240px;
+    width: 240px;
   }
 
   .control-bar {
@@ -1067,7 +1054,8 @@ h1.section-title {
   }
 
   .control-panel {
-    max-height: 50vh;
+    flex: 0 0 200px;
+    width: 200px;
   }
 
   .settings-modal {
@@ -1079,13 +1067,36 @@ h1.section-title {
     padding: calc(var(--grid-unit) * 2);
   }
 
-  body {
-    overflow: auto;
-    height: auto;
+  .output-border {
+    margin: 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .control-panel {
+    flex: 0 0 160px;
+    width: 160px;
   }
 
-  .dashboard-container {
-    min-height: calc(100vh - 80px);
+  .status-section,
+  .nav-section,
+  .links-section {
+    padding: calc(var(--grid-unit) * 1.5);
+  }
+
+  .nav-item,
+  .external-link {
+    font-size: 0.7rem;
+    padding: calc(var(--grid-unit) * 0.5);
+  }
+
+  .settings-trigger {
+    font-size: 0.65rem;
+    padding: calc(var(--grid-unit) * 1);
+  }
+
+  .output-border {
+    margin: 6px;
   }
 }
 
