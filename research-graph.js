@@ -457,8 +457,12 @@ class ResearchGraph {
   }
 
   centerGraph() {
-    // Center the graph initially
-    this.fitToScreen();
+    // Wait for DOM to fully render before fitting to screen
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        this.fitToScreen();
+      });
+    });
   }
 
   startDrag(e) {
