@@ -348,11 +348,84 @@ Prompt: "Create complete HTML paper from the manuscript at [path]. Use terminal 
 </div>
 ```
 
+#### 4d. Add to Research Graph
+
+**ALL papers should be added to the research graph** at `/Users/rohanvinaik/rohan-vinaik.github.io/graph-data.js`
+
+**Determine paper's tier in the conceptual hierarchy:**
+- **TIER 1 (y=100):** Foundational theory (COEC, philosophical frameworks, ontology)
+- **TIER 2 (y=300):** Platforms, infrastructure, foundational technologies (FDSC, GenomeVault, HDC Survey)
+- **TIER 3 (y=500):** Domain applications (Kimaiya, AuDHD, Biocomputing, exploratory projects)
+- **TIER 4 (y=700):** Refined methods and iterations (REV, HBT)
+- **TIER 5 (y=900):** Specific applications and tools (TailChasing, VintageOptics)
+
+**Add node to appropriate tier:**
+
+```javascript
+{
+  id: '[lowercase-slug]',
+  title: '[UPPERCASE TITLE]',
+  subtitle: '[Short subtitle]',
+  description: '[1-sentence description]',
+  type: '[theory|infrastructure|biology|bio-crypto|ai-security|exploratory|tools]',
+  status: '[published|preprint|active|research|development]',
+  tags: ['TAG1', 'TAG2', 'TAG3'],
+  position: { x: [100-900], y: [100|300|500|700|900] }
+}
+```
+
+**X-position guidelines:**
+- Space nodes horizontally to avoid overlap (typically 100-900 range)
+- Related projects should be visually proximate when possible
+- Leave ~200-300px between nodes for readability
+
+**Add connections to show relationships:**
+
+```javascript
+// In connections array
+{ from: '[source-id]', to: '[new-paper-id]', label: '[relationship]', type: '[informs|technology|iteration]' }
+```
+
+**Connection types:**
+- `informs`: Theoretical foundation → Application (TIER 1→2, 1→3, 2→3)
+- `technology`: Technology transfer between projects (TIER 2→3, 3→4)
+- `iteration`: Evolutionary refinement (TIER 2→4, 4→5)
+
+**Add domain if needed:**
+
+If paper introduces a new research domain not in existing list:
+
+```javascript
+// In domains array
+{ id: '[domain-id]', name: '[Domain Name]', color: '[hex-color]' }
+```
+
+**Example:**
+
+```javascript
+// TIER 2 addition (survey/foundational)
+{
+  id: 'hdc-survey',
+  title: 'HDC SURVEY',
+  subtitle: 'Semantic Encoding',
+  description: 'Hypervector principles and models',
+  type: 'theory',
+  status: 'published',
+  tags: ['HDC', 'VECTOR-SYMBOLIC', 'SURVEY'],
+  position: { x: 250, y: 300 }
+}
+
+// Connections showing it informs other projects
+{ from: 'hdc-survey', to: 'genomevault', label: 'semantic encoding', type: 'informs' },
+{ from: 'hdc-survey', to: 'biocomputing', label: 'vector models', type: 'informs' },
+{ from: 'hdc-survey', to: 'hbt', label: 'hypervector theory', type: 'informs' }
+```
+
 ### Step 5: Commit and Push
 
 ```bash
-# Stage all changes
-git add papers/[paper_slug].html papers/[paper_slug]_figures/ index.html
+# Stage all changes (including graph-data.js if modified)
+git add papers/[paper_slug].html papers/[paper_slug]_figures/ index.html graph-data.js
 
 # Check status
 git status
@@ -376,6 +449,7 @@ Integration:
 - Added to [CATEGORY] section in Papers
 - Updated [PROJECT] box description with findings
 - [If applicable] Updated "Currently Working On" section
+- Added to research graph as [TIER X] node with [N] connections
 - All figures copied to papers/[paper_slug]_figures/
 
 🤖 Generated with [Claude Code](https://claude.com/claude-code)
@@ -400,6 +474,8 @@ Before committing, verify:
 - [ ] Tags link to `../index.html?filter=TAGNAME`
 - [ ] Paper appears in correct Papers section category
 - [ ] Project box (if applicable) has updated description
+- [ ] Paper added to research graph with appropriate tier and connections
+- [ ] Graph node doesn't overlap with existing nodes
 - [ ] Terminal aesthetic styling is consistent
 - [ ] Mobile responsive (check on narrow viewport)
 - [ ] No broken image links

@@ -12,6 +12,16 @@ const GRAPH_DATA = {
       tags: ['ONTOLOGY', 'FRAMEWORK', 'EPISTEMOLOGY'],
       position: { x: 400, y: 100 }
     },
+    {
+      id: 'machine-ethics',
+      title: 'MACHINE ETHICS',
+      subtitle: 'Beyond Binary Ethics',
+      description: 'Narrative learning and moral agency',
+      type: 'theory',
+      status: 'preprint',
+      tags: ['PHILOSOPHY', 'AI-ETHICS', 'NARRATIVE-LEARNING'],
+      position: { x: 700, y: 100 }
+    },
 
     // TIER 2: Infrastructure & Technology Platforms
     {
@@ -25,6 +35,16 @@ const GRAPH_DATA = {
       position: { x: 100, y: 300 }
     },
     {
+      id: 'hdc-survey',
+      title: 'HDC SURVEY',
+      subtitle: 'Semantic Encoding',
+      description: 'Hypervector principles and models',
+      type: 'theory',
+      status: 'published',
+      tags: ['HDC', 'VECTOR-SYMBOLIC', 'SURVEY'],
+      position: { x: 250, y: 300 }
+    },
+    {
       id: 'genomevault',
       title: 'GENOMEVAULT',
       subtitle: 'Privacy-Preserving Genomics',
@@ -32,7 +52,7 @@ const GRAPH_DATA = {
       type: 'bio-crypto',
       status: 'published',
       tags: ['HDC', 'ZERO-KNOWLEDGE', 'GENOMICS'],
-      position: { x: 400, y: 300 }
+      position: { x: 450, y: 300 }
     },
     {
       id: 'behavioral-holography',
@@ -76,6 +96,16 @@ const GRAPH_DATA = {
       tags: ['HDC', 'WETWARE', 'TDA'],
       position: { x: 650, y: 500 }
     },
+    {
+      id: 'ad-mvp',
+      title: 'AD-MVP',
+      subtitle: 'Camera Architecture',
+      description: 'Hybrid analog-digital optics + ML',
+      type: 'exploratory',
+      status: 'research',
+      tags: ['COMPUTATIONAL-PHOTOGRAPHY', 'MACHINE-LEARNING'],
+      position: { x: 850, y: 500 }
+    },
 
     // TIER 4: Refined Methods & Iterations
     {
@@ -108,7 +138,17 @@ const GRAPH_DATA = {
       type: 'tools',
       status: 'active',
       tags: ['CODE-ANALYSIS', 'HDC'],
-      position: { x: 400, y: 900 }
+      position: { x: 300, y: 900 }
+    },
+    {
+      id: 'vintageoptics',
+      title: 'VINTAGEOPTICS',
+      subtitle: 'Lens Correction',
+      description: 'HDC-based optical aberration correction',
+      type: 'tools',
+      status: 'active',
+      tags: ['COMPUTER-VISION', 'HDC', 'OPTICS'],
+      position: { x: 600, y: 900 }
     }
   ],
 
@@ -117,6 +157,7 @@ const GRAPH_DATA = {
     { from: 'coec', to: 'fdsc', label: 'constraint framework', type: 'informs' },
     { from: 'coec', to: 'genomevault', label: 'emergence theory', type: 'informs' },
     { from: 'coec', to: 'behavioral-holography', label: 'semantic agents', type: 'informs' },
+    { from: 'machine-ethics', to: 'behavioral-holography', label: 'moral agency', type: 'informs' },
 
     // TIER 2 → TIER 3: Platforms enable domain applications
     { from: 'fdsc', to: 'kimaiya', label: 'distributed sims', type: 'technology' },
@@ -124,21 +165,26 @@ const GRAPH_DATA = {
     { from: 'genomevault', to: 'audhd', label: 'privacy-preserving', type: 'technology' },
     { from: 'genomevault', to: 'biocomputing', label: 'HDC methods', type: 'technology' },
     { from: 'behavioral-holography', to: 'rev', label: 'evolved approach', type: 'iteration' },
+    { from: 'hdc-survey', to: 'genomevault', label: 'semantic encoding', type: 'informs' },
+    { from: 'hdc-survey', to: 'biocomputing', label: 'vector models', type: 'informs' },
 
     // TIER 2 → TIER 4: Platform technology to refined methods
     { from: 'genomevault', to: 'hbt', label: 'HDC + ZK', type: 'technology' },
     { from: 'behavioral-holography', to: 'hbt', label: 'verification core', type: 'iteration' },
+    { from: 'hdc-survey', to: 'hbt', label: 'hypervector theory', type: 'informs' },
 
     // TIER 3 → TIER 3: Cross-domain technology sharing
     { from: 'kimaiya', to: 'biocomputing', label: 'TDA methods', type: 'technology' },
 
-    // TIER 3 → TIER 4: Direct application to refinement
+    // TIER 1 → TIER 3: Direct foundational influence
     { from: 'coec', to: 'kimaiya', label: 'network dynamics', type: 'informs' },
     { from: 'coec', to: 'biocomputing', label: 'substrate independence', type: 'informs' },
 
     // TIER 4 → TIER 5: Refined methods enable final applications
     { from: 'hbt', to: 'tailchasing', label: 'HDC analysis', type: 'technology' },
-    { from: 'rev', to: 'tailchasing', label: 'behavioral signatures', type: 'technology' }
+    { from: 'rev', to: 'tailchasing', label: 'behavioral signatures', type: 'technology' },
+    { from: 'hdc-survey', to: 'vintageoptics', label: 'vector operations', type: 'informs' },
+    { from: 'ad-mvp', to: 'vintageoptics', label: 'optical systems', type: 'informs' }
   ],
 
   domains: [
@@ -147,6 +193,7 @@ const GRAPH_DATA = {
     { id: 'ai-security', name: 'AI Verification', color: '#f97316' },
     { id: 'theory', name: 'Theoretical Framework', color: '#a78bfa' },
     { id: 'infrastructure', name: 'Infrastructure', color: '#fb923c' },
-    { id: 'tools', name: 'Applied Tools', color: '#fbbf24' }
+    { id: 'tools', name: 'Applied Tools', color: '#fbbf24' },
+    { id: 'exploratory', name: 'Exploratory Research', color: '#ec4899' }
   ]
 };
