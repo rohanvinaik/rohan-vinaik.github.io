@@ -7,61 +7,105 @@
   'use strict';
 
   // ============================================
-  // LOW-RES PIXEL DOG SPRITES (using block characters for pixel art)
+  // WHITE PIXEL DOG SPRITES (Undertale-inspired style)
+  // Higher resolution with clear features
+  // █ = white pixel, . = transparent/empty
   // ============================================
   const dogSprites = {
     // Standing/idle (facing right)
     standRight: `
-██████
-█░░░░█
-██░░██
- ████
- █  █
+...██...
+..████..
+.██████.
+████████
+..████..
+.██..██.
+.█....█.
+██....██
 `,
     // Standing (facing left)
     standLeft: `
-██████
-█░░░░█
-██░░██
- ████
- █  █
+...██...
+..████..
+.██████.
+████████
+..████..
+.██..██.
+.█....█.
+██....██
 `,
-    // Walking cycle frame 1
+    // Walking cycle frame 1 (right - front leg forward)
     walk1Right: `
-██████
-█░░░░█
-██░░██
- ████
-█   █
+...██...
+..████..
+.██████.
+████████
+..████..
+.██..██.
+.█.....█
+██.....█
 `,
-    // Walking cycle frame 2
+    // Walking cycle frame 2 (right - back leg forward)
     walk2Right: `
-██████
-█░░░░█
-██░░██
- ████
- █ █
+...██...
+..████..
+.██████.
+████████
+..████..
+.██..██.
+█.....█.
+█.....██
+`,
+    // Walking cycle frame 1 (left - front leg forward)
+    walk1Left: `
+...██...
+..████..
+.██████.
+████████
+..████..
+.██..██.
+█.....█.
+█.....██
+`,
+    // Walking cycle frame 2 (left - back leg forward)
+    walk2Left: `
+...██...
+..████..
+.██████.
+████████
+..████..
+.██..██.
+.█.....█
+██.....█
 `,
     // Sitting
     sit: `
-██████
-█░░░░█
-██████
- ████
+...██...
+..████..
+.██████.
+████████
+.██████.
+.██████.
+.██..██.
 `,
-    // Lying down
+    // Lying down (sleeping)
     lie: `
-██████████
-█░░░░░░░█
-██████████
+........
+..██████████..
+.████████████.
+.████████████.
+..██████████..
 `,
-    // Barking
+    // Barking (mouth open)
     bark: `
-██████
-█o░o░█ !
-██░░██
- ████
- █  █
+...██...
+..████..
+.██████.
+███..███
+..████..
+.██..██.
+.█....█.
+██....██
 `,
   };
 
@@ -102,11 +146,13 @@
   function createDogCanvas() {
     const canvas = document.createElement('canvas');
     canvas.id = 'dog-canvas';
-    canvas.width = 60;  // Small canvas for low-res look
-    canvas.height = 60;
+    canvas.width = 96;   // Larger for better detail (8 chars * 3 pixels * 4 scale)
+    canvas.height = 96;  // 8 rows * 3 pixels * 4 scale
     canvas.style.position = 'fixed';
     canvas.style.bottom = '60px';
     canvas.style.left = dog.x + 'px';
+    canvas.style.width = '48px';   // Display at 2x scale for crisp pixels
+    canvas.style.height = '48px';
     canvas.style.imageRendering = 'pixelated';  // Keep it crispy
     canvas.style.imageRendering = '-moz-crisp-edges';
     canvas.style.imageRendering = 'crisp-edges';
@@ -140,33 +186,31 @@
     } else if (dog.currentBehavior === 'barking') {
       sprite = dogSprites.bark;
     } else if (dog.isWalking) {
-      // Alternate walking frames
-      sprite = (Math.floor(dog.walkFrame / 10) % 2 === 0)
-        ? dogSprites.walk1Right
-        : dogSprites.walk2Right;
+      // Alternate walking frames based on direction
+      const walkCycle = Math.floor(dog.walkFrame / 10) % 2;
+      if (dog.facingRight) {
+        sprite = walkCycle === 0 ? dogSprites.walk1Right : dogSprites.walk2Right;
+      } else {
+        sprite = walkCycle === 0 ? dogSprites.walk1Left : dogSprites.walk2Left;
+      }
       dog.walkFrame++;
     } else {
       sprite = dog.facingRight ? dogSprites.standRight : dogSprites.standLeft;
     }
 
-    // Draw pixel art sprite
-    dog.ctx.fillStyle = '#00ff00';  // Green pixels
-    dog.ctx.font = '8px monospace';
+    // Draw pixel art sprite - WHITE color for Undertale style
+    dog.ctx.fillStyle = '#ffffff';  // Pure white
 
     const lines = sprite.trim().split('\n');
+    const pixelSize = 12;  // Larger pixels for better visibility
+
     lines.forEach((line, y) => {
       for (let x = 0; x < line.length; x++) {
         if (line[x] === '█') {
-          dog.ctx.fillRect(x * 6, y * 6, 6, 6);
-        } else if (line[x] === '░') {
-          dog.ctx.fillStyle = '#006600';
-          dog.ctx.fillRect(x * 6, y * 6, 6, 6);
-          dog.ctx.fillStyle = '#00ff00';
-        } else if (line[x] === 'o') {
-          dog.ctx.fillStyle = '#ffff00';
-          dog.ctx.fillRect(x * 6, y * 6, 6, 6);
-          dog.ctx.fillStyle = '#00ff00';
+          // Draw white pixel
+          dog.ctx.fillRect(x * pixelSize, y * pixelSize, pixelSize, pixelSize);
         }
+        // Skip '.' (transparent pixels)
       }
     });
   }
