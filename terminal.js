@@ -249,13 +249,68 @@
   // ============================================
   // DEPLOY TIME UPDATER
   // ============================================
-  function updateDeployTime() {
+  async function updateDeployTime() {
     const deployEl = document.getElementById('deploy-time');
-    if (deployEl) {
+    if (!deployEl) return;
+
+    try {
+      // Fetch latest commit from GitHub API
+      const response = await fetch('https://api.github.com/repos/rohanvinaik/rohan-vinaik.github.io/commits/main');
+      const data = await response.json();
+
+      if (data.commit && data.commit.committer && data.commit.committer.date) {
+        const commitDate = new Date(data.commit.committer.date);
+
+        // Convert to Boston time (America/New_York timezone)
+        const bostonTimeString = commitDate.toLocaleString('en-US', {
+          timeZone: 'America/New_York',
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: false
+        });
+
+        // Format as YYYY-MM-DD HH:MM EST/EDT
+        const [datePart, timePart] = bostonTimeString.split(', ');
+        const [month, day, year] = datePart.split('/');
+        const formattedDate = `${year}-${month}-${day}`;
+
+        // Determine if EST or EDT
+        const isDST = isDaylightSavingTime(commitDate);
+        const timezone = isDST ? 'EDT' : 'EST';
+
+        deployEl.textContent = `${formattedDate} ${timePart} ${timezone}`;
+      } else {
+        // Fallback to current date if API fails
+        const now = new Date();
+        const dateString = now.toISOString().split('T')[0];
+        deployEl.textContent = dateString;
+      }
+    } catch (error) {
+      console.error('Failed to fetch deploy time:', error);
+      // Fallback to current date
       const now = new Date();
       const dateString = now.toISOString().split('T')[0];
       deployEl.textContent = dateString;
     }
+  }
+
+  // ============================================
+  // CHECK IF DAYLIGHT SAVING TIME
+  // ============================================
+  function isDaylightSavingTime(date) {
+    const year = date.getFullYear();
+    // DST starts on second Sunday in March
+    const marchSecondSunday = new Date(year, 2, 1); // March 1
+    marchSecondSunday.setDate(1 + (7 - marchSecondSunday.getDay()) % 7 + 7); // Second Sunday
+
+    // DST ends on first Sunday in November
+    const novemberFirstSunday = new Date(year, 10, 1); // November 1
+    novemberFirstSunday.setDate(1 + (7 - novemberFirstSunday.getDay()) % 7); // First Sunday
+
+    return date >= marchSecondSunday && date < novemberFirstSunday;
   }
 
   // ============================================
@@ -412,7 +467,10 @@
         projects: 'PROJECTS.TXT',
         papers: 'PAPERS.TXT',
         about: 'ABOUT.TXT',
-        contact: 'CONTACT.TXT'
+        contact: 'CONTACT.TXT',
+        skills: 'SKILLS.TXT',
+        timeline: 'TIMELINE.TXT',
+        tools: 'TOOLS.TXT'
       };
       outputTitle.textContent = titleMap[sectionName] || 'HOME.TXT';
     }
@@ -469,7 +527,7 @@
 
     // Handle initial hash
     const initialHash = window.location.hash.slice(1);
-    if (initialHash && ['home', 'projects', 'papers', 'about', 'contact'].includes(initialHash)) {
+    if (initialHash && ['home', 'projects', 'papers', 'about', 'contact', 'skills', 'timeline', 'tools'].includes(initialHash)) {
       switchSection(initialHash);
     } else {
       switchSection('home');
