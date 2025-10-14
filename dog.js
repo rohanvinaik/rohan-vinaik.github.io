@@ -1,19 +1,68 @@
 // ============================================
-// SPRITE DOG COMPANION
+// REALISTIC PIXEL DOG COMPANION
+// Low-res sprite with natural pet behavior
 // ============================================
 
 (function() {
   'use strict';
 
   // ============================================
-  // DOG STATES (EMOJI SPRITES)
+  // LOW-RES PIXEL DOG SPRITES (using block characters for pixel art)
   // ============================================
-  const dogStates = {
-    standing: { emoji: '🐕', speech: null },
-    sitting: { emoji: '🐕', speech: null },
-    sleeping: { emoji: '😴', speech: 'ZZZ' },
-    barking: { emoji: '🐕', speech: 'WOOF!' },
-    happy: { emoji: '🐶', speech: '♥' }
+  const dogSprites = {
+    // Standing/idle (facing right)
+    standRight: `
+██████
+█░░░░█
+██░░██
+ ████
+ █  █
+`,
+    // Standing (facing left)
+    standLeft: `
+██████
+█░░░░█
+██░░██
+ ████
+ █  █
+`,
+    // Walking cycle frame 1
+    walk1Right: `
+██████
+█░░░░█
+██░░██
+ ████
+█   █
+`,
+    // Walking cycle frame 2
+    walk2Right: `
+██████
+█░░░░█
+██░░██
+ ████
+ █ █
+`,
+    // Sitting
+    sit: `
+██████
+█░░░░█
+██████
+ ████
+`,
+    // Lying down
+    lie: `
+██████████
+█░░░░░░░█
+██████████
+`,
+    // Barking
+    bark: `
+██████
+█o░o░█ !
+██░░██
+ ████
+ █  █
+`,
   };
 
   // ============================================
@@ -21,226 +70,257 @@
   // ============================================
   let dog = {
     element: null,
-    spriteEl: null,
-    speechEl: null,
+    canvasEl: null,
+    ctx: null,
     enabled: false,
-    currentState: 'standing',
-    targetX: window.innerWidth / 2,
-    currentX: window.innerWidth / 2,
-    lastMouseMove: Date.now(),
-    petCount: 0,
-    animationFrame: null
+
+    // Position (in pixels)
+    x: 200,
+    y: window.innerHeight - 120,
+
+    // Movement
+    targetX: null,
+    targetY: null,
+    walkSpeed: 2,  // pixels per frame
+    isWalking: false,
+    facingRight: true,
+    walkFrame: 0,
+
+    // Behavior state
+    currentBehavior: 'idle',  // idle, walking, sitting, lying, barking
+    behaviorTimer: null,
+    lastInteraction: Date.now(),
+
+    // Animation
+    animationFrame: null,
+    frameCount: 0
   };
 
   // ============================================
-  // GET DOG ELEMENTS
+  // CANVAS SETUP
   // ============================================
-  function getDogElements() {
-    dog.element = document.getElementById('ascii-dog');
-    if (dog.element) {
-      dog.spriteEl = dog.element.querySelector('.dog-sprite');
-      dog.speechEl = dog.element.querySelector('.dog-speech');
-    }
+  function createDogCanvas() {
+    const canvas = document.createElement('canvas');
+    canvas.id = 'dog-canvas';
+    canvas.width = 60;  // Small canvas for low-res look
+    canvas.height = 60;
+    canvas.style.position = 'fixed';
+    canvas.style.bottom = '60px';
+    canvas.style.left = dog.x + 'px';
+    canvas.style.imageRendering = 'pixelated';  // Keep it crispy
+    canvas.style.imageRendering = '-moz-crisp-edges';
+    canvas.style.imageRendering = 'crisp-edges';
+    canvas.style.zIndex = '500';
+    canvas.style.cursor = 'pointer';
+    canvas.style.display = 'none';
+
+    // Click handler for petting
+    canvas.addEventListener('click', petDog);
+
+    document.body.appendChild(canvas);
+    dog.canvasEl = canvas;
+    dog.ctx = canvas.getContext('2d');
   }
 
   // ============================================
-  // ENABLE DOG
+  // DRAW PIXEL DOG
   // ============================================
-  function enableDog() {
-    if (dog.enabled) return;
+  function drawDog() {
+    if (!dog.ctx) return;
 
-    dog.enabled = true;
+    // Clear canvas
+    dog.ctx.clearRect(0, 0, dog.canvasEl.width, dog.canvasEl.height);
 
-    getDogElements();
+    // Select sprite based on behavior
+    let sprite;
+    if (dog.currentBehavior === 'sitting') {
+      sprite = dogSprites.sit;
+    } else if (dog.currentBehavior === 'lying') {
+      sprite = dogSprites.lie;
+    } else if (dog.currentBehavior === 'barking') {
+      sprite = dogSprites.bark;
+    } else if (dog.isWalking) {
+      // Alternate walking frames
+      sprite = (Math.floor(dog.walkFrame / 10) % 2 === 0)
+        ? dogSprites.walk1Right
+        : dogSprites.walk2Right;
+      dog.walkFrame++;
+    } else {
+      sprite = dog.facingRight ? dogSprites.standRight : dogSprites.standLeft;
+    }
 
-    if (!dog.element) {
-      console.error('Dog element not found in DOM');
+    // Draw pixel art sprite
+    dog.ctx.fillStyle = '#00ff00';  // Green pixels
+    dog.ctx.font = '8px monospace';
+
+    const lines = sprite.trim().split('\n');
+    lines.forEach((line, y) => {
+      for (let x = 0; x < line.length; x++) {
+        if (line[x] === '█') {
+          dog.ctx.fillRect(x * 6, y * 6, 6, 6);
+        } else if (line[x] === '░') {
+          dog.ctx.fillStyle = '#006600';
+          dog.ctx.fillRect(x * 6, y * 6, 6, 6);
+          dog.ctx.fillStyle = '#00ff00';
+        } else if (line[x] === 'o') {
+          dog.ctx.fillStyle = '#ffff00';
+          dog.ctx.fillRect(x * 6, y * 6, 6, 6);
+          dog.ctx.fillStyle = '#00ff00';
+        }
+      }
+    });
+  }
+
+  // ============================================
+  // MOVEMENT & BEHAVIOR
+  // ============================================
+
+  function pickRandomDestination() {
+    const screenWidth = window.innerWidth;
+    const margin = 100;
+
+    // Pick corners, edges, or random spots
+    const destinations = [
+      { x: margin, name: 'left corner' },
+      { x: screenWidth - margin, name: 'right corner' },
+      { x: screenWidth / 2, name: 'center' },
+      { x: margin + Math.random() * 200, name: 'left side' },
+      { x: screenWidth - margin - Math.random() * 200, name: 'right side' }
+    ];
+
+    const dest = destinations[Math.floor(Math.random() * destinations.length)];
+    dog.targetX = dest.x;
+    dog.isWalking = true;
+    dog.currentBehavior = 'walking';
+
+    // Face the direction we're walking
+    if (dest.x > dog.x) {
+      dog.facingRight = true;
+    } else {
+      dog.facingRight = false;
+    }
+  }
+
+  function updateMovement() {
+    if (!dog.isWalking || dog.targetX === null) return;
+
+    const distance = Math.abs(dog.targetX - dog.x);
+
+    // Reached destination
+    if (distance < dog.walkSpeed) {
+      dog.x = dog.targetX;
+      dog.isWalking = false;
+      dog.targetX = null;
+      dog.walkFrame = 0;
+
+      // Decide what to do after arriving
+      scheduleNextBehavior();
       return;
     }
 
-    dog.element.style.display = 'flex';
+    // Walk toward target
+    if (dog.targetX > dog.x) {
+      dog.x += dog.walkSpeed;
+      dog.facingRight = true;
+    } else {
+      dog.x -= dog.walkSpeed;
+      dog.facingRight = false;
+    }
 
-    // Click handler for petting
-    dog.element.addEventListener('click', petDog);
-
-    // Start tracking mouse
-    document.addEventListener('mousemove', onMouseMove);
-
-    // Start animation loop
-    startAnimationLoop();
-
-    // Start random behaviors
-    startRandomBehaviors();
+    // Update canvas position
+    dog.canvasEl.style.left = dog.x + 'px';
   }
 
-  // ============================================
-  // DISABLE DOG
-  // ============================================
-  function disableDog() {
-    if (!dog.enabled) return;
+  function scheduleNextBehavior() {
+    // After reaching destination, randomly decide what to do
+    const behaviors = [
+      { action: 'sit', duration: 5000, weight: 3 },
+      { action: 'lie', duration: 8000, weight: 2 },
+      { action: 'stand', duration: 3000, weight: 4 },
+      { action: 'walk', duration: 0, weight: 3 },
+      { action: 'bark', duration: 2000, weight: 1 }
+    ];
 
-    dog.enabled = false;
+    // Weighted random selection
+    const totalWeight = behaviors.reduce((sum, b) => sum + b.weight, 0);
+    let random = Math.random() * totalWeight;
 
-    if (dog.element) {
-      dog.element.style.display = 'none';
-      dog.element.removeEventListener('click', petDog);
-    }
-
-    document.removeEventListener('mousemove', onMouseMove);
-
-    if (dog.animationFrame) {
-      cancelAnimationFrame(dog.animationFrame);
-    }
-
-    clearAllTimers();
-  }
-
-  // ============================================
-  // MOUSE TRACKING
-  // ============================================
-  function onMouseMove(e) {
-    dog.targetX = e.clientX;
-    dog.lastMouseMove = Date.now();
-
-    // Wake up if sleeping
-    if (dog.currentState === 'sleeping') {
-      setState('standing');
-    }
-  }
-
-  // ============================================
-  // ANIMATION LOOP
-  // ============================================
-  function startAnimationLoop() {
-    function animate() {
-      if (!dog.enabled) return;
-
-      // Smooth easing toward target
-      const ease = 0.1;
-      dog.currentX += (dog.targetX - dog.currentX) * ease;
-
-      // Keep dog on screen (accounting for sprite width)
-      const dogWidth = 60;
-      const minX = dogWidth / 2;
-      const maxX = window.innerWidth - dogWidth / 2;
-      dog.currentX = Math.max(minX, Math.min(maxX, dog.currentX));
-
-      // Update position
-      if (dog.element) {
-        dog.element.style.left = `${dog.currentX}px`;
-        dog.element.style.transform = 'translateX(-50%)';
-      }
-
-      // Check for sleep (no mouse movement for 60 seconds)
-      const timeSinceMove = Date.now() - dog.lastMouseMove;
-      if (timeSinceMove > 60000 && dog.currentState === 'standing') {
-        setState('sleeping');
-      }
-
-      dog.animationFrame = requestAnimationFrame(animate);
-    }
-
-    animate();
-  }
-
-  // ============================================
-  // RANDOM BEHAVIORS
-  // ============================================
-  let behaviorTimers = [];
-
-  function startRandomBehaviors() {
-    // Random barking (every 20-40 seconds)
-    function scheduleBark() {
-      const timer = setTimeout(() => {
-        if (dog.enabled && dog.currentState === 'standing') {
-          bark();
-        }
-        scheduleBark();
-      }, 20000 + Math.random() * 20000);
-      behaviorTimers.push(timer);
-    }
-
-    // Random sitting (every 30-60 seconds)
-    function scheduleSit() {
-      const timer = setTimeout(() => {
-        if (dog.enabled && dog.currentState === 'standing') {
-          sit();
-        }
-        scheduleSit();
-      }, 30000 + Math.random() * 30000);
-      behaviorTimers.push(timer);
-    }
-
-    scheduleBark();
-    scheduleSit();
-  }
-
-  function clearAllTimers() {
-    behaviorTimers.forEach(timer => clearTimeout(timer));
-    behaviorTimers = [];
-  }
-
-  // ============================================
-  // DOG BEHAVIORS
-  // ============================================
-  function setState(state) {
-    dog.currentState = state;
-    const stateData = dogStates[state];
-
-    if (!dog.spriteEl || !dog.speechEl) {
-      getDogElements();
-    }
-
-    if (dog.spriteEl) {
-      dog.spriteEl.textContent = stateData.emoji;
-
-      // Remove any existing animation classes
-      dog.spriteEl.classList.remove('wagging');
-
-      // Add wagging animation for happy state
-      if (state === 'happy') {
-        dog.spriteEl.classList.add('wagging');
-      }
-    }
-
-    if (dog.speechEl) {
-      if (stateData.speech) {
-        dog.speechEl.textContent = stateData.speech;
-        dog.speechEl.classList.add('show');
-      } else {
-        dog.speechEl.classList.remove('show');
+    for (const behavior of behaviors) {
+      random -= behavior.weight;
+      if (random <= 0) {
+        executeBehavior(behavior.action, behavior.duration);
+        break;
       }
     }
   }
 
-  function bark() {
-    setState('barking');
-    playBarkSound();
+  function executeBehavior(action, duration) {
+    clearTimeout(dog.behaviorTimer);
 
-    // Return to standing after 2 seconds
-    setTimeout(() => {
-      if (dog.enabled) {
-        setState('standing');
-      }
-    }, 2000);
+    switch (action) {
+      case 'sit':
+        dog.currentBehavior = 'sitting';
+        dog.behaviorTimer = setTimeout(() => {
+          dog.currentBehavior = 'idle';
+          scheduleNextBehavior();
+        }, duration);
+        break;
+
+      case 'lie':
+        dog.currentBehavior = 'lying';
+        dog.behaviorTimer = setTimeout(() => {
+          dog.currentBehavior = 'idle';
+          scheduleNextBehavior();
+        }, duration);
+        break;
+
+      case 'stand':
+        dog.currentBehavior = 'idle';
+        dog.behaviorTimer = setTimeout(() => {
+          scheduleNextBehavior();
+        }, duration);
+        break;
+
+      case 'walk':
+        pickRandomDestination();
+        break;
+
+      case 'bark':
+        dog.currentBehavior = 'barking';
+        playBarkSound();
+        dog.behaviorTimer = setTimeout(() => {
+          dog.currentBehavior = 'idle';
+          scheduleNextBehavior();
+        }, duration);
+        break;
+    }
   }
 
-  function sit() {
-    setState('sitting');
-
-    // Stand back up after 10-20 seconds
-    setTimeout(() => {
-      if (dog.enabled && dog.currentState === 'sitting') {
-        setState('standing');
-      }
-    }, 10000 + Math.random() * 10000);
-  }
-
+  // ============================================
+  // PET INTERACTION
+  // ============================================
   function petDog() {
-    // Show happy state
-    setState('happy');
+    // Cancel current behavior
+    clearTimeout(dog.behaviorTimer);
+    dog.isWalking = false;
+    dog.targetX = null;
 
-    // Increment achievement counter
+    // Happy dance
+    const happyFrames = 10;
+    let frame = 0;
+
+    const happyInterval = setInterval(() => {
+      dog.currentBehavior = frame % 2 === 0 ? 'barking' : 'idle';
+      frame++;
+
+      if (frame >= happyFrames) {
+        clearInterval(happyInterval);
+        dog.currentBehavior = 'idle';
+        scheduleNextBehavior();
+      }
+    }, 200);
+
+    // Achievement tracking
     if (window.AchievementSystem) {
       window.AchievementSystem.incrementDog();
     }
@@ -248,12 +328,34 @@
     // Play happy sound
     playHappySound();
 
-    // Return to standing after 2 seconds
-    setTimeout(() => {
-      if (dog.enabled) {
-        setState('standing');
+    dog.lastInteraction = Date.now();
+  }
+
+  // ============================================
+  // MAIN ANIMATION LOOP
+  // ============================================
+  function startAnimationLoop() {
+    function animate() {
+      if (!dog.enabled) return;
+
+      dog.frameCount++;
+
+      // Update movement
+      updateMovement();
+
+      // Draw dog
+      drawDog();
+
+      // Check for inactivity (fall asleep after 60 seconds)
+      const timeSinceInteraction = Date.now() - dog.lastInteraction;
+      if (timeSinceInteraction > 60000 && dog.currentBehavior !== 'lying') {
+        executeBehavior('lie', 30000);  // Sleep for 30 seconds
       }
-    }, 2000);
+
+      dog.animationFrame = requestAnimationFrame(animate);
+    }
+
+    animate();
   }
 
   // ============================================
@@ -270,7 +372,6 @@
         oscillator.connect(gainNode);
         gainNode.connect(audioContext.destination);
 
-        // Bark sound: quick frequency sweep
         oscillator.frequency.value = 400;
         oscillator.type = 'square';
         gainNode.gain.value = settings.volume / 300;
@@ -297,7 +398,6 @@
         oscillator.connect(gainNode);
         gainNode.connect(audioContext.destination);
 
-        // Happy sound: ascending notes
         oscillator.frequency.value = 400;
         oscillator.type = 'sine';
         gainNode.gain.value = settings.volume / 400;
@@ -313,6 +413,48 @@
   }
 
   // ============================================
+  // ENABLE/DISABLE DOG
+  // ============================================
+  function enableDog() {
+    if (dog.enabled) return;
+
+    dog.enabled = true;
+
+    // Create canvas if needed
+    if (!dog.canvasEl) {
+      createDogCanvas();
+    }
+
+    dog.canvasEl.style.display = 'block';
+
+    // Start at random position
+    dog.x = 100 + Math.random() * (window.innerWidth - 200);
+    dog.canvasEl.style.left = dog.x + 'px';
+
+    // Start animation
+    startAnimationLoop();
+
+    // Start first behavior
+    setTimeout(() => scheduleNextBehavior(), 2000);
+  }
+
+  function disableDog() {
+    if (!dog.enabled) return;
+
+    dog.enabled = false;
+
+    if (dog.canvasEl) {
+      dog.canvasEl.style.display = 'none';
+    }
+
+    if (dog.animationFrame) {
+      cancelAnimationFrame(dog.animationFrame);
+    }
+
+    clearTimeout(dog.behaviorTimer);
+  }
+
+  // ============================================
   // HIDDEN TRIGGER: "gooddog"
   // ============================================
   let commandBuffer = '';
@@ -325,21 +467,10 @@
 
     if (commandBuffer.endsWith('gooddog')) {
       if (dog.enabled) {
-        // Happy dance: rapid state changes
-        const states = ['happy', 'standing', 'happy', 'standing', 'happy'];
-        let i = 0;
-        const interval = setInterval(() => {
-          setState(states[i]);
-          i++;
-          if (i >= states.length) {
-            clearInterval(interval);
-            setState('standing');
-          }
-        }, 300);
+        petDog();
       } else {
-        // Enable dog if not already enabled
         enableDog();
-        setTimeout(() => petDog(), 500);
+        setTimeout(() => petDog(), 1000);
       }
       commandBuffer = '';
     }
