@@ -248,6 +248,41 @@
   padding: 12px;
   z-index: 10;
   max-width: 250px;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.graph-filters.collapsed {
+  transform: translateX(-100%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.graph-filters-toggle {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  width: 36px;
+  height: 36px;
+  background: #0a0a0a;
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 16px;
+  z-index: 11;
+}
+
+.graph-filters-toggle:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: rgba(0, 255, 0, 0.05);
+}
+
+.graph-filters-toggle.active {
+  left: 282px;
 }
 
 .filter-title {
@@ -380,6 +415,7 @@
   }
 
   .graph-filters,
+  .graph-filters-toggle,
   .graph-legend {
     display: none;
   }

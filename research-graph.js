@@ -71,8 +71,17 @@ class ResearchGraph {
   }
 
   createFilters() {
+    // Create toggle button
+    const toggleBtn = document.createElement('button');
+    toggleBtn.className = 'graph-filters-toggle';
+    toggleBtn.id = 'graph-filters-toggle';
+    toggleBtn.innerHTML = '☰';
+    toggleBtn.title = 'Toggle Domain Filters';
+    this.container.appendChild(toggleBtn);
+
+    // Create filters panel
     const filters = document.createElement('div');
-    filters.className = 'graph-filters';
+    filters.className = 'graph-filters collapsed';
     filters.id = 'graph-filters';
 
     let html = '<div class="filter-title">DOMAINS</div>';
@@ -215,6 +224,16 @@ class ResearchGraph {
     this.svg.querySelectorAll('.connection-line').forEach(line => {
       line.addEventListener('click', (e) => this.handleConnectionClick(e));
     });
+
+    // Filter toggle button
+    const toggleBtn = document.getElementById('graph-filters-toggle');
+    const filtersPanel = document.getElementById('graph-filters');
+    if (toggleBtn && filtersPanel) {
+      toggleBtn.addEventListener('click', () => {
+        filtersPanel.classList.toggle('collapsed');
+        toggleBtn.classList.toggle('active');
+      });
+    }
 
     // Filter clicks
     this.container.querySelectorAll('.filter-option').forEach(option => {
