@@ -20,7 +20,7 @@
       <span class="header-command" id="header-cmd">cat status.txt</span>
     </div>
     <div class="system-info">
-      <span id="status-indicator" class="status-available">● AVAILABLE</span>
+      <span id="status-indicator" class="status-available">● <span data-translate="available">AVAILABLE</span></span>
       <span class="separator">|</span>
       <span id="clock"></span>
       <span class="separator">|</span>
@@ -28,357 +28,345 @@
     </div>
   </header>
 
-  <!-- Main Container -->
-  <div class="container">
+  <!-- Main Dashboard Container -->
+  <div class="dashboard-container">
 
-    <!-- Status Panel -->
-    <div class="status-panel">
-      <div class="panel-header">STATUS.TXT</div>
-      <div class="status-content">
-        <div class="status-line"><span class="label">NAME</span><span class="value">ROHAN VINAIK</span></div>
-        <div class="status-line"><span class="label">ROLE</span><span class="value">INDEPENDENT RESEARCHER</span></div>
-        <div class="status-line"><span class="label">FOCUS</span><span class="value">AI SECURITY · CRYPTOGRAPHY</span></div>
-        <div class="status-line"><span class="label">LOCATION</span><span class="value">BOSTON, MA</span></div>
-        <div class="status-line"><span class="label">TIMEZONE</span><span class="value">UTC-5</span></div>
-      </div>
-    </div>
+    <!-- Left Control Panel -->
+    <aside class="control-panel">
 
-    <!-- Navigation Panel -->
-    <nav class="nav-panel">
-      <div class="panel-header">NAVIGATION</div>
-      <div class="nav-content">
-        <a href="#home" class="nav-link active" data-section="home">
-          <span class="nav-prefix">▸</span> home
-        </a>
-        <a href="#projects" class="nav-link" data-section="projects">
-          <span class="nav-prefix">▸</span> projects
-        </a>
-        <a href="#papers" class="nav-link" data-section="papers">
-          <span class="nav-prefix">▸</span> papers
-        </a>
-        <a href="#about" class="nav-link" data-section="about">
-          <span class="nav-prefix">▸</span> about
-        </a>
-        <a href="#contact" class="nav-link" data-section="contact">
-          <span class="nav-prefix">▸</span> contact
-        </a>
-      </div>
+      <!-- Status Section -->
+      <section class="status-section">
+        <div class="status-header">STATUS.TXT</div>
+        <div class="status-item">
+          <span class="label">NAME</span>
+          <span class="value">ROHAN VINAIK</span>
+        </div>
+        <div class="status-item">
+          <span class="label">ROLE</span>
+          <span class="value" data-translate="role">INDEPENDENT RESEARCHER</span>
+        </div>
+        <div class="status-item">
+          <span class="label">FOCUS</span>
+          <span class="value" data-translate="focus">AI SECURITY · CRYPTOGRAPHY</span>
+        </div>
+        <div class="status-item">
+          <span class="label">LOCATION</span>
+          <span class="value">BOSTON, MA</span>
+        </div>
+        <div class="status-item">
+          <span class="label">STATUS</span>
+          <span class="value status-badge">● <span data-translate="available">AVAILABLE</span></span>
+        </div>
+      </section>
 
-      <div class="panel-header" style="margin-top: 24px;">LINKS</div>
-      <div class="nav-content">
-        <a href="https://github.com/rohanvinaik" target="_blank" class="external-link">
+      <!-- Navigation Section -->
+      <nav class="nav-section">
+        <div class="nav-header">NAVIGATION</div>
+        <a href="#home" class="nav-item active" data-section="home">
+          <span class="nav-icon">▸</span> <span data-translate="nav-home">home</span>
+        </a>
+        <a href="#projects" class="nav-item" data-section="projects">
+          <span class="nav-icon">▸</span> <span data-translate="nav-projects">projects</span>
+        </a>
+        <a href="#papers" class="nav-item" data-section="papers">
+          <span class="nav-icon">▸</span> <span data-translate="nav-papers">papers</span>
+        </a>
+        <a href="#about" class="nav-item" data-section="about">
+          <span class="nav-icon">▸</span> <span data-translate="nav-about">about</span>
+        </a>
+        <a href="#contact" class="nav-item" data-section="contact">
+          <span class="nav-icon">▸</span> <span data-translate="nav-contact">contact</span>
+        </a>
+      </nav>
+
+      <!-- External Links -->
+      <div class="links-section">
+        <div class="nav-header">LINKS</div>
+        <a href="https://github.com/rohanvinaik" target="_blank" class="link-item">
           <span class="link-icon">□</span> github
         </a>
-        <a href="mailto:hello@rohanv.me" class="external-link">
+        <a href="mailto:hello@rohanv.me" class="link-item">
           <span class="link-icon">□</span> email
         </a>
       </div>
-    </nav>
 
-    <!-- Content Area -->
-    <main class="content-panel">
-      <div class="panel-header">
-        <span id="content-header">HOME.TXT</span>
-        <span class="loading-indicator" id="loading">█</span>
-      </div>
-      <div class="content-area" id="content">
+      <!-- Settings Button -->
+      <button class="settings-trigger" id="settings-btn">
+        <span class="settings-icon">⚙</span> SETTINGS
+      </button>
 
-        <!-- Home Section -->
-        <section class="content-section active" id="section-home">
-          <div class="terminal-output">
-            <div class="output-line">> loading home.txt...</div>
-            <div class="output-line">> done.</div>
-            <div class="output-line blank"></div>
-          </div>
+    </aside>
 
-          <h1 class="section-title">CONSTRAINT-ORIENTED EMERGENT COMPUTATION</h1>
+    <!-- Right Output Area -->
+    <main class="output-area">
+      <div class="output-border">
+        <div class="output-header">
+          <span id="output-title">HOME.TXT</span>
+          <span class="cursor-blink">█</span>
+        </div>
+        <div class="output-content" id="content">
 
-          <p class="intro-text">
-            Unifying AI security, cryptography, and systems biology through<br>
-            constraints, topology, and intention. Clean theory. Practical builds.
-          </p>
-
-          <div class="quick-links">
-            <a href="#projects" class="terminal-link" data-section="projects">> view_projects</a>
-            <a href="#papers" class="terminal-link" data-section="papers">> view_papers</a>
-          </div>
-
-          <div class="system-stats">
-            <div class="stat-line">
-              <span class="stat-label">[PROJECTS]</span>
-              <span class="stat-value">6 active</span>
-            </div>
-            <div class="stat-line">
-              <span class="stat-label">[PAPERS]</span>
-              <span class="stat-value">7 published</span>
-            </div>
-            <div class="stat-line">
-              <span class="stat-label">[RESEARCH_AREAS]</span>
-              <span class="stat-value">behavioral_holography · genomics · biocomputing</span>
-            </div>
-          </div>
-        </section>
-
-        <!-- Projects Section -->
-        <section class="content-section" id="section-projects">
-          <div class="terminal-output">
-            <div class="output-line">> loading projects.txt...</div>
-            <div class="output-line">> done.</div>
-            <div class="output-line blank"></div>
-          </div>
-
-          <h2 class="section-title">PROJECTS</h2>
-
-          <div class="project-grid">
-
-            <div class="project-box">
-              <div class="project-header">BEHAVIORAL_HOLOGRAPHY</div>
-              <div class="project-desc">
-                Black-box verification of LLMs with memory-bounded execution<br>
-                and hyperdimensional fingerprints. PoT · REV · HDC.
-              </div>
-              <div class="project-tags">
-                <span class="tag">[PYTHON]</span>
-                <span class="tag">[ZK-PROOFS]</span>
-                <span class="tag">[HDC]</span>
-              </div>
-              <div class="project-links">
-                <a href="papers/Shaking_the_Black_Box.pdf" target="_blank" class="project-link">> paper</a>
-                <a href="papers/pot_neurips2025.pdf" target="_blank" class="project-link">> pot_verifier</a>
-              </div>
+          <!-- Home Section -->
+          <section class="content-section active" id="section-home">
+            <div class="term-output">
+              <div class="term-line">> loading home.txt...</div>
+              <div class="term-line">> done.</div>
             </div>
 
-            <div class="project-box">
-              <div class="project-header">GENOMEVAULT</div>
-              <div class="project-desc">
-                Privacy-preserving genomics with PIR + ZK-SNARKs + HDC<br>
-                compression for secure, scalable queries.
-              </div>
-              <div class="project-tags">
-                <span class="tag">[PIR]</span>
-                <span class="tag">[ZK-SNARKS]</span>
-                <span class="tag">[HDC]</span>
-              </div>
-              <div class="project-links">
-                <a href="papers/GenomeVault_Manuscript.pdf" target="_blank" class="project-link">> manuscript</a>
-                <a href="papers/GenomeVault_AppendixA_Hypervector_Security.pdf" target="_blank" class="project-link">> appendix_a</a>
-                <a href="papers/GenomeVault_AppendixB_ZK_Proofs.pdf" target="_blank" class="project-link">> appendix_b</a>
-                <a href="papers/GenomeVault_AppendixC_Cost_Analysis.pdf" target="_blank" class="project-link">> appendix_c</a>
-              </div>
-            </div>
+            <h1 class="section-title">CONSTRAINT-ORIENTED EMERGENT COMPUTATION</h1>
 
-            <div class="project-box">
-              <div class="project-header">FDSC</div>
-              <div class="project-desc">
-                Fluid Distributed Super-Computer: Constraint-topology-driven<br>
-                distributed compute for PDEs, optics, and simulation workloads.
-              </div>
-              <div class="project-tags">
-                <span class="tag">[DISTRIBUTED]</span>
-                <span class="tag">[PDE]</span>
-                <span class="tag">[SIMULATION]</span>
-              </div>
-            </div>
-
-            <div class="project-box">
-              <div class="project-header">KIMAIYA</div>
-              <div class="project-desc">
-                AI-guided iPSC differentiation with PDE/HDC modeling for<br>
-                reproducible cell therapy pipelines.
-              </div>
-              <div class="project-tags">
-                <span class="tag">[BIOTECH]</span>
-                <span class="tag">[AI]</span>
-                <span class="tag">[CELL-THERAPY]</span>
-              </div>
-              <div class="project-links">
-                <a href="papers/Kimaiya.pdf" target="_blank" class="project-link">> overview</a>
-              </div>
-            </div>
-
-            <div class="project-box">
-              <div class="project-header">BIOCOMPUTING</div>
-              <div class="project-desc">
-                Multi-substrate computation: proteins, DNA/RNA, organelles,<br>
-                neurons in unified hyperdimensional framework.
-              </div>
-              <div class="project-tags">
-                <span class="tag">[HDC]</span>
-                <span class="tag">[WETWARE]</span>
-                <span class="tag">[BIO-AI]</span>
-              </div>
-              <div class="project-links">
-                <a href="papers/Biocomputing.pdf" target="_blank" class="project-link">> concept_note</a>
-              </div>
-            </div>
-
-            <div class="project-box">
-              <div class="project-header">ONTOLOGICAL_FRAMEWORK</div>
-              <div class="project-desc">
-                K-T-I Framework: Meaning, Knowledge, Intelligence — metrics<br>
-                for semantic density, redundancy, and alignment.
-              </div>
-              <div class="project-tags">
-                <span class="tag">[THEORY]</span>
-                <span class="tag">[SEMANTICS]</span>
-                <span class="tag">[AI-ALIGNMENT]</span>
-              </div>
-              <div class="project-links">
-                <a href="papers/An_Ontological_Framework.pdf" target="_blank" class="project-link">> manuscript</a>
-              </div>
-            </div>
-
-          </div>
-        </section>
-
-        <!-- Papers Section -->
-        <section class="content-section" id="section-papers">
-          <div class="terminal-output">
-            <div class="output-line">> loading papers.txt...</div>
-            <div class="output-line">> done.</div>
-            <div class="output-line blank"></div>
-          </div>
-
-          <h2 class="section-title">PAPERS & WHITE PAPERS</h2>
-
-          <div class="papers-list">
-
-            <div class="paper-entry">
-              <div class="paper-title">Proof-of-Training Verifier: Efficient Black-Box Model Identity Verification with Anytime Confidence Sequences</div>
-              <div class="paper-meta">[2025 · NEURIPS SUBMISSION]</div>
-              <div class="paper-links">
-                <a href="papers/pot_neurips2025.pdf" target="_blank" class="paper-link">> pdf</a>
-              </div>
-            </div>
-
-            <div class="paper-entry">
-              <div class="paper-title">Shaking the Black Box: Behavioral Holography & Variance-Mediated Structural Inference</div>
-              <div class="paper-meta">[AUG 2025 · WORKING PAPER]</div>
-              <div class="paper-links">
-                <a href="papers/Shaking_the_Black_Box.pdf" target="_blank" class="paper-link">> pdf</a>
-              </div>
-            </div>
-
-            <div class="paper-entry">
-              <div class="paper-title">Constraint-Oriented Emergent Computation: A Formal Framework</div>
-              <div class="paper-meta">[2025]</div>
-              <div class="paper-links">
-                <a href="papers/COEC_Thesis.pdf" target="_blank" class="paper-link">> pdf</a>
-              </div>
-            </div>
-
-            <div class="paper-entry">
-              <div class="paper-title">GenomeVault: Privacy-Preserving Genomic Analytics with PIR, ZK-SNARKs, and HDC</div>
-              <div class="paper-meta">[2025]</div>
-              <div class="paper-links">
-                <a href="papers/GenomeVault_Manuscript.pdf" target="_blank" class="paper-link">> pdf</a>
-                <span class="separator">|</span>
-                <a href="papers/GenomeVault_AppendixA_Hypervector_Security.pdf" target="_blank" class="paper-link">appendix_a</a>
-                <span class="separator">|</span>
-                <a href="papers/GenomeVault_AppendixB_ZK_Proofs.pdf" target="_blank" class="paper-link">appendix_b</a>
-                <span class="separator">|</span>
-                <a href="papers/GenomeVault_AppendixC_Cost_Analysis.pdf" target="_blank" class="paper-link">appendix_c</a>
-              </div>
-            </div>
-
-            <div class="paper-entry">
-              <div class="paper-title">Kimaiya: AI-Guided iPSC Differentiation Platform</div>
-              <div class="paper-meta">[2025]</div>
-              <div class="paper-links">
-                <a href="papers/Kimaiya.pdf" target="_blank" class="paper-link">> pdf</a>
-              </div>
-            </div>
-
-            <div class="paper-entry">
-              <div class="paper-title">Biocomputing: Multi-Substrate Hyperdimensional Framework</div>
-              <div class="paper-meta">[2025]</div>
-              <div class="paper-links">
-                <a href="papers/Biocomputing.pdf" target="_blank" class="paper-link">> pdf</a>
-              </div>
-            </div>
-
-            <div class="paper-entry">
-              <div class="paper-title">An Ontological Framework for Meaning, Knowledge, and Intelligence</div>
-              <div class="paper-meta">[2025]</div>
-              <div class="paper-links">
-                <a href="papers/An_Ontological_Framework.pdf" target="_blank" class="paper-link">> pdf</a>
-              </div>
-            </div>
-
-          </div>
-        </section>
-
-        <!-- About Section -->
-        <section class="content-section" id="section-about">
-          <div class="terminal-output">
-            <div class="output-line">> loading about.txt...</div>
-            <div class="output-line">> done.</div>
-            <div class="output-line blank"></div>
-          </div>
-
-          <h2 class="section-title">ABOUT</h2>
-
-          <div class="about-content">
-            <p class="about-text">
-              Independent researcher developing <strong>Constraint-Oriented Emergent Computation (COEC)</strong>
-              — a cross-domain framework connecting AI security, cryptography, scientific computing,
-              and systems biology.
+            <p class="section-intro">
+              Unifying AI security, cryptography, and systems biology through<br>
+              constraints, topology, and intention. Clean theory. Practical builds.
             </p>
 
-            <p class="about-text">
-              Focus areas: behavioral holography for AI verification, privacy-preserving genomics,
-              hyperdimensional computing, and biocomputation. Clean theory meets practical builds.
-            </p>
-
-            <div class="about-links">
-              <div class="about-link-item">
-                <span class="label">EMAIL</span>
-                <a href="mailto:hello@rohanv.me" class="value-link">hello@rohanv.me</a>
-              </div>
-              <div class="about-link-item">
-                <span class="label">GITHUB</span>
-                <a href="https://github.com/rohanvinaik" target="_blank" class="value-link">github.com/rohanvinaik</a>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- Contact Section -->
-        <section class="content-section" id="section-contact">
-          <div class="terminal-output">
-            <div class="output-line">> loading contact.txt...</div>
-            <div class="output-line">> done.</div>
-            <div class="output-line blank"></div>
-          </div>
-
-          <h2 class="section-title">CONTACT</h2>
-
-          <div class="contact-content">
-            <div class="contact-methods">
-              <div class="contact-line">
-                <span class="label">PRIMARY</span>
-                <a href="mailto:hello@rohanv.me" class="value-link">hello@rohanv.me</a>
-              </div>
-              <div class="contact-line">
-                <span class="label">GITHUB</span>
-                <a href="https://github.com/rohanvinaik" target="_blank" class="value-link">github.com/rohanvinaik</a>
-              </div>
-              <div class="contact-line">
-                <span class="label">RESPONSE_TIME</span>
-                <span class="value">24-48 hours</span>
-              </div>
+            <div class="quick-actions">
+              <a href="#projects" class="action-link" data-section="projects">> view_projects</a>
+              <a href="#papers" class="action-link" data-section="papers">> view_papers</a>
             </div>
 
-            <div class="terminal-output" style="margin-top: 32px;">
-              <div class="output-line">> Available for collaboration on:</div>
-              <div class="output-line">  ▸ AI security & verification</div>
-              <div class="output-line">  ▸ Privacy-preserving systems</div>
-              <div class="output-line">  ▸ Hyperdimensional computing</div>
-              <div class="output-line">  ▸ Biocomputation & wetware</div>
+            <div class="info-box">
+              <div class="info-line">
+                <span class="info-label">[<span data-translate="nav-projects">PROJECTS</span>]</span>
+                <span class="info-value">6 active</span>
+              </div>
+              <div class="info-line">
+                <span class="info-label">[<span data-translate="nav-papers">PAPERS</span>]</span>
+                <span class="info-value">7 published</span>
+              </div>
+              <div class="info-line">
+                <span class="info-label">[RESEARCH]</span>
+                <span class="info-value">behavioral_holography · genomics · biocomputing</span>
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
 
+          <!-- Projects Section -->
+          <section class="content-section" id="section-projects">
+            <div class="term-output">
+              <div class="term-line">> loading projects.txt...</div>
+              <div class="term-line">> done.</div>
+            </div>
+
+            <h2 class="section-title" data-translate="nav-projects">PROJECTS</h2>
+
+            <div class="items-grid">
+              <div class="item-box">
+                <div class="item-title">BEHAVIORAL_HOLOGRAPHY</div>
+                <div class="item-desc">Black-box verification of LLMs with memory-bounded execution and hyperdimensional fingerprints. PoT · REV · HDC.</div>
+                <div class="item-tags">
+                  <span class="tag">[PYTHON]</span>
+                  <span class="tag">[ZK-PROOFS]</span>
+                  <span class="tag">[HDC]</span>
+                </div>
+                <div class="item-actions">
+                  <a href="papers/Shaking_the_Black_Box.pdf" target="_blank">> paper</a>
+                  <a href="papers/pot_neurips2025.pdf" target="_blank">> pot_verifier</a>
+                </div>
+              </div>
+
+              <div class="item-box">
+                <div class="item-title">GENOMEVAULT</div>
+                <div class="item-desc">Privacy-preserving genomics with PIR + ZK-SNARKs + HDC compression for secure, scalable queries.</div>
+                <div class="item-tags">
+                  <span class="tag">[PIR]</span>
+                  <span class="tag">[ZK-SNARKS]</span>
+                  <span class="tag">[HDC]</span>
+                </div>
+                <div class="item-actions">
+                  <a href="papers/GenomeVault_Manuscript.pdf" target="_blank">> manuscript</a>
+                  <a href="papers/GenomeVault_AppendixA_Hypervector_Security.pdf" target="_blank">> appendix_a</a>
+                </div>
+              </div>
+
+              <div class="item-box">
+                <div class="item-title">FDSC</div>
+                <div class="item-desc">Fluid Distributed Super-Computer: Constraint-topology-driven distributed compute for PDEs and simulations.</div>
+                <div class="item-tags">
+                  <span class="tag">[DISTRIBUTED]</span>
+                  <span class="tag">[PDE]</span>
+                  <span class="tag">[SIMULATION]</span>
+                </div>
+              </div>
+
+              <div class="item-box">
+                <div class="item-title">KIMAIYA</div>
+                <div class="item-desc">AI-guided iPSC differentiation with PDE/HDC modeling for reproducible cell therapy pipelines.</div>
+                <div class="item-tags">
+                  <span class="tag">[BIOTECH]</span>
+                  <span class="tag">[AI]</span>
+                  <span class="tag">[CELL-THERAPY]</span>
+                </div>
+                <div class="item-actions">
+                  <a href="papers/Kimaiya.pdf" target="_blank">> overview</a>
+                </div>
+              </div>
+
+              <div class="item-box">
+                <div class="item-title">BIOCOMPUTING</div>
+                <div class="item-desc">Multi-substrate computation: proteins, DNA/RNA, organelles, neurons in unified hyperdimensional framework.</div>
+                <div class="item-tags">
+                  <span class="tag">[HDC]</span>
+                  <span class="tag">[WETWARE]</span>
+                  <span class="tag">[BIO-AI]</span>
+                </div>
+                <div class="item-actions">
+                  <a href="papers/Biocomputing.pdf" target="_blank">> concept_note</a>
+                </div>
+              </div>
+
+              <div class="item-box">
+                <div class="item-title">ONTOLOGICAL_FRAMEWORK</div>
+                <div class="item-desc">K-T-I Framework: Meaning, Knowledge, Intelligence — metrics for semantic density and alignment.</div>
+                <div class="item-tags">
+                  <span class="tag">[THEORY]</span>
+                  <span class="tag">[SEMANTICS]</span>
+                  <span class="tag">[AI-ALIGNMENT]</span>
+                </div>
+                <div class="item-actions">
+                  <a href="papers/An_Ontological_Framework.pdf" target="_blank">> manuscript</a>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Papers Section -->
+          <section class="content-section" id="section-papers">
+            <div class="term-output">
+              <div class="term-line">> loading papers.txt...</div>
+              <div class="term-line">> done.</div>
+            </div>
+
+            <h2 class="section-title" data-translate="nav-papers">PAPERS & WHITE PAPERS</h2>
+
+            <div class="items-list">
+              <div class="list-item">
+                <div class="list-title">Proof-of-Training Verifier: Efficient Black-Box Model Identity Verification with Anytime Confidence Sequences</div>
+                <div class="list-meta">[2025 · NEURIPS SUBMISSION]</div>
+                <div class="list-actions">
+                  <a href="papers/pot_neurips2025.pdf" target="_blank">> pdf</a>
+                </div>
+              </div>
+
+              <div class="list-item">
+                <div class="list-title">Shaking the Black Box: Behavioral Holography & Variance-Mediated Structural Inference</div>
+                <div class="list-meta">[AUG 2025 · WORKING PAPER]</div>
+                <div class="list-actions">
+                  <a href="papers/Shaking_the_Black_Box.pdf" target="_blank">> pdf</a>
+                </div>
+              </div>
+
+              <div class="list-item">
+                <div class="list-title">Constraint-Oriented Emergent Computation: A Formal Framework</div>
+                <div class="list-meta">[2025]</div>
+                <div class="list-actions">
+                  <a href="papers/COEC_Thesis.pdf" target="_blank">> pdf</a>
+                </div>
+              </div>
+
+              <div class="list-item">
+                <div class="list-title">GenomeVault: Privacy-Preserving Genomic Analytics with PIR, ZK-SNARKs, and HDC</div>
+                <div class="list-meta">[2025]</div>
+                <div class="list-actions">
+                  <a href="papers/GenomeVault_Manuscript.pdf" target="_blank">> pdf</a>
+                  <span class="separator">|</span>
+                  <a href="papers/GenomeVault_AppendixA_Hypervector_Security.pdf" target="_blank">appendix_a</a>
+                  <span class="separator">|</span>
+                  <a href="papers/GenomeVault_AppendixB_ZK_Proofs.pdf" target="_blank">appendix_b</a>
+                  <span class="separator">|</span>
+                  <a href="papers/GenomeVault_AppendixC_Cost_Analysis.pdf" target="_blank">appendix_c</a>
+                </div>
+              </div>
+
+              <div class="list-item">
+                <div class="list-title">Kimaiya: AI-Guided iPSC Differentiation Platform</div>
+                <div class="list-meta">[2025]</div>
+                <div class="list-actions">
+                  <a href="papers/Kimaiya.pdf" target="_blank">> pdf</a>
+                </div>
+              </div>
+
+              <div class="list-item">
+                <div class="list-title">Biocomputing: Multi-Substrate Hyperdimensional Framework</div>
+                <div class="list-meta">[2025]</div>
+                <div class="list-actions">
+                  <a href="papers/Biocomputing.pdf" target="_blank">> pdf</a>
+                </div>
+              </div>
+
+              <div class="list-item">
+                <div class="list-title">An Ontological Framework for Meaning, Knowledge, and Intelligence</div>
+                <div class="list-meta">[2025]</div>
+                <div class="list-actions">
+                  <a href="papers/An_Ontological_Framework.pdf" target="_blank">> pdf</a>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- About Section -->
+          <section class="content-section" id="section-about">
+            <div class="term-output">
+              <div class="term-line">> loading about.txt...</div>
+              <div class="term-line">> done.</div>
+            </div>
+
+            <h2 class="section-title" data-translate="nav-about">ABOUT</h2>
+
+            <div class="text-content">
+              <p>Independent researcher developing <strong>Constraint-Oriented Emergent Computation (COEC)</strong> — a cross-domain framework connecting AI security, cryptography, scientific computing, and systems biology.</p>
+
+              <p>Focus areas: behavioral holography for AI verification, privacy-preserving genomics, hyperdimensional computing, and biocomputation. Clean theory meets practical builds.</p>
+
+              <div class="info-box" style="margin-top: 20px;">
+                <div class="info-line">
+                  <span class="info-label">EMAIL</span>
+                  <a href="mailto:hello@rohanv.me" class="info-link">hello@rohanv.me</a>
+                </div>
+                <div class="info-line">
+                  <span class="info-label">GITHUB</span>
+                  <a href="https://github.com/rohanvinaik" target="_blank" class="info-link">github.com/rohanvinaik</a>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Contact Section -->
+          <section class="content-section" id="section-contact">
+            <div class="term-output">
+              <div class="term-line">> loading contact.txt...</div>
+              <div class="term-line">> done.</div>
+            </div>
+
+            <h2 class="section-title" data-translate="nav-contact">CONTACT</h2>
+
+            <div class="text-content">
+              <div class="info-box">
+                <div class="info-line">
+                  <span class="info-label">PRIMARY</span>
+                  <a href="mailto:hello@rohanv.me" class="info-link">hello@rohanv.me</a>
+                </div>
+                <div class="info-line">
+                  <span class="info-label">GITHUB</span>
+                  <a href="https://github.com/rohanvinaik" target="_blank" class="info-link">github.com/rohanvinaik</a>
+                </div>
+                <div class="info-line">
+                  <span class="info-label">RESPONSE_TIME</span>
+                  <span class="info-value">24-48 hours</span>
+                </div>
+              </div>
+
+              <div class="term-output" style="margin-top: 24px;">
+                <div class="term-line">> Available for collaboration on:</div>
+                <div class="term-line">  ▸ AI security & verification</div>
+                <div class="term-line">  ▸ Privacy-preserving systems</div>
+                <div class="term-line">  ▸ Hyperdimensional computing</div>
+                <div class="term-line">  ▸ Biocomputation & wetware</div>
+              </div>
+            </div>
+          </section>
+
+        </div>
       </div>
     </main>
 
@@ -386,24 +374,96 @@
 
   <!-- Control Bar -->
   <div class="control-bar">
-    <div class="control-section control-left">
+    <div class="control-left">
       <span class="control-label">[GITHUB]</span>
       <span class="activity-bar">▓▓▓▓▓▓▓▓▓▓▓▓░░░░░░░░</span>
-      <span class="activity-info">247 COMMITS | LAST: 2D AGO</span>
+      <span class="activity-info">247 commits</span>
     </div>
-    <div class="control-section control-center">
-      <!-- Reserved for future features -->
-    </div>
-    <div class="control-section control-right">
-      <button class="control-btn" id="grid-btn" title="Grid View">
-        <span class="btn-icon">▣</span> GRID
-      </button>
-      <button class="control-btn" id="theme-btn" title="Toggle Theme">
+    <div class="control-right">
+      <button class="ctrl-btn" id="theme-cycle-btn" title="Cycle Theme">
         <span class="btn-icon">◐</span> THEME
       </button>
-      <button class="control-btn" id="compact-btn" title="Compact View">
-        <span class="btn-icon">=</span> COMPACT
+      <button class="ctrl-btn" id="settings-open-btn" title="Open Settings">
+        <span class="btn-icon">⚙</span> SETTINGS
       </button>
+    </div>
+  </div>
+
+  <!-- Settings Modal -->
+  <div class="settings-overlay" id="settings-overlay">
+    <div class="settings-modal" id="settings-modal">
+      <div class="settings-header">
+        <span class="settings-title">⚙ SETTINGS</span>
+        <button class="settings-close" id="settings-close-btn">[×]</button>
+      </div>
+
+      <div class="settings-content">
+
+        <!-- Volume Control -->
+        <div class="setting-group">
+          <label class="setting-label">VOLUME</label>
+          <div class="slider-container">
+            <input type="range" class="setting-slider" id="volume-slider" min="0" max="100" value="80">
+            <span class="slider-value" id="volume-value">80%</span>
+          </div>
+        </div>
+
+        <!-- Accent Color -->
+        <div class="setting-group">
+          <label class="setting-label">ACCENT COLOR</label>
+          <div class="radio-group">
+            <label class="radio-option">
+              <input type="radio" name="accent" value="green" checked>
+              <span class="radio-label">Terminal Green</span>
+            </label>
+            <label class="radio-option">
+              <input type="radio" name="accent" value="amber">
+              <span class="radio-label">Amber</span>
+            </label>
+            <label class="radio-option">
+              <input type="radio" name="accent" value="cyan">
+              <span class="radio-label">Cyan</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Background Color -->
+        <div class="setting-group">
+          <label class="setting-label">BACKGROUND</label>
+          <div class="radio-group">
+            <label class="radio-option">
+              <input type="radio" name="background" value="black" checked>
+              <span class="radio-label">True Black</span>
+            </label>
+            <label class="radio-option">
+              <input type="radio" name="background" value="gray">
+              <span class="radio-label">Dark Gray</span>
+            </label>
+            <label class="radio-option">
+              <input type="radio" name="background" value="navy">
+              <span class="radio-label">Navy</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Language Dropdown -->
+        <div class="setting-group">
+          <label class="setting-label">LANGUAGE</label>
+          <select class="setting-select" id="language-select">
+            <option value="standard">Standard English</option>
+            <option value="newspeak">Newspeak</option>
+            <option value="emo">Emo</option>
+            <option value="corporate">Corporate Jargon</option>
+          </select>
+        </div>
+
+      </div>
+
+      <div class="settings-footer">
+        <button class="settings-btn" id="reset-btn">RESET</button>
+        <button class="settings-btn" id="apply-btn">APPLY</button>
+        <button class="settings-btn primary" id="close-btn">CLOSE</button>
+      </div>
     </div>
   </div>
 

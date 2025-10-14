@@ -1,9 +1,224 @@
 // ============================================
-// TERMINAL INTERACTION SCRIPT
+// DASHBOARD INTERACTION SCRIPT
 // ============================================
 
 (function() {
   'use strict';
+
+  // ============================================
+  // TRANSLATIONS
+  // ============================================
+  const translations = {
+    standard: {
+      role: 'INDEPENDENT RESEARCHER',
+      focus: 'AI SECURITY & CRYPTOGRAPHY',
+      location: 'CALIFORNIA, USA',
+      status: 'AVAILABLE',
+      'nav-home': 'home',
+      'nav-projects': 'projects',
+      'nav-papers': 'papers',
+      'nav-about': 'about',
+      'nav-contact': 'contact',
+      'section-title-home': 'ROHAN VINAIK',
+      'section-title-projects': 'PROJECTS',
+      'section-title-papers': 'RESEARCH PAPERS',
+      'section-title-about': 'ABOUT',
+      'section-title-contact': 'CONTACT',
+      'home-intro': 'Independent researcher developing Constraint-Oriented Emergent Computation (COEC) — a cross-domain framework connecting AI security, cryptography, scientific computing, and systems biology.',
+      'projects-intro': 'Current research initiatives and technical implementations.',
+      'papers-intro': 'Published research and technical documentation.',
+      'about-intro': 'Background and research interests.',
+      'contact-cta': 'Open to collaboration on research initiatives.',
+      github: 'GitHub',
+      linkedin: 'LinkedIn',
+      email: 'Email'
+    },
+    newspeak: {
+      role: 'THOUGHTWORKER',
+      focus: 'THOUGHTSEC & SECRETMATH',
+      location: 'AIRSTRIP ONE',
+      status: 'PLUSREADY',
+      'nav-home': 'home',
+      'nav-projects': 'works',
+      'nav-papers': 'thinkdocs',
+      'nav-about': 'personfile',
+      'nav-contact': 'reachout',
+      'section-title-home': 'ROHAN VINAIK',
+      'section-title-projects': 'WORKS',
+      'section-title-papers': 'THINKDOCS',
+      'section-title-about': 'PERSONFILE',
+      'section-title-contact': 'REACHOUT',
+      'home-intro': 'Thoughtworker developing Constraint-Oriented Emergent Computation (COEC) — plusgood framework connecting thoughtsec, secretmath, and biocompute.',
+      'projects-intro': 'Current works and technical implementations.',
+      'papers-intro': 'Published thinkdocs and technical documentation.',
+      'about-intro': 'Background and research interests.',
+      'contact-cta': 'Open to collaboration on research works.',
+      github: 'GitHub',
+      linkedin: 'LinkedIn',
+      email: 'Telegram'
+    },
+    emo: {
+      role: 'misunderstood thinker :(',
+      focus: 'protecting against the void',
+      location: 'somewhere lonely',
+      status: 'online but... whatever',
+      'nav-home': 'home',
+      'nav-projects': 'things i made alone',
+      'nav-papers': 'thoughts no1 reads',
+      'nav-about': 'my story (it\'s complicated)',
+      'nav-contact': 'message me (if u care)',
+      'section-title-home': 'ROHAN VINAIK',
+      'section-title-projects': 'things i made alone',
+      'section-title-papers': 'thoughts no1 reads',
+      'section-title-about': 'my story',
+      'section-title-contact': 'reach out maybe',
+      'home-intro': 'trying to make sense of everything through Constraint-Oriented Emergent Computation... nobody really understands what i\'m doing but that\'s fine i guess',
+      'projects-intro': 'stuff i\'ve been working on when i can\'t sleep.',
+      'papers-intro': 'things i\'ve written that probably don\'t matter.',
+      'about-intro': 'who even am i anymore.',
+      'contact-cta': 'if you want to talk about research or whatever... i\'m around.',
+      github: 'GitHub (barely active)',
+      linkedin: 'LinkedIn (fake smile)',
+      email: 'Email (i\'ll respond eventually)'
+    },
+    corporate: {
+      role: 'INNOVATION CATALYST',
+      focus: 'AI RISK MITIGATION SOLUTIONS',
+      location: 'SILICON VALLEY ECOSYSTEM',
+      status: 'CURRENTLY RESOURCED',
+      'nav-home': 'home',
+      'nav-projects': 'KEY INITIATIVES',
+      'nav-papers': 'THOUGHT LEADERSHIP',
+      'nav-about': 'EXECUTIVE SUMMARY',
+      'nav-contact': 'STRATEGIC PARTNERSHIPS',
+      'section-title-home': 'ROHAN VINAIK',
+      'section-title-projects': 'KEY INITIATIVES',
+      'section-title-papers': 'THOUGHT LEADERSHIP',
+      'section-title-about': 'EXECUTIVE SUMMARY',
+      'section-title-contact': 'STRATEGIC PARTNERSHIPS',
+      'home-intro': 'Driving innovation in Constraint-Oriented Emergent Computation (COEC) — a synergistic framework leveraging AI security, cryptographic excellence, and computational biology to deliver transformative outcomes.',
+      'projects-intro': 'Strategic initiatives delivering measurable impact.',
+      'papers-intro': 'Industry-leading thought leadership and technical documentation.',
+      'about-intro': 'Professional background and core competencies.',
+      'contact-cta': 'Seeking strategic partnerships to unlock synergies.',
+      github: 'GitHub',
+      linkedin: 'LinkedIn',
+      email: 'Email'
+    }
+  };
+
+  // ============================================
+  // SETTINGS STATE
+  // ============================================
+  let settings = {
+    volume: 80,
+    accent: 'green',
+    background: 'black',
+    language: 'standard'
+  };
+
+  // ============================================
+  // LOAD SETTINGS FROM LOCALSTORAGE
+  // ============================================
+  function loadSettings() {
+    const saved = localStorage.getItem('dashboard-settings');
+    if (saved) {
+      try {
+        settings = { ...settings, ...JSON.parse(saved) };
+      } catch (e) {
+        console.error('Failed to load settings:', e);
+      }
+    }
+    applySettings();
+  }
+
+  // ============================================
+  // SAVE SETTINGS TO LOCALSTORAGE
+  // ============================================
+  function saveSettings() {
+    localStorage.setItem('dashboard-settings', JSON.stringify(settings));
+  }
+
+  // ============================================
+  // APPLY SETTINGS
+  // ============================================
+  function applySettings() {
+    // Apply accent color
+    const root = document.documentElement;
+    const accentColors = {
+      green: '#00ff00',
+      amber: '#ffb000',
+      cyan: '#00ffff'
+    };
+    root.style.setProperty('--accent', accentColors[settings.accent] || accentColors.green);
+
+    // Apply background color
+    const bgColors = {
+      black: '#0a0a0a',
+      gray: '#1a1a1a',
+      navy: '#0a0a1a'
+    };
+    root.style.setProperty('--bg-primary', bgColors[settings.background] || bgColors.black);
+
+    // Apply translations
+    applyTranslations();
+
+    // Update UI controls
+    updateSettingsUI();
+  }
+
+  // ============================================
+  // APPLY TRANSLATIONS
+  // ============================================
+  function applyTranslations() {
+    const lang = settings.language;
+    const t = translations[lang] || translations.standard;
+
+    // Update all elements with data-translate attribute
+    document.querySelectorAll('[data-translate]').forEach(el => {
+      const key = el.getAttribute('data-translate');
+      if (t[key]) {
+        el.textContent = t[key];
+      }
+    });
+  }
+
+  // ============================================
+  // UPDATE SETTINGS UI
+  // ============================================
+  function updateSettingsUI() {
+    // Volume slider
+    const volumeSlider = document.getElementById('volume-slider');
+    const volumeValue = document.getElementById('volume-value');
+    if (volumeSlider && volumeValue) {
+      volumeSlider.value = settings.volume;
+      volumeValue.textContent = settings.volume + '%';
+    }
+
+    // Accent color radio buttons
+    const accentRadios = document.querySelectorAll('input[name="accent"]');
+    accentRadios.forEach(radio => {
+      radio.checked = radio.value === settings.accent;
+    });
+
+    // Background color radio buttons
+    const bgRadios = document.querySelectorAll('input[name="background"]');
+    bgRadios.forEach(radio => {
+      radio.checked = radio.value === settings.background;
+    });
+
+    // Language select
+    const languageSelect = document.getElementById('language-select');
+    if (languageSelect) {
+      languageSelect.value = settings.language;
+    }
+
+    // Update theme button in control bar
+    const themeBtn = document.getElementById('theme-btn');
+    if (themeBtn) {
+      themeBtn.classList.toggle('active', settings.accent !== 'green');
+    }
+  }
 
   // ============================================
   // CLOCK UPDATER
@@ -44,38 +259,125 @@
   }
 
   // ============================================
-  // THEME TOGGLE
+  // SETTINGS MODAL
+  // ============================================
+  function initSettingsModal() {
+    const overlay = document.getElementById('settings-overlay');
+    const openBtn = document.getElementById('settings-btn');
+    const closeBtn = document.querySelector('.settings-close');
+    const applyBtn = document.getElementById('apply-settings');
+    const resetBtn = document.getElementById('reset-settings');
+
+    if (!overlay || !openBtn) return;
+
+    // Open modal
+    openBtn.addEventListener('click', () => {
+      overlay.classList.add('active');
+      updateSettingsUI();
+    });
+
+    // Close modal
+    if (closeBtn) {
+      closeBtn.addEventListener('click', () => {
+        overlay.classList.remove('active');
+      });
+    }
+
+    // Close on overlay click
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) {
+        overlay.classList.remove('active');
+      }
+    });
+
+    // Close on Escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && overlay.classList.contains('active')) {
+        overlay.classList.remove('active');
+      }
+    });
+
+    // Volume slider
+    const volumeSlider = document.getElementById('volume-slider');
+    const volumeValue = document.getElementById('volume-value');
+    if (volumeSlider && volumeValue) {
+      volumeSlider.addEventListener('input', (e) => {
+        settings.volume = parseInt(e.target.value);
+        volumeValue.textContent = settings.volume + '%';
+      });
+    }
+
+    // Accent color radio buttons
+    const accentRadios = document.querySelectorAll('input[name="accent"]');
+    accentRadios.forEach(radio => {
+      radio.addEventListener('change', (e) => {
+        if (e.target.checked) {
+          settings.accent = e.target.value;
+          applySettings();
+        }
+      });
+    });
+
+    // Background color radio buttons
+    const bgRadios = document.querySelectorAll('input[name="background"]');
+    bgRadios.forEach(radio => {
+      radio.addEventListener('change', (e) => {
+        if (e.target.checked) {
+          settings.background = e.target.value;
+          applySettings();
+        }
+      });
+    });
+
+    // Language select
+    const languageSelect = document.getElementById('language-select');
+    if (languageSelect) {
+      languageSelect.addEventListener('change', (e) => {
+        settings.language = e.target.value;
+        applySettings();
+      });
+    }
+
+    // Apply button
+    if (applyBtn) {
+      applyBtn.addEventListener('click', () => {
+        saveSettings();
+        overlay.classList.remove('active');
+      });
+    }
+
+    // Reset button
+    if (resetBtn) {
+      resetBtn.addEventListener('click', () => {
+        settings = {
+          volume: 80,
+          accent: 'green',
+          background: 'black',
+          language: 'standard'
+        };
+        applySettings();
+        saveSettings();
+      });
+    }
+  }
+
+  // ============================================
+  // THEME TOGGLE (CONTROL BAR)
   // ============================================
   function initThemeToggle() {
     const themeBtn = document.getElementById('theme-btn');
     if (!themeBtn) return;
 
-    // Check for saved theme preference
-    const savedTheme = localStorage.getItem('terminal-theme');
-    if (savedTheme === 'amber') {
-      setTheme('amber');
-      themeBtn.classList.add('active');
-    }
-
     themeBtn.addEventListener('click', () => {
-      const currentTheme = localStorage.getItem('terminal-theme') || 'green';
-      const newTheme = currentTheme === 'green' ? 'amber' : 'green';
-      setTheme(newTheme);
-      themeBtn.classList.toggle('active');
-    });
-  }
+      // Cycle through accent colors: green -> amber -> cyan -> green
+      const accentCycle = ['green', 'amber', 'cyan'];
+      const currentIndex = accentCycle.indexOf(settings.accent);
+      const nextIndex = (currentIndex + 1) % accentCycle.length;
+      settings.accent = accentCycle[nextIndex];
 
-  function setTheme(theme) {
-    const root = document.documentElement;
-    if (theme === 'amber') {
-      root.style.setProperty('--accent', '#ffb000');
-      root.style.setProperty('--accent-dim', '#cc8800');
-      localStorage.setItem('terminal-theme', 'amber');
-    } else {
-      root.style.setProperty('--accent', '#00ff00');
-      root.style.setProperty('--accent-dim', '#00aa00');
-      localStorage.setItem('terminal-theme', 'green');
-    }
+      applySettings();
+      saveSettings();
+    });
   }
 
   // ============================================
@@ -92,43 +394,43 @@
       targetSection.classList.add('active');
     }
 
-    // Update nav links
-    const navLinks = document.querySelectorAll('.nav-link');
-    navLinks.forEach(link => {
-      if (link.dataset.section === sectionName) {
-        link.classList.add('active');
+    // Update nav items
+    const navItems = document.querySelectorAll('.nav-item');
+    navItems.forEach(item => {
+      if (item.dataset.section === sectionName) {
+        item.classList.add('active');
       } else {
-        link.classList.remove('active');
+        item.classList.remove('active');
       }
     });
 
-    // Update header path and command
-    const pathEl = document.getElementById('current-path');
-    const cmdEl = document.getElementById('header-cmd');
-    const contentHeaderEl = document.getElementById('content-header');
-
-    if (pathEl) pathEl.textContent = sectionName;
-
-    const sectionFileMap = {
-      home: { file: 'home.txt', cmd: 'cat home.txt' },
-      projects: { file: 'projects.txt', cmd: 'cat projects.txt' },
-      papers: { file: 'papers.txt', cmd: 'cat papers.txt' },
-      about: { file: 'about.txt', cmd: 'cat about.txt' },
-      contact: { file: 'contact.txt', cmd: 'cat contact.txt' }
-    };
-
-    const sectionData = sectionFileMap[sectionName] || { file: 'home.txt', cmd: 'cat home.txt' };
-    if (cmdEl) cmdEl.textContent = sectionData.cmd;
-    if (contentHeaderEl) contentHeaderEl.textContent = sectionData.file.toUpperCase();
+    // Update output header
+    const outputTitle = document.getElementById('output-title');
+    if (outputTitle) {
+      const titleMap = {
+        home: 'HOME.TXT',
+        projects: 'PROJECTS.TXT',
+        papers: 'PAPERS.TXT',
+        about: 'ABOUT.TXT',
+        contact: 'CONTACT.TXT'
+      };
+      outputTitle.textContent = titleMap[sectionName] || 'HOME.TXT';
+    }
 
     // Scroll to top smoothly
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    const outputContent = document.querySelector('.output-content');
+    if (outputContent) {
+      outputContent.scrollTop = 0;
+    }
   }
 
   // ============================================
   // EVENT LISTENERS
   // ============================================
   function init() {
+    // Load saved settings
+    loadSettings();
+
     // Update clock immediately and then every second
     updateClock();
     setInterval(updateClock, 1000);
@@ -139,18 +441,20 @@
     // Update deploy time
     updateDeployTime();
 
+    // Initialize settings modal
+    initSettingsModal();
+
     // Initialize theme toggle
     initThemeToggle();
 
-    // Navigation links
-    const navLinks = document.querySelectorAll('.nav-link, .terminal-link');
-    navLinks.forEach(link => {
-      link.addEventListener('click', (e) => {
-        const section = link.dataset.section;
+    // Navigation items
+    const navItems = document.querySelectorAll('.nav-item');
+    navItems.forEach(item => {
+      item.addEventListener('click', (e) => {
+        e.preventDefault();
+        const section = item.dataset.section;
         if (section) {
-          e.preventDefault();
           switchSection(section);
-
           // Update URL hash
           history.pushState(null, '', `#${section}`);
         }
@@ -192,7 +496,7 @@
     let commandBuffer = '';
     document.addEventListener('keypress', (e) => {
       // Don't trigger if typing in an input field
-      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') {
         return;
       }
 
@@ -219,11 +523,12 @@
   // EASTER EGG FUNCTIONS
   // ============================================
   function showEasterEgg() {
-    const originalAccent = getComputedStyle(document.documentElement).getPropertyValue('--accent');
-    document.documentElement.style.setProperty('--accent', '#ff00ff');
+    const root = document.documentElement;
+    const originalAccent = getComputedStyle(root).getPropertyValue('--accent');
+    root.style.setProperty('--accent', '#ff00ff');
 
     setTimeout(() => {
-      document.documentElement.style.setProperty('--accent', originalAccent);
+      root.style.setProperty('--accent', originalAccent);
     }, 3000);
 
     console.log('%c> KONAMI CODE ACTIVATED', 'color: #ff00ff; font-size: 20px; font-weight: bold;');
