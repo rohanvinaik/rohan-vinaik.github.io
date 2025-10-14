@@ -134,6 +134,7 @@ const GRAPH_DATA = {
     { from: 'coec', to: 'behavioral-holography', label: 'constraint framework', type: 'informs' },
     { from: 'coec', to: 'genomevault', label: 'emergence theory', type: 'informs' },
     { from: 'coec', to: 'kimaiya', label: 'network dynamics', type: 'informs' },
+    { from: 'coec', to: 'biocomputing', label: 'substrate independence', type: 'informs' },
 
     // Network analysis methods
     { from: 'kimaiya', to: 'biocomputing', label: 'TDA methods', type: 'technology' },

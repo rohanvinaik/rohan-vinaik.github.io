@@ -1,0 +1,1079 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Constraint-Oriented Emergent Computation: A Formal Framework</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+  <!-- MathJax for LaTeX rendering -->
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']]
+      }
+    };
+  </script>
+
+  <style>
+    :root {
+      --bg-primary: #0a0a0a;
+      --bg-secondary: #1a1a1a;
+      --text-primary: #e0e0e0;
+      --text-secondary: #808080;
+      --accent: #00ff00;
+      --border: #333;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'JetBrains Mono', monospace;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.6;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      padding: 40px;
+    }
+
+    /* Header */
+    .paper-header {
+      border-bottom: 2px solid var(--accent);
+      padding-bottom: 20px;
+      margin-bottom: 30px;
+    }
+
+    .paper-title {
+      font-size: 1.5rem;
+      color: var(--accent);
+      margin-bottom: 15px;
+      line-height: 1.4;
+      letter-spacing: -0.5px;
+    }
+
+    .paper-meta {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      margin: 5px 0;
+    }
+
+    .paper-meta strong {
+      color: var(--text-primary);
+    }
+
+    /* Concept Tags */
+    .concept-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+    }
+
+    .concept-tag {
+      font-size: 0.7rem;
+      padding: 4px 10px;
+      background: rgba(0, 255, 0, 0.1);
+      border: 1px solid rgba(0, 255, 0, 0.3);
+      color: var(--accent);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .concept-tag:hover {
+      background: rgba(0, 255, 0, 0.2);
+      border-color: var(--accent);
+    }
+
+    /* Navigation */
+    .nav-section {
+      background: rgba(0, 255, 0, 0.05);
+      border: 1px solid var(--border);
+      padding: 20px;
+      margin-bottom: 30px;
+    }
+
+    .nav-title {
+      color: var(--accent);
+      font-size: 0.85rem;
+      margin-bottom: 10px;
+      letter-spacing: 0.1em;
+    }
+
+    .nav-links {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .nav-link {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 0.75rem;
+      transition: color 0.2s;
+      padding: 4px 0;
+    }
+
+    .nav-link:hover {
+      color: var(--accent);
+    }
+
+    .nav-link::before {
+      content: '> ';
+      color: var(--accent);
+    }
+
+    /* Content */
+    h2 {
+      color: var(--accent);
+      font-size: 1.2rem;
+      margin: 40px 0 20px 0;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+      letter-spacing: 0.05em;
+    }
+
+    h3 {
+      color: var(--text-primary);
+      font-size: 1rem;
+      margin: 30px 0 15px 0;
+      font-weight: 700;
+    }
+
+    h4 {
+      color: var(--text-primary);
+      font-size: 0.9rem;
+      margin: 20px 0 10px 0;
+      font-weight: 700;
+    }
+
+    p {
+      margin: 15px 0;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      text-align: justify;
+    }
+
+    strong {
+      color: var(--text-primary);
+      font-weight: 700;
+    }
+
+    em {
+      color: var(--accent);
+      font-style: italic;
+    }
+
+    /* Lists */
+    ul, ol {
+      margin: 15px 0 15px 30px;
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+    }
+
+    li {
+      margin: 8px 0;
+    }
+
+    li strong {
+      color: var(--text-primary);
+    }
+
+    /* Math */
+    .MathJax {
+      font-size: 1.1em !important;
+    }
+
+    mjx-container[display="true"] {
+      margin: 20px 0;
+    }
+
+    /* Code blocks */
+    code {
+      background: rgba(0, 255, 0, 0.05);
+      padding: 2px 6px;
+      border: 1px solid rgba(0, 255, 0, 0.2);
+      font-size: 0.8rem;
+      color: var(--accent);
+    }
+
+    /* Tables */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      font-size: 0.75rem;
+    }
+
+    th, td {
+      border: 1px solid var(--border);
+      padding: 10px;
+      text-align: left;
+    }
+
+    th {
+      background: rgba(0, 255, 0, 0.1);
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    td {
+      color: var(--text-secondary);
+    }
+
+    /* Definition boxes */
+    .definition {
+      background: rgba(0, 255, 0, 0.03);
+      border-left: 3px solid var(--accent);
+      padding: 15px 20px;
+      margin: 20px 0;
+      font-size: 0.85rem;
+    }
+
+    .definition strong {
+      color: var(--accent);
+    }
+
+    /* Theorem boxes */
+    .theorem {
+      background: rgba(0, 150, 255, 0.05);
+      border-left: 3px solid #0096ff;
+      padding: 15px 20px;
+      margin: 20px 0;
+      font-size: 0.85rem;
+    }
+
+    .theorem strong {
+      color: #0096ff;
+    }
+
+    /* Example boxes */
+    .example {
+      background: rgba(255, 150, 0, 0.05);
+      border-left: 3px solid #ff9600;
+      padding: 15px 20px;
+      margin: 20px 0;
+      font-size: 0.85rem;
+    }
+
+    .example strong {
+      color: #ff9600;
+    }
+
+    /* Back link */
+    .back-link {
+      display: inline-block;
+      color: var(--accent);
+      text-decoration: none;
+      font-size: 0.85rem;
+      margin-bottom: 30px;
+      padding: 8px 0;
+      transition: all 0.2s;
+    }
+
+    .back-link:hover {
+      padding-left: 10px;
+    }
+
+    .back-link::before {
+      content: '← ';
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .container {
+        padding: 20px;
+      }
+
+      .paper-title {
+        font-size: 1.2rem;
+      }
+
+      h2 {
+        font-size: 1.1rem;
+      }
+
+      .concept-tags {
+        gap: 6px;
+      }
+
+      .concept-tag {
+        font-size: 0.65rem;
+        padding: 3px 8px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a href="../index.html#papers" class="back-link">Back to Papers</a>
+
+    <div class="paper-header">
+      <h1 class="paper-title">Constraint-Oriented Emergent Computation: A Formal Framework for Biological and Artificial Systems</h1>
+      <div class="paper-meta"><strong>Authors:</strong> Rohan Vinaik</div>
+      <div class="paper-meta"><strong>Date:</strong> January 2025</div>
+      <div class="paper-meta"><strong>Status:</strong> Framework Paper</div>
+
+      <div class="concept-tags">
+        <span class="concept-tag" data-concept="Constraint Systems">CONSTRAINT-SYSTEMS</span>
+        <span class="concept-tag" data-concept="Information Theory">INFORMATION-THEORY</span>
+        <span class="concept-tag" data-concept="Thermodynamics">THERMODYNAMICS</span>
+        <span class="concept-tag" data-concept="Biological Computing">BIOLOGICAL-COMPUTING</span>
+        <span class="concept-tag" data-concept="Emergent Computation">EMERGENT-COMPUTATION</span>
+        <span class="concept-tag" data-concept="Free Energy Principle">FREE-ENERGY-PRINCIPLE</span>
+        <span class="concept-tag" data-concept="Distributed Systems">DISTRIBUTED-SYSTEMS</span>
+        <span class="concept-tag" data-concept="Entropy Dynamics">ENTROPY-DYNAMICS</span>
+        <span class="concept-tag" data-concept="Topological Data Analysis">TOPOLOGICAL-DATA-ANALYSIS</span>
+        <span class="concept-tag" data-concept="Bayesian Inference">BAYESIAN-INFERENCE</span>
+        <span class="concept-tag" data-concept="Network Analysis">NETWORK-ANALYSIS</span>
+        <span class="concept-tag" data-concept="Self-Organization">SELF-ORGANIZATION</span>
+      </div>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-title">QUICK NAVIGATION</div>
+      <div class="nav-links">
+        <a href="#abstract" class="nav-link">Abstract</a>
+        <a href="#introduction" class="nav-link">1. Introduction</a>
+        <a href="#formal-ontology" class="nav-link">2. Formal Ontology</a>
+        <a href="#classification" class="nav-link">3. Classification of COEC Systems</a>
+        <a href="#computability" class="nav-link">4. Computability Spectrum</a>
+        <a href="#information-theory" class="nav-link">5. Information Theory and Thermodynamics</a>
+        <a href="#applications" class="nav-link">6. Applications</a>
+        <a href="#design-principles" class="nav-link">7. Design Principles</a>
+        <a href="#quantum-bridge" class="nav-link">8. Quantum-Classical Bridge</a>
+        <a href="#validation" class="nav-link">9. Empirical Validation</a>
+        <a href="#discussion" class="nav-link">10. Discussion</a>
+        <a href="#conclusion" class="nav-link">11. Conclusion</a>
+        <a href="#references" class="nav-link">References</a>
+      </div>
+    </div>
+
+    <h2 id="abstract">Abstract</h2>
+    <p>We present Constraint-Oriented Emergent Computation (COEC), a substrate-independent framework describing computation as the trajectory of physical or biological systems through constrained state spaces. Unlike traditional computational models based on discrete logic or symbolic manipulation, COEC formalizes computation as the evolution of systems under entropy-driven transitions within boundary conditions. We establish formal connections between computational substrates and thermodynamic, informational, and variational principles, providing a unified mathematical language for understanding computational processes from protein folding to neural dynamics. The framework introduces a taxonomy of nine computational classes (SS-COEC through Sheaf-COEC), each characterized by distinct properties of their residual functions and constraint dynamics. We demonstrate applications in synthetic biology, neuromorphic computing, and distributed systems, showing how COEC principles enable novel design approaches and explain biological computation across scales.</p>
+
+    <p><strong>Keywords:</strong> Constraint satisfaction, emergent computation, biological computing, information theory, thermodynamics, distributed systems</p>
+
+    <h2 id="introduction">1. Introduction</h2>
+
+    <h3>1.1 Motivation</h3>
+    <p>Biological systems demonstrate sophisticated computational behavior without reliance on symbolic logic or centralized control. Proteins fold into functional configurations, cellular networks process environmental signals, and embryos develop into complex organisms—all without explicit algorithms or centralized decision-making. This suggests an alternative computational paradigm: <strong>computation as the consequence of systems minimizing surprise through constraint-guided physical evolution</strong>.</p>
+
+    <p>Traditional computational frameworks (Turing machines, cellular automata, Boolean networks) rely on discrete state transitions governed by explicit rules. While effective for engineered systems, these frameworks often struggle to capture the fluid, parallel, and distributed nature of biological computation. By contrast, COEC conceptualizes computation as the natural trajectory of a physical system through its state space, shaped by physical constraints and information-theoretic principles.</p>
+
+    <h3>1.2 Core Insight</h3>
+    <p>From an information-theoretic perspective, biological systems can be understood as simultaneously reducing uncertainty about their environment while maintaining their internal organization. This process—navigating constraints while optimizing information flow—constitutes computation in the COEC framework. Systems effectively implement forms of predictive processing, where internal models guide interactions through perception-action loops.</p>
+
+    <h3>1.3 Contributions</h3>
+    <p>This paper makes the following contributions:</p>
+    <ol>
+      <li><strong>Formal ontology</strong>: A rigorous 7-tuple mathematical framework $(S, C, E, \Phi, R, I, P)$ for describing constraint-oriented computation</li>
+      <li><strong>Taxonomy</strong>: Nine computational classes spanning Sub-Turing to Hyper-Turing capabilities</li>
+      <li><strong>Information theory</strong>: Integration of entropy dynamics, variational free energy, and Bayesian inference</li>
+      <li><strong>Applications</strong>: Demonstrations in protein folding, neural processing, and synthetic biology</li>
+      <li><strong>Design principles</strong>: Novel engineering approaches based on constraint manipulation</li>
+    </ol>
+
+    <h2 id="formal-ontology">2. Formal Ontology</h2>
+
+    <h3>2.1 Core Definitions</h3>
+    <p>We establish the basic ontology of COEC systems through seven fundamental components:</p>
+
+    <div class="definition">
+      <strong>Definition 1 (COEC System):</strong> A Constraint-Oriented Emergent Computation system is a tuple $(S, C, E, \Phi, R, I, P)$ where:
+      <ul>
+        <li>$S$: Computational substrate with configuration space $\Omega_S$</li>
+        <li>$C$: Constraint set imposing conditions on $S$</li>
+        <li>$E$: Energy-information landscape combining entropy gradients and informational constraints</li>
+        <li>$\Phi$: System evolution operator mapping initial configurations to trajectories</li>
+        <li>$R$: Residual function (output, attractor, or terminal configuration)</li>
+        <li>$I$: Information structure (organization of information processing)</li>
+        <li>$P$: Precision weighting (reliability of different constraints)</li>
+      </ul>
+      <p>Computation emerges from the evolution of substrate $S$ under constraints $C$ within the energy-information landscape $E$, guided by information structure $I$ and precision weighting $P$.</p>
+    </div>
+
+    <div class="definition">
+      <strong>Definition 2 (Computation):</strong> We define computation formally as:
+      $$R = \Phi(S \,||\, C, E, I, P)$$
+      where $\Phi(S \,||\, C, E, I, P)$ represents the trajectory of the system from initial state $S_0$ under the specified constraints and landscape.
+    </div>
+
+    <div class="example">
+      <strong>Example (Protein Folding):</strong> In protein folding:
+      <ul>
+        <li>$S$: Unfolded polypeptide chain</li>
+        <li>$C$: Chemical bonds, hydrophobic effects, steric hindrance</li>
+        <li>$E$: Free energy landscape</li>
+        <li>$\Phi$: Molecular dynamics evolution</li>
+        <li>$R$: Final folded configuration</li>
+        <li>$I$: Local-to-global information propagation during folding</li>
+        <li>$P$: Relative importance of different interactions (covalent bonds have higher precision than van der Waals forces)</li>
+      </ul>
+    </div>
+
+    <h3>2.2 Information-Theoretic Principles</h3>
+    <p>From an information-theoretic perspective, COEC systems are characterized by their management of uncertainty:</p>
+
+    $$\Delta I(S, C) = H(S) - H(S|C)$$
+
+    <p>where:</p>
+    <ul>
+      <li>$H(S)$: Entropy of the unconstrained system</li>
+      <li>$H(S|C)$: Conditional entropy under constraints</li>
+      <li>$\Delta I(S, C)$: Information gain from applying constraints</li>
+    </ul>
+
+    <p>This quantity reflects the reduction in uncertainty resulting from constraint application—essentially quantifying the computational work performed.</p>
+
+    <div class="definition">
+      <strong>COEC Axiom 1 (Entropy Minimization):</strong> Computation is the evolution of a constrained substrate toward a residual function, guided by entropy minimization and information preservation.
+    </div>
+
+    <div class="definition">
+      <strong>COEC Axiom 2 (Mutual Information Preservation):</strong> A system's trajectory through state space maintains mutual information between internal state and environmental regularities, balancing adaptability with structural integrity.
+    </div>
+
+    <h3>2.3 Constraint Types</h3>
+    <p>Constraints in COEC can be classified along multiple dimensions:</p>
+
+    <p><strong>Temporal Persistence:</strong></p>
+    <ul>
+      <li><em>Static</em>: Fixed throughout computation (e.g., physical boundaries)</li>
+      <li><em>Dynamic</em>: Changing during computation (e.g., regulatory feedback)</li>
+      <li><em>Adaptive</em>: Modified by the system itself (e.g., learning systems)</li>
+    </ul>
+
+    <p><strong>Implementation Mechanism:</strong></p>
+    <ul>
+      <li><em>Topological</em>: Restrictions on connectivity or spatial arrangement</li>
+      <li><em>Energetic</em>: Biases in the energy landscape</li>
+      <li><em>Informational</em>: Restrictions on signal propagation</li>
+      <li><em>Boundary</em>: Interfaces separating internal and external states</li>
+    </ul>
+
+    <p><strong>Precision and Reliability:</strong></p>
+    <ul>
+      <li><em>High-precision</em>: Strongly enforced with little flexibility</li>
+      <li><em>Low-precision</em>: Weakly enforced with greater flexibility</li>
+      <li><em>Context-dependent</em>: Importance varies with context</li>
+    </ul>
+
+    <div class="definition">
+      <strong>Definition 3 (Constraint Set):</strong> The constraint set $C$ is a collection of functions $c_i: \Omega_S \rightarrow [0,1]$ where $c_i(\omega)$ indicates the degree to which state $\omega \in \Omega_S$ satisfies constraint $c_i$.
+    </div>
+
+    <p>The effective state space becomes:</p>
+    $$\Omega_{S|C} = \{\omega \in \Omega_S \,|\, \forall c_i \in C, \, c_i(\omega) > \theta_i\}$$
+    <p>where $\theta_i$ is the satisfaction threshold for constraint $c_i$.</p>
+
+    <h3>2.4 Energy-Information Landscapes</h3>
+    <p>The energy-information landscape $E$ is a function $E: \Omega_S \rightarrow \mathbb{R}$ combining physical energy with informational constraints:</p>
+
+    $$E(\omega) = E_{\text{physical}}(\omega) + \beta \cdot E_{\text{information}}(\omega)$$
+
+    <p>where $\beta$ controls the relative importance of information versus energy.</p>
+
+    <div class="definition">
+      <strong>Definition 4 (Energy-Information-Guided Evolution):</strong> The probability of transition between states $\omega_a$ and $\omega_b$ is:
+
+      $$P(\omega_a \rightarrow \omega_b) = \frac{1}{Z}\exp\left(-\frac{E(\omega_b) - E(\omega_a)}{k_B T}\right) \cdot \prod_{c_i \in C} c_i(\omega_b)^{p_i}$$
+
+      where:
+      <ul>
+        <li>$k_B$: Boltzmann's constant</li>
+        <li>$T$: Temperature</li>
+        <li>$p_i$: Precision weighting of constraint $c_i$</li>
+        <li>$Z$: Partition function ensuring normalization</li>
+      </ul>
+      <p>This formulation combines energetic preference with soft constraints of varying importance.</p>
+    </div>
+
+    <h3>2.5 Entropy Dynamics and Cognitive Equilibrium</h3>
+
+    <div class="definition">
+      <strong>Definition 5 (Entropy-Minimization Dynamics):</strong> The system's entropy evolution is characterized by:
+
+      $$\frac{dS}{dt} < 0 \quad \text{and} \quad \frac{d^2S}{dt^2} \approx 0$$
+
+      for stable computation.
+    </div>
+
+    <div class="definition">
+      <strong>COEC Axiom 3 (Adaptive Response):</strong> When a system encounters destabilizing conditions indicated by $\frac{d^2S}{dt^2} \gg 0$, it triggers adaptive responses including:
+      <ol>
+        <li>Topological reconfiguration of the constraint network</li>
+        <li>Node birth/death processes (addition/removal of constraints)</li>
+        <li>Precision reweighting of existing constraints</li>
+      </ol>
+      <p>The transition criterion:</p>
+      $$\text{if } \frac{d^2S}{dt^2} > \theta \text{ then } C_{t+1} = f\left(C_t, \frac{dS}{dt}, \frac{d^2S}{dt^2}\right)$$
+      <p>where $\theta$ is a system-specific threshold and $f$ is an adaptation function.</p>
+    </div>
+
+    <h2 id="classification">3. Classification of COEC Systems</h2>
+
+    <h3>3.1 Taxonomy Overview</h3>
+    <p>COEC systems can be classified based on their residual function types and computational characteristics. We identify nine primary classes:</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Class</th>
+          <th>Residual Type</th>
+          <th>Key Properties</th>
+          <th>Examples</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>SS-COEC</strong></td>
+          <td>Static structure</td>
+          <td>Terminal attractor</td>
+          <td>Protein folding, self-assembly</td>
+        </tr>
+        <tr>
+          <td><strong>DB-COEC</strong></td>
+          <td>Dynamic pattern</td>
+          <td>Limit cycles</td>
+          <td>Circadian clocks, oscillations</td>
+        </tr>
+        <tr>
+          <td><strong>DM-COEC</strong></td>
+          <td>Distributed outcome</td>
+          <td>Non-local processing</td>
+          <td>Immune response, swarms</td>
+        </tr>
+        <tr>
+          <td><strong>AP-COEC</strong></td>
+          <td>Adaptive structure</td>
+          <td>Self-modification</td>
+          <td>Neural plasticity, evolution</td>
+        </tr>
+        <tr>
+          <td><strong>PP-COEC</strong></td>
+          <td>Predicted state</td>
+          <td>Error minimization</td>
+          <td>Visual perception, motor control</td>
+        </tr>
+        <tr>
+          <td><strong>GCT-COEC</strong></td>
+          <td>Graph property</td>
+          <td>Network metrics</td>
+          <td>Gene networks, fairness</td>
+        </tr>
+        <tr>
+          <td><strong>TDA-COEC</strong></td>
+          <td>Topological feature</td>
+          <td>Persistent homology</td>
+          <td>Morphogenesis, shape analysis</td>
+        </tr>
+        <tr>
+          <td><strong>Cat-COEC</strong></td>
+          <td>Efficient solution</td>
+          <td>Catalytic memory</td>
+          <td>Space-efficient algorithms</td>
+        </tr>
+        <tr>
+          <td><strong>Sheaf-COEC</strong></td>
+          <td>Global consistency</td>
+          <td>Cohomological</td>
+          <td>Distributed coordination</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>3.2 SS-COEC (Static-Structural)</h3>
+
+    <div class="definition">
+      <strong>Definition 6 (SS-COEC):</strong> A Static-Structural COEC system produces a residual function that is a stable structural configuration:
+
+      $$R_{SS} = S(\tau) \quad \text{where } S(\tau) \text{ is an attractor state}$$
+
+      <p><strong>Formal Properties:</strong></p>
+      <ul>
+        <li>Energy landscapes with distinct minima</li>
+        <li>Computation terminates when $\frac{dS}{dt} \approx 0$</li>
+        <li>Information encoded in spatial configuration</li>
+      </ul>
+    </div>
+
+    <div class="example">
+      <strong>Example (Protein Folding):</strong> The system begins with an unfolded polypeptide chain (high energy) and ends with a stable folded configuration (energy minimum). The computation is complete when the protein reaches its native state, and the residual function is the three-dimensional structure determining function.
+    </div>
+
+    <p><strong>Computational Complexity:</strong> For discrete state spaces with $n$ states and $m$ linear constraints, SS-COEC satisfaction is in P. With quadratic constraints, it becomes NP-hard.</p>
+
+    <h3>3.3 DB-COEC (Dynamic-Behavioral)</h3>
+
+    <div class="definition">
+      <strong>Definition 7 (DB-COEC):</strong> A Dynamic-Behavioral COEC system produces a residual function that is a stable temporal pattern:
+
+      $$R_{DB} = \{S(t) \,|\, t \in [t_0, t_0+\Delta]\}$$
+
+      for some time window $\Delta$.
+
+      <p><strong>Formal Properties:</strong></p>
+      <ul>
+        <li>Limit cycles or strange attractors</li>
+        <li>Information encoded in rhythms, frequencies, or phase relationships</li>
+        <li>Ongoing rather than terminating computation</li>
+      </ul>
+    </div>
+
+    <div class="example">
+      <strong>Example (Circadian Clock):</strong> The circadian clock in cyanobacteria relies on the phosphorylation cycle of KaiC proteins. The residual function is the sustained ~24-hour rhythm coordinating cellular processes with environmental cycles.
+    </div>
+
+    <h3>3.4 DM-COEC (Distributed-Multiplicative)</h3>
+
+    <div class="definition">
+      <strong>Definition 8 (DM-COEC):</strong> A Distributed-Multiplicative COEC system produces a residual function emerging from interactions across multiple subsystems:
+
+      $$R_{DM} = f(\{S_1(t), S_2(t), \ldots, S_n(t)\})$$
+
+      <p><strong>Formal Properties:</strong></p>
+      <ul>
+        <li>Non-local information processing</li>
+        <li>Computation emerges from constraints operating across system boundaries</li>
+        <li>Often displays scale-free or fractal properties</li>
+      </ul>
+    </div>
+
+    <div class="example">
+      <strong>Example (Immune System):</strong> Adaptive immune response integrates information from dendritic cells, T cells, and B cells. The residual function (pathogen clearance and immunological memory) cannot be attributed to any single component—it emerges from collective interaction.
+    </div>
+
+    <h3>3.5 PP-COEC (Predictive-Probabilistic)</h3>
+
+    <div class="definition">
+      <strong>Definition 9 (PP-COEC):</strong> A Predictive-Probabilistic COEC system uses internal models to anticipate future states:
+
+      $$R_{PP} = \Phi(S \,||\, C, E, M)$$
+
+      where $M$ is an internal model minimizing prediction error.
+
+      <p><strong>Formal Properties:</strong></p>
+      <ul>
+        <li>Balances exploration and exploitation</li>
+        <li>Operates by minimizing prediction error: $\delta(t) = S_{\text{actual}}(t) - S_{\text{predicted}}(t)$</li>
+        <li>Continuous updating of internal models</li>
+      </ul>
+    </div>
+
+    <div class="example">
+      <strong>Example (Visual Perception):</strong> The brain maintains internal models of the visual world, generating predictions about incoming sensory data. Prediction errors drive either model updates or active sampling to gather more information.
+    </div>
+
+    <h2 id="computability">4. Computability Spectrum</h2>
+
+    <h3>4.1 Computational Power Classification</h3>
+    <p>COEC systems span a spectrum from Sub-Turing to potentially Hyper-Turing capabilities:</p>
+
+    <div class="definition">
+      <strong>Definition 10 (Sub-Turing COEC):</strong> Fixed, passive constraints that cannot encode arbitrary computations. Equivalent to finite state machines or limited automata.
+    </div>
+
+    <div class="definition">
+      <strong>Definition 11 (Weak Turing COEC):</strong> Externally tunable constraints enabling conditional universal computation. Equivalent to pushdown automata or context-sensitive grammars.
+    </div>
+
+    <div class="definition">
+      <strong>Definition 12 (Strong Turing COEC):</strong> Dynamically modifiable constraints approaching universal computation:
+
+      $$C(t+1) = f(S(t), C(t), E(t))$$
+    </div>
+
+    <div class="theorem">
+      <strong>Theorem 1 (COEC Universality):</strong> Strong-Turing COEC systems are computationally universal.
+
+      <p><em>Proof sketch:</em> We construct a Strong-Turing COEC system simulating a universal Turing machine (UTM) where:</p>
+      <ul>
+        <li>$S$ represents tape, head position, and state</li>
+        <li>$C$ contains constraints enforcing transition rules</li>
+        <li>$\Phi$ implements single-step UTM transitions</li>
+        <li>$R$ extracts halting state and final tape contents</li>
+      </ul>
+      <p>Since the UTM is universal, our COEC system can compute any Turing-computable function. □</p>
+    </div>
+
+    <div class="definition">
+      <strong>Definition 13 (Hyper-Turing COEC):</strong> Systems exploiting parallel constraint satisfaction or quantum effects to potentially exceed classical Turing limits.
+    </div>
+
+    <h3>4.2 Busy Beaver Bounds</h3>
+
+    <div class="definition">
+      <strong>Definition 14 (BB-Bounded):</strong> A COEC system encounters a BB-bound if exhaustive state exploration requires more than $\text{BB}(n)$ state transitions for some $n$.
+    </div>
+
+    <div class="theorem">
+      <strong>Theorem 2:</strong> Any BB-bounded COEC system attempting exhaustive exploration must either:
+      <ol>
+        <li>Limit exploration to a tractable subset</li>
+        <li>Implement non-deterministic search strategies</li>
+        <li>Invoke oracle constraints</li>
+      </ol>
+    </div>
+
+    <h3>4.3 Catalytic Space Complexity</h3>
+
+    <div class="theorem">
+      <strong>Theorem 3 (Catalytic Space Advantage):</strong> $\text{CSPACE}(s(n)) \subseteq \text{SPACE}(s(n)^2)$
+
+      <p>This implies Cat-COEC systems solve problems with quadratically less dedicated space than conventional approaches by leveraging transient catalytic memory.</p>
+    </div>
+
+    <div class="example">
+      <strong>Example:</strong> A Cat-COEC system solving subset-sum with $n$ integers requires only $O(\log n)$ clean space plus $O(n \log n)$ catalytic space, compared to $O((\log n)^2)$ dedicated space conventionally.
+    </div>
+
+    <h2 id="information-theory">5. Information Theory and Thermodynamics</h2>
+
+    <h3>5.1 Variational Free Energy</h3>
+    <p>The evolution of PP-COEC systems can be formalized through variational free energy:</p>
+
+    <div class="definition">
+      <strong>Definition 15 (Variational Free Energy):</strong> For a system with internal model $M$:
+
+      $$F(\omega, M) = D_{KL}[q(\hat{\omega}|\omega) \,||\, p(\hat{\omega})] - \mathbb{E}_{q(\hat{\omega}|\omega)}[\log p(\omega|\hat{\omega})]$$
+
+      where:
+      <ul>
+        <li>$q(\hat{\omega}|\omega)$: System's belief about hidden states given observations</li>
+        <li>$p(\hat{\omega})$: Prior over hidden states</li>
+        <li>$p(\omega|\hat{\omega})$: Likelihood of observations given hidden states</li>
+      </ul>
+    </div>
+
+    <div class="theorem">
+      <strong>Theorem 4:</strong> A PP-COEC system minimizing variational free energy converges to an internal model optimally balancing prior expectations with sensory evidence.
+    </div>
+
+    <p>System dynamics follow gradient descent on free energy:</p>
+    $$\frac{dM}{dt} = -\alpha \nabla_M F(\omega, M)$$
+
+    <h3>5.2 Connection to Active Inference</h3>
+    <p>COEC's ontology embraces the Free Energy Principle (FEP). Systems evolve by gradient descent on an energy function plus penalty terms for unsatisfied constraints:</p>
+
+    $$F(s) = E_{\text{physical}}(s) + \sum_i w_i \cdot c_i(s)$$
+
+    <p>This is conceptually equivalent to minimizing variational free energy, establishing COEC as an extension of active inference where constraints play the role of learned models or prediction errors.</p>
+
+    <h3>5.3 Information Bottleneck</h3>
+    <p>The information bottleneck principle provides a framework for constraint evolution:</p>
+
+    <div class="definition">
+      <strong>Definition 16 (Information Bottleneck):</strong> For input $X$, constrained representation $\tilde{X}$, and target $Y$:
+
+      $$\mathcal{L}_{IB} = I(X;\tilde{X}) - \beta I(\tilde{X};Y)$$
+
+      In COEC terms:
+      <ul>
+        <li>$X$: Full configuration space $\Omega_S$</li>
+        <li>$\tilde{X}$: Constrained space $\Omega_{S|C}$</li>
+        <li>$Y$: Target residual function $R$</li>
+      </ul>
+    </div>
+
+    <div class="theorem">
+      <strong>Theorem 5:</strong> Optimal AP-COEC constraint evolution follows the information bottleneck principle, with constraints evolving to minimize $\mathcal{L}_{IB}$.
+    </div>
+
+    <h2 id="applications">6. Applications</h2>
+
+    <h3>6.1 Synthetic Biology: Kimaiya Platform</h3>
+    <p>The Kimaiya platform exemplifies multiple COEC classes in a single biological computing system for directed stem cell differentiation.</p>
+
+    <p><strong>COEC Formalization:</strong></p>
+    <ul>
+      <li><strong>Substrate</strong>: Induced pluripotent stem cells (iPSCs) with high-dimensional epigenetic state space</li>
+      <li><strong>Constraints</strong>:
+        <ul>
+          <li>$c_{\text{genetic}}$: Transcription factors and gene regulatory networks</li>
+          <li>$c_{\text{epigenetic}}$: Methylation patterns and chromatin accessibility</li>
+          <li>$c_{\text{morphogen}}$: Spatial and temporal signaling gradients</li>
+          <li>$c_{\text{mechanical}}$: Physical forces and ECM interactions</li>
+        </ul>
+      </li>
+      <li><strong>Energy Landscape</strong>: Waddington landscape with local minima representing stable cell types</li>
+      <li><strong>Residual Function</strong>: Terminal differentiation into functional specialized cells</li>
+    </ul>
+
+    <p><strong>Key Results:</strong></p>
+    <ul>
+      <li>95% differentiation efficiency (vs. ≤50% traditional protocols)</li>
+      <li>Reduction of timeframes from weeks/months to days</li>
+      <li>Integration of multiple COEC classes: SS-COEC (terminal differentiation), AP-COEC (ML-driven optimization), PP-COEC (predictive modeling)</li>
+    </ul>
+
+    <h3>6.2 Neuromorphic Computing</h3>
+    <p>COEC principles guide efficient neuromorphic hardware design:</p>
+
+    <p><strong>Precision-Weighted Synapses:</strong> Mapping COEC precision weights to memristor conductances achieves 1.4× energy improvement over digital baselines by implementing weighted constraint satisfaction directly in hardware.</p>
+
+    <p><strong>Benchmark Results (NeuRRAM):</strong></p>
+    <ul>
+      <li>9.1 TOPS/W efficiency</li>
+      <li>Direct implementation of constraint operations</li>
+      <li>50-fold energy reduction vs. traditional architectures for constraint satisfaction problems</li>
+    </ul>
+
+    <h3>6.3 Distributed Privacy-Preserving Computing: GenomeVault</h3>
+    <p>GenomeVault demonstrates DM-COEC and Cat-COEC principles for genomic data analysis:</p>
+
+    <p><strong>COEC Architecture:</strong></p>
+    <ul>
+      <li><strong>Substrate</strong>: Multi-omics biological data in high-dimensional vector spaces</li>
+      <li><strong>Constraints</strong>: Privacy requirements (differential privacy, zero-knowledge proofs), computational verification rules</li>
+      <li><strong>Information Structure</strong>: Hierarchical hyperdimensional encoding</li>
+      <li><strong>Precision Weighting</strong>: Byzantine fault tolerance with dual-axis node weighting</li>
+    </ul>
+
+    <p><strong>Privacy Mechanisms as Constraints:</strong></p>
+    <ul>
+      <li>Information-theoretic PIR with $P_{\text{fail}}(k,q) = (1-q)^k$</li>
+      <li>Zero-knowledge proofs implementing proof-of-constraint verification</li>
+      <li>Differential privacy via Gaussian mechanism: $M(x) = f(x) + \mathcal{N}(0, \sigma^2)$</li>
+    </ul>
+
+    <p><strong>Performance:</strong></p>
+    <ul>
+      <li>Full genome analysis in &lt;10 minutes</li>
+      <li>Zero-knowledge proofs in &lt;1 minute (GPU)</li>
+      <li>Network footprint &lt;60KB</li>
+      <li>Privacy failure probability: $4 \times 10^{-4}$</li>
+    </ul>
+
+    <h2 id="design-principles">7. Design Principles</h2>
+
+    <h3>7.1 Constraint Engineering</h3>
+    <p><strong>Design Principle 1:</strong> Instead of specifying behaviors directly, engineer constraints making desired behaviors energetically favorable.</p>
+
+    <p><strong>Methodology:</strong></p>
+    <ol>
+      <li>Identify desired residual function $R$</li>
+      <li>Reverse-engineer constraint set $C$ such that $\Phi(S \,||\, C, E)$ yields $R$</li>
+      <li>Implement constraints through physical structures or boundary conditions</li>
+    </ol>
+
+    <div class="example">
+      <strong>Example:</strong> Microfluidic cell sorting device using geometric constraints (channel tapers), flow constraints (pressure gradients), and obstacle constraints (pillar arrays) to separate cells by deformability. Sorting emerges from passive constraint satisfaction without active control.
+    </div>
+
+    <h3>7.2 Energy Landscape Architecture</h3>
+    <p><strong>Design Principle 2:</strong> Shape energy landscapes to guide system evolution toward desired attractors.</p>
+
+    <p><strong>Methodology:</strong></p>
+    <ol>
+      <li>Map natural energy landscape $E_0$ of the substrate</li>
+      <li>Design modifications $\Delta E$ creating attractors for desired outputs</li>
+      <li>Implement $E = E_0 + \Delta E$ through chemical potential, temperature gradients, or other means</li>
+    </ol>
+
+    <h3>7.3 Multi-Scale Constraint Composition</h3>
+    <p><strong>Design Principle 3:</strong> Combine constraints operating at different scales to achieve complex computations.</p>
+
+    <p><strong>Methodology:</strong></p>
+    <ol>
+      <li>Decompose desired computation into hierarchical constraint sets $\{C_1, C_2, \ldots, C_n\}$ at different scales</li>
+      <li>Ensure constraint compatibility across scales</li>
+      <li>Implement through nested or interlocking physical structures</li>
+    </ol>
+
+    <div class="example">
+      <strong>Example:</strong> Tissue engineering with molecular constraints (protein binding), cellular constraints (adhesion, migration), and tissue constraints (mechanical properties, architecture).
+    </div>
+
+    <h2 id="quantum-bridge">8. Quantum-Classical Bridge</h2>
+
+    <h3>8.1 Quantum COEC Formalism</h3>
+
+    <div class="definition">
+      <strong>Definition 17 (Quantum COEC):</strong> A COEC system operating on quantum states where constraints are quantum operators:
+
+      $$R_{\text{Quantum}} = \Phi(|\psi\rangle \,||\, \{C_i\}, H)$$
+
+      where $|\psi\rangle$ is a quantum state, $\{C_i\}$ are quantum constraint operators, and $H$ is a Hamiltonian.
+    </div>
+
+    <p><strong>Entanglement as Non-Local Constraint:</strong> Entanglement provides a mechanism for instantaneous non-local constraint satisfaction:</p>
+
+    $$|\psi_{AB}\rangle = \frac{1}{\sqrt{2}}(|0_A 0_B\rangle + |1_A 1_B\rangle)$$
+
+    <p>This entangled state ensures constraints on system A are instantly reflected in system B.</p>
+
+    <h3>8.2 Quantum Advantage</h3>
+
+    <div class="theorem">
+      <strong>Theorem 6 (Quantum Oracle Advantage):</strong> For certain constraint satisfaction problems requiring $N$ classical oracle queries, a quantum COEC system requires only $O(\sqrt{N})$ quantum oracle queries.
+    </div>
+
+    <div class="theorem">
+      <strong>Theorem 7 (Grover Speedup):</strong> A Quantum-COEC system can find a constraint-satisfying state in a discrete space of size $N$ using $O(\sqrt{N})$ operations, compared to $O(N)$ classically.
+    </div>
+
+    <h2 id="validation">9. Empirical Validation</h2>
+
+    <h3>9.1 Experimental Proposals</h3>
+    <p>We propose five high-priority experiments to validate COEC principles:</p>
+
+    <p><strong>Experiment 1 (Entropy Dynamics):</strong> Track single-cell RNA-seq entropy during stem cell differentiation. COEC predicts $\frac{dS}{dt} < 0$ and $\frac{d^2S}{dt^2} \approx 0$ during normal differentiation, with stress responses triggered when $\frac{d^2S}{dt^2} > \theta$.</p>
+
+    <p><strong>Experiment 2 (Constraint Precision):</strong> Create neural networks with explicitly encoded constraints of varying precision. COEC predicts satisfaction patterns follow precision weights even when energetically unfavorable.</p>
+
+    <p><strong>Experiment 3 (Distributed Computation):</strong> Culture synthetic microbial consortia with defined metabolic interdependencies. COEC predicts emergence of specific topological features optimizing constraint satisfaction beyond pairwise interactions.</p>
+
+    <p><strong>Experiment 4 (Catalytic Memory):</strong> Design cell-free biochemical systems with transient RNA structures acting as catalytic memory. COEC predicts $O(\log n)$ dedicated resources can solve problems requiring $O((\log n)^2)$ resources conventionally.</p>
+
+    <p><strong>Experiment 5 (Quantum Constraints):</strong> Create quantum systems with entangled qubits representing constraints. COEC predicts characteristic entanglement patterns correlating with constraint satisfaction efficiency.</p>
+
+    <h3>9.2 Falsifiability</h3>
+    <p>COEC makes several falsifiable predictions:</p>
+
+    <ol>
+      <li><strong>Entropy Dynamics</strong>: Systems functioning effectively while maintaining $\frac{dS}{dt} > 0$ without compensatory mechanisms would contradict COEC</li>
+      <li><strong>Constraint Priority</strong>: Consistent violation of high-precision constraints in favor of low-precision ones would challenge the framework</li>
+      <li><strong>Energy-Information Tradeoffs</strong>: Systems achieving higher information processing at lower energy than COEC predicts would require framework revision</li>
+      <li><strong>Cross-Scale Consistency</strong>: Robust computational behaviors at higher scales that cannot be traced to lower-level constraints would challenge COEC's unification claims</li>
+    </ol>
+
+    <h2 id="discussion">10. Discussion</h2>
+
+    <h3>10.1 Relationship to Existing Frameworks</h3>
+    <p>COEC provides a unifying language connecting multiple existing frameworks:</p>
+
+    <p><strong>Active Inference:</strong> COEC extends active inference beyond neural systems, providing substrate independence and stronger thermodynamic grounding. The variational free energy formulation is a special case of COEC's energy-information landscape.</p>
+
+    <p><strong>Cellular Automata:</strong> COEC generalizes cellular automata by allowing flexible topologies, continuous state spaces, and explicit energy landscapes rather than rigid discrete rules.</p>
+
+    <p><strong>Chemical Reaction Networks:</strong> COEC abstracts beyond specific chemical contexts while maintaining connections to physical implementation through energy landscapes and stoichiometric constraints.</p>
+
+    <h3>10.2 Advantages and Limitations</h3>
+
+    <p><strong>Advantages:</strong></p>
+    <ol>
+      <li><strong>Substrate independence</strong>: Applies equally to molecular, cellular, tissue, and ecosystem-level processes</li>
+      <li><strong>Integration of physical laws</strong>: Explicit links to thermodynamics and information theory</li>
+      <li><strong>Multi-scale</strong>: Natural handling of hierarchical phenomena</li>
+      <li><strong>Design principles</strong>: Alternative engineering approaches via constraint manipulation</li>
+      <li><strong>Unification</strong>: Connects computational principles across scales and domains</li>
+    </ol>
+
+    <p><strong>Limitations:</strong></p>
+    <ol>
+      <li><strong>Complexity</strong>: Mathematical sophistication may limit accessibility</li>
+      <li><strong>Predictive power</strong>: Some predictions require extensive computation to verify</li>
+      <li><strong>Measurement challenges</strong>: Quantifying constraints and entropy in biological systems remains difficult</li>
+      <li><strong>Implementation barriers</strong>: Engineering arbitrary constraint sets can be technically challenging</li>
+    </ol>
+
+    <h3>10.3 Future Directions</h3>
+
+    <p><strong>Theoretical Extensions:</strong></p>
+    <ol>
+      <li>Deeper integration with quantum information theory</li>
+      <li>Formal relationships between COEC classes</li>
+      <li>Computational complexity refinements for each class</li>
+      <li>Category-theoretic foundations</li>
+    </ol>
+
+    <p><strong>Experimental Validation:</strong></p>
+    <ol>
+      <li>Systematic testing of entropy dynamics predictions</li>
+      <li>Quantitative measurement of constraint satisfaction in biological systems</li>
+      <li>Implementation of COEC-inspired synthetic systems</li>
+      <li>Cross-scale validation studies</li>
+    </ol>
+
+    <p><strong>Applications:</strong></p>
+    <ol>
+      <li>Drug discovery via SS-COEC protein design</li>
+      <li>Neuromorphic hardware directly implementing COEC principles</li>
+      <li>Distributed AI systems using DM-COEC architecture</li>
+      <li>Climate modeling as DM-COEC with emergent constraints</li>
+    </ol>
+
+    <h2 id="conclusion">11. Conclusion</h2>
+
+    <p>We have presented Constraint-Oriented Emergent Computation (COEC), a substrate-independent framework for understanding computation in biological and artificial systems. By viewing computation as the trajectory of physical systems through constrained state spaces, COEC provides a unified mathematical language bridging scales from molecular interactions to ecosystem dynamics.</p>
+
+    <p>The framework's key contributions include:</p>
+    <ol>
+      <li><strong>Formal unification</strong>: Integration of energy, information, and constraint perspectives</li>
+      <li><strong>Computational taxonomy</strong>: Nine classes spanning Sub-Turing to Hyper-Turing capabilities</li>
+      <li><strong>Design principles</strong>: Novel approaches to engineering computational systems</li>
+      <li><strong>Cross-disciplinary bridges</strong>: Connections between biological, physical, and computational sciences</li>
+      <li><strong>Empirical grounding</strong>: Testable predictions and validation roadmap</li>
+    </ol>
+
+    <p>COEC challenges traditional assumptions about computation, agency, and purpose. By recognizing that purposeful behavior can emerge from distributed constraints without central control, COEC provides both analytical tools and design inspiration. As we continue developing this framework, we anticipate new insights into biological systems and technologies that harness the computational principles embodied in living organisms.</p>
+
+    <p>The framework invites researchers from diverse fields to reconsider fundamental assumptions and explore how constraint-oriented thinking applies to their domains. Through collaborative effort, we can develop deeper understanding of emergent computation and design more efficient, adaptive, and sustainable computational systems inspired by nature's constraint-based solutions.</p>
+
+    <h2 id="references">References</h2>
+
+    <ol style="font-size: 0.75rem;">
+      <li>Friston, K. (2010). The free-energy principle: a unified brain theory? <em>Nature Reviews Neuroscience</em>, 11(2), 127-138.</li>
+      <li>Tononi, G., Boly, M., Massimini, M., & Koch, C. (2016). Integrated information theory: from consciousness to its physical substrate. <em>Nature Reviews Neuroscience</em>, 17(7), 450-461.</li>
+      <li>Buehler, M. J. (2006). Atomistic and continuum modeling of mechanical properties of collagen: Elasticity, fracture, and self-assembly. <em>Journal of Materials Research</em>, 21(8), 1947-1961.</li>
+      <li>Wolpert, L. (1969). Positional information and the spatial pattern of cellular differentiation. <em>Journal of Theoretical Biology</em>, 25(1), 1-47.</li>
+      <li>Hopfield, J. J. (1982). Neural networks and physical systems with emergent collective computational abilities. <em>Proceedings of the National Academy of Sciences</em>, 79(8), 2554-2558.</li>
+      <li>Pearl, J. (2009). <em>Causality: Models, Reasoning and Inference</em> (2nd ed.). Cambridge University Press.</li>
+      <li>Kauffman, S. A. (1993). <em>The Origins of Order: Self-Organization and Selection in Evolution</em>. Oxford University Press.</li>
+      <li>Turing, A. M. (1952). The chemical basis of morphogenesis. <em>Philosophical Transactions of the Royal Society of London B</em>, 237(641), 37-72.</li>
+      <li>Mitchell, M. (2009). <em>Complexity: A Guided Tour</em>. Oxford University Press.</li>
+      <li>Maturana, H. R., & Varela, F. J. (1980). <em>Autopoiesis and Cognition: The Realization of the Living</em>. D. Reidel Publishing Company.</li>
+      <li>Carlson, J. M., & Doyle, J. (2002). Complexity and robustness. <em>Proceedings of the National Academy of Sciences</em>, 99(suppl 1), 2538-2545.</li>
+      <li>Bengio, Y., Courville, A., & Vincent, P. (2013). Representation learning: A review and new perspectives. <em>IEEE Transactions on Pattern Analysis and Machine Intelligence</em>, 35(8), 1798-1828.</li>
+      <li>Elowitz, M. B., & Leibler, S. (2000). A synthetic oscillatory network of transcriptional regulators. <em>Nature</em>, 403(6767), 335-338.</li>
+      <li>Adleman, L. M. (1994). Molecular computation of solutions to combinatorial problems. <em>Science</em>, 266(5187), 1021-1024.</li>
+      <li>Seung, H. S. (2012). <em>Connectome: How the Brain's Wiring Makes Us Who We Are</em>. Houghton Mifflin Harcourt.</li>
+    </ol>
+
+    <div style="margin-top: 60px; padding-top: 30px; border-top: 1px solid var(--border); text-align: center; color: var(--text-secondary); font-size: 0.75rem;">
+      <p>© 2025 Rohan Vinaik. Framework Paper.</p>
+      <p style="margin-top: 10px;"><a href="../index.html" style="color: var(--accent);">← Back to Homepage</a></p>
+    </div>
+  </div>
+
+  <script>
+    // Concept tag click handler
+    document.querySelectorAll('.concept-tag').forEach(tag => {
+      tag.addEventListener('click', function() {
+        const concept = this.dataset.concept;
+        // Redirect to main site with filter
+        window.location.href = `../index.html#skills?filter=${encodeURIComponent(concept)}`;
+      });
+    });
+
+    // Smooth scroll for navigation
+    document.querySelectorAll('.nav-link').forEach(link => {
+      link.addEventListener('click', function(e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+  </script>
+</body>
+</html>
