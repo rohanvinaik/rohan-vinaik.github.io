@@ -665,8 +665,8 @@
 
     // Global keyboard shortcuts
     document.addEventListener('keydown', (e) => {
-      // Ctrl+` - toggle terminal
-      if (e.ctrlKey && e.key === '`') {
+      // Ctrl+` - toggle terminal (check both key and code for compatibility)
+      if (e.ctrlKey && (e.key === '`' || e.code === 'Backquote')) {
         e.preventDefault();
         toggleTerminal();
       }
