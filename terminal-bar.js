@@ -13,7 +13,7 @@
     currentSection: 'home',
     commandHistory: [],
     historyIndex: -1,
-    isVisible: false,
+    isVisible: true, // Visible by default
     startTime: Date.now(),
     projects: [
       'BEHAVIORAL_HOLOGRAPHY',
@@ -594,6 +594,11 @@
     if (!terminalBar || !terminalInput) {
       console.error('[Terminal Bar] Required elements not found');
       return;
+    }
+
+    // Show terminal by default if state.isVisible is true
+    if (state.isVisible) {
+      terminalBar.classList.add('visible');
     }
 
     // Show welcome message
