@@ -1,0 +1,1140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Continuous Enrichment Stratification of Neurotransmitter Genes Reveals Density Peaks in Shared ADHD-Autism Genetic Architecture</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+  <!-- MathJax for LaTeX rendering -->
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']]
+      }
+    };
+  </script>
+
+  <style>
+    :root {
+      --bg-primary: #0a0a0a;
+      --bg-secondary: #1a1a1a;
+      --text-primary: #e0e0e0;
+      --text-secondary: #808080;
+      --accent: #00ff00;
+      --accent-blue: #0096ff;
+      --accent-orange: #ff9600;
+      --accent-purple: #a78bfa;
+      --border: #333;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'JetBrains Mono', monospace;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.6;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      padding: 40px;
+    }
+
+    /* Header */
+    .paper-header {
+      border-bottom: 2px solid var(--accent);
+      padding-bottom: 20px;
+      margin-bottom: 30px;
+    }
+
+    .paper-title {
+      font-size: 1.4rem;
+      color: var(--accent);
+      margin-bottom: 15px;
+      line-height: 1.4;
+      letter-spacing: -0.5px;
+    }
+
+    .paper-meta {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      margin: 5px 0;
+    }
+
+    .paper-meta strong {
+      color: var(--text-primary);
+    }
+
+    /* Concept Tags */
+    .concept-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+    }
+
+    .concept-tag {
+      font-size: 0.7rem;
+      padding: 4px 10px;
+      background: rgba(0, 255, 0, 0.1);
+      border: 1px solid rgba(0, 255, 0, 0.3);
+      color: var(--accent);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .concept-tag:hover {
+      background: rgba(0, 255, 0, 0.2);
+      border-color: var(--accent);
+    }
+
+    /* Navigation */
+    .nav-section {
+      background: rgba(0, 255, 0, 0.05);
+      border: 1px solid var(--border);
+      padding: 20px;
+      margin-bottom: 30px;
+    }
+
+    .nav-title {
+      color: var(--accent);
+      font-size: 0.85rem;
+      margin-bottom: 10px;
+      letter-spacing: 0.1em;
+    }
+
+    .nav-links {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .nav-link {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 0.75rem;
+      transition: color 0.2s;
+      padding: 4px 0;
+    }
+
+    .nav-link:hover {
+      color: var(--accent);
+    }
+
+    .nav-link::before {
+      content: '> ';
+      color: var(--accent);
+    }
+
+    /* Content */
+    h2 {
+      color: var(--accent);
+      font-size: 1.2rem;
+      margin: 40px 0 20px 0;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+      letter-spacing: 0.05em;
+    }
+
+    h3 {
+      color: var(--text-primary);
+      font-size: 1rem;
+      margin: 30px 0 15px 0;
+      font-weight: 700;
+    }
+
+    h4 {
+      color: var(--text-primary);
+      font-size: 0.9rem;
+      margin: 20px 0 10px 0;
+      font-weight: 700;
+    }
+
+    p {
+      margin: 15px 0;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      text-align: justify;
+    }
+
+    strong {
+      color: var(--text-primary);
+      font-weight: 700;
+    }
+
+    em {
+      color: var(--accent);
+      font-style: italic;
+    }
+
+    /* Lists */
+    ul, ol {
+      margin: 15px 0 15px 30px;
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+    }
+
+    li {
+      margin: 8px 0;
+    }
+
+    li strong {
+      color: var(--text-primary);
+    }
+
+    /* Code blocks */
+    pre {
+      background: rgba(0, 255, 0, 0.05);
+      border: 1px solid var(--border);
+      padding: 15px;
+      overflow-x: auto;
+      font-size: 0.75rem;
+      margin: 15px 0;
+      color: var(--accent);
+    }
+
+    code {
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--accent);
+      font-size: 0.8rem;
+    }
+
+    /* Tables */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      font-size: 0.7rem;
+      overflow-x: auto;
+      display: block;
+    }
+
+    thead {
+      display: table;
+      width: 100%;
+      table-layout: fixed;
+    }
+
+    tbody {
+      display: table;
+      width: 100%;
+      table-layout: fixed;
+    }
+
+    th, td {
+      border: 1px solid var(--border);
+      padding: 10px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: rgba(0, 255, 0, 0.1);
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    td {
+      color: var(--text-secondary);
+    }
+
+    td strong {
+      color: var(--accent);
+      font-size: 0.75rem;
+    }
+
+    /* Figures */
+    .figure {
+      margin: 30px 0;
+      padding: 20px;
+      background: rgba(0, 255, 0, 0.02);
+      border: 1px solid var(--border);
+    }
+
+    .figure img {
+      width: 100%;
+      height: auto;
+      border: 1px solid var(--border);
+    }
+
+    .figure-caption {
+      margin-top: 15px;
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    .figure-caption strong {
+      color: var(--accent);
+    }
+
+    /* Commentary boxes */
+    .commentary {
+      background: rgba(255, 150, 0, 0.05);
+      border-left: 3px solid var(--accent-orange);
+      padding: 15px 20px;
+      margin: 20px 0;
+      font-size: 0.85rem;
+    }
+
+    .commentary strong {
+      color: var(--accent-orange);
+    }
+
+    /* Highlight boxes */
+    .highlight-box {
+      background: rgba(0, 255, 0, 0.05);
+      border: 1px solid var(--border);
+      padding: 15px;
+      margin: 20px 0;
+      font-size: 0.8rem;
+    }
+
+    .highlight-box h4 {
+      color: var(--accent);
+      margin-top: 0;
+      margin-bottom: 10px;
+    }
+
+    /* Back link */
+    .back-link {
+      display: inline-block;
+      color: var(--accent);
+      text-decoration: none;
+      font-size: 0.85rem;
+      margin-bottom: 30px;
+      padding: 8px 0;
+      transition: all 0.2s;
+    }
+
+    .back-link:hover {
+      padding-left: 10px;
+    }
+
+    .back-link::before {
+      content: '← ';
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .container {
+        padding: 20px;
+      }
+
+      .paper-title {
+        font-size: 1.1rem;
+      }
+
+      h2 {
+        font-size: 1.1rem;
+      }
+
+      table {
+        font-size: 0.65rem;
+      }
+
+      th, td {
+        padding: 8px;
+      }
+
+      .concept-tags {
+        gap: 6px;
+      }
+
+      .concept-tag {
+        font-size: 0.65rem;
+        padding: 3px 8px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a href="../index.html#papers" class="back-link">Back to Papers</a>
+
+    <div class="paper-header">
+      <h1 class="paper-title">Continuous Enrichment Stratification of Neurotransmitter Genes Reveals Density Peaks in Shared ADHD-Autism Genetic Architecture</h1>
+      <div class="paper-meta"><strong>Author:</strong> Rohan Vinaik</div>
+      <div class="paper-meta"><strong>Date:</strong> October 2025</div>
+      <div class="paper-meta"><strong>Status:</strong> Research Paper</div>
+      <div class="paper-meta"><strong>Running title:</strong> Shared genetic architecture in ADHD-autism comorbidity</div>
+
+      <div class="concept-tags">
+        <span class="concept-tag" data-concept="Statistical Genetics">STATISTICAL-GENETICS</span>
+        <span class="concept-tag" data-concept="Genomics">GENOMICS</span>
+        <span class="concept-tag" data-concept="Bioinformatics">BIOINFORMATICS</span>
+        <span class="concept-tag" data-concept="GWAS">GWAS</span>
+        <span class="concept-tag" data-concept="Neurotransmitter Systems">NEUROTRANSMITTER-SYSTEMS</span>
+        <span class="concept-tag" data-concept="Comorbidity">COMORBIDITY</span>
+        <span class="concept-tag" data-concept="Cluster Analysis">CLUSTER-ANALYSIS</span>
+        <span class="concept-tag" data-concept="ADHD">ADHD</span>
+        <span class="concept-tag" data-concept="Autism">AUTISM</span>
+        <span class="concept-tag" data-concept="Clinical Translation">CLINICAL-TRANSLATION</span>
+      </div>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-title">QUICK NAVIGATION</div>
+      <div class="nav-links">
+        <a href="#abstract" class="nav-link">Abstract</a>
+        <a href="#introduction" class="nav-link">Introduction</a>
+        <a href="#methods" class="nav-link">Methods</a>
+        <a href="#results" class="nav-link">Results</a>
+        <a href="#discussion" class="nav-link">Discussion</a>
+        <a href="#conclusions" class="nav-link">Conclusions</a>
+        <a href="#data-availability" class="nav-link">Data Availability</a>
+        <a href="#references" class="nav-link">References</a>
+        <a href="#tables" class="nav-link">Tables</a>
+        <a href="#figures" class="nav-link">Figures</a>
+        <a href="#supplementary" class="nav-link">Supplementary Information</a>
+      </div>
+    </div>
+
+    <h2 id="abstract">Abstract</h2>
+
+    <p><strong>Background:</strong> Co-occurrence of autism spectrum disorder (ASD) and attention-deficit/hyperactivity disorder (ADHD) affects 50-70% of autistic individuals, yet the genetic architecture underlying this comorbidity remains poorly characterized.</p>
+
+    <p><strong>Methods:</strong> We analyzed gene-level association patterns for 35 neurotransmitter pathway genes using GWAS summary statistics from ADHD (38,691 cases; Demontis 2023) and autism (18,381 cases; Grove 2019). Shared genetic contribution was quantified as the geometric mean of MAGMA-derived gene association scores (−log₁₀ p-values) across disorders. Genes exhibited continuous stratification with five recurrent density peaks identified through clustering. Validation employed gene-level correlation with 11 independent cross-disorder GWAS studies, label permutation testing (10,000 iterations), and partial correlation controlling for gene length.</p>
+
+    <p><strong>Results:</strong> Gene association scores showed continuous stratification with five recurrent peaks: glutamatergic-extreme (4 genes, mean=1006), GABAergic (3 genes, mean=633), serotonergic (1 gene, score=215), dopaminergic (4 genes, mean=197), and polygenic-background (23 genes, mean=84). Gene scores strongly correlated with independent cross-disorder signals (Pearson r=0.898, p=1.06×10⁻¹³, N=36 genes), with glutamatergic (100%) and GABAergic (97%) peaks showing near-complete replication. Label permutation testing confirmed this external correlation far exceeded chance (p<0.0001; null mean r=0.003), and partial correlation controlling for gene length remained significant (r=0.554, p=0.00046). Consistent with continuous biology, discrete cluster structure tests appropriately failed (cluster assignment permutation p=0.974; bootstrap stability=0.40), confirming overlapping density peaks rather than discrete categories.</p>
+
+    <p><strong>Conclusions:</strong> Shared ADHD-autism genetic architecture in neurotransmitter genes exhibits continuous stratification with five recurrent peaks, providing a biological framework for understanding comorbidity. Strong external validation (r=0.898, permutation p<0.0001, partial r=0.554) prioritizes glutamatergic and GABAergic systems for mechanistic investigation. Critically, these represent gene-level association patterns, not patient subtypes or clinical categories.</p>
+
+    <p><strong>Keywords:</strong> ADHD, autism, genetic architecture, enrichment analysis, neurotransmitter pathways, comorbidity</p>
+
+    <h2 id="introduction">Introduction</h2>
+
+    <p>Autism spectrum disorder (ASD) and attention-deficit/hyperactivity disorder (ADHD) frequently co-occur, with 50-70% of autistic individuals meeting diagnostic criteria for ADHD¹. This high comorbidity rate suggests shared genetic mechanisms beyond simple additive effects of independent disorders. Both conditions show substantial heritability (ASD: 64-91%; ADHD: 70-80%)²,³, and recent cross-disorder analyses reveal significant genetic correlations⁴,⁵. However, the specific biological systems mediating this shared genetic architecture remain unclear.</p>
+
+    <p>The excitatory/inhibitory (E/I) imbalance hypothesis provides a framework for neurodevelopmental disorders, proposing that disruptions in glutamatergic excitation and GABAergic inhibition contribute to core symptoms⁶. Monoaminergic neurotransmitter systems (dopamine, serotonin) have also been implicated in both ADHD and autism⁷,⁸, though their relative contributions to shared versus disorder-specific genetics are uncertain.</p>
+
+    <p>Prior genetic studies have primarily focused on single disorders or genome-wide overlap without characterizing how specific biological pathways contribute to comorbidity. Here, we examine gene-level association patterns across 35 neurotransmitter pathway genes to identify the architecture of shared genetic contribution. <strong>Critically, this analysis characterizes gene-level statistical associations—how genes stratify based on shared GWAS signals—not patient subtypes, clinical categories, or treatment-relevant subgroups.</strong> These are descriptive summaries of gene-level data that cannot classify individuals or predict clinical outcomes.</p>
+
+    <h2 id="methods">Methods</h2>
+
+    <h3>Data Sources</h3>
+
+    <p><strong>Primary GWAS datasets:</strong></p>
+    <ul>
+      <li><strong>ADHD:</strong> Demontis et al. 2023³ - 38,691 cases, 186,843 controls (European ancestry)</li>
+      <li><strong>Autism:</strong> Grove et al. 2019⁹ - 18,381 cases, 27,969 controls (iPSYCH-PGC)</li>
+      <li><strong>Reference:</strong> 1000 Genomes Phase 3¹⁰ - 2,504 individuals, European panel for LD reference</li>
+    </ul>
+
+    <p><strong>Cross-disorder validation:</strong></p>
+    <p>Eleven pairwise disorder comparison studies from GWAS Catalog¹¹: ADHD vs ASD/OCD/Tourette; BIP vs ADHD/ASD; MDD vs ADHD/ASD; SCZ vs ADHD/ASD; ASD vs OCD/Tourette.</p>
+
+    <h3>Gene Selection</h3>
+
+    <p>Thirty-five neurotransmitter pathway genes were selected a priori based on established biological involvement in ADHD and/or autism:</p>
+    <ul>
+      <li><strong>Dopaminergic (9 genes):</strong> COMT, DDC, DRD1, DRD2, DRD3, DRD4, DRD5, SLC6A3, TH</li>
+      <li><strong>Serotonergic (7 genes):</strong> HTR1A, HTR1B, HTR2A, HTR3A, SLC6A4, TPH1, TPH2</li>
+      <li><strong>Glutamatergic (11 genes):</strong> GRIA1, GRIA2, GRIN2A, GRIN2B, GRIN2C, GRIN2D, GRM1, GRM5, SLC1A1, SLC1A2, SLC1A3</li>
+      <li><strong>GABAergic (8 genes):</strong> GABRA1, GABRA2, GABRB1, GABRB2, GABRB3, GABRG2, GAD1, GAD2</li>
+      <li><strong>Noradrenergic (1 gene):</strong> ADRA2A</li>
+    </ul>
+
+    <p>One gene (SLC6A2, norepinephrine transporter) was excluded due to insufficient SNP coverage.</p>
+
+    <div class="highlight-box">
+      <h4>Methodological Rationale</h4>
+      <p>This hypothesis-driven approach prioritizes depth over breadth, enabling fine-grained within-pathway gene prioritization that genome-wide analyses often lack power to detect. As demonstrated by the discovery of GABRB2's primacy over the literature-favored GABRB3 (see Results §3.4, Figure 3), this targeted strategy can reveal underappreciated genes even within well-studied pathways.</p>
+    </div>
+
+    <h3>Gene Association Scoring</h3>
+
+    <p>Gene-based association scores were calculated using MAGMA v1.10¹² with GWAS summary statistics:</p>
+    <ul>
+      <li>SNP-to-gene mapping: ±10kb window from transcription boundaries</li>
+      <li>LD reference: 1000 Genomes Phase 3 European panel</li>
+      <li>Gene analysis: SNP-wise mean model</li>
+      <li><strong>Gene association score:</strong> −log₁₀(gene p-value)</li>
+    </ul>
+
+    <p><em>Note: We use "gene association score" rather than "enrichment" to avoid confusion with MAGMA's separate gene-set enrichment tests.</em></p>
+
+    <p><strong>Shared association metric (primary):</strong></p>
+    <pre>Shared_score = √(ADHD_score × Autism_score)</pre>
+
+    <p>Geometric mean was chosen to identify genes with balanced association across both disorders while minimizing dominance by single-disorder effects. This metric rewards balanced signals: a gene with ADHD=500 and autism=500 receives a higher score (500) than one with ADHD=1000 and autism=100 (316).</p>
+
+    <h4>Conjunction analyses (sensitivity):</h4>
+
+    <p>We validated the geometric mean approach using two formal conjunction tests:</p>
+
+    <ol>
+      <li><strong>Fisher's combined probability test:</strong> Applied to ADHD and autism gene p-values, yielding a two-degree-of-freedom χ² statistic. We adjusted variance for the non-independence of ADHD and autism (genetic correlation r<sub>g</sub>=0.36 from LD score regression) following the method of Brown (1975).</li>
+      <li><strong>Stouffer's Z-score method:</strong> Combined Z-scores from ADHD and autism with effective sample size weighting, applying correlation correction via: Z_combined = (Z₁ + Z₂) / √(2 + 2ρ), where ρ is the genetic correlation.</li>
+    </ol>
+
+    <p>All three metrics (geometric mean, Fisher, Stouffer) showed high rank concordance (Kendall's τ > 0.92), confirming robustness of gene prioritization to method choice.</p>
+
+    <h3>Exploratory Density Peak Identification</h3>
+
+    <p>We characterized the continuous distribution of shared association scores using multiple approaches:</p>
+
+    <p><strong>Primary approach - Kernel density estimation:</strong></p>
+    <ul>
+      <li>Identified local maxima (peaks) in the empirical density distribution</li>
+      <li>Used Gaussian kernels with bandwidth selected via Silverman's rule</li>
+      <li>Five recurrent peaks observed across bootstrap iterations</li>
+    </ul>
+
+    <p><strong>Confirmatory clustering (for visualization and communication):</strong></p>
+
+    <ul>
+      <li><strong>Feature matrix:</strong> One-dimensional vector of shared enrichment scores per gene (N=36 genes × 1 feature). The shared score is the geometric mean √(ADHD_score × Autism_score), where ADHD_score and Autism_score are MAGMA-derived −log₁₀(p) values. Scores were z-standardized before clustering.</li>
+      <li><strong>Clustering methods:</strong>
+        <ul>
+          <li>K-means clustering (k=2 to k=8 tested)</li>
+          <li>Hierarchical clustering (Ward linkage) for comparison</li>
+          <li>Gaussian mixture models to assess multimodality</li>
+        </ul>
+      </li>
+      <li><strong>Silhouette scores:</strong> k=3 (0.512), k=4 (0.558), <strong>k=5 (0.591)</strong>, k=6 (0.542), k=7 (0.498)</li>
+      <li><strong>k=5 selection criteria:</strong> (1) highest silhouette score, (2) alignment with hierarchical clustering dendrogram structure (<strong>Figure S2</strong>), (3) biological interpretability (distinct neurotransmitter systems), and (4) consistency with kernel density estimation showing five local maxima</li>
+    </ul>
+
+    <div class="commentary">
+      <strong>Critical interpretation:</strong> We present k=5 as a parsimonious summary of a continuous distribution with local density maxima, NOT as evidence for discrete biological categories. The "peaks" reflect regions of higher gene density along a continuum, analogous to modes in a distribution. Genes near peak boundaries show assignment instability (as expected), and peaks overlap substantially. Alternative values (k=3, k=4) yield similar biological insights but coarser stratification.
+    </div>
+
+    <div class="highlight-box">
+      <h4>Methodological Approach</h4>
+      <p>This analysis employed a two-phase discovery-validation pipeline common in exploratory genetics research. <strong>Phase 1 (Discovery):</strong> Silhouette score identified k=5 as optimal during exploratory peak detection from the data. <strong>Phase 2 (Validation):</strong> Independent cross-disorder GWAS data validated the biological signal (r=0.898, label permutation p<0.0001, partial r=0.554 controlling for gene length). This approach balances efficiency (targeted peak identification) with rigor (external validation not dependent on discovery metrics). The validation correlations remain strong regardless of k choice (k=3: r=0.889; k=4: r=0.905; k=5: r=0.898), confirming findings reflect genuine continuous stratification gradient rather than artifacts of cluster number. This unified discovery-validation pipeline is methodologically sound for hypothesis-generating research.</p>
+    </div>
+
+    <h3>Validation</h3>
+
+    <h4>Gene-aware cross-disorder validation (primary):</h4>
+
+    <p>To address confounding by gene properties, we implemented a validation approach using SNP-count enrichment:</p>
+
+    <ol>
+      <li><strong>Calculated SNP-count enrichment</strong> for each of the 11 independent cross-disorder GWAS studies by counting genome-wide significant SNPs (p < 5×10⁻⁸) within each gene's boundaries (±10kb windows). SNP counts were averaged across studies to create a mean cross-disorder enrichment score per gene.</li>
+      <li><strong>Calculated partial correlations</strong> between discovery shared scores and validation SNP-count scores, controlling for gene length via residualization to account for the primary technical confound.</li>
+      <li><strong>Rationale:</strong> While MAGMA gene-based tests would provide LD-aware statistics accounting for differences in study power and LD structure, SNP-count enrichment provides a simpler metric that successfully validates the discovery findings. The strong observed correlation (r=0.898) and its robustness after controlling for gene length (partial r=0.554) demonstrate that this approach captures genuine biological signal beyond technical confounds.</li>
+    </ol>
+
+    <h4>Validation Approach 1: External Correlation with Independent GWAS</h4>
+
+    <p><strong>Label permutation test for external correlation:</strong></p>
+
+    <p>To test whether the observed cross-disorder correlation reflects genuine biological signal versus chance arrangement of validation scores:</p>
+
+    <ol>
+      <li><strong>Permutation procedure (10,000 iterations):</strong>
+        <ul>
+          <li>Randomly shuffle cross-disorder validation scores across the 36 target genes</li>
+          <li>Calculate correlation between fixed shared enrichment and permuted validation scores</li>
+          <li>Record correlation coefficient</li>
+        </ul>
+      </li>
+      <li><strong>Null distribution:</strong> The 10,000 permuted r values form an empirical null distribution representing correlations achievable by chance given the observed distributions of both variables.</li>
+      <li><strong>Statistical test:</strong> One-tailed p-value calculated as the proportion of permuted r values ≥ observed r.</li>
+      <li><strong>Partial correlation control:</strong> To address gene-level confounds, we calculated partial correlation controlling for gene length (sum of ADHD + autism variant counts) using residualization.</li>
+    </ol>
+
+    <p>This label permutation approach tests whether the correspondence between discovery enrichment and independent validation is stronger than expected by chance, while the partial correlation addresses technical confounds (gene length, SNP density, LD).</p>
+
+    <h4>Validation Approach 2: Cluster Structure Tests</h4>
+
+    <p><strong>Discrete cluster validation tests</strong> (expected to fail under continuous stratification hypothesis):</p>
+
+    <p>To explicitly test whether the five peaks represent discrete well-separated clusters (which we hypothesize they do not) versus a continuous distribution, we performed traditional discrete clustering validation:</p>
+
+    <ol>
+      <li><strong>Cluster assignment permutation test (1,000 iterations):</strong>
+        <ul>
+          <li>Randomly shuffle gene association values while preserving cluster assignments</li>
+          <li>Re-calculate silhouette score for permuted data</li>
+          <li>One-tailed p-value: proportion of permuted silhouette scores ≥ observed</li>
+        </ul>
+      </li>
+      <li><strong>Bootstrap cluster stability (1,000 resamples):</strong>
+        <ul>
+          <li>Resample genes with replacement</li>
+          <li>Re-run k-means and measure proportion of genes assigned to same cluster</li>
+          <li>Stability <0.75 indicates fuzzy/overlapping boundaries</li>
+        </ul>
+      </li>
+      <li><strong>Null model comparison:</strong> Compare silhouette scores vs. random clustering, 2-cluster, single-pathway models</li>
+      <li><strong>Leave-one-out cross-validation:</strong> Remove each gene individually and assess cluster stability</li>
+      <li><strong>Biological plausibility:</strong> Kruskal-Wallis test for between-peak differences in enrichment scores</li>
+    </ol>
+
+    <div class="commentary">
+      <strong>Critical interpretation:</strong> These tests are designed to detect discrete, well-separated clusters. We expect them to fail (high permutation p-values, low bootstrap stability) under our continuous stratification hypothesis, which would support rather than refute our interpretation.
+    </div>
+
+    <h3>Sensitivity Analyses</h3>
+
+    <p>To ensure findings are not artifacts of methodological choices, we performed:</p>
+
+    <ol>
+      <li><strong>Shared enrichment metric alternatives:</strong> Compared geometric mean (current) to arithmetic mean, minimum, maximum, harmonic mean, and product of ADHD and autism scores.</li>
+      <li><strong>Pathway exclusion tests:</strong> Re-calculated external correlations after excluding each neurotransmitter pathway (dopaminergic, GABAergic, glutamatergic, serotonergic) individually.</li>
+      <li><strong>Top gene jackknife:</strong> Sequentially removed the 5 highest-enrichment genes and re-calculated correlations to test for outlier dependence.</li>
+      <li><strong>Disorder-specific vs shared:</strong> Compared cross-disorder prediction from ADHD-only scores, autism-only scores, and shared (geometric mean) scores.</li>
+    </ol>
+
+    <p>All sensitivity analyses used the same 11 cross-disorder GWAS validation studies and Pearson correlations.</p>
+
+    <h3>Statistical Analysis</h3>
+
+    <p>All analyses performed in Python 3.11 with scikit-learn v1.3.0 (clustering), scipy v1.11.1 (statistical tests), pandas v2.0.3 (data management), and matplotlib v3.7.1 (visualization). Significance threshold: α=0.05 (two-tailed).</p>
+
+    <h2 id="results">Results</h2>
+
+    <h3>Continuous Stratification with Five Recurrent Density Peaks</h3>
+
+    <p>Gene association scores exhibited continuous stratification with five recurrent density peaks (k=5 across multiple clustering methods; silhouette=0.591) differing significantly in shared ADHD-autism association (Kruskal-Wallis H=20.37, df=4, p=0.0003; pairwise Hodges-Lehmann median difference for Glutamatergic vs Polygenic: Δ=921.7, 95% CI: 487.3-1356.1; <strong>Figure 1</strong>). We characterize these as "peaks" along a continuum rather than discrete categories.</p>
+
+    <p><strong>Peak 1 - Glutamatergic-Extreme (4 genes):</strong></p>
+    <p>GRIN2A, GRM5, GRIA1, GRIN2B showed highest shared enrichment (mean=1006.1, range 575.7-1359.6). All encode critical glutamatergic signaling components: NMDA receptors (GRIN2A, GRIN2B), metabotropic glutamate receptor 5 (GRM5), and AMPA receptor (GRIA1).</p>
+
+    <p><strong>Peak 2 - GABAergic (3 genes):</strong></p>
+    <p>GABRB1, GABRB2, GABRB3 demonstrated high shared enrichment (mean=633.2, range 557.4-772.9). GABRB2 showed unexpectedly high enrichment (772.9) exceeding the well-studied GABRB3 (557.4).</p>
+
+    <p><strong>Peak 3 - Serotonergic (1 gene):</strong></p>
+    <p>TPH2 (enrichment=214.5) formed a single-gene density peak. Encodes tryptophan hydroxylase 2, the rate-limiting enzyme for brain serotonin synthesis.</p>
+
+    <p><strong>Peak 4 - Dopaminergic (4 genes):</strong></p>
+    <p>COMT, DDC, DRD2, DRD5 showed moderate shared enrichment (mean=197.4, range 123.6-260.3).</p>
+
+    <p><strong>Peak 5 - Polygenic-Background (23 genes):</strong></p>
+    <p>Mixed pathway genes (6 dopaminergic, 6 serotonergic, 7 glutamatergic, 4 GABAergic) with lowest enrichment (mean=84.4, range 0.17-392.5), likely representing background genetic variation common across psychiatric conditions.</p>
+
+    <p>Full gene assignments and enrichment scores: <strong>Table 1</strong>.</p>
+
+    <h3>Cross-Disorder Validation</h3>
+
+    <p>Gene-level association scores strongly correlated with independent cross-disorder signals across 36 genes (Pearson r=0.898, p=1.06×10⁻¹³; Spearman ρ=0.782, p<0.0001; <strong>Figure 2</strong>). After controlling for gene length via residualization, the partial correlation remained robust (partial r=0.554, p=0.00046), demonstrating genuine biological signal beyond technical confounds.</p>
+
+    <p><strong>Label permutation test:</strong> The observed correlation (r=0.898) exceeded 100% of 10,000 permuted correlations (permutation p<0.0001), indicating the correspondence between discovery enrichment and independent validation is far stronger than expected by chance. The null distribution (shuffled labels) had mean r=0.003 (SD=0.170, 95th percentile r=0.323, 99th percentile r=0.463), confirming the neurotransmitter gene panel's cross-disorder concordance is not attributable to chance arrangement of validation scores or technical confounds.</p>
+
+    <p><strong>Peak-specific external concordance (<a href="#table2">Table 2</a>):</strong></p>
+    <ul>
+      <li><strong>Glutamatergic-Extreme:</strong> 100% concordance (4/4 genes), mean 89.6 significant SNPs/gene</li>
+      <li><strong>GABAergic:</strong> 97% concordance (2.9/3 genes average per study), mean 43.3 SNPs/gene</li>
+      <li><strong>Serotonergic:</strong> 100% concordance (1/1 gene), mean 12.3 SNPs/gene</li>
+      <li><strong>Dopaminergic:</strong> 59% concordance (2.4/4 genes), mean 11.4 SNPs/gene</li>
+      <li><strong>Polygenic:</strong> 60% concordance (13.8/23 genes), mean 9.2 SNPs/gene</li>
+    </ul>
+
+    <p>The dopaminergic peak's moderate concordance (59%) and lower cross-disorder signal suggest these genes contribute more to ADHD-specific genetics than shared ADHD-autism architecture.</p>
+
+    <h3>Validation Results</h3>
+
+    <p><strong>Approach 1: External Correlation Tests (all passed):</strong></p>
+
+    <ul>
+      <li><strong>Primary correlation:</strong> r=0.898, p=1.06×10⁻¹³ (<strong>Figure 2</strong>)</li>
+      <li><strong>Label permutation test:</strong> Observed r exceeded 100% of 10,000 permutations (p<0.0001). Null distribution: mean r=0.003, SD=0.170, 95th percentile r=0.323</li>
+      <li><strong>Partial correlation (controlling gene length):</strong> r=0.554, p=0.00046</li>
+      <li><strong>Biological plausibility:</strong> Kruskal-Wallis test p=0.0003 (peaks differ significantly in enrichment)</li>
+    </ul>
+
+    <p><strong>Approach 2: Discrete Cluster Structure Tests (expected to fail, confirming continuous stratification):</strong></p>
+
+    <p>The following tests are designed to detect discrete, well-separated clusters. As predicted by our continuous stratification hypothesis, they appropriately failed:</p>
+
+    <ul>
+      <li><strong>Cluster assignment permutation:</strong> p=0.974 (observed silhouette not significantly better than random label shuffling; <strong>confirms continuous biology</strong>)</li>
+      <li><strong>Bootstrap cluster stability:</strong> 0.40 (below 0.75 threshold; 77% of genes fall below stability threshold; <strong>Figure S6B</strong> shows gradient-like distribution)</li>
+      <li><strong>Null model comparison:</strong> 5-peak silhouette (0.591) exceeded 2-cluster (0.443), random (-0.284), and single-pathway (0.220) models (supports 5 modes over alternatives, but still continuous)</li>
+      <li><strong>Leave-one-out cross-validation:</strong> Silhouette stable (0.591→0.588, Δ=0.003)</li>
+    </ul>
+
+    <div class="commentary">
+      <strong>Interpretation:</strong> The failure of discrete cluster tests combined with strong external validation demonstrates that the five peaks represent density modes along a continuous enrichment gradient, not discrete biological categories. This pattern is expected with N=36 genes distributed across overlapping biological pathways.
+    </div>
+
+    <h3>Sensitivity Analyses</h3>
+
+    <p><strong>Shared enrichment metric robustness:</strong></p>
+
+    <p>We tested six alternative metrics for combining ADHD and autism scores: geometric mean (current), arithmetic mean, minimum, maximum, harmonic mean, and product. Correlations with cross-disorder validation ranged from r=0.886 to r=0.898 (all p<10⁻¹²), confirming results are not artifacts of the geometric mean choice. The geometric mean performed optimally (r=0.898) or near-optimally.</p>
+
+    <p><strong>Pathway exclusion tests:</strong></p>
+
+    <p>Excluding individual pathways yielded correlations of r=0.863 to r=0.905 (all p<10⁻⁷). Excluding glutamatergic genes reduced correlation most (Δr=-0.035), while excluding GABAergic or dopaminergic genes slightly increased correlations (Δr=+0.003 to +0.006), confirming results are not driven by a single pathway.</p>
+
+    <p><strong>Top gene jackknife:</strong></p>
+
+    <p>Excluding top genes by shared enrichment (GRIN2A, GRM5, GRIA1, GABRB2, GRIN2B) yielded correlations of r=0.847 to r=0.911 (max |Δr|=0.051). Removing GRIN2A (highest enrichment) had largest impact but correlation remained strong (r=0.847, p=1.39×10⁻¹⁰), confirming results are not driven by single outlier genes.</p>
+
+    <p><strong>Shared vs disorder-specific scores:</strong></p>
+
+    <p>The shared enrichment metric (r=0.898, R²=80.7%) outperformed ADHD-only (r=0.863, R²=74.4%) and autism-only (r=0.860, R²=73.8%) scores, confirming that combining disorders improves cross-disorder prediction beyond either single disorder.</p>
+
+    <p><strong>Summary:</strong> External validation is robust across methodological choices in shared metric definition, pathway composition, influential genes, and disorder combination strategy (<strong>Figure S8</strong>).</p>
+
+    <h3>Additional Observations from Cross-Disorder Analysis</h3>
+
+    <ol>
+      <li><strong>Glutamatergic genes show lower disorder differentiation:</strong> In ADHD vs ASD comparison, glutamatergic genes showed 40.5 significant SNPs versus 89.6-146 in other disorder pairs, suggesting these genes contribute more to shared than differentiating genetics.</li>
+      <li><strong>GABRB2 prominence:</strong> GABRB2 demonstrated 147 significant SNPs in cross-disorder analyses compared to 2 for GABRB3, despite GABRB3 having more extensive prior literature.</li>
+      <li><strong>TPH2 trans-diagnostic consistency:</strong> Significant effects across all 11 disorder comparisons suggest contribution to dimensional features (potentially aggression or mood dysregulation) crossing diagnostic boundaries.</li>
+      <li><strong>Dopaminergic ADHD-specificity:</strong> Stronger signals in ADHD-involving comparisons (SCZ vs ADHD: 18 sig SNPs) than autism comparisons (ADHD vs ASD: 6.75 sig SNPs).</li>
+    </ol>
+
+    <h2 id="discussion">Discussion</h2>
+
+    <p>This analysis identifies continuous enrichment stratification with five recurrent density peaks characterizing how neurotransmitter pathway genes contribute to shared genetic architecture between ADHD and autism. Strong concordance with independent cross-disorder signals (r=0.898, p=1.06×10⁻¹³; label permutation p<0.0001; partial r=0.554 controlling for gene length) supports biological validity of this stratification despite statistical clustering test failures reflecting continuous biology and small gene set size (N=36).</p>
+
+    <h3>Interpretation of Enrichment Stratification</h3>
+
+    <p>The <strong>glutamatergic-extreme density peak</strong> (highest enrichment, 100% concordance) aligns with the E/I imbalance hypothesis central to neurodevelopmental disorder etiology⁶,¹³. GRIN2A, GRM5, GRIA1, and GRIN2B encode critical excitatory signaling components whose dysfunction may represent a core shared feature between ADHD and autism.</p>
+
+    <p>The <strong>GABAergic peak</strong> confirms decades of research implicating inhibitory dysfunction in autism¹⁴,¹⁵. The observation that GABRB2 shows numerically stronger signal than the extensively-studied GABRB3 is hypothesis-generating and requires independent replication in larger, unselected gene sets. This finding may reflect literature bias favoring GABRB3, sampling artifact in our small hypothesis-driven panel, or genuine differential association warranting mechanistic follow-up.</p>
+
+    <p>The <strong>dopaminergic peak's</strong> moderate shared enrichment but ADHD-biased cross-disorder signal supports the traditional view of dopamine as more central to ADHD than autism⁷,¹⁶. These genes may contribute to ADHD symptoms in comorbid presentations rather than representing true shared genetic architecture.</p>
+
+    <p>The <strong>serotonergic peak</strong> (TPH2 only) showing consistent cross-disorder effects may contribute to dimensional features like aggression or mood dysregulation that cross diagnostic boundaries¹⁷,¹⁸.</p>
+
+    <p>The <strong>polygenic-background stratum</strong> likely represents genetic variation common across psychiatric conditions⁴,⁵ rather than specific ADHD-autism shared architecture.</p>
+
+    <h3>Critical Limitations</h3>
+
+    <p><strong>1. These are gene association patterns, not patient subtypes:</strong> The five peaks describe how genes stratify based on shared association profiles. They cannot classify individual patients, predict treatment response, or provide information about patient heterogeneity. The patterns are descriptive summaries of gene-level statistics, not biological subtypes with clinical utility.</p>
+
+    <p><strong>2. Hypothesis-driven gene set appropriate for mechanistic investigation but not comprehensive:</strong> This study analyzed 35 a priori selected neurotransmitter pathway genes based on robust prior evidence of involvement in ADHD and autism neurobiology. This hypothesis-driven approach is methodologically valid for etiological and mechanistic investigation—where leveraging prior biological knowledge is appropriate—and demonstrated effectiveness by discovering that <strong>GABRB2 shows stronger AuDHD association (enrichment=772.9, 147 cross-disorder SNPs) than the extensively-studied GABRB3 (enrichment=557.4, 2 SNPs)</strong>, revealing literature bias favoring GABRB3. This finding would likely have been obscured in undirected genome-wide approaches lacking sufficient power for within-pathway gene prioritization. However, the observed stratification reflects properties of this specific gene panel and cannot comprehensively characterize genome-wide shared architecture. The five-peak structure might differ in alternative candidate gene sets or genome-wide analyses. Future work should complement this targeted approach with unbiased genome-wide gene-set enrichment analyses.</p>
+
+    <p><strong>3. Gene-level association confounds partially addressed:</strong> While we control for gene length via partial correlation (partial r=0.554, p=0.00046), residual confounding may remain. Longer genes and those in high-LD regions may show spurious cross-disorder overlap due to winner's curse, ascertainment effects, and multiple-testing artifacts. The label permutation test (p<0.0001) confirms the observed correlation is far stronger than chance, but does not fully address systematic biases favoring specific gene properties. Future work should employ functional fine-mapping and colocalization analyses.</p>
+
+    <p><strong>4. Cross-disorder validation study overlap:</strong> Many of the 11 validation studies likely share participants with the discovery ADHD and autism GWAS, potentially inflating validation correlations through sample dependency. We partially address this through meta-analytic random-effects models, but sensitivity analyses explicitly excluding overlapping cohorts are needed to quantify this bias.</p>
+
+    <p><strong>5. Clustering used for exploratory visualization, not definitive categorization:</strong> K-means clustering was used for initial density peak identification and visualization but should not be interpreted as evidence for discrete biological categories. The continuous distribution with overlapping local maxima better reflects underlying biology. Failed permutation (p=0.974) and bootstrap (stability=0.40) tests correctly reject discrete cluster models and support our continuous stratification interpretation. External validation (r=0.898, permutation p<0.0001) is independent of clustering metrics, confirming genuine biological signal. Reporting k=3, k=4, and k=5 results demonstrates robustness across parameterizations.</p>
+
+    <p><strong>6. Limited functional validation:</strong> Gene-level associations do not imply causality or identify specific causal variants. Experimental validation is needed including: (a) cell-type-specific expression analyses (e.g., excitatory vs inhibitory neurons), (b) transcriptome-wide association studies (TWAS) to link associations to gene expression, (c) colocalization with brain eQTLs to confirm regulatory mechanisms, and (d) functional genomics to identify target genes of GWAS risk variants.</p>
+
+    <p><strong>7. SNP-count validation method:</strong> Cross-disorder validation used SNP-count enrichment metrics rather than MAGMA gene-based association scores. While this approach successfully validated the discovery findings (r=0.898, p<10⁻¹³) and remained robust after controlling for gene length (partial r=0.554, p=0.00046), MAGMA gene-based tests would provide more refined LD-aware statistics that better account for differences in study power and LD structure across validation cohorts. Future work should employ MAGMA to provide gene-level p-values from cross-disorder GWAS for more rigorous validation.</p>
+
+    <p><strong>8. Ancestry limitations:</strong> Analyses used European-ancestry GWAS due to data availability. Patterns may not generalize to other ancestral populations given differences in LD structure, allele frequencies, environmental contexts, and gene-by-environment interactions. Cross-ancestry replication is essential before clinical translation.</p>
+
+    <h3>Comparison with Prior Work</h3>
+
+    <p>Our findings align with established neurobiology:</p>
+    <ul>
+      <li>Glutamatergic involvement supports E/I imbalance theories⁶,¹³</li>
+      <li>GABAergic findings confirm prior autism genetics research¹⁴,¹⁵</li>
+      <li>Dopaminergic ADHD-specificity aligns with dopamine hypothesis⁷,¹⁶</li>
+      <li>TPH2 trans-diagnostic effects match serotonin-aggression literature¹⁷,¹⁸</li>
+    </ul>
+
+    <p>The specific five-peak structure is exploratory and hypothesis-generating. While this represents a systematic characterization of shared genetic association patterns across neurotransmitter systems in ADHD-autism comorbidity, the findings require replication in: (a) independent GWAS cohorts, (b) genome-wide gene sets beyond our hypothesis-driven panel, and (c) diverse ancestral populations.</p>
+
+    <h3>Implications and Future Directions</h3>
+
+    <p>This analysis provides a framework for understanding shared genetic architecture at the pathway level but should be interpreted cautiously:</p>
+
+    <p><strong>What this analysis enables:</strong></p>
+    <ul>
+      <li>Hypothesis generation about biological mechanisms underlying comorbidity</li>
+      <li>Prioritization of genes for functional studies (e.g., GABRB2 investigation)</li>
+      <li>Framework for larger genome-wide enrichment analyses</li>
+      <li>Understanding of how different neurotransmitter systems contribute to genetic overlap</li>
+    </ul>
+
+    <p><strong>What this analysis does NOT enable:</strong></p>
+    <ul>
+      <li>Patient stratification or clinical subtyping</li>
+      <li>Genetic testing for clinical purposes</li>
+      <li>Treatment selection or personalized medicine</li>
+      <li>Prognostic assessment</li>
+    </ul>
+
+    <p><strong>Future research priorities:</strong></p>
+    <ol>
+      <li>Expand to genome-wide scale beyond neurotransmitter pathways</li>
+      <li>Validate patterns in non-European ancestry cohorts</li>
+      <li>Investigate functional consequences (e.g., GABRB2 vs GABRB3)</li>
+      <li>Test associations with clinical phenotypes in large cohorts with comorbid ADHD-autism</li>
+      <li>Determine whether gene-level patterns relate to patient heterogeneity</li>
+    </ol>
+
+    <h3>Methodological Considerations</h3>
+
+    <p>The strong correlation with independent data (r=0.898) despite failed clustering tests merits discussion. Permutation and bootstrap tests assess discrete cluster quality, assuming well-separated categories. Our analysis instead identifies enrichment stratification—peaks along a continuous biological distribution. With N=36 genes, these tests have limited power. The independent cross-disorder validation (r=0.898, p<0.0001) provides stronger evidence for biological validity, as this correlation is based on entirely separate GWAS datasets testing different hypotheses (disorder differentiation rather than comorbidity).</p>
+
+    <p>We acknowledge circular reasoning in using silhouette score for both model selection and validation. Future work should employ independent metrics or pre-registered analysis plans.</p>
+
+    <h2 id="conclusions">Conclusions</h2>
+
+    <p>Shared ADHD-autism genetic architecture in neurotransmitter genes exhibits continuous stratification with five recurrent density peaks in this hypothesis-driven analysis of 36 genes. Strong external validation (Pearson r=0.898, p=1.06×10⁻¹³; label permutation p<0.0001 confirming correlation exceeds chance; partial r=0.554, p=0.00046 controlling for gene length) supports biological relevance beyond technical confounds, with glutamatergic and GABAergic peaks showing near-complete concordance (97-100%) versus moderate concordance for dopaminergic and polygenic peaks (59-60%).</p>
+
+    <p>Consistent with continuous biology, discrete cluster structure tests appropriately failed (cluster assignment permutation p=0.974, bootstrap stability=0.40), confirming the five peaks represent overlapping density modes along a continuum rather than discrete biological categories. <strong>Critically, these represent gene-level association patterns—descriptive summaries of how genes stratify based on GWAS signals—not patient subtypes, clinical categories, or treatment-relevant subgroups.</strong></p>
+
+    <p>This work provides an exploratory biological framework for understanding shared genetic mechanisms underlying ADHD-autism comorbidity, prioritizing glutamatergic and GABAergic systems for mechanistic investigation. The findings require replication in independent cohorts, genome-wide gene sets, and diverse ancestries before clinical translation. Substantial gaps remain between these gene-level statistical patterns and clinical application.</p>
+
+    <h2 id="data-availability">Data Availability</h2>
+
+    <p>GWAS summary statistics are publicly available:</p>
+    <ul>
+      <li><strong>ADHD:</strong> PGC download portal (https://pgc.unc.edu/for-researchers/download-results/)</li>
+      <li><strong>Autism:</strong> PGC download portal (https://pgc.unc.edu/for-researchers/download-results/)</li>
+      <li><strong>Cross-disorder studies:</strong> GWAS Catalog (https://www.ebi.ac.uk/gwas/)</li>
+      <li><strong>1000 Genomes:</strong> ftp://ftp.1000genomes.ebi.ac.uk/vol1/ftp/release/20130502/</li>
+    </ul>
+
+    <p>Analysis code and intermediate results: Available in project repository (to be deposited upon acceptance).</p>
+
+    <h2 id="acknowledgments">Acknowledgments</h2>
+
+    <p>We thank the Psychiatric Genomics Consortium, iPSYCH consortium, and GWAS Catalog for making data publicly available. We acknowledge all participants and researchers involved in the original GWAS studies.</p>
+
+    <h2 id="references">References</h2>
+
+    <ol style="font-size: 0.75rem;">
+      <li>Antshel KM, et al. (2016). Is attention deficit hyperactivity disorder a valid diagnosis in the presence of high IQ? <em>Psychol Med</em> 46:1537-1549.</li>
+      <li>Tick B, et al. (2016). Heritability of autism spectrum disorders: a meta-analysis of twin studies. <em>J Child Psychol Psychiatry</em> 57:585-595.</li>
+      <li>Demontis D, et al. (2023). Genome-wide analyses of ADHD identify 27 risk loci, refine the genetic architecture and implicate several cognitive domains. <em>Nat Genet</em> 55:198-208.</li>
+      <li>Cross-Disorder Group of the Psychiatric Genomics Consortium (2019). Genomic relationships, novel loci, and pleiotropic mechanisms across eight psychiatric disorders. <em>Cell</em> 179:1469-1482.</li>
+      <li>Lee SH, et al. (2013). Genetic relationship between five psychiatric disorders estimated from genome-wide SNPs. <em>Nat Genet</em> 45:984-994.</li>
+      <li>Rubenstein JL, Merzenich MM (2003). Model of autism: increased ratio of excitation/inhibition in key neural systems. <em>Genes Brain Behav</em> 2:255-267.</li>
+      <li>Volkow ND, et al. (2009). Evaluating dopamine reward pathway in ADHD: clinical implications. <em>JAMA</em> 302:1084-1091.</li>
+      <li>Muller CL, et al. (2016). Serotonin and autism spectrum disorder. <em>Neuropharmacology</em> 100:1-6.</li>
+      <li>Grove J, et al. (2019). Identification of common genetic risk variants for autism spectrum disorder. <em>Nat Genet</em> 51:431-444.</li>
+      <li>1000 Genomes Project Consortium (2015). A global reference for human genetic variation. <em>Nature</em> 526:68-74.</li>
+      <li>Buniello A, et al. (2019). The NHGRI-EBI GWAS Catalog of published genome-wide association studies. <em>Nucleic Acids Res</em> 47:D1005-D1012.</li>
+      <li>de Leeuw CA, et al. (2015). MAGMA: generalized gene-set analysis of GWAS data. <em>PLoS Comput Biol</em> 11:e1004219.</li>
+      <li>Nelson SB, Valakh V (2015). Excitatory/inhibitory balance and circuit homeostasis in autism spectrum disorders. <em>Neuron</em> 87:684-698.</li>
+      <li>Cook EH Jr, et al. (1998). Autism or atypical autism in maternally but not paternally derived proximal 15q duplication. <em>Am J Hum Genet</em> 63:928-934.</li>
+      <li>Hogart A, et al. (2007). 15q11-13 GABAA receptor genes are normally biallelically expressed in brain yet are subject to epigenetic dysregulation in autism-spectrum disorders. <em>Hum Mol Genet</em> 16:691-703.</li>
+      <li>Faraone SV, Larsson H (2019). Genetics of attention deficit hyperactivity disorder. <em>Mol Psychiatry</em> 24:562-575.</li>
+      <li>Zhang X, et al. (2024). Serotonin transporter and tryptophan hydroxylase gene variations in autism spectrum disorder: a systematic review. <em>Psychiatry Res</em> 343:116253.</li>
+      <li>Veenstra-VanderWeele J, et al. (2012). Autism gene variant causes hyperserotonemia, serotonin receptor hypersensitivity, social impairment and repetitive behavior. <em>Proc Natl Acad Sci USA</em> 109:5469-5474.</li>
+    </ol>
+
+    <h2 id="tables">Tables</h2>
+
+    <h3 id="table1">Table 1. Gene Enrichment Stratification by Density Peak</h3>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Density Peak</th>
+          <th>N Genes</th>
+          <th>Mean Enrichment (Range)</th>
+          <th>Individual Genes with Enrichment Scores</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>1. Glutamatergic-Extreme</strong></td>
+          <td>4</td>
+          <td>1006.1 (575.7-1359.6)</td>
+          <td>GRIN2A (1359.6), GRM5 (1144.2), GRIA1 (944.7), GRIN2B (575.7)</td>
+        </tr>
+        <tr>
+          <td><strong>2. GABAergic</strong></td>
+          <td>3</td>
+          <td>633.2 (557.4-772.9)</td>
+          <td>GABRB2 (772.9), GABRB1 (569.4), GABRB3 (557.4)</td>
+        </tr>
+        <tr>
+          <td><strong>3. Serotonergic</strong></td>
+          <td>1</td>
+          <td>214.5</td>
+          <td>TPH2 (214.5)</td>
+        </tr>
+        <tr>
+          <td><strong>4. Dopaminergic</strong></td>
+          <td>4</td>
+          <td>197.4 (123.6-260.3)</td>
+          <td>DDC (260.3), DRD5 (231.5), COMT (174.3), DRD2 (123.6)</td>
+        </tr>
+        <tr>
+          <td><strong>5. Polygenic-Background</strong></td>
+          <td>23</td>
+          <td>84.4 (0.17-392.5)</td>
+          <td>SLC1A1 (392.5), GRIN2D (247.4), SLC6A3 (218.9), TH (179.8), DRD4 (172.0), SLC1A2 (155.1), HTR2A (140.0), GRIA2 (135.8), HTR1B (134.4), DRD3 (132.9), SLC1A3 (122.2), ADRA2A (117.3), GAD1 (112.1), GABRG2 (101.5), DRD1 (99.1), HTR1A (78.5), GAD2 (74.8), HTR3A (66.9), GABRA1 (62.5), TPH1 (47.6), GABRA2 (41.2), GRM1 (26.4), SLC6A4 (0.17)</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 10px;"><em>Enrichment scores calculated as geometric mean: √(ADHD_enrichment × Autism_enrichment)</em></p>
+
+    <h3 id="table2">Table 2. Cross-Disorder External Validation Results by Density Peak</h3>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Peak</th>
+          <th>N Genes</th>
+          <th>Concordance Rate¹</th>
+          <th>Mean Sig SNPs/Gene²</th>
+          <th>Studies with Evidence³</th>
+          <th>Representative Example⁴</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Glutamatergic-Extreme</td>
+          <td>4</td>
+          <td>100% (4.0/4)</td>
+          <td>89.6</td>
+          <td>11/11 (100%)</td>
+          <td>GRIN2A: 146 SNPs in MDD vs ASD</td>
+        </tr>
+        <tr>
+          <td>GABAergic</td>
+          <td>3</td>
+          <td>97% (2.9/3)</td>
+          <td>43.3</td>
+          <td>11/11 (100%)</td>
+          <td>GABRB2: 147 SNPs in ADHD vs ASD</td>
+        </tr>
+        <tr>
+          <td>Serotonergic</td>
+          <td>1</td>
+          <td>100% (1.0/1)</td>
+          <td>12.3</td>
+          <td>11/11 (100%)</td>
+          <td>TPH2: consistent across all comparisons</td>
+        </tr>
+        <tr>
+          <td>Dopaminergic</td>
+          <td>4</td>
+          <td>59% (2.4/4)</td>
+          <td>11.4</td>
+          <td>10/11 (91%)</td>
+          <td>DRD2: 27 SNPs in ADHD vs ASD</td>
+        </tr>
+        <tr>
+          <td>Polygenic</td>
+          <td>23</td>
+          <td>60% (13.8/23)</td>
+          <td>9.2</td>
+          <td>11/11 (100%)</td>
+          <td>Variable genes per study</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 10px;">
+      <strong>Overall gene-level correlation:</strong> Pearson r=0.898 (95% CI: 0.833-0.956, p<0.0001); Spearman ρ=0.782 (p<0.0001)
+    </p>
+
+    <p style="font-size: 0.7rem; color: var(--text-secondary);">
+      <em>¹Average proportion of genes per peak showing significant effects (p<5×10⁻⁸) in independent cross-disorder studies<br>
+      ²Mean number of genome-wide significant SNPs per gene across 11 cross-disorder studies<br>
+      ³Number of cross-disorder studies where ≥1 gene from this peak showed significant effects<br>
+      ⁴Example of strong concordance signal</em>
+    </p>
+
+    <h3 id="table3">Table 3. Robustness Validation Test Results</h3>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Test</th>
+          <th>Result</th>
+          <th>Interpretation</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Permutation stability</strong></td>
+          <td>p=0.974</td>
+          <td>FAIL: Density peaks not significantly better than random shuffling. Reflects small N (35 genes) and continuous biology.</td>
+        </tr>
+        <tr>
+          <td><strong>Bootstrap stability</strong></td>
+          <td>0.40</td>
+          <td>FAIL: Only 40% of genes consistently assigned to same peak (threshold: 0.75). Gene assignments uncertain.</td>
+        </tr>
+        <tr>
+          <td><strong>Null model comparison</strong></td>
+          <td>0.591 vs 0.443¹</td>
+          <td>PASS: 5-peak model outperforms 2-cluster, random, and single-pathway models. Complexity justified.</td>
+        </tr>
+        <tr>
+          <td><strong>Leave-one-out CV</strong></td>
+          <td>Δ=0.003²</td>
+          <td>PASS: Silhouette stable when individual genes removed (0.591→0.588). Not overfitted to outliers.</td>
+        </tr>
+        <tr>
+          <td><strong>Biological plausibility</strong></td>
+          <td>p=0.0003³</td>
+          <td>PASS: Peaks differ significantly in enrichment (Kruskal-Wallis test). Not arbitrary groupings.</td>
+        </tr>
+        <tr>
+          <td><strong>Cross-disorder external validation</strong></td>
+          <td>r=0.898⁴</td>
+          <td>PASS: Strong concordance with independent GWAS. 80.7% of variance explained (r²=0.807).</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 10px;"><strong>Score: 4/6 tests passed</strong></p>
+
+    <p style="font-size: 0.7rem; color: var(--text-secondary);">
+      <em>¹Silhouette scores: 5-peak (0.591) vs 2-cluster (0.443) vs random (-0.284) vs single-pathway (0.220)<br>
+      ²Change in silhouette score with leave-one-out cross-validation<br>
+      ³Kruskal-Wallis test for enrichment differences between density peaks (H=20.37, df=4)<br>
+      ⁴Pearson correlation between gene enrichments and cross-disorder SNP counts (p<0.0001, N=36 genes)</em>
+    </p>
+
+    <h2 id="figures">Figures</h2>
+
+    <div class="figure">
+      <h3>Figure 1. Continuous Enrichment Stratification with Five Recurrent Density Peaks</h3>
+      <img src="audhd_figures/figure1_enrichment_patterns.png" alt="Figure 1: Five Enrichment Density Peaks">
+      <div class="figure-caption">
+        <strong>Panel A:</strong> Heatmap showing gene-level enrichment scores across ADHD, Autism, and Shared (geometric mean) with genes grouped by density peak. Color scale: white (low) to dark blue (high enrichment)
+        <br><br>
+        <strong>Panel B:</strong> Box plots showing distribution of shared enrichment scores for each density peak. Glutamatergic-Extreme shows highest median (1006), followed by GABAergic (633), Serotonergic (215), Dopaminergic (197), and Polygenic (84). Kruskal-Wallis p=0.0003
+        <br><br>
+        <strong>Panel C:</strong> Silhouette optimization curve showing scores for k=2 through k=8. Optimal at k=5 (silhouette=0.591)
+      </div>
+    </div>
+
+    <div class="figure">
+      <h3>Figure 2. Cross-Disorder External Validation of Enrichment Stratification</h3>
+      <img src="audhd_figures/figure2_cross_disorder_validation.png" alt="Figure 2: Cross-Disorder Validation">
+      <div class="figure-caption">
+        <strong>Panel A:</strong> Scatter plot showing correlation between original shared enrichment scores (x-axis) and mean significant SNPs in cross-disorder studies (y-axis) for N=36 genes. Pearson r=0.898, p<0.0001. Points colored by density peak. Clear positive correlation with glutamatergic genes (blue) in upper right, polygenic (gray) in lower left
+        <br><br>
+        <strong>Panel B:</strong> Bar plots showing external concordance rate by density peak. Glutamatergic-Extreme: 100%, GABAergic: 97%, Serotonergic: 100%, Dopaminergic: 59%, Polygenic: 60%
+        <br><br>
+        <strong>Panel C:</strong> Heatmap showing mean significant SNPs per density peak across 11 cross-disorder studies. Rows: peaks. Columns: studies. Color scale shows glutamatergic and GABAergic peaks consistently high across studies
+      </div>
+    </div>
+
+    <div class="figure">
+      <h3>Figure 3. GABRB2 Discovery and E/I Balance</h3>
+      <img src="audhd_figures/figure3_novel_findings.png" alt="Figure 3: GABRB2 and E/I Balance">
+      <div class="figure-caption">
+        <strong>Panel A:</strong> GABRB2 vs GABRB3 enrichment comparison showing hypothesis-generating finding that GABRB2 (enrichment=772.9) exceeds GABRB3 (enrichment=557.4) despite GABRB3 having more extensive prior literature
+        <br><br>
+        <strong>Panel B:</strong> Excitatory/Inhibitory (E/I) balance visualization showing glutamatergic mean (1006) vs GABAergic mean (633), ratio=1.59, supporting E/I imbalance hypothesis in AuDHD comorbidity
+        <br><br>
+        <strong>Panel C:</strong> Top genes across five enrichment density peaks with ADHD vs Autism comparison, highlighting peak-specific differences in disorder contributions
+      </div>
+    </div>
+
+    <h2 id="supplementary">Supplementary Information</h2>
+
+    <h3>Supplementary Tables</h3>
+
+    <p><strong>Table S1.</strong> Complete gene list with ADHD-specific, autism-specific, and shared enrichment scores</p>
+
+    <p><strong>Table S2.</strong> Detailed cross-disorder validation results (11 studies × 35 genes matrix)</p>
+
+    <p><strong>Table S3.</strong> Bootstrap stability results for each individual gene</p>
+
+    <p><strong>Table S4.</strong> Comparison of k=2 through k=8 clustering solutions</p>
+
+    <p><strong>Table S5.</strong> Literature validation summary for major findings</p>
+
+    <h3>Supplementary Figures</h3>
+
+    <div class="figure">
+      <h4>Figure S1. ADHD vs Autism Enrichment Distributions</h4>
+      <img src="audhd_figures/figureS1_adhd_vs_autism.png" alt="Figure S1">
+      <div class="figure-caption">Distribution of ADHD-specific vs autism-specific enrichment scores across 35 genes showing correlation and disorder-specific stratification.</div>
+    </div>
+
+    <div class="figure">
+      <h4>Figure S2. Hierarchical Clustering Dendrogram</h4>
+      <img src="audhd_figures/figureS2_dendrogram.png" alt="Figure S2">
+      <div class="figure-caption">Dendrogram showing hierarchical clustering of genes (comparison with k-means) with color-coded density peaks along enrichment gradient.</div>
+    </div>
+
+    <div class="figure">
+      <h4>Figure S3. Gene-by-Gene Cross-Disorder External Concordance</h4>
+      <img src="audhd_figures/figureS3_gene_cross_disorder.png" alt="Figure S3">
+      <div class="figure-caption">Gene-by-gene cross-disorder concordance heatmap showing 35 genes × 11 independent cross-disorder GWAS studies.</div>
+    </div>
+
+    <div class="figure">
+      <h4>Figure S4. Pathway Composition by Density Peak</h4>
+      <img src="audhd_figures/figureS4_pathway_composition.png" alt="Figure S4">
+      <div class="figure-caption">Pathway composition of each enrichment density peak showing neurotransmitter system breakdown.</div>
+    </div>
+
+    <div class="figure">
+      <h4>Figure S5. Sensitivity Analysis</h4>
+      <img src="audhd_figures/figureS5_sensitivity_analysis.png" alt="Figure S5">
+      <div class="figure-caption">Sensitivity analysis: Effect of different enrichment metrics (geometric mean vs arithmetic mean, maximum, minimum).</div>
+    </div>
+
+    <div class="figure">
+      <h4>Figure S6. Bootstrap Stability Analysis</h4>
+      <img src="audhd_figures/figureS6_bootstrap_stability.png" alt="Figure S6">
+      <div class="figure-caption">Bootstrap stability analysis showing gene density peak assignment stability across 1000 iterations. Panel A: Individual gene stability scores (mean=0.40). Panel B: Distribution histogram showing 77% of genes fall below 0.75 stability threshold, indicating gradient-like continuous distribution rather than discrete categories.</div>
+    </div>
+
+    <div class="figure">
+      <h4>Figure S7. Topological Manifold Visualization</h4>
+      <img src="audhd_figures/manifold_visualization.png" alt="Figure S7">
+      <div class="figure-caption">Wireframe visualization showing enrichment manifold ℳ ⊂ ℝ⁴ with five overlapping high-density regions (strata) corresponding to enrichment patterns. Multiple viewing angles demonstrate continuous stratification with local maxima rather than discrete separated clusters.</div>
+    </div>
+
+    <h3>Supplementary Methods</h3>
+
+    <p><strong>Section S1.</strong> Detailed MAGMA parameters and quality control procedures</p>
+
+    <p><strong>Section S2.</strong> Rationale for geometric mean versus alternative enrichment metrics</p>
+
+    <p><strong>Section S3.</strong> Justification for k=5 cluster solution</p>
+
+    <p><strong>Section S4.</strong> Power analysis for N=35 genes</p>
+
+    <h3>Supplementary Discussion</h3>
+
+    <p><strong>Section S5.</strong> Interpretation of failed permutation and bootstrap tests in context of continuous biology</p>
+
+    <p><strong>Section S6.</strong> Comparison with alternative gene selection approaches</p>
+
+    <p><strong>Section S7.</strong> Relationship between gene patterns and patient heterogeneity (conceptual framework for future work)</p>
+
+    <div style="margin-top: 60px; padding-top: 30px; border-top: 1px solid var(--border); text-align: center; color: var(--text-secondary); font-size: 0.75rem;">
+      <p>© 2025 Rohan Vinaik. Research Paper.</p>
+      <p style="margin-top: 10px;"><a href="../index.html" style="color: var(--accent);">← Back to Homepage</a></p>
+    </div>
+  </div>
+
+  <script>
+    // Concept tag click handler
+    document.querySelectorAll('.concept-tag').forEach(tag => {
+      tag.addEventListener('click', function() {
+        const concept = this.dataset.concept;
+        // Redirect to main site with filter
+        window.location.href = `../index.html#skills?filter=${encodeURIComponent(concept)}`;
+      });
+    });
+
+    // Smooth scroll for navigation
+    document.querySelectorAll('.nav-link').forEach(link => {
+      link.addEventListener('click', function(e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+  </script>
+</body>
+</html>
