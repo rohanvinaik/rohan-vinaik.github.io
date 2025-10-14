@@ -1122,6 +1122,231 @@ h1.section-title {
 }
 
 /* ============================================
+   SKILLS SECTION
+   ============================================ */
+
+.skills-container {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--grid-unit) * 5);
+}
+
+.skill-category {
+  border: 1px solid var(--border-color);
+  padding: calc(var(--grid-unit) * 2.5);
+}
+
+.category-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  margin-bottom: calc(var(--grid-unit) * 2.5);
+  color: var(--accent);
+  letter-spacing: 0.05em;
+}
+
+.skill-bar {
+  display: grid;
+  grid-template-columns: 100px 1fr 60px;
+  align-items: center;
+  gap: calc(var(--grid-unit) * 2);
+  margin-bottom: calc(var(--grid-unit) * 2);
+  font-size: 0.8rem;
+}
+
+.skill-bar:last-child {
+  margin-bottom: 0;
+}
+
+.skill-name {
+  color: var(--text-secondary);
+}
+
+.bar-container {
+  height: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--border-color);
+  position: relative;
+  overflow: hidden;
+}
+
+.bar-fill {
+  height: 100%;
+  background: var(--accent);
+  transition: width 0.3s ease;
+}
+
+.skill-percent {
+  color: var(--text-primary);
+  text-align: right;
+  font-size: 0.75rem;
+}
+
+.skill-chip {
+  display: inline-block;
+  padding: calc(var(--grid-unit) * 1.2) calc(var(--grid-unit) * 2);
+  border: 1px solid var(--border-color);
+  margin: calc(var(--grid-unit) * 0.5);
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  transition: all 0.1s ease;
+}
+
+.skill-chip:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: rgba(0, 255, 0, 0.05);
+}
+
+.tool-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: calc(var(--grid-unit) * 1.2);
+}
+
+.tool-tag {
+  padding: calc(var(--grid-unit) * 1) calc(var(--grid-unit) * 2);
+  border: 1px solid var(--border-color);
+  font-size: 0.7rem;
+  color: var(--text-primary);
+  background: rgba(0, 255, 0, 0.05);
+  transition: all 0.1s ease;
+}
+
+.tool-tag:hover {
+  border-color: var(--accent);
+  background: rgba(0, 255, 0, 0.1);
+}
+
+/* ============================================
+   TIMELINE SECTION
+   ============================================ */
+
+.timeline-container {
+  border: 1px solid var(--border-color);
+  padding: calc(var(--grid-unit) * 2.5);
+}
+
+.timeline-item {
+  display: grid;
+  grid-template-columns: 100px 1fr auto;
+  gap: calc(var(--grid-unit) * 2);
+  padding: calc(var(--grid-unit) * 1.2) 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  font-size: 0.8rem;
+}
+
+.timeline-item:last-child {
+  border-bottom: none;
+}
+
+.timeline-date {
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+}
+
+.timeline-event {
+  color: var(--text-primary);
+}
+
+.timeline-tag {
+  color: var(--accent);
+  font-size: 0.7rem;
+  white-space: nowrap;
+}
+
+.progress-item {
+  display: grid;
+  grid-template-columns: 150px 1fr 50px;
+  gap: calc(var(--grid-unit) * 2);
+  margin-top: calc(var(--grid-unit) * 1.2);
+  font-size: 0.75rem;
+}
+
+.progress-name {
+  color: var(--text-secondary);
+}
+
+.progress-bar {
+  color: var(--accent);
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: -1px;
+}
+
+.progress-percent {
+  color: var(--text-primary);
+  text-align: right;
+}
+
+/* ============================================
+   TOOLS SECTION
+   ============================================ */
+
+.tools-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: calc(var(--grid-unit) * 2);
+}
+
+.tool-box {
+  border: 1px solid var(--border-color);
+  padding: calc(var(--grid-unit) * 2);
+  background: var(--bg-primary);
+  transition: all 0.15s ease;
+}
+
+.tool-box:hover {
+  border-color: var(--accent);
+  background: rgba(0, 255, 0, 0.02);
+}
+
+.tool-header {
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  margin-bottom: calc(var(--grid-unit) * 1.5);
+  color: var(--accent);
+}
+
+.tool-desc {
+  font-size: 0.7rem;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  margin-bottom: calc(var(--grid-unit) * 1.5);
+}
+
+.tool-meta {
+  display: flex;
+  gap: calc(var(--grid-unit) * 1.5);
+  margin-bottom: calc(var(--grid-unit) * 1.5);
+}
+
+.tool-lang {
+  font-size: 0.65rem;
+  color: var(--text-secondary);
+  border: 1px solid var(--border-color);
+  padding: calc(var(--grid-unit) * 0.5) calc(var(--grid-unit) * 1);
+}
+
+.tool-status {
+  font-size: 0.65rem;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  padding: calc(var(--grid-unit) * 0.5) calc(var(--grid-unit) * 1);
+  background: rgba(0, 255, 0, 0.05);
+}
+
+.tool-link {
+  color: var(--accent);
+  text-decoration: none;
+  font-size: 0.7rem;
+  transition: all 0.1s ease;
+}
+
+.tool-link:hover {
+  color: var(--text-primary);
+}
+
+/* ============================================
    ACHIEVEMENT POPUP SYSTEM
    ============================================ */
 
