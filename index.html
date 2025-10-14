@@ -959,6 +959,15 @@
   <!-- Physics Trophy -->
   <div id="physics-trophy" class="physics-trophy" style="display:none;">🏆</div>
 
+  <!-- Terminal Command Bar -->
+  <div class="terminal-bar" id="terminal-bar">
+    <div class="terminal-output" id="terminal-output"></div>
+    <div class="terminal-input-wrapper">
+      <span class="terminal-prompt">rohan@terminal:~/<span id="terminal-path">home</span>$</span>
+      <input type="text" class="terminal-input" id="terminal-input" placeholder="Type 'help' for commands..." autocomplete="off" />
+    </div>
+  </div>
+
   <!-- Scripts -->
   <script src="terminal.js"></script>
   <script src="achievements.js"></script>
@@ -969,5 +978,6 @@
   <script src="meta-detection.js"></script>
   <script src="skill-project-map.js"></script>
   <script src="filter-system.js"></script>
+  <script src="terminal-bar.js"></script>
 </body>
 </html>
