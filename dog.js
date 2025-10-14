@@ -1,41 +1,19 @@
 // ============================================
-// ASCII DOG COMPANION
+// SPRITE DOG COMPANION
 // ============================================
 
 (function() {
   'use strict';
 
   // ============================================
-  // DOG STATES
+  // DOG STATES (EMOJI SPRITES)
   // ============================================
   const dogStates = {
-    standing: `     /\\_/\\
-    ( o.o )
-     > ^ <
-    /|   |\\
-   (_|   |_)`,
-
-    sitting: `     /\\_/\\
-    ( o.o )
-     > ^ <
-    /     \\
-   (       )`,
-
-    sleeping: `     /\\_/\\
-    ( -.- )
-     > ^ <   ZZZ`,
-
-    barking: `     /\\_/\\
-    ( O.O )
-     > ^ <   WOOF!
-    /|   |\\
-   (_|   |_)`,
-
-    happy: `     /\\_/\\
-    ( ^.^ )
-     > ^ <   ♥
-    /|   |\\
-   (_|   |_)`
+    standing: { emoji: '🐕', speech: null },
+    sitting: { emoji: '🐕', speech: null },
+    sleeping: { emoji: '😴', speech: 'ZZZ' },
+    barking: { emoji: '🐕', speech: 'WOOF!' },
+    happy: { emoji: '🐶', speech: '♥' }
   };
 
   // ============================================
@@ -43,6 +21,8 @@
   // ============================================
   let dog = {
     element: null,
+    spriteEl: null,
+    speechEl: null,
     enabled: false,
     currentState: 'standing',
     targetX: window.innerWidth / 2,
@@ -53,20 +33,14 @@
   };
 
   // ============================================
-  // CREATE DOG ELEMENT
+  // GET DOG ELEMENTS
   // ============================================
-  function createDog() {
-    const dogEl = document.createElement('div');
-    dogEl.id = 'ascii-dog';
-    dogEl.className = 'ascii-dog';
-    dogEl.innerHTML = `<pre>${dogStates.standing}</pre>`;
-    document.body.appendChild(dogEl);
-    dog.element = dogEl;
-
-    // Click handler for petting
-    dogEl.addEventListener('click', petDog);
-
-    return dogEl;
+  function getDogElements() {
+    dog.element = document.getElementById('ascii-dog');
+    if (dog.element) {
+      dog.spriteEl = dog.element.querySelector('.dog-sprite');
+      dog.speechEl = dog.element.querySelector('.dog-speech');
+    }
   }
 
   // ============================================
@@ -77,11 +51,17 @@
 
     dog.enabled = true;
 
+    getDogElements();
+
     if (!dog.element) {
-      createDog();
+      console.error('Dog element not found in DOM');
+      return;
     }
 
-    dog.element.style.display = 'block';
+    dog.element.style.display = 'flex';
+
+    // Click handler for petting
+    dog.element.addEventListener('click', petDog);
 
     // Start tracking mouse
     document.addEventListener('mousemove', onMouseMove);
@@ -103,6 +83,7 @@
 
     if (dog.element) {
       dog.element.style.display = 'none';
+      dog.element.removeEventListener('click', petDog);
     }
 
     document.removeEventListener('mousemove', onMouseMove);
@@ -138,7 +119,7 @@
       const ease = 0.1;
       dog.currentX += (dog.targetX - dog.currentX) * ease;
 
-      // Keep dog on screen (accounting for width ~60px)
+      // Keep dog on screen (accounting for sprite width)
       const dogWidth = 60;
       const minX = dogWidth / 2;
       const maxX = window.innerWidth - dogWidth / 2;
@@ -146,7 +127,8 @@
 
       // Update position
       if (dog.element) {
-        dog.element.style.left = `${dog.currentX - dogWidth / 2}px`;
+        dog.element.style.left = `${dog.currentX}px`;
+        dog.element.style.transform = 'translateX(-50%)';
       }
 
       // Check for sleep (no mouse movement for 60 seconds)
@@ -203,8 +185,31 @@
   // ============================================
   function setState(state) {
     dog.currentState = state;
-    if (dog.element) {
-      dog.element.querySelector('pre').textContent = dogStates[state];
+    const stateData = dogStates[state];
+
+    if (!dog.spriteEl || !dog.speechEl) {
+      getDogElements();
+    }
+
+    if (dog.spriteEl) {
+      dog.spriteEl.textContent = stateData.emoji;
+
+      // Remove any existing animation classes
+      dog.spriteEl.classList.remove('wagging');
+
+      // Add wagging animation for happy state
+      if (state === 'happy') {
+        dog.spriteEl.classList.add('wagging');
+      }
+    }
+
+    if (dog.speechEl) {
+      if (stateData.speech) {
+        dog.speechEl.textContent = stateData.speech;
+        dog.speechEl.classList.add('show');
+      } else {
+        dog.speechEl.classList.remove('show');
+      }
     }
   }
 
