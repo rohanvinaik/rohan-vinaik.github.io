@@ -111,7 +111,7 @@ body {
 .dashboard-container {
   display: flex;
   flex-direction: row;
-  height: calc(100vh - 32px);
+  height: calc(100vh - 32px - 120px);
   width: 100%;
   max-width: 1920px;
   margin: 0 auto;
@@ -1798,6 +1798,10 @@ h1.section-title {
     font-size: 12px;
   }
 
+  .dashboard-container {
+    height: calc(100vh - 32px - 110px);
+  }
+
   .terminal-header {
     flex-direction: column;
     align-items: flex-start;
@@ -1831,6 +1835,10 @@ h1.section-title {
 }
 
 @media (max-width: 480px) {
+  .dashboard-container {
+    height: calc(100vh - 32px - 100px);
+  }
+
   .control-panel {
     flex: 0 0 160px;
     width: 160px;
