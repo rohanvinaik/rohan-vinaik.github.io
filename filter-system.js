@@ -115,18 +115,18 @@
     }
 
     setupSkillTags() {
-      // Find all skill tags in the skills section
+      // Find all skill/interest tags in the skills section
       const skillElements = document.querySelectorAll('.tool-tag, .skill-name');
 
       skillElements.forEach(el => {
         const skillName = el.textContent.trim();
 
-        // Check if this skill is in our mapping
+        // Check if this skill/interest is in our mapping
         if (window.SkillProjectMap.skillProjectMap[skillName]) {
           // Make it clickable
           el.classList.add('skill-clickable');
           el.setAttribute('data-skill', skillName);
-          el.setAttribute('title', 'Click to filter projects using this skill');
+          el.setAttribute('title', 'Click to filter projects using this skill/interest');
 
           // Add project count badge
           const count = window.SkillProjectMap.getProjectCountForSkill(skillName);
@@ -148,7 +148,7 @@
         }
       });
 
-      console.log('[FilterSystem] Made', this.skillTags.length, 'skills clickable');
+      console.log('[FilterSystem] Made', this.skillTags.length, 'skills/interests clickable');
     }
 
     setupProjectTags() {

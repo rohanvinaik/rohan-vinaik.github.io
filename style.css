@@ -2340,3 +2340,34 @@ h1.section-title {
   opacity: 0.5;
   font-family: var(--font-mono);
 }
+
+/* ============================================
+   FEATURED PROJECT STYLING
+   ============================================ */
+
+.featured-project {
+  border: 2px solid var(--accent);
+  background: rgba(0, 255, 0, 0.03);
+  position: relative;
+}
+
+.featured-project::before {
+  content: '★ FEATURED';
+  position: absolute;
+  top: -1px;
+  right: -1px;
+  background: var(--accent);
+  color: #000000;
+  font-size: 0.6rem;
+  font-weight: 700;
+  padding: 4px 8px;
+  letter-spacing: 0.05em;
+}
+
+.featured-project .item-title {
+  color: var(--accent);
+}
+
+.featured-project:hover {
+  box-shadow: 0 0 0 2px var(--accent), 0 0 20px rgba(0, 255, 0, 0.2);
+}

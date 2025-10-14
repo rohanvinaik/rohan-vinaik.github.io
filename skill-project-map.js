@@ -10,6 +10,75 @@
   // Each skill maps to array of project tags that use it
   const skillProjectMap = {
     // ==========================================
+    // SYSTEMS ARCHITECTURE & FORMAL METHODS
+    // ==========================================
+    'Constraint Systems': [
+      'THEORY',          // CONSTRAINT_THEORY - core focus
+      'SYSTEMS',         // CONSTRAINT_THEORY
+      'EMERGENCE',       // CONSTRAINT_THEORY
+      'AI-SECURITY',     // BEHAVIORAL_HOLOGRAPHY - constraint-based approach
+      'GENOMICS'         // GENOMEVAULT - constraint-based design
+    ],
+
+    'Formal Verification': [
+      'AI-SECURITY',     // BEHAVIORAL_HOLOGRAPHY - verification framework
+      'VERIFICATION',    // BEHAVIORAL_HOLOGRAPHY
+      'STATISTICS',      // BEHAVIORAL_HOLOGRAPHY - statistical verification
+      'CRYPTOGRAPHY'     // GENOMEVAULT - formal proofs
+    ],
+
+    'Statistical Testing': [
+      'AI-SECURITY',     // BEHAVIORAL_HOLOGRAPHY - statistical testing
+      'VERIFICATION',    // BEHAVIORAL_HOLOGRAPHY
+      'STATISTICS',      // Statistical methods
+      'VALIDATION'       // Testing methodologies
+    ],
+
+    'Distributed Systems': [
+      'DISTRIBUTED',     // FDSC - primary focus
+      'PDE-SOLVERS',     // FDSC - distributed solving
+      'SIMULATION'       // FDSC - distributed simulation
+    ],
+
+    'Cryptographic Protocols': [
+      'CRYPTOGRAPHY',    // GENOMEVAULT - primary focus
+      'GENOMICS',        // GENOMEVAULT
+      'COMPRESSION'      // GENOMEVAULT - cryptographic compression
+    ],
+
+    'Hyperdimensional Computing': [
+      'COMPRESSION',     // GENOMEVAULT - HDC compression
+      'CRYPTOGRAPHY',    // GENOMEVAULT - HDC security
+      'THEORY',          // Theoretical HDC
+      'GENOMICS'         // GENOMEVAULT - genomic HDC
+    ],
+
+    'Information Theory': [
+      'THEORY',          // Theoretical foundations
+      'COMPRESSION',     // GENOMEVAULT
+      'CRYPTOGRAPHY',    // GENOMEVAULT
+      'WETWARE'          // BIOCOMPUTING - biological information
+    ],
+
+    'Network Analysis': [
+      'SYSTEMS',         // CONSTRAINT_THEORY
+      'THEORY',          // Network theory
+      'DISTRIBUTED'      // FDSC - network systems
+    ],
+
+    'Confidence Sequences': [
+      'AI-SECURITY',     // BEHAVIORAL_HOLOGRAPHY - anytime confidence
+      'VERIFICATION',    // BEHAVIORAL_HOLOGRAPHY
+      'STATISTICS'       // Statistical sequences
+    ],
+
+    'Topology & Sheaf Theory': [
+      'THEORY',          // CONSTRAINT_THEORY - topological foundations
+      'SYSTEMS',         // CONSTRAINT_THEORY
+      'EMERGENCE'        // Topological emergence
+    ],
+
+    // ==========================================
     // MATHEMATICAL FOUNDATIONS
     // ==========================================
     'Differential Equations': [
@@ -219,22 +288,45 @@
     ],
 
     // ==========================================
-    // CRYPTOGRAPHY & SECURITY (for GENOMEVAULT)
+    // DOMAIN EXPERTISE
     // ==========================================
-    'Cryptography': [
-      'CRYPTOGRAPHY',    // GENOMEVAULT - core focus
-      'GENOMICS'         // GENOMEVAULT - genomic security
+    'AI Security & Verification': [
+      'AI-SECURITY',     // BEHAVIORAL_HOLOGRAPHY - primary domain
+      'VERIFICATION',    // BEHAVIORAL_HOLOGRAPHY
+      'STATISTICS'       // Statistical verification
     ],
 
-    'Privacy-Preserving Computation': [
+    'Genomics & Bioinformatics': [
+      'GENOMICS',        // GENOMEVAULT - primary domain
       'CRYPTOGRAPHY',    // GENOMEVAULT
-      'GENOMICS'         // GENOMEVAULT
+      'COMPRESSION',     // GENOMEVAULT
+      'CELL-BIOLOGY'     // KIMAIYA - genomic analysis
     ],
 
-    'HDC': [
-      'COMPRESSION',     // GENOMEVAULT - HDC compression
-      'CRYPTOGRAPHY',    // GENOMEVAULT - HDC security
-      'THEORY'           // Hyperdimensional computing theory
+    'Cell Biology & Biophysics': [
+      'CELL-BIOLOGY',    // KIMAIYA - primary domain
+      'MOLECULAR-BIO',   // BIOCOMPUTING
+      'PDE-MODELS',      // KIMAIYA
+      'WETWARE'          // BIOCOMPUTING
+    ],
+
+    'Distributed Computing': [
+      'DISTRIBUTED',     // FDSC - primary domain
+      'PDE-SOLVERS',     // FDSC
+      'SIMULATION'       // FDSC
+    ],
+
+    'Privacy-Preserving Systems': [
+      'CRYPTOGRAPHY',    // GENOMEVAULT - privacy focus
+      'GENOMICS',        // GENOMEVAULT
+      'COMPRESSION'      // GENOMEVAULT
+    ],
+
+    'Scientific Computing': [
+      'PDE-SOLVERS',     // FDSC - scientific computing
+      'SIMULATION',      // FDSC
+      'DISTRIBUTED',     // FDSC
+      'PDE-MODELS'       // KIMAIYA
     ],
 
     // ==========================================
@@ -306,12 +398,12 @@
 
   // Project metadata (maps project names to their tags)
   const projectTags = {
-    'KIMAIYA': ['CELL-BIOLOGY', 'PDE-MODELS', 'AI-CONTROL'],
+    'BEHAVIORAL_HOLOGRAPHY': ['AI-SECURITY', 'VERIFICATION', 'STATISTICS'],
     'GENOMEVAULT': ['GENOMICS', 'CRYPTOGRAPHY', 'COMPRESSION'],
-    'BIOCOMPUTING': ['THEORY', 'MOLECULAR-BIO', 'WETWARE'],
     'FDSC': ['PDE-SOLVERS', 'DISTRIBUTED', 'SIMULATION'],
-    'MODEL_VERIFICATION': ['STATISTICS', 'VALIDATION', 'ML-TOOLS'],
-    'CONSTRAINT_THEORY': ['THEORY', 'EMERGENCE', 'SYSTEMS']
+    'KIMAIYA': ['CELL-BIOLOGY', 'PDE-MODELS', 'AI-CONTROL'],
+    'CONSTRAINT_THEORY': ['THEORY', 'EMERGENCE', 'SYSTEMS'],
+    'BIOCOMPUTING': ['THEORY', 'MOLECULAR-BIO', 'WETWARE']
   };
 
   // Helper function: Get all tags for a skill
