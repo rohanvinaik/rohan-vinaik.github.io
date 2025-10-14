@@ -1,26 +1,28 @@
 // Research project graph data structure
 const GRAPH_DATA = {
   nodes: [
-    // Core Computational Biology Projects
+    // TIER 1: Theoretical Foundation (TOP - most fundamental)
     {
-      id: 'audhd',
-      title: 'AUDHD',
-      subtitle: 'Genetic Architecture Analysis',
-      description: '7 genetic subtypes from 18,381 cases',
-      type: 'biology',
-      status: 'active',
-      tags: ['GENOMICS', 'STATISTICAL-GENETICS', 'CLINICAL'],
-      position: { x: 300, y: 100 }
+      id: 'coec',
+      title: 'CONSTRAINT THEORY',
+      subtitle: 'COEC Framework',
+      description: 'Ontological framework for emergence',
+      type: 'theory',
+      status: 'published',
+      tags: ['ONTOLOGY', 'FRAMEWORK', 'EPISTEMOLOGY'],
+      position: { x: 400, y: 100 }
     },
+
+    // TIER 2: Infrastructure & Technology Platforms
     {
-      id: 'kimaiya',
-      title: 'KIMAIYA',
-      subtitle: 'iPSC Differentiation Platform',
-      description: 'AI-guided stem cell protocols',
-      type: 'biology',
-      status: 'active',
-      tags: ['STEM-CELLS', 'TDA', 'NETWORK-FLOW'],
-      position: { x: 600, y: 100 }
+      id: 'fdsc',
+      title: 'FDSC',
+      subtitle: 'Distributed Computing',
+      description: 'PDE solvers for biological sims',
+      type: 'infrastructure',
+      status: 'development',
+      tags: ['PDE-SOLVERS', 'DISTRIBUTED'],
+      position: { x: 100, y: 300 }
     },
     {
       id: 'genomevault',
@@ -30,7 +32,39 @@ const GRAPH_DATA = {
       type: 'bio-crypto',
       status: 'published',
       tags: ['HDC', 'ZERO-KNOWLEDGE', 'GENOMICS'],
-      position: { x: 450, y: 300 }
+      position: { x: 400, y: 300 }
+    },
+    {
+      id: 'behavioral-holography',
+      title: 'BEHAVIORAL HOLOGRAPHY',
+      subtitle: 'LLM Identity Verification',
+      description: 'Cryptographic behavioral verifier',
+      type: 'ai-security',
+      status: 'published',
+      tags: ['AI-SECURITY', 'VERIFICATION', 'CRYPTOGRAPHY'],
+      position: { x: 700, y: 300 }
+    },
+
+    // TIER 3: Domain Applications
+    {
+      id: 'kimaiya',
+      title: 'KIMAIYA',
+      subtitle: 'iPSC Differentiation Platform',
+      description: 'AI-guided stem cell protocols',
+      type: 'biology',
+      status: 'active',
+      tags: ['STEM-CELLS', 'TDA', 'NETWORK-FLOW'],
+      position: { x: 150, y: 500 }
+    },
+    {
+      id: 'audhd',
+      title: 'AUDHD',
+      subtitle: 'Genetic Architecture Analysis',
+      description: '7 genetic subtypes from 18,381 cases',
+      type: 'biology',
+      status: 'active',
+      tags: ['GENOMICS', 'STATISTICAL-GENETICS', 'CLINICAL'],
+      position: { x: 400, y: 500 }
     },
     {
       id: 'biocomputing',
@@ -40,20 +74,10 @@ const GRAPH_DATA = {
       type: 'biology',
       status: 'research',
       tags: ['HDC', 'WETWARE', 'TDA'],
-      position: { x: 750, y: 300 }
+      position: { x: 650, y: 500 }
     },
 
-    // AI Verification & Security
-    {
-      id: 'behavioral-holography',
-      title: 'BEHAVIORAL HOLOGRAPHY',
-      subtitle: 'LLM Identity Verification',
-      description: 'Cryptographic behavioral verifier',
-      type: 'ai-security',
-      status: 'published',
-      tags: ['AI-SECURITY', 'VERIFICATION', 'CRYPTOGRAPHY'],
-      position: { x: 200, y: 500 }
-    },
+    // TIER 4: Refined Methods & Iterations
     {
       id: 'rev',
       title: 'REV',
@@ -62,7 +86,7 @@ const GRAPH_DATA = {
       type: 'ai-security',
       status: 'active',
       tags: ['AI-SECURITY', 'VERIFICATION'],
-      position: { x: 500, y: 500 }
+      position: { x: 250, y: 700 }
     },
     {
       id: 'hbt',
@@ -72,34 +96,10 @@ const GRAPH_DATA = {
       type: 'ai-security',
       status: 'active',
       tags: ['AI-SECURITY', 'HDC', 'ZERO-KNOWLEDGE'],
-      position: { x: 350, y: 700 }
+      position: { x: 550, y: 700 }
     },
 
-    // Foundational Framework
-    {
-      id: 'coec',
-      title: 'CONSTRAINT THEORY',
-      subtitle: 'COEC Framework',
-      description: 'Ontological framework for emergence',
-      type: 'theory',
-      status: 'published',
-      tags: ['ONTOLOGY', 'FRAMEWORK', 'EPISTEMOLOGY'],
-      position: { x: 100, y: 900 }
-    },
-
-    // Infrastructure
-    {
-      id: 'fdsc',
-      title: 'FDSC',
-      subtitle: 'Distributed Computing',
-      description: 'PDE solvers for biological sims',
-      type: 'infrastructure',
-      status: 'development',
-      tags: ['PDE-SOLVERS', 'DISTRIBUTED'],
-      position: { x: 600, y: 700 }
-    },
-
-    // Applied Tools
+    // TIER 5: Final Applications (BOTTOM - most specific)
     {
       id: 'tailchasing',
       title: 'TAILCHASING',
@@ -108,39 +108,37 @@ const GRAPH_DATA = {
       type: 'tools',
       status: 'active',
       tags: ['CODE-ANALYSIS', 'HDC'],
-      position: { x: 800, y: 500 }
+      position: { x: 400, y: 900 }
     }
   ],
 
   connections: [
-    // Genomics → Privacy
-    { from: 'audhd', to: 'genomevault', label: 'privacy needs', type: 'motivates' },
-    { from: 'kimaiya', to: 'genomevault', label: 'data security', type: 'uses' },
-
-    // HDC shared technology
-    { from: 'genomevault', to: 'biocomputing', label: 'HDC methods', type: 'technology' },
-    { from: 'genomevault', to: 'hbt', label: 'HDC + ZK', type: 'technology' },
-    { from: 'hbt', to: 'tailchasing', label: 'HDC analysis', type: 'technology' },
-
-    // Verification lineage
-    { from: 'behavioral-holography', to: 'rev', label: 'evolved approach', type: 'iteration' },
-    { from: 'behavioral-holography', to: 'hbt', label: 'HDC integration', type: 'iteration' },
-
-    // Computational infrastructure
-    { from: 'kimaiya', to: 'fdsc', label: 'distributed sims', type: 'requires' },
-    { from: 'biocomputing', to: 'fdsc', label: 'large-scale compute', type: 'requires' },
-
-    // Theoretical foundation
-    { from: 'coec', to: 'behavioral-holography', label: 'constraint framework', type: 'informs' },
+    // TIER 1 → TIER 2: Theoretical foundation informs platforms
+    { from: 'coec', to: 'fdsc', label: 'constraint framework', type: 'informs' },
     { from: 'coec', to: 'genomevault', label: 'emergence theory', type: 'informs' },
+    { from: 'coec', to: 'behavioral-holography', label: 'semantic agents', type: 'informs' },
+
+    // TIER 2 → TIER 3: Platforms enable domain applications
+    { from: 'fdsc', to: 'kimaiya', label: 'distributed sims', type: 'technology' },
+    { from: 'fdsc', to: 'biocomputing', label: 'large-scale compute', type: 'technology' },
+    { from: 'genomevault', to: 'audhd', label: 'privacy-preserving', type: 'technology' },
+    { from: 'genomevault', to: 'biocomputing', label: 'HDC methods', type: 'technology' },
+    { from: 'behavioral-holography', to: 'rev', label: 'evolved approach', type: 'iteration' },
+
+    // TIER 2 → TIER 4: Platform technology to refined methods
+    { from: 'genomevault', to: 'hbt', label: 'HDC + ZK', type: 'technology' },
+    { from: 'behavioral-holography', to: 'hbt', label: 'verification core', type: 'iteration' },
+
+    // TIER 3 → TIER 3: Cross-domain technology sharing
+    { from: 'kimaiya', to: 'biocomputing', label: 'TDA methods', type: 'technology' },
+
+    // TIER 3 → TIER 4: Direct application to refinement
     { from: 'coec', to: 'kimaiya', label: 'network dynamics', type: 'informs' },
     { from: 'coec', to: 'biocomputing', label: 'substrate independence', type: 'informs' },
 
-    // Network analysis methods
-    { from: 'kimaiya', to: 'biocomputing', label: 'TDA methods', type: 'technology' },
-
-    // Applied verification
-    { from: 'rev', to: 'tailchasing', label: 'model testing', type: 'application' }
+    // TIER 4 → TIER 5: Refined methods enable final applications
+    { from: 'hbt', to: 'tailchasing', label: 'HDC analysis', type: 'technology' },
+    { from: 'rev', to: 'tailchasing', label: 'behavioral signatures', type: 'technology' }
   ],
 
   domains: [
