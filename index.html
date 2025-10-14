@@ -384,16 +384,28 @@
 
   </div>
 
-  <!-- Footer -->
-  <footer class="terminal-footer">
-    <div class="footer-content">
-      <span>rohanv.me</span>
-      <span class="separator">|</span>
-      <span>© <span id="year"></span> ROHAN VINAIK</span>
-      <span class="separator">|</span>
-      <span class="footer-help">type 'help' for commands</span>
+  <!-- Control Bar -->
+  <div class="control-bar">
+    <div class="control-section control-left">
+      <span class="control-label">[GITHUB]</span>
+      <span class="activity-bar">▓▓▓▓▓▓▓▓▓▓▓▓░░░░░░░░</span>
+      <span class="activity-info">247 COMMITS | LAST: 2D AGO</span>
     </div>
-  </footer>
+    <div class="control-section control-center">
+      <!-- Reserved for future features -->
+    </div>
+    <div class="control-section control-right">
+      <button class="control-btn" id="grid-btn" title="Grid View">
+        <span class="btn-icon">▣</span> GRID
+      </button>
+      <button class="control-btn" id="theme-btn" title="Toggle Theme">
+        <span class="btn-icon">◐</span> THEME
+      </button>
+      <button class="control-btn" id="compact-btn" title="Compact View">
+        <span class="btn-icon">=</span> COMPACT
+      </button>
+    </div>
+  </div>
 
   <script src="terminal.js"></script>
 </body>

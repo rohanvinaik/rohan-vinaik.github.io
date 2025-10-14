@@ -44,6 +44,41 @@
   }
 
   // ============================================
+  // THEME TOGGLE
+  // ============================================
+  function initThemeToggle() {
+    const themeBtn = document.getElementById('theme-btn');
+    if (!themeBtn) return;
+
+    // Check for saved theme preference
+    const savedTheme = localStorage.getItem('terminal-theme');
+    if (savedTheme === 'amber') {
+      setTheme('amber');
+      themeBtn.classList.add('active');
+    }
+
+    themeBtn.addEventListener('click', () => {
+      const currentTheme = localStorage.getItem('terminal-theme') || 'green';
+      const newTheme = currentTheme === 'green' ? 'amber' : 'green';
+      setTheme(newTheme);
+      themeBtn.classList.toggle('active');
+    });
+  }
+
+  function setTheme(theme) {
+    const root = document.documentElement;
+    if (theme === 'amber') {
+      root.style.setProperty('--accent', '#ffb000');
+      root.style.setProperty('--accent-dim', '#cc8800');
+      localStorage.setItem('terminal-theme', 'amber');
+    } else {
+      root.style.setProperty('--accent', '#00ff00');
+      root.style.setProperty('--accent-dim', '#00aa00');
+      localStorage.setItem('terminal-theme', 'green');
+    }
+  }
+
+  // ============================================
   // SECTION NAVIGATION
   // ============================================
   function switchSection(sectionName) {
@@ -104,6 +139,9 @@
     // Update deploy time
     updateDeployTime();
 
+    // Initialize theme toggle
+    initThemeToggle();
+
     // Navigation links
     const navLinks = document.querySelectorAll('.nav-link, .terminal-link');
     navLinks.forEach(link => {
@@ -132,27 +170,6 @@
     } else {
       switchSection('home');
     }
-
-    // Add hover effect for nav links (cursor simulation)
-    const allNavLinks = document.querySelectorAll('.nav-link');
-    allNavLinks.forEach(link => {
-      link.addEventListener('mouseenter', () => {
-        const text = link.textContent.trim();
-        if (!link.classList.contains('active')) {
-          link.innerHTML = `<span class="nav-prefix">▸</span> ${text}_`;
-        }
-      });
-
-      link.addEventListener('mouseleave', () => {
-        const text = link.textContent.trim().replace('_', '');
-        const prefix = link.querySelector('.nav-prefix');
-        if (prefix) {
-          link.innerHTML = '';
-          link.appendChild(prefix);
-          link.appendChild(document.createTextNode(` ${text}`));
-        }
-      });
-    });
 
     // ============================================
     // EASTER EGG: KONAMI CODE
@@ -242,17 +259,6 @@
     console.log('%cgenomics, hyperdimensional computing, biocomputation.', 'color: #808080; font-family: monospace;');
     console.log('');
     console.log('%c> Clean theory. Practical builds.', 'color: #00ff00; font-family: monospace;');
-  }
-
-  // ============================================
-  // LOADING INDICATOR BLINK
-  // ============================================
-  function handleLoadingIndicator() {
-    const loadingEl = document.getElementById('loading');
-    if (loadingEl) {
-      // The blink is handled by CSS animation
-      // This is just a placeholder for future enhancements
-    }
   }
 
   // ============================================
