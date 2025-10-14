@@ -480,12 +480,37 @@ class ResearchGraph {
 
   handleWheel(e) {
     e.preventDefault();
-    const delta = e.deltaY;
 
-    if (delta < 0) {
-      this.zoomIn();
+    // Check if this is a pinch gesture (Ctrl+wheel or pinch on trackpad)
+    if (e.ctrlKey || e.metaKey) {
+      // Pinch-to-zoom
+      const delta = e.deltaY;
+      const zoomFactor = delta > 0 ? 0.95 : 1.05;
+      const newScale = Math.min(Math.max(this.scale * zoomFactor, 0.3), 3);
+
+      // Zoom towards cursor position
+      const rect = this.canvas.getBoundingClientRect();
+      const mouseX = e.clientX - rect.left;
+      const mouseY = e.clientY - rect.top;
+
+      // Calculate the point in graph space before zoom
+      const graphX = (mouseX - this.panX) / this.scale;
+      const graphY = (mouseY - this.panY) / this.scale;
+
+      // Update scale
+      this.scale = newScale;
+
+      // Adjust pan to keep the point under cursor
+      this.panX = mouseX - graphX * this.scale;
+      this.panY = mouseY - graphY * this.scale;
+
+      this.applyTransform();
     } else {
-      this.zoomOut();
+      // Two-finger scroll for panning
+      const panSpeed = 1;
+      this.panX -= e.deltaX * panSpeed;
+      this.panY -= e.deltaY * panSpeed;
+      this.applyTransform();
     }
   }
 
