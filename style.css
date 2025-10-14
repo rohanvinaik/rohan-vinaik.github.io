@@ -38,6 +38,7 @@ body {
   height: 100vh;
   display: flex;
   flex-direction: column;
+  position: relative;
 }
 
 /* ============================================
@@ -111,12 +112,12 @@ body {
 .dashboard-container {
   display: flex;
   flex-direction: row;
-  height: calc(100vh - 32px);
+  flex: 1;
   width: 100%;
   max-width: 1920px;
   margin: 0 auto;
   overflow: hidden;
-  padding-bottom: 120px;
+  min-height: 0;
 }
 
 /* ============================================
@@ -1471,19 +1472,16 @@ h1.section-title {
    ============================================ */
 
 .terminal-bar {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
   background: rgba(0, 0, 0, 0.95);
   border-top: 1px solid var(--accent);
   max-height: 0;
   overflow: hidden;
   transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  z-index: 998;
   font-family: 'JetBrains Mono', monospace;
   display: flex;
   flex-direction: column;
+  flex-shrink: 0;
+  width: 100%;
 }
 
 .terminal-bar.visible {
@@ -1638,10 +1636,6 @@ h1.section-title {
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
-  .terminal-bar {
-    bottom: 0;
-  }
-
   .terminal-bar.visible {
     max-height: 110px; /* Compact on mobile */
   }
@@ -1799,11 +1793,6 @@ h1.section-title {
     font-size: 12px;
   }
 
-  .dashboard-container {
-    height: calc(100vh - 32px);
-    padding-bottom: 110px;
-  }
-
   .terminal-header {
     flex-direction: column;
     align-items: flex-start;
@@ -1837,11 +1826,6 @@ h1.section-title {
 }
 
 @media (max-width: 480px) {
-  .dashboard-container {
-    height: calc(100vh - 32px);
-    padding-bottom: 100px;
-  }
-
   .control-panel {
     flex: 0 0 160px;
     width: 160px;
