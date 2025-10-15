@@ -345,6 +345,10 @@
   let speechBubbleFadeTimeout = null;
   let speechBubbleRemoveTimeout = null;
 
+  // Thought bubble (for dreaming)
+  let thoughtBubble = null;
+  let thoughtBubbleInterval = null;
+
   // Philosophical quotes organized by tone
   const dogWisdomByCategory = {
     simple: ["BARK!", "Carthage Delenda Est"],
@@ -580,6 +584,66 @@
     }, duration);
   }
 
+  function showThoughtBubble(emoji, duration = 3000) {
+    // Remove existing thought bubble
+    if (thoughtBubble && thoughtBubble.parentNode) {
+      document.body.removeChild(thoughtBubble);
+    }
+    if (thoughtBubbleInterval) {
+      clearInterval(thoughtBubbleInterval);
+    }
+
+    thoughtBubble = document.createElement('div');
+    thoughtBubble.style.cssText = `
+      position: fixed;
+      background: white;
+      color: #222;
+      border: 2px solid #222;
+      padding: 8px 12px;
+      font-size: 24px;
+      border-radius: 50%;
+      z-index: 1000;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 300ms ease-in-out;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    `;
+    thoughtBubble.textContent = emoji;
+
+    document.body.appendChild(thoughtBubble);
+
+    // Position above dog
+    const updatePosition = () => {
+      if (!dog.canvasEl || !thoughtBubble) return;
+      const rect = dog.canvasEl.getBoundingClientRect();
+      thoughtBubble.style.left = (rect.left + rect.width / 2 - 20) + 'px';
+      thoughtBubble.style.top = (rect.top - 60) + 'px';
+    };
+
+    updatePosition();
+    thoughtBubbleInterval = setInterval(updatePosition, 16);
+
+    requestAnimationFrame(() => {
+      if (thoughtBubble) thoughtBubble.style.opacity = '1';
+    });
+
+    setTimeout(() => {
+      if (thoughtBubble) {
+        thoughtBubble.style.opacity = '0';
+        setTimeout(() => {
+          if (thoughtBubble && thoughtBubble.parentNode) {
+            document.body.removeChild(thoughtBubble);
+          }
+          if (thoughtBubbleInterval) {
+            clearInterval(thoughtBubbleInterval);
+            thoughtBubbleInterval = null;
+          }
+          thoughtBubble = null;
+        }, 300);
+      }
+    }, duration);
+  }
+
   // ===========================================
   // GAMEPLAY: BALL THROW, CATCH & TUG-OF-WAR
   // ===========================================
@@ -598,7 +662,18 @@
       this.vy = 0;
       this.gravity = 0.45;
       this.radius = 4;
-      this.state = 'idle'; // 'idle', 'flying', 'grounded', 'caught', 'tug'
+      this.state = 'idle'; // 'idle', 'flying', 'grounded', 'caught', 'tug', 'bezier'
+
+      // Bezier throw state
+      this.bezierStart = null;
+      this.bezierEnd = null;
+      this.bezierControl = null;
+      this.bezierT = 0;
+      this.bezierDuration = 0;
+
+      // Trail effect
+      this.trail = [];
+      this.maxTrailLength = 8;
 
       this.canvas = document.createElement('canvas');
       this.canvas.width = 8;
@@ -622,15 +697,34 @@
     }
 
     throw(startX, startY, targetX, targetY) {
-      const dx = targetX - startX;
-      const dy = targetY - startY;
-      const dist = Math.hypot(dx, dy);
-      const speed = Math.min(dist / 8, 22);
-      this.vx = (dx / dist) * speed;
-      this.vy = (dy / dist) * (speed / 18) - 9;
-      this.x = startX;
-      this.y = startY;
-      this.state = 'flying';
+      // Use Bezier curve for smooth arc
+      this.bezierStart = { x: startX, y: startY };
+      this.bezierEnd = { x: targetX, y: targetY };
+
+      // Control point for arc (apex of throw)
+      const midX = (startX + targetX) / 2;
+      const dist = Math.hypot(targetX - startX, targetY - startY);
+      const arcHeight = Math.min(dist * 0.5, 250); // Arc scales with distance
+      const midY = Math.min(startY, targetY) - arcHeight;
+
+      this.bezierControl = { x: midX, y: midY };
+      this.bezierT = 0;
+      this.bezierDuration = Math.max(0.8, Math.min(dist / 400, 2.0)); // 0.8-2.0 seconds
+
+      this.state = 'bezier';
+      this.trail = [];
+    }
+
+    // Quadratic Bezier interpolation
+    bezierPoint(t) {
+      const t2 = t * t;
+      const mt = 1 - t;
+      const mt2 = mt * mt;
+
+      return {
+        x: mt2 * this.bezierStart.x + 2 * mt * t * this.bezierControl.x + t2 * this.bezierEnd.x,
+        y: mt2 * this.bezierStart.y + 2 * mt * t * this.bezierControl.y + t2 * this.bezierEnd.y
+      };
     }
 
     handleMouseDown(e) {
@@ -694,7 +788,76 @@
     }
 
     update() {
+      // Update trail
+      if (this.state === 'flying' || this.state === 'bezier') {
+        this.trail.push({ x: this.x, y: this.y, alpha: 1.0 });
+        if (this.trail.length > this.maxTrailLength) {
+          this.trail.shift();
+        }
+        // Fade trail
+        this.trail.forEach((t, i) => {
+          t.alpha = (i + 1) / this.trail.length * 0.6;
+        });
+      } else {
+        this.trail = [];
+      }
+
       switch (this.state) {
+        case 'bezier':
+          // Smooth Bezier curve throw
+          this.bezierT += 1/60 / this.bezierDuration;
+
+          if (this.bezierT >= 1.0) {
+            // Bezier complete, transition to physics
+            const pos = this.bezierPoint(1.0);
+            this.x = pos.x;
+            this.y = pos.y;
+            this.state = 'grounded';
+            this.vx = 0;
+            this.vy = 0;
+
+            // Spawn dust on landing
+            spawnDustPuff(this.x, this.y + 12);
+          } else {
+            const pos = this.bezierPoint(easeInOutSine(this.bezierT));
+            this.x = pos.x;
+            this.y = pos.y;
+
+            // Check catch during Bezier flight
+            const mouth = this.getMouthPosition();
+            const dist = Math.hypot(this.x - mouth.x, this.y - mouth.y);
+            if (dist < 35 && this.bezierT > 0.3) { // Catch cone during flight
+              this.state = 'caught';
+              dog.currentBehavior = 'catch';
+              dog.frameCount = 0;
+
+              fetchCount++;
+              localStorage.setItem('dog-fetch-count', fetchCount.toString());
+
+              const catchMessage = `Caught it! (${fetchCount}) - Click to play tug-of-war!`;
+              const catchWordCount = catchMessage.split(/\s+/).length;
+              const catchDuration = Math.max(2000, catchWordCount * 500);
+              showSpeechBubble(catchMessage, catchDuration);
+
+              setTimeout(() => {
+                if (this.state === 'caught') {
+                  dog.currentBehavior = 'excited';
+                  dog.excitedStartFrame = dog.frameCount;
+                  playHappySound();
+
+                  setTimeout(() => {
+                    if (this.state === 'caught') {
+                      dog.currentBehavior = 'idle';
+                      dog.canvasEl.style.bottom = '60px';
+                      this.enableInteraction();
+                    }
+                  }, 1500);
+                }
+              }, catchDuration);
+            }
+          }
+          break;
+
         case 'flying':
           this.vy += this.gravity;
           this.x += this.vx;
@@ -826,6 +989,38 @@
 
       this.canvas.style.left = (this.x - 12) + 'px';
       this.canvas.style.top = (this.y - 12) + 'px';
+
+      // Render trail
+      this.renderTrail();
+    }
+
+    renderTrail() {
+      // Remove old trail elements
+      document.querySelectorAll('.ball-trail').forEach(el => {
+        const age = Date.now() - parseInt(el.dataset.created || 0);
+        if (age > 200) el.remove();
+      });
+
+      // Create new trail elements (only latest few)
+      if (this.trail.length > 2) {
+        const latest = this.trail[this.trail.length - 1];
+        const trail = document.createElement('div');
+        trail.className = 'ball-trail';
+        trail.dataset.created = Date.now().toString();
+        trail.style.cssText = `
+          position: fixed;
+          left: ${latest.x - 3}px;
+          top: ${latest.y - 3}px;
+          width: 6px;
+          height: 6px;
+          background: rgba(255, 170, 68, ${latest.alpha});
+          border-radius: 50%;
+          pointer-events: none;
+          z-index: 498;
+        `;
+        document.body.appendChild(trail);
+        setTimeout(() => trail.remove(), 250);
+      }
     }
 
     getMouthPosition() {
@@ -973,7 +1168,17 @@
 
     // Pounce state
     pounceTarget: null,
-    pounceWindup: 0
+    pounceWindup: 0,
+
+    // Micro-naughtiness state
+    microNaughtyTarget: null,
+    microNaughtyNudges: 0,
+    microNaughtyTimer: null,
+    microNaughtyActive: false,
+
+    // Smear frame state
+    smearFrames: [], // Array of { x, alpha, facingRight }
+    smearActive: false
   };
 
   function createDogCanvas() {
@@ -1086,8 +1291,14 @@
     let bodyIndex = 0;
     let offsetY = 0;
     if (bodyPose === 'walk') {
+      const prevBodyIndex = Math.floor((dog.frameCount - 1) / 8) % 4;
       bodyIndex = Math.floor(dog.frameCount / 8) % 4;
       offsetY = [0, -1, 0, +1][bodyIndex];
+
+      // Footstep sounds on frames 0 and 2 (when feet touch ground)
+      if (bodyIndex !== prevBodyIndex && (bodyIndex === 0 || bodyIndex === 2)) {
+        playFootstepSound();
+      }
     } else if (dog.currentBehavior === 'excited') {
       const hopPhase = Math.floor(dog.frameCount / 4) % 4;
       offsetY = hopPhase === 1 ? -3 : hopPhase === 2 ? -1 : 0;
@@ -1115,6 +1326,32 @@
     // Center in viewport
     const ox = Math.floor((VIEW_W - BODY_W) / 2);
     const oy = Math.floor((VIEW_H - BODY_H) / 2) + offsetY;
+
+    // Draw smear frames first (ghost images behind main dog)
+    if (dog.smearActive && dog.smearFrames.length > 0) {
+      const currentX = dog.x;
+      dog.smearFrames.forEach(smear => {
+        ctx.save();
+        ctx.globalAlpha = smear.alpha;
+
+        // Temporarily adjust position for smear frame
+        const smearOffsetX = smear.x - currentX;
+
+        // Compose smear frame with same pose
+        const smearFrame = composeFrame({
+          facingRight: smear.facingRight,
+          bodyPose,
+          bodyIndex,
+          mouthPose,
+          tailPose,
+          blink
+        });
+
+        // Draw smear at offset position
+        drawMatrix(ctx, smearFrame, ox + Math.round(smearOffsetX), oy);
+        ctx.restore();
+      });
+    }
 
     drawMatrix(ctx, fr, ox, oy);
 
@@ -1204,6 +1441,168 @@
   }
 
   // ===========================================
+  // TIME-BASED REACTIONS
+  // ===========================================
+
+  function getTimeOfDayModifier() {
+    const hour = new Date().getHours();
+
+    if (hour >= 22 || hour < 6) {
+      // Late night / early morning (10pm - 6am) - sleepy
+      return {
+        energyModifier: -20,
+        sleepProbability: 0.6,
+        activityMultiplier: 0.5,
+        mood: 'sleepy'
+      };
+    } else if (hour >= 6 && hour < 9) {
+      // Early morning (6am - 9am) - fresh and energetic
+      return {
+        energyModifier: 10,
+        sleepProbability: 0.1,
+        activityMultiplier: 1.3,
+        mood: 'energetic'
+      };
+    } else if (hour >= 9 && hour < 17) {
+      // Daytime (9am - 5pm) - normal
+      return {
+        energyModifier: 0,
+        sleepProbability: 0.2,
+        activityMultiplier: 1.0,
+        mood: 'normal'
+      };
+    } else if (hour >= 17 && hour < 22) {
+      // Evening (5pm - 10pm) - winding down
+      return {
+        energyModifier: -10,
+        sleepProbability: 0.4,
+        activityMultiplier: 0.8,
+        mood: 'calm'
+      };
+    }
+
+    return {
+      energyModifier: 0,
+      sleepProbability: 0.2,
+      activityMultiplier: 1.0,
+      mood: 'normal'
+    };
+  }
+
+  // ===========================================
+  // MICRO-NAUGHTINESS
+  // ===========================================
+
+  function findNudgeableElement() {
+    // Find nearby interactive elements the dog can nudge for comedy
+    const dogRect = dog.canvasEl.getBoundingClientRect();
+    const dogCenterX = dogRect.left + dogRect.width / 2;
+    const dogCenterY = dogRect.top + dogRect.height / 2;
+
+    // Candidate elements: buttons, links, input fields, etc.
+    const candidates = document.querySelectorAll('button, a, input, .project-item, .list-item, .skill-item, h2, h3');
+
+    let closest = null;
+    let closestDist = Infinity;
+
+    candidates.forEach(el => {
+      // Skip the dog's own elements
+      if (el.id === 'dog-canvas' || el.closest('#dog-canvas') || el.closest('#dog-shadow')) return;
+
+      const rect = el.getBoundingClientRect();
+      const elCenterX = rect.left + rect.width / 2;
+      const elCenterY = rect.top + rect.height / 2;
+
+      const dist = Math.hypot(elCenterX - dogCenterX, elCenterY - dogCenterY);
+
+      // Only consider elements within reasonable range (100-400px)
+      if (dist < 400 && dist > 100 && dist < closestDist) {
+        closestDist = dist;
+        closest = el;
+      }
+    });
+
+    return closest;
+  }
+
+  function playNudgeSound() {
+    const settings = JSON.parse(localStorage.getItem('dashboard-settings') || '{}');
+    if (settings.volume && settings.volume > 0) {
+      try {
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+
+        // Subtle "bump" sound - very quiet
+        oscillator.frequency.value = 150;
+        oscillator.type = 'sine';
+        gainNode.gain.value = settings.volume / 800; // Very low volume
+
+        oscillator.start();
+        setTimeout(() => {
+          oscillator.frequency.value = 100;
+        }, 30);
+        setTimeout(() => oscillator.stop(), 80);
+      } catch (e) {}
+    }
+  }
+
+  function doMicroNudge() {
+    if (dog.microNaughtyActive) return;
+
+    const target = findNudgeableElement();
+    if (!target) return;
+
+    dog.microNaughtyActive = true;
+    dog.microNaughtyTarget = target;
+    dog.microNaughtyNudges = 0;
+
+    // Store original transform (if any)
+    const originalTransform = target.style.transform || '';
+
+    function nudge() {
+      if (dog.microNaughtyNudges >= 3) {
+        // Done! Reset everything
+        setTimeout(() => {
+          target.style.transform = originalTransform;
+          dog.microNaughtyActive = false;
+          dog.microNaughtyTarget = null;
+          dog.microNaughtyNudges = 0;
+        }, 1500); // Hold final position briefly
+        return;
+      }
+
+      // Nudge in a random direction (1px)
+      const dx = Math.random() < 0.5 ? 1 : -1;
+      const dy = Math.random() < 0.5 ? 1 : -1;
+      const currentNudge = dog.microNaughtyNudges;
+
+      target.style.transform = `translate(${dx * currentNudge}px, ${dy * currentNudge}px)`;
+      playNudgeSound();
+
+      dog.microNaughtyNudges++;
+
+      // Face toward the target
+      const dogRect = dog.canvasEl.getBoundingClientRect();
+      const targetRect = target.getBoundingClientRect();
+      const dogCenterX = dogRect.left + dogRect.width / 2;
+      const targetCenterX = targetRect.left + targetRect.width / 2;
+
+      dog.facingRight = targetCenterX > dogCenterX;
+
+      // Stare at it, then nudge again
+      const waitTime = 1200 + Math.random() * 800;
+      dog.microNaughtyTimer = setTimeout(nudge, waitTime);
+    }
+
+    // Start the nudging sequence
+    nudge();
+  }
+
+  // ===========================================
   // MOVEMENT & BEHAVIOR
   // ===========================================
 
@@ -1281,6 +1680,17 @@
       spawnDustPuff(rect.left + rect.width/2, rect.bottom - 5);
       spawnDustPuff(rect.left + rect.width/2 + (Math.random() - 0.5) * 10, rect.bottom - 3);
       dog.squashStretch = 0.85; // Squash on turn
+
+      // Add smear frames for motion blur
+      dog.smearActive = true;
+      dog.smearFrames = [
+        { x: dog.x - currentVelocitySign * 8, alpha: 0.3, facingRight: dog.facingRight },
+        { x: dog.x - currentVelocitySign * 4, alpha: 0.5, facingRight: dog.facingRight }
+      ];
+      setTimeout(() => {
+        dog.smearActive = false;
+        dog.smearFrames = [];
+      }, 150);
     }
 
     // Anticipation before starting to move
@@ -1340,6 +1750,9 @@
     // Get dominant need to bias behavior selection
     const { need, strength } = getDominantNeed();
 
+    // Get time-of-day modifiers
+    const timeModifier = getTimeOfDayModifier();
+
     const behaviors = [
       { action: 'sit', duration: 5000, weight: 3, cooldown: 8000, needBias: { energy: 0, curiosity: -1, affection: 1 } },
       { action: 'lie', duration: 8000, weight: 2, cooldown: 15000, needBias: { energy: 3, curiosity: -1, affection: 0 } },
@@ -1357,11 +1770,23 @@
       return;
     }
 
-    // Apply need-based weight multipliers
+    // Apply need-based weight multipliers and time-of-day adjustments
     const weightedBehaviors = available.map(b => {
       const bias = b.needBias[need] || 0;
-      const multiplier = 1 + (bias * strength / 100); // Scale bias by need strength
-      return { ...b, effectiveWeight: Math.max(0.1, b.weight * multiplier) };
+      const needMultiplier = 1 + (bias * strength / 100); // Scale bias by need strength
+
+      // Apply time-of-day modifiers
+      let timeMultiplier = timeModifier.activityMultiplier;
+      if (b.action === 'lie') {
+        timeMultiplier *= (1 + timeModifier.sleepProbability); // Boost sleep during night
+      } else if (b.action === 'walk' || b.action === 'bark') {
+        // Active behaviors reduced during sleepy times
+        if (timeModifier.mood === 'sleepy') {
+          timeMultiplier *= 0.3;
+        }
+      }
+
+      return { ...b, effectiveWeight: Math.max(0.1, b.weight * needMultiplier * timeMultiplier) };
     });
 
     // Weighted random selection from available behaviors
@@ -1384,6 +1809,8 @@
     switch (action) {
       case 'sit':
         dog.currentBehavior = 'sitting';
+        // Ear flop sound when settling
+        setTimeout(() => playEarFlopSound(), 200);
         dog.behaviorTimer = setTimeout(() => {
           dog.currentBehavior = 'idle';
           scheduleNextBehavior();
@@ -1392,6 +1819,11 @@
 
       case 'lie':
         dog.currentBehavior = 'lying';
+        // Sigh sound when lying down
+        setTimeout(() => {
+          playSighSound();
+          playEarFlopSound();
+        }, 300);
         dog.behaviorTimer = setTimeout(() => {
           dog.currentBehavior = 'idle';
           scheduleNextBehavior();
@@ -1773,6 +2205,29 @@
           executeBehavior('lie', 30000);
         }
 
+        // Dreaming: show thought bubbles while sleeping
+        if (dog.currentBehavior === 'lying' && !thoughtBubble && Math.random() < 0.003) {
+          const dreams = ['🦴', '⚽', '🐿️', '🍖', '🎾', '💭'];
+          showThoughtBubble(dreams[Math.floor(Math.random() * dreams.length)], 2500);
+
+          // Tiny paw twitches during dream
+          if (Math.random() < 0.5) {
+            setTimeout(() => {
+              dog.anticipationOffset = Math.random() * 2 - 1;
+            }, 800);
+          }
+        }
+
+        // Micro-naughtiness: occasionally nudge nearby elements for comedy
+        if (!dog.microNaughtyActive &&
+            !dog.chasingBall &&
+            !dog.isWalking &&
+            dog.currentBehavior !== 'lying' &&
+            dog.currentBehavior !== 'excited' &&
+            Math.random() < 0.0005) { // Very rare (about once every 30 seconds when idle)
+          doMicroNudge();
+        }
+
         accumulator -= FIXED_DT;
       }
 
@@ -1832,6 +2287,87 @@
         setTimeout(() => { oscillator.frequency.value = 500; }, 100);
         setTimeout(() => { oscillator.frequency.value = 600; }, 200);
         setTimeout(() => oscillator.stop(), 300);
+      } catch (e) {}
+    }
+  }
+
+  function playFootstepSound() {
+    const settings = JSON.parse(localStorage.getItem('dashboard-settings') || '{}');
+    if (settings.volume && settings.volume > 0) {
+      try {
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+        const panner = audioContext.createStereoPanner ? audioContext.createStereoPanner() : null;
+
+        oscillator.connect(gainNode);
+
+        // Apply panning based on dog's horizontal position
+        if (panner) {
+          const normalizedX = (dog.x / window.innerWidth) * 2 - 1; // -1 (left) to +1 (right)
+          panner.pan.value = clamp(normalizedX, -1, 1);
+          gainNode.connect(panner);
+          panner.connect(audioContext.destination);
+        } else {
+          gainNode.connect(audioContext.destination);
+        }
+
+        // Subtle "tap" sound - very quiet
+        oscillator.frequency.value = 80 + Math.random() * 20; // Slight variation
+        oscillator.type = 'sine';
+        gainNode.gain.value = settings.volume / 1000; // Very subtle
+
+        oscillator.start();
+        gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.05);
+        setTimeout(() => oscillator.stop(), 60);
+      } catch (e) {}
+    }
+  }
+
+  function playSighSound() {
+    const settings = JSON.parse(localStorage.getItem('dashboard-settings') || '{}');
+    if (settings.volume && settings.volume > 0) {
+      try {
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+
+        // Descending "sigh" sound - like air escaping
+        oscillator.frequency.value = 300;
+        oscillator.type = 'sine';
+        gainNode.gain.value = settings.volume / 600;
+
+        oscillator.start();
+        // Descend in frequency over time for sigh effect
+        oscillator.frequency.exponentialRampToValueAtTime(100, audioContext.currentTime + 0.4);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.4);
+        setTimeout(() => oscillator.stop(), 450);
+      } catch (e) {}
+    }
+  }
+
+  function playEarFlopSound() {
+    const settings = JSON.parse(localStorage.getItem('dashboard-settings') || '{}');
+    if (settings.volume && settings.volume > 0) {
+      try {
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+
+        // Quick "flop" sound
+        oscillator.frequency.value = 200;
+        oscillator.type = 'sine';
+        gainNode.gain.value = settings.volume / 800;
+
+        oscillator.start();
+        gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.08);
+        setTimeout(() => oscillator.stop(), 90);
       } catch (e) {}
     }
   }
@@ -1932,6 +2468,18 @@
     }
 
     clearTimeout(dog.behaviorTimer);
+
+    // Clear micro-naughtiness timer and reset any nudged elements
+    if (dog.microNaughtyTimer) {
+      clearTimeout(dog.microNaughtyTimer);
+      dog.microNaughtyTimer = null;
+    }
+    if (dog.microNaughtyTarget) {
+      dog.microNaughtyTarget.style.transform = '';
+      dog.microNaughtyTarget = null;
+    }
+    dog.microNaughtyActive = false;
+    dog.microNaughtyNudges = 0;
 
     // Teardown naughty mode
     teardownUserActivityTracking();
