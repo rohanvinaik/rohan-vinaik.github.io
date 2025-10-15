@@ -2979,6 +2979,29 @@ h1.section-title {
   color: var(--accent);
 }
 
+/* Paper List Filter States */
+.list-item {
+  transition: opacity 0.3s ease, transform 0.3s ease, border-color 0.3s ease;
+}
+
+.list-item.filtered-out {
+  opacity: 0.3;
+  transform: scale(0.98);
+  pointer-events: none;
+  filter: grayscale(50%);
+}
+
+.list-item.filtered-in {
+  opacity: 1;
+  transform: scale(1);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
+}
+
+.list-item.filtered-in .list-title {
+  color: var(--accent);
+}
+
 /* Skill Category Titles - Make category-level filtering possible in future */
 .category-title {
   user-select: none;

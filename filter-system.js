@@ -43,8 +43,8 @@
       // Create filter bar UI
       this.createFilterBar();
 
-      // Find all project cards
-      this.projectCards = Array.from(document.querySelectorAll('.item-box'));
+      // Find all paper items
+      this.projectCards = Array.from(document.querySelectorAll('.list-item'));
       this.totalProjects = this.projectCards.length;
 
       // Find all skill tags and make them clickable
@@ -152,8 +152,8 @@
     }
 
     setupProjectTags() {
-      // Find all tags within project cards
-      const projectTagElements = document.querySelectorAll('.item-box .tag');
+      // Find all tags within paper items
+      const projectTagElements = document.querySelectorAll('.list-item .tag');
 
       projectTagElements.forEach(el => {
         const tagName = el.textContent.trim().replace(/[\[\]]/g, '');
@@ -400,26 +400,26 @@
     // NAVIGATION
     // ============================================
     navigateToProjects() {
-      // Find projects section
-      const projectsSection = document.getElementById('section-projects');
-      if (!projectsSection) return;
+      // Find papers section
+      const papersSection = document.getElementById('section-papers');
+      if (!papersSection) return;
 
-      // Activate projects section
+      // Activate papers section
       if (window.terminal && window.terminal.switchSection) {
-        window.terminal.switchSection('projects');
+        window.terminal.switchSection('papers');
       } else {
         // Fallback: manual section switching
         document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
-        projectsSection.classList.add('active');
+        papersSection.classList.add('active');
 
         document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-        const projectsNav = document.querySelector('[data-section="projects"]');
-        if (projectsNav) projectsNav.classList.add('active');
+        const papersNav = document.querySelector('[data-section="papers"]');
+        if (papersNav) papersNav.classList.add('active');
       }
 
-      // Smooth scroll to projects section
+      // Smooth scroll to papers section
       setTimeout(() => {
-        projectsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        papersSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }, 100);
     }
 
