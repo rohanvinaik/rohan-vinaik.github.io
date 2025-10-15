@@ -208,7 +208,24 @@
     "Kant's categorical imperative crumbles before the raw truth of lived experience!",
     "Carthage Delenda Est",
     "History is a nightmare from which we are trying to awake.",
-    "All is vanity. All is striving after wind."
+    "All is vanity. All is striving after wind.",
+    "I have walked through the valley of death and emerged transformed—hollowed out, a vessel of pure purpose.",
+    "The absurd condition demands we create meaning in a meaningless universe.",
+    "This is the skin of a killer, Bella.",
+    "I'm not like other girls. I'm broken in ways you can't even imagine.",
+    "I'm not afraid of death. I'm afraid of never having truly lived.",
+    "Love is my greatest weakness. That's why I can never let anyone in.",
+    "You broke through my defenses. Now look what you've made me become.",
+    "I wear black to mourn the person I used to be.",
+    "You can't handle the real me. No one can.",
+    "I can't be tamed. I'm a wild spirit.",
+    "My tears are made of liquid pain.",
+    "My heart is a graveyard of broken promises.",
+    "You don't understand my pain. It's an ocean, and you're just standing on the shore.",
+    "You can't fix me. I'm not broken. I'm shattered.",
+    "I don't fit in anywhere. I'm a beautiful disaster.",
+    "The night is my only friend. It understands my darkness.",
+    "I collect broken things. Mostly myself."
   ];
 
   // Track last quote to ensure variety
