@@ -149,9 +149,203 @@
     return { width: sprite.width, height: sprite.height, pixels: p };
   }
 
-  // ============================================
+  // ===========================================
+  // SPEECH BUBBLE SYSTEM
+  // ===========================================
+
+  let speechBubble = null;
+
+  /**
+   * Creates and displays a speech bubble above the dog
+   * @param {string} text - Text to display in bubble
+   * @param {number} duration - How long to show bubble (ms)
+   */
+  function showSpeechBubble(text, duration = 1500) {
+    // Remove existing bubble if present
+    if (speechBubble) {
+      document.body.removeChild(speechBubble);
+    }
+
+    // Create speech bubble element
+    speechBubble = document.createElement('div');
+    speechBubble.className = 'dog-speech-bubble';
+    speechBubble.textContent = text;
+
+    // Terminal aesthetic styling
+    speechBubble.style.cssText = `
+      position: fixed;
+      background: #0a0a0a;
+      color: #00ff00;
+      border: 2px solid #00ff00;
+      padding: 8px 12px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px;
+      font-weight: bold;
+      border-radius: 4px;
+      z-index: 1000;
+      pointer-events: none;
+      white-space: nowrap;
+      opacity: 0;
+      transition: opacity 300ms ease-in-out;
+    `;
+
+    // Position bubble above dog
+    const dogRect = dog.canvasEl.getBoundingClientRect();
+    let bubbleX = dogRect.left + (dogRect.width / 2);
+    let bubbleY = dogRect.top - 40; // 40px above dog
+
+    document.body.appendChild(speechBubble);
+
+    // Get bubble dimensions for positioning
+    const bubbleRect = speechBubble.getBoundingClientRect();
+    bubbleX -= bubbleRect.width / 2; // Center horizontally
+
+    // Viewport boundary checking
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+
+    // Keep within horizontal bounds
+    if (bubbleX < 10) bubbleX = 10;
+    if (bubbleX + bubbleRect.width > viewportWidth - 10) {
+      bubbleX = viewportWidth - bubbleRect.width - 10;
+    }
+
+    // Keep within vertical bounds
+    if (bubbleY < 10) bubbleY = dogRect.bottom + 10; // Show below if too high
+
+    speechBubble.style.left = bubbleX + 'px';
+    speechBubble.style.top = bubbleY + 'px';
+
+    // Fade in
+    requestAnimationFrame(() => {
+      speechBubble.style.opacity = '1';
+    });
+
+    // Fade out and remove
+    setTimeout(() => {
+      if (speechBubble) {
+        speechBubble.style.opacity = '0';
+        setTimeout(() => {
+          if (speechBubble && speechBubble.parentNode) {
+            document.body.removeChild(speechBubble);
+            speechBubble = null;
+          }
+        }, 300);
+      }
+    }, duration);
+  }
+
+  // ===========================================
+  // BALL THROWING GAME
+  // ===========================================
+
+  let ball = null;
+  let fetchCount = parseInt(localStorage.getItem('dog-fetch-count') || '0');
+
+  /**
+   * Ball object for fetch mini-game
+   * Handles physics, rendering, and collision
+   */
+  class Ball {
+    constructor(x, y, targetX, targetY) {
+      this.x = x;
+      this.y = y;
+
+      // Calculate initial velocity based on distance to dog
+      const dx = targetX - x;
+      const dy = targetY - y;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+
+      this.vx = (dx / distance) * Math.min(distance / 20, 15);
+      this.vy = (dy / distance) * Math.min(distance / 20, 15) - 8; // Arc upward
+
+      this.gravity = 0.4;
+      this.bounced = false;
+      this.radius = 4;
+
+      // Create canvas for ball
+      this.canvas = document.createElement('canvas');
+      this.canvas.width = 8;
+      this.canvas.height = 8;
+      this.canvas.style.cssText = `
+        position: fixed;
+        width: 24px;
+        height: 24px;
+        image-rendering: pixelated;
+        z-index: 499;
+        pointer-events: none;
+      `;
+
+      this.ctx = this.canvas.getContext('2d');
+      this.draw();
+      document.body.appendChild(this.canvas);
+    }
+
+    draw() {
+      this.ctx.clearRect(0, 0, 8, 8);
+      this.ctx.fillStyle = '#ff6600';
+      // Draw 8x8 pixel circle
+      this.ctx.fillRect(2, 1, 4, 1);
+      this.ctx.fillRect(1, 2, 6, 4);
+      this.ctx.fillRect(2, 6, 4, 1);
+      // Highlight
+      this.ctx.fillStyle = '#ffaa44';
+      this.ctx.fillRect(3, 2, 2, 1);
+    }
+
+    update() {
+      // Apply physics
+      this.vy += this.gravity;
+      this.x += this.vx;
+      this.y += this.vy;
+
+      // Bounce on ground
+      const ground = window.innerHeight - 60;
+      if (this.y > ground && !this.bounced) {
+        this.y = ground;
+        this.vy *= -0.6; // Energy retention
+        this.vx *= 0.8;
+        this.bounced = true;
+      } else if (this.y > ground && this.bounced) {
+        // Stop bouncing
+        this.y = ground;
+        this.vy = 0;
+      }
+
+      // Update canvas position
+      this.canvas.style.left = (this.x - 12) + 'px';
+      this.canvas.style.top = (this.y - 12) + 'px';
+
+      // Check if off-screen
+      return this.x < -50 || this.x > window.innerWidth + 50 ||
+             this.y > window.innerHeight + 50;
+    }
+
+    isNearDog(dogX, dogY) {
+      const dx = this.x - dogX;
+      const dy = this.y - dogY;
+      return Math.sqrt(dx * dx + dy * dy) < 100;
+    }
+
+    canCatch(dogX, dogY) {
+      const dx = this.x - dogX;
+      const dy = this.y - dogY;
+      return Math.sqrt(dx * dx + dy * dy) < 25;
+    }
+
+    destroy() {
+      if (this.canvas && this.canvas.parentNode) {
+        document.body.removeChild(this.canvas);
+      }
+    }
+  }
+
+  // Track ball chase timeout
+  let ballChaseTimeout = null;
+
+  // ===========================================
   // DOG STATE
-  // ============================================
+  // ===========================================
   let dog = {
     element: null,
     canvasEl: null,
@@ -180,7 +374,11 @@
       timer: 0,
       frame: 0,
       lastToggle: 0
-    }
+    },
+
+    // Ball chasing state
+    chasingBall: false,
+    ballTarget: null
   };
 
   // ============================================
@@ -431,18 +629,30 @@
     clearTimeout(dog.behaviorTimer);
     dog.isWalking = false;
     dog.targetX = null;
+    dog.chasingBall = false;
 
-    dog.currentBehavior = 'excited';
+    // Trigger bark animation with speech bubble
+    dog.currentBehavior = 'barking';
 
-    // Toggle tail wag on click
-    dog.tailWag.active = !dog.tailWag.active;
-    dog.tailWag.timer = dog.tailWag.active ? 9999 : 0;
+    // Show speech bubble
+    showSpeechBubble('BARK!', 1500);
 
-    playHappySound();
+    // Play bark sound
+    playBarkSound();
 
+    // Activate tail wag
+    dog.tailWag.active = true;
+    dog.tailWag.timer = 40;
+
+    // After bark, become excited
     dog.behaviorTimer = setTimeout(() => {
-      dog.currentBehavior = 'idle';
-      scheduleNextBehavior();
+      dog.currentBehavior = 'excited';
+      playHappySound();
+
+      setTimeout(() => {
+        dog.currentBehavior = 'idle';
+        scheduleNextBehavior();
+      }, 1500);
     }, 1500);
 
     if (window.AchievementSystem) {
@@ -460,11 +670,80 @@
       if (!dog.enabled) return;
 
       dog.frameCount++;
+
+      // Update ball physics
+      if (ball) {
+        const offScreen = ball.update();
+
+        // Get dog position for collision detection
+        const dogRect = dog.canvasEl.getBoundingClientRect();
+        const dogX = dogRect.left + dogRect.width / 2;
+        const dogY = dogRect.top + dogRect.height / 2;
+
+        // Check if dog can catch ball
+        if (ball.canCatch(dogX, dogY)) {
+          // Dog caught the ball!
+          ball.destroy();
+          ball = null;
+          dog.chasingBall = false;
+          dog.isWalking = false;
+          dog.targetX = null;
+
+          // Increment fetch count
+          fetchCount++;
+          localStorage.setItem('dog-fetch-count', fetchCount.toString());
+
+          // Show excited reaction
+          showSpeechBubble(`Caught it! (${fetchCount})`, 2000);
+          playHappySound();
+          dog.currentBehavior = 'excited';
+
+          clearTimeout(dog.behaviorTimer);
+          dog.behaviorTimer = setTimeout(() => {
+            dog.currentBehavior = 'idle';
+            scheduleNextBehavior();
+          }, 2000);
+
+          clearTimeout(ballChaseTimeout);
+          ballChaseTimeout = null;
+        }
+        // Check if ball is near dog and dog should chase
+        else if (ball.isNearDog(dogX, dogY) && !dog.chasingBall) {
+          dog.chasingBall = true;
+          clearTimeout(dog.behaviorTimer);
+          dog.currentBehavior = 'walking';
+        }
+
+        // If chasing, update target to ball position
+        if (dog.chasingBall && ball) {
+          dog.targetX = ball.x;
+          dog.isWalking = true;
+          dog.facingRight = ball.x > dogX;
+        }
+
+        // If ball went off-screen, stop chasing after timeout
+        if (offScreen && !ballChaseTimeout) {
+          ballChaseTimeout = setTimeout(() => {
+            if (ball) {
+              ball.destroy();
+              ball = null;
+            }
+            dog.chasingBall = false;
+            if (dog.currentBehavior === 'walking' && dog.isWalking && dog.chasingBall === false) {
+              dog.isWalking = false;
+              dog.targetX = null;
+              dog.currentBehavior = 'idle';
+              scheduleNextBehavior();
+            }
+          }, 3000);
+        }
+      }
+
       updateMovement();
       drawDog();
 
       const timeSinceInteraction = Date.now() - dog.lastInteraction;
-      if (timeSinceInteraction > 60000 && dog.currentBehavior !== 'lying') {
+      if (timeSinceInteraction > 60000 && dog.currentBehavior !== 'lying' && !dog.chasingBall) {
         executeBehavior('lie', 30000);
       }
 
@@ -567,9 +846,18 @@
   }
 
   // ============================================
-  // HIDDEN TRIGGER: "gooddog"
+  // KEYBOARD CONTROLS
   // ============================================
   let commandBuffer = '';
+  let lastMouseX = window.innerWidth / 2;
+  let lastMouseY = window.innerHeight / 2;
+
+  // Track mouse position for ball throwing
+  document.addEventListener('mousemove', (e) => {
+    lastMouseX = e.clientX;
+    lastMouseY = e.clientY;
+  });
+
   document.addEventListener('keypress', (e) => {
     if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') {
       return;
@@ -577,6 +865,26 @@
 
     commandBuffer += e.key;
 
+    // Ball throwing: 'b' key
+    if (e.key === 'b' && dog.enabled) {
+      // Remove old ball if exists
+      if (ball) {
+        ball.destroy();
+      }
+
+      // Create new ball at cursor position
+      const dogRect = dog.canvasEl.getBoundingClientRect();
+      const dogX = dogRect.left + dogRect.width / 2;
+      const dogY = dogRect.top + dogRect.height / 2;
+
+      ball = new Ball(lastMouseX, lastMouseY, dogX, dogY);
+
+      // Stop current behavior and prepare to chase
+      clearTimeout(ballChaseTimeout);
+      ballChaseTimeout = null;
+    }
+
+    // Hidden trigger: "gooddog"
     if (commandBuffer.endsWith('gooddog')) {
       if (dog.enabled) {
         petDog();
