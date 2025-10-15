@@ -312,13 +312,27 @@
         this.vy = 0;
       }
 
+      // Bounce off left/right walls
+      if (this.x < 20) {
+        this.x = 20;
+        this.vx *= -0.7;
+      } else if (this.x > window.innerWidth - 20) {
+        this.x = window.innerWidth - 20;
+        this.vx *= -0.7;
+      }
+
+      // Bounce off top
+      if (this.y < 20) {
+        this.y = 20;
+        this.vy *= -0.5;
+      }
+
       // Update canvas position
       this.canvas.style.left = (this.x - 12) + 'px';
       this.canvas.style.top = (this.y - 12) + 'px';
 
-      // Check if off-screen
-      return this.x < -50 || this.x > window.innerWidth + 50 ||
-             this.y > window.innerHeight + 50;
+      // Ball is never truly off-screen now, return false
+      return false;
     }
 
     isNearDog(dogX, dogY) {
@@ -512,13 +526,16 @@
   function pickRandomDestination() {
     const screenWidth = window.innerWidth;
     const margin = 100;
+    const minX = margin;
+    const maxX = screenWidth - margin;
 
+    // Ensure destinations stay within bounds
     const destinations = [
-      { x: margin },
-      { x: screenWidth - margin },
-      { x: screenWidth / 2 },
-      { x: margin + Math.random() * 200 },
-      { x: screenWidth - margin - Math.random() * 200 }
+      { x: Math.max(minX, Math.min(maxX, margin)) },
+      { x: Math.max(minX, Math.min(maxX, screenWidth - margin)) },
+      { x: Math.max(minX, Math.min(maxX, screenWidth / 2)) },
+      { x: Math.max(minX, Math.min(maxX, margin + Math.random() * 200)) },
+      { x: Math.max(minX, Math.min(maxX, screenWidth - margin - Math.random() * 200)) }
     ];
 
     const dest = destinations[Math.floor(Math.random() * destinations.length)];
@@ -555,6 +572,10 @@
       dog.x -= dog.walkSpeed;
       dog.facingRight = false;
     }
+
+    // Clamp dog position within screen bounds
+    const margin = 50;
+    dog.x = Math.max(margin, Math.min(window.innerWidth - margin, dog.x));
 
     dog.canvasEl.style.left = dog.x + 'px';
   }
@@ -673,7 +694,7 @@
 
       // Update ball physics
       if (ball) {
-        const offScreen = ball.update();
+        ball.update();
 
         // Get dog position for collision detection
         const dogRect = dog.canvasEl.getBoundingClientRect();
@@ -703,9 +724,6 @@
             dog.currentBehavior = 'idle';
             scheduleNextBehavior();
           }, 2000);
-
-          clearTimeout(ballChaseTimeout);
-          ballChaseTimeout = null;
         }
         // Check if ball is near dog and dog should chase
         else if (ball.isNearDog(dogX, dogY) && !dog.chasingBall) {
@@ -719,23 +737,6 @@
           dog.targetX = ball.x;
           dog.isWalking = true;
           dog.facingRight = ball.x > dogX;
-        }
-
-        // If ball went off-screen, stop chasing after timeout
-        if (offScreen && !ballChaseTimeout) {
-          ballChaseTimeout = setTimeout(() => {
-            if (ball) {
-              ball.destroy();
-              ball = null;
-            }
-            dog.chasingBall = false;
-            if (dog.currentBehavior === 'walking' && dog.isWalking && dog.chasingBall === false) {
-              dog.isWalking = false;
-              dog.targetX = null;
-              dog.currentBehavior = 'idle';
-              scheduleNextBehavior();
-            }
-          }, 3000);
         }
       }
 
