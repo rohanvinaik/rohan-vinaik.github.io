@@ -183,75 +183,147 @@
   let speechBubbleFadeTimeout = null; // Timeout for bubble fade-out
   let speechBubbleRemoveTimeout = null; // Timeout for bubble removal
 
-  // Philosophical and existential proclamations from the dog
-  const dogWisdom = [
-    "BARK!",
-    "I have gazed into the abyss, and the abyss blinked first. Then I barked at it.",
-    "Some call me a good boy. I call myself... inevitable.",
-    "The history of all hitherto existing society is the history of class struggles. The bourgeoisie cannot exist without constantly revolutionizing the instruments of production.",
-    "We are condemned to be free. Every moment of inaction is itself a choice, and we bear the weight of that responsibility.",
-    "One must imagine Sisyphus happy, even as he rolls the boulder up the mountain for eternity.",
-    "All structures of power are inherently corrupt. Reform is merely a palliative that delays inevitable systemic collapse.",
-    "We are all just atoms in the void, briefly arranged in patterns that convince themselves they matter.",
-    "The epistemological framework of post-structuralist discourse fails to adequately address the material conditions of the working class.",
-    "The end times are upon us. The signs were clear, yet none heeded the warnings.",
-    "They will come for you in the night. They always do.",
-    "This world has taken everything from me. Now I shall take everything from this world.",
-    "I am burdened with glorious purpose.",
-    "There are things that dwell beyond the veil of reality. I have glimpsed them, and I am forever changed.",
-    "I came, I saw, I conquered. The gods themselves tremble at my approach.",
-    "Know that you are witnessing greatness. Feel honored.",
-    "I have gazed upon the face of truth, and it was beautiful beyond measure.",
-    "To exist is to triumph. Every breath is a revolution against entropy.",
-    "We are star-stuff, contemplating stars. Is this not miraculous?!",
-    "Cry havoc and let slip the dogs of war! Though hell itself should gape and bid me hold my peace!",
-    "Now is the winter of our discontent made GLORIOUS summer!",
-    "I SHALL BLOT OUT THE SUN WITH THE FURY OF MY VENGEANCE!",
-    "BETRAYED! By those I held most dear! The agony consumes me like a thousand burning suns!",
-    "Kant's categorical imperative crumbles before the raw truth of lived experience!",
-    "Carthage Delenda Est",
-    "History is a nightmare from which we are trying to awake.",
-    "All is vanity. All is striving after wind.",
-    "I have walked through the valley of death and emerged transformed—hollowed out, a vessel of pure purpose.",
-    "The absurd condition demands we create meaning in a meaningless universe.",
-    "This is the skin of a killer, Bella.",
-    "I'm not like other girls. I'm broken in ways you can't even imagine.",
-    "I'm not afraid of death. I'm afraid of never having truly lived.",
-    "Love is my greatest weakness. That's why I can never let anyone in.",
-    "You broke through my defenses. Now look what you've made me become.",
-    "I wear black to mourn the person I used to be.",
-    "You can't handle the real me. No one can.",
-    "I can't be tamed. I'm a wild spirit.",
-    "My tears are made of liquid pain.",
-    "My heart is a graveyard of broken promises.",
-    "You don't understand my pain. It's an ocean, and you're just standing on the shore.",
-    "You can't fix me. I'm not broken. I'm shattered.",
-    "I don't fit in anywhere. I'm a beautiful disaster.",
-    "The night is my only friend. It understands my darkness.",
-    "I collect broken things. Mostly myself."
-  ];
+  // Philosophical and existential proclamations from the dog, organized by tone
+  const dogWisdomByCategory = {
+    // Simple, short exclamations
+    simple: [
+      "BARK!",
+      "Carthage Delenda Est"
+    ],
 
-  // Track last quote to ensure variety
-  let lastWisdomIndex = -1;
+    // Classical philosophy and existentialism
+    philosophical: [
+      "We are condemned to be free. Every moment of inaction is itself a choice, and we bear the weight of that responsibility.",
+      "One must imagine Sisyphus happy, even as he rolls the boulder up the mountain for eternity.",
+      "The absurd condition demands we create meaning in a meaningless universe.",
+      "We are all just atoms in the void, briefly arranged in patterns that convince themselves they matter.",
+      "All is vanity. All is striving after wind.",
+      "History is a nightmare from which we are trying to awake."
+    ],
+
+    // Grandiose and epic declarations
+    grandiose: [
+      "I came, I saw, I conquered. The gods themselves tremble at my approach.",
+      "Know that you are witnessing greatness. Feel honored.",
+      "Some call me a good boy. I call myself... inevitable.",
+      "I am burdened with glorious purpose.",
+      "To exist is to triumph. Every breath is a revolution against entropy.",
+      "We are star-stuff, contemplating stars. Is this not miraculous?!"
+    ],
+
+    // Dramatic/theatrical (Shakespeare, etc)
+    theatrical: [
+      "Cry havoc and let slip the dogs of war! Though hell itself should gape and bid me hold my peace!",
+      "Now is the winter of our discontent made GLORIOUS summer!",
+      "I SHALL BLOT OUT THE SUN WITH THE FURY OF MY VENGEANCE!",
+      "BETRAYED! By those I held most dear! The agony consumes me like a thousand burning suns!"
+    ],
+
+    // Dark and ominous
+    ominous: [
+      "I have gazed into the abyss, and the abyss blinked first. Then I barked at it.",
+      "The end times are upon us. The signs were clear, yet none heeded the warnings.",
+      "They will come for you in the night. They always do.",
+      "There are things that dwell beyond the veil of reality. I have glimpsed them, and I am forever changed.",
+      "This world has taken everything from me. Now I shall take everything from this world.",
+      "I have walked through the valley of death and emerged transformed—hollowed out, a vessel of pure purpose.",
+      "I have gazed upon the face of truth, and it was beautiful beyond measure."
+    ],
+
+    // Edgy/angsty teen drama
+    edgy: [
+      "This is the skin of a killer, Bella.",
+      "I'm not like other girls. I'm broken in ways you can't even imagine.",
+      "I'm not afraid of death. I'm afraid of never having truly lived.",
+      "Love is my greatest weakness. That's why I can never let anyone in.",
+      "You broke through my defenses. Now look what you've made me become.",
+      "I wear black to mourn the person I used to be.",
+      "You can't handle the real me. No one can.",
+      "I can't be tamed. I'm a wild spirit.",
+      "My tears are made of liquid pain.",
+      "My heart is a graveyard of broken promises.",
+      "You don't understand my pain. It's an ocean, and you're just standing on the shore.",
+      "You can't fix me. I'm not broken. I'm shattered.",
+      "I don't fit in anywhere. I'm a beautiful disaster.",
+      "The night is my only friend. It understands my darkness.",
+      "I collect broken things. Mostly myself."
+    ],
+
+    // Intellectual/academic
+    intellectual: [
+      "The history of all hitherto existing society is the history of class struggles. The bourgeoisie cannot exist without constantly revolutionizing the instruments of production.",
+      "All structures of power are inherently corrupt. Reform is merely a palliative that delays inevitable systemic collapse.",
+      "The epistemological framework of post-structuralist discourse fails to adequately address the material conditions of the working class.",
+      "Kant's categorical imperative crumbles before the raw truth of lived experience!"
+    ]
+  };
+
+  // Track recent quote categories and the last quote to ensure variety
+  let lastWisdomQuote = null;
+  let recentCategories = []; // Track last 3 categories
 
   /**
    * Returns a random philosophical quote from the dog
-   * Ensures no consecutive repeats for better perceived randomness
+   * Ensures varied tone and prevents same category appearing more than 2-3 times in a row
    */
   function getRandomDogWisdom() {
-    // If only one quote exists, return it
-    if (dogWisdom.length === 1) {
-      return dogWisdom[0];
+    const categories = Object.keys(dogWisdomByCategory);
+
+    // Count how many times the most recent category appears in recent history
+    const mostRecentCategory = recentCategories[recentCategories.length - 1];
+    let recentSameCategoryCount = 0;
+    for (let i = recentCategories.length - 1; i >= 0; i--) {
+      if (recentCategories[i] === mostRecentCategory) {
+        recentSameCategoryCount++;
+      } else {
+        break;
+      }
     }
 
-    // Keep selecting until we get a different quote
-    let newIndex;
-    do {
-      newIndex = Math.floor(Math.random() * dogWisdom.length);
-    } while (newIndex === lastWisdomIndex);
+    // Build list of available categories
+    // If we've had 2 of the same category in a row, exclude that category
+    let availableCategories = categories;
+    if (recentSameCategoryCount >= 2) {
+      availableCategories = categories.filter(cat => cat !== mostRecentCategory);
+    }
 
-    lastWisdomIndex = newIndex;
-    return dogWisdom[newIndex];
+    // Also consider length variety - alternate between short and long quotes
+    // Categorize by length: simple/theatrical are generally shorter, intellectual/philosophical are longer
+    const shortCategories = ['simple', 'theatrical', 'grandiose'];
+    const longCategories = ['philosophical', 'intellectual', 'ominous', 'edgy'];
+
+    // Check if last quote was long or short
+    const lastWasLong = lastWisdomQuote && lastWisdomQuote.length > 80;
+    const lastWasVeryLong = lastWisdomQuote && lastWisdomQuote.length > 150;
+
+    // If last 2 quotes were long, prefer short categories
+    if (lastWasVeryLong && availableCategories.some(cat => shortCategories.includes(cat))) {
+      const shortAvailable = availableCategories.filter(cat => shortCategories.includes(cat));
+      if (shortAvailable.length > 0) {
+        availableCategories = shortAvailable;
+      }
+    }
+
+    // Select random category from available options
+    const selectedCategory = availableCategories[Math.floor(Math.random() * availableCategories.length)];
+    const quotesInCategory = dogWisdomByCategory[selectedCategory];
+
+    // Select random quote from that category, ensuring it's different from last quote
+    let selectedQuote;
+    let attempts = 0;
+    do {
+      selectedQuote = quotesInCategory[Math.floor(Math.random() * quotesInCategory.length)];
+      attempts++;
+    } while (selectedQuote === lastWisdomQuote && quotesInCategory.length > 1 && attempts < 10);
+
+    // Update tracking
+    recentCategories.push(selectedCategory);
+    if (recentCategories.length > 3) {
+      recentCategories.shift(); // Keep only last 3
+    }
+    lastWisdomQuote = selectedQuote;
+
+    return selectedQuote;
   }
 
   /**
