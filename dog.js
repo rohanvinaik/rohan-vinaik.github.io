@@ -1178,7 +1178,15 @@
 
     // Smear frame state
     smearFrames: [], // Array of { x, alpha, facingRight }
-    smearActive: false
+    smearActive: false,
+
+    // Breathing animation
+    breathingPhase: 0,
+    breathingRate: 0.02, // Slower breathing
+
+    // Ear twitch state
+    lastEarTwitch: 0,
+    earTwitchCooldown: 5000 // Min time between twitches
   };
 
   function createDogCanvas() {
@@ -1363,22 +1371,30 @@
   // ===========================================
 
   function spawnDustPuff(x, y) {
+    const motionSettings = getReducedMotionMultiplier();
+
+    // Skip dust puffs if user prefers reduced motion
+    if (motionSettings.disableEffects) return;
+
     const puff = document.createElement('div');
-    const size = 6 + Math.random() * 4;
+    const size = (6 + Math.random() * 4) * motionSettings.effectIntensity;
+    const opacity = 0.6 * motionSettings.effectIntensity;
+    const duration = 400 / motionSettings.animationSpeed;
+
     puff.style.cssText = `
       position: fixed;
       left: ${x - size/2}px;
       top: ${y - size/2}px;
       width: ${size}px;
       height: ${size}px;
-      background: rgba(200, 200, 200, 0.6);
+      background: rgba(200, 200, 200, ${opacity});
       border-radius: 50%;
       pointer-events: none;
       z-index: 499;
-      animation: dustFade 400ms ease-out forwards;
+      animation: dustFade ${duration}ms ease-out forwards;
     `;
     document.body.appendChild(puff);
-    setTimeout(() => puff.remove(), 400);
+    setTimeout(() => puff.remove(), duration);
   }
 
   // Inject dust animation keyframes
@@ -1681,16 +1697,19 @@
       spawnDustPuff(rect.left + rect.width/2 + (Math.random() - 0.5) * 10, rect.bottom - 3);
       dog.squashStretch = 0.85; // Squash on turn
 
-      // Add smear frames for motion blur
-      dog.smearActive = true;
-      dog.smearFrames = [
-        { x: dog.x - currentVelocitySign * 8, alpha: 0.3, facingRight: dog.facingRight },
-        { x: dog.x - currentVelocitySign * 4, alpha: 0.5, facingRight: dog.facingRight }
-      ];
-      setTimeout(() => {
-        dog.smearActive = false;
-        dog.smearFrames = [];
-      }, 150);
+      // Add smear frames for motion blur (skip if reduced motion preferred)
+      const motionSettings = getReducedMotionMultiplier();
+      if (!motionSettings.disableEffects) {
+        dog.smearActive = true;
+        dog.smearFrames = [
+          { x: dog.x - currentVelocitySign * 8, alpha: 0.3 * motionSettings.effectIntensity, facingRight: dog.facingRight },
+          { x: dog.x - currentVelocitySign * 4, alpha: 0.5 * motionSettings.effectIntensity, facingRight: dog.facingRight }
+        ];
+        setTimeout(() => {
+          dog.smearActive = false;
+          dog.smearFrames = [];
+        }, 150 / motionSettings.animationSpeed);
+      }
     }
 
     // Anticipation before starting to move
@@ -2060,6 +2079,20 @@
   // ===========================================
 
   function updatePhysics(dt) {
+    // Breathing animation - subtle body expansion/contraction
+    dog.breathingPhase += dog.breathingRate;
+    const breathingScale = 1 + Math.sin(dog.breathingPhase) * 0.015; // Very subtle 1.5% variation
+
+    // Random ear twitches during idle
+    if (!dog.isWalking && dog.currentBehavior !== 'excited') {
+      const now = Date.now();
+      if (now - dog.lastEarTwitch > dog.earTwitchCooldown && Math.random() < 0.001) {
+        dog.lastEarTwitch = now;
+        playEarFlopSound();
+        // Visual ear twitch handled in drawDog
+      }
+    }
+
     // Phase offsets for body parts (creates natural lag/inertia illusion)
     dog.headBobPhase = (dog.frameCount + 5) * 0.8;   // 5-frame offset, slightly slower
     dog.earFlopPhase = (dog.frameCount + 12) * 0.6;  // 12-frame offset, much slower
@@ -2103,12 +2136,20 @@
       dog.canvasEl.style.left = (baseLeft + offsetX) + 'px';
     }
 
-    // Apply squash/stretch transform
-    if (dog.squashStretch !== 1.0 && dog.canvasEl) {
-      const inverseStretch = 2 - dog.squashStretch; // Maintain volume
-      dog.canvasEl.style.transform = `scaleY(${dog.squashStretch}) scaleX(${inverseStretch})`;
-    } else if (dog.canvasEl) {
-      dog.canvasEl.style.transform = '';
+    // Apply squash/stretch and breathing transforms
+    if (dog.canvasEl) {
+      // Combine squash/stretch with breathing (breathing only when idle)
+      const isIdle = !dog.isWalking && dog.currentBehavior !== 'excited' && dog.currentBehavior !== 'barking';
+      const finalBreathingScale = isIdle ? breathingScale : 1.0;
+
+      if (dog.squashStretch !== 1.0) {
+        const inverseStretch = 2 - dog.squashStretch; // Maintain volume
+        dog.canvasEl.style.transform = `scaleY(${dog.squashStretch * finalBreathingScale}) scaleX(${inverseStretch})`;
+      } else if (finalBreathingScale !== 1.0) {
+        dog.canvasEl.style.transform = `scale(${finalBreathingScale})`;
+      } else {
+        dog.canvasEl.style.transform = '';
+      }
     }
 
     // Update shadow scale based on y position (fake depth)
@@ -2416,6 +2457,36 @@
 
   // ===========================================
   // ENABLE/DISABLE DOG
+  // ===========================================
+
+  // ===========================================
+  // ACCESSIBILITY
+  // ===========================================
+
+  function prefersReducedMotion() {
+    return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  }
+
+  function getReducedMotionMultiplier() {
+    // If user prefers reduced motion, scale down animation intensities
+    if (prefersReducedMotion()) {
+      return {
+        animationSpeed: 0.5,      // Slower animations
+        effectIntensity: 0.3,     // Reduce dust, smears, etc.
+        soundVolume: 0.5,         // Quieter sounds
+        disableEffects: true      // Disable non-essential effects
+      };
+    }
+    return {
+      animationSpeed: 1.0,
+      effectIntensity: 1.0,
+      soundVolume: 1.0,
+      disableEffects: false
+    };
+  }
+
+  // ===========================================
+  // DOG INITIALIZATION
   // ===========================================
 
   function enableDog() {
