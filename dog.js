@@ -246,6 +246,11 @@
       dog.walkFrame++;
     } else {
       sprite = dog.facingRight ? dogSprites.standRight : dogSprites.standLeft;
+      // Add breathing idle effect
+      if (!dog.isWalking && !dog.tailWag.active && dog.currentBehavior === 'idle') {
+        const breath = Math.sin(dog.frameCount / 60) * 0.5;
+        yOffset = breath;
+      }
     }
 
     // Tail wag behavior
