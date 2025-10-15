@@ -956,7 +956,24 @@
       lie: 0,
       bark: 0,
       walk: 0
-    }
+    },
+
+    // Need/Drive model (0-100 scale)
+    needs: {
+      energy: 100,      // Drains over time, restored by napping
+      curiosity: 50,    // Increases with inactivity, satisfied by exploring
+      affection: 50     // Increases with time away from user, satisfied by interaction
+    },
+    needDecayRates: {
+      energy: 0.5,      // Per minute
+      curiosity: 1.0,
+      affection: 0.8
+    },
+    lastNeedUpdate: Date.now(),
+
+    // Pounce state
+    pounceTarget: null,
+    pounceWindup: 0
   };
 
   function createDogCanvas() {
@@ -993,7 +1010,22 @@
     canvas.style.cursor = 'pointer';
     canvas.style.display = 'none';
 
-    canvas.addEventListener('click', petDog);
+    let lastClickTime = 0;
+    canvas.addEventListener('click', (e) => {
+      const now = Date.now();
+      const timeSinceLastClick = now - lastClickTime;
+
+      if (timeSinceLastClick < 400) {
+        // Double-click! Make dog sit
+        executeBehavior('sit', 5000);
+        showSpeechBubble('Good dog!', 1500);
+      } else {
+        // Single click - pet dog
+        petDog();
+      }
+
+      lastClickTime = now;
+    });
 
     document.body.appendChild(canvas);
     dog.canvasEl = canvas;
@@ -1123,6 +1155,52 @@
       }
     `;
     document.head.appendChild(style);
+  }
+
+  // ===========================================
+  // NEED/DRIVE SYSTEM
+  // ===========================================
+
+  function updateNeeds(dt) {
+    const now = Date.now();
+    const elapsed = (now - dog.lastNeedUpdate) / 1000 / 60; // minutes
+    dog.lastNeedUpdate = now;
+
+    // Decay/grow needs over time
+    dog.needs.energy = clamp(dog.needs.energy - dog.needDecayRates.energy * elapsed, 0, 100);
+    dog.needs.curiosity = clamp(dog.needs.curiosity + dog.needDecayRates.curiosity * elapsed, 0, 100);
+    dog.needs.affection = clamp(dog.needs.affection + dog.needDecayRates.affection * elapsed, 0, 100);
+
+    // Behavior-specific need adjustments
+    if (dog.currentBehavior === 'lying') {
+      dog.needs.energy = Math.min(100, dog.needs.energy + 2 * elapsed);
+    }
+    if (dog.isWalking) {
+      dog.needs.curiosity = Math.max(0, dog.needs.curiosity - 1.5 * elapsed);
+    }
+  }
+
+  function getDominantNeed() {
+    const needs = dog.needs;
+    let highest = 'energy';
+    let highestValue = needs.energy;
+
+    // Find which need is most pressing (but inverted for energy)
+    const energyNeed = 100 - needs.energy; // Low energy = high need to rest
+    if (energyNeed > highestValue) {
+      highest = 'energy';
+      highestValue = energyNeed;
+    }
+    if (needs.curiosity > highestValue) {
+      highest = 'curiosity';
+      highestValue = needs.curiosity;
+    }
+    if (needs.affection > highestValue) {
+      highest = 'affection';
+      highestValue = needs.affection;
+    }
+
+    return { need: highest, strength: highestValue };
   }
 
   // ===========================================
@@ -1259,12 +1337,15 @@
       }
     }
 
+    // Get dominant need to bias behavior selection
+    const { need, strength } = getDominantNeed();
+
     const behaviors = [
-      { action: 'sit', duration: 5000, weight: 3, cooldown: 8000 },
-      { action: 'lie', duration: 8000, weight: 2, cooldown: 15000 },
-      { action: 'stand', duration: 3000, weight: 4, cooldown: 5000 },
-      { action: 'walk', duration: 0, weight: 3, cooldown: 6000 },
-      { action: 'bark', duration: 2000, weight: 1, cooldown: 10000 }
+      { action: 'sit', duration: 5000, weight: 3, cooldown: 8000, needBias: { energy: 0, curiosity: -1, affection: 1 } },
+      { action: 'lie', duration: 8000, weight: 2, cooldown: 15000, needBias: { energy: 3, curiosity: -1, affection: 0 } },
+      { action: 'stand', duration: 3000, weight: 4, cooldown: 5000, needBias: { energy: 0, curiosity: 0, affection: 0 } },
+      { action: 'walk', duration: 0, weight: 3, cooldown: 6000, needBias: { energy: -1, curiosity: 3, affection: 0 } },
+      { action: 'bark', duration: 2000, weight: 1, cooldown: 10000, needBias: { energy: 0, curiosity: 0, affection: 2 } }
     ];
 
     // Filter out behaviors on cooldown
@@ -1276,12 +1357,19 @@
       return;
     }
 
+    // Apply need-based weight multipliers
+    const weightedBehaviors = available.map(b => {
+      const bias = b.needBias[need] || 0;
+      const multiplier = 1 + (bias * strength / 100); // Scale bias by need strength
+      return { ...b, effectiveWeight: Math.max(0.1, b.weight * multiplier) };
+    });
+
     // Weighted random selection from available behaviors
-    const totalWeight = available.reduce((sum, b) => sum + b.weight, 0);
+    const totalWeight = weightedBehaviors.reduce((sum, b) => sum + b.effectiveWeight, 0);
     let random = Math.random() * totalWeight;
 
-    for (const behavior of available) {
-      random -= behavior.weight;
+    for (const behavior of weightedBehaviors) {
+      random -= behavior.effectiveWeight;
       if (random <= 0) {
         executeBehavior(behavior.action, behavior.duration);
         dog.behaviorCooldowns[behavior.action] = behavior.cooldown;
@@ -1341,6 +1429,9 @@
     resetIdleTimer();
     dog.naughtyMode.inProgress = false;
     dog.naughtyMode.currentSprite = null;
+
+    // Satisfy affection need
+    dog.needs.affection = Math.max(0, dog.needs.affection - 30);
 
     dog.currentBehavior = 'idle';
 
@@ -1658,6 +1749,24 @@
 
         updateMovement(FIXED_DT);
         updatePhysics(FIXED_DT);
+        updateNeeds(FIXED_DT);
+
+        // Cursor pounce behavior
+        if (dog.cursorLookStrength > 0.7 && !dog.chasingBall && !dog.isWalking && Math.random() < 0.01) {
+          const rect = dog.canvasEl.getBoundingClientRect();
+          const dogCenterX = rect.left + rect.width / 2;
+          const distanceToCursor = Math.abs(lastMouseX - dogCenterX);
+
+          if (distanceToCursor < 80 && distanceToCursor > 20) {
+            // Pounce toward cursor!
+            dog.targetX = lastMouseX - 20 + Math.random() * 40;
+            dog.isWalking = true;
+            dog.anticipationOffset = -3; // Windup
+            setTimeout(() => {
+              dog.squashStretch = 0.7; // Compress for pounce
+            }, 100);
+          }
+        }
 
         const timeSinceInteraction = Date.now() - dog.lastInteraction;
         if (timeSinceInteraction > 60000 && dog.currentBehavior !== 'lying' && !dog.chasingBall) {
