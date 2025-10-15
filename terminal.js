@@ -521,7 +521,7 @@
       'term-fortune-9': '"Code speaks eternal truth; commentary fades like mortal breath." - Keeper of Records',
       'term-fortune-10': '"True masters inscribe for those who dwell beyond the veil." - Guardian of Knowledge'
     },
-    es: {
+    spanish: {
       role: 'INVESTIGADOR INDEPENDIENTE',
       focus: 'BIOLOGÍA COMPUTACIONAL · HDC · TEORÍA',
       available: 'DISPONIBLE',
@@ -640,7 +640,7 @@
       'term-fortune-9': '"El código nunca miente, los comentarios a veces sí." - Ron Jeffries',
       'term-fortune-10': '"Los buenos programadores escriben código que los humanos pueden entender." - Martin Fowler'
     },
-    fr: {
+    french: {
       role: 'CHERCHEUR INDÉPENDANT',
       focus: 'BIOLOGIE COMPUTATIONNELLE · HDC · THÉORIE',
       available: 'DISPONIBLE',
@@ -759,7 +759,7 @@
       'term-fortune-9': '"Le code ne ment jamais, les commentaires parfois." - Ron Jeffries',
       'term-fortune-10': '"Les bons programmeurs écrivent du code que les humains peuvent comprendre." - Martin Fowler'
     },
-    de: {
+    german: {
       role: 'UNABHÄNGIGER FORSCHER',
       focus: 'COMPUTERBIOLOGIE · HDC · THEORIE',
       available: 'VERFÜGBAR',
@@ -878,7 +878,7 @@
       'term-fortune-9': '"Code lügt nie, Kommentare manchmal schon." - Ron Jeffries',
       'term-fortune-10': '"Gute Programmierer schreiben Code, den Menschen verstehen können." - Martin Fowler'
     },
-    pt: {
+    portuguese: {
       role: 'PESQUISADOR INDEPENDENTE',
       focus: 'BIOLOGIA COMPUTACIONAL · HDC · TEORIA',
       available: 'DISPONÍVEL',
@@ -997,7 +997,7 @@
       'term-fortune-9': '"O código nunca mente, os comentários às vezes sim." - Ron Jeffries',
       'term-fortune-10': '"Bons programadores escrevem código que humanos podem entender." - Martin Fowler'
     },
-    it: {
+    italian: {
       role: 'RICERCATORE INDIPENDENTE',
       focus: 'BIOLOGIA COMPUTAZIONALE · HDC · TEORIA',
       available: 'DISPONIBILE',
