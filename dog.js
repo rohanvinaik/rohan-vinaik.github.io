@@ -17,7 +17,7 @@
 
   // Anchors and feature positions
   const LEG_GROUPS = [[5,6], [9,10], [16,17], [20,21]];
-  const LEG_ROWS_FROM_BOTTOM = 4;
+  const LEG_ROWS_FROM_BOTTOM = 6;
   const MOUTH_ANCHOR = { x: 12, y: 5 };
   const TAIL_ANCHOR = { x: 21, y: 6 };
   const EYE_PIXELS = [{x:7,y:3}, {x:9,y:3}];
@@ -253,10 +253,15 @@
   function tailPixels(kind, facing='right') {
     const baseX = facing === 'right' ? TAIL_ANCHOR.x : BODY_W - 1 - TAIL_ANCHOR.x;
     const baseY = TAIL_ANCHOR.y;
+    const sx = facing === 'right' ? 1 : -1; // outward from rump
+
     switch (kind) {
-      case 'left':   return [{x:baseX,y:baseY},{x:baseX-1,y:baseY+1},{x:baseX-2,y:baseY+2}];
-      case 'right':  return [{x:baseX,y:baseY},{x:baseX+1,y:baseY+1},{x:baseX+2,y:baseY+2}];
-      default:       return [{x:baseX,y:baseY},{x:baseX,y:baseY+1}];
+      case 'left':  // one extreme
+        return [{x:baseX,y:baseY},{x:baseX - sx, y:baseY - 1},{x:baseX - 2*sx, y:baseY - 2}];
+      case 'right': // other extreme
+        return [{x:baseX,y:baseY},{x:baseX + sx, y:baseY - 1},{x:baseX + 2*sx, y:baseY - 2}];
+      default:      // neutral
+        return [{x:baseX,y:baseY-1},{x:baseX,y:baseY}];
     }
   }
 
@@ -282,11 +287,16 @@
 
     // Tail layer
     const tp = tailPixels(tailPose, side);
-    const tx0 = Math.max(0, (facingRight?TAIL_ANCHOR.x:BODY_W-1-TAIL_ANCHOR.x)-3);
-    const ty0 = Math.max(0, TAIL_ANCHOR.y-1);
+    const minx = Math.max(0, Math.min(...tp.map(p=>p.x)) - 1);
+    const maxx = Math.min(BODY_W-1, Math.max(...tp.map(p=>p.x)) + 1);
+    const miny = Math.max(0, Math.min(...tp.map(p=>p.y)) - 1);
+    const maxy = Math.min(BODY_H-1, Math.max(...tp.map(p=>p.y)) + 1);
+
     const clearPts = [];
-    for (let yy=ty0; yy<ty0+4 && yy<BODY_H; yy++)
-      for (let xx=tx0; xx<tx0+7 && xx<BODY_W; xx++) clearPts.push({x:xx,y:yy});
+    for (let yy=miny; yy<=maxy; yy++)
+      for (let xx=minx; xx<=maxx; xx++)
+        clearPts.push({x:xx,y:yy});
+
     blitErase(frame, clearPts);
     blitWhite(frame, tp);
 
@@ -806,8 +816,13 @@
 
     getMouthPosition() {
       const rect = dog.canvasEl.getBoundingClientRect();
-      const x = rect.left + (dog.facingRight ? rect.width * 0.75 : rect.width * 0.25);
-      const y = rect.top + rect.height * 0.4;
+      const ox = Math.floor((VIEW_W - BODY_W) / 2);
+      const oy = Math.floor((VIEW_H - BODY_H) / 2);
+      const anchorX = dog.facingRight
+        ? MOUTH_ANCHOR.x
+        : (BODY_W - 1 - MOUTH_ANCHOR.x - 2); // same mirror as mouthMask
+      const x = rect.left + (ox + anchorX) * SCALE;
+      const y = rect.top  + (oy + MOUTH_ANCHOR.y) * SCALE;
       return { x, y };
     }
 
