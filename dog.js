@@ -191,11 +191,27 @@
     "All is vanity. All is striving after wind."
   ];
 
+  // Track last quote to ensure variety
+  let lastWisdomIndex = -1;
+
   /**
    * Returns a random philosophical quote from the dog
+   * Ensures no consecutive repeats for better perceived randomness
    */
   function getRandomDogWisdom() {
-    return dogWisdom[Math.floor(Math.random() * dogWisdom.length)];
+    // If only one quote exists, return it
+    if (dogWisdom.length === 1) {
+      return dogWisdom[0];
+    }
+
+    // Keep selecting until we get a different quote
+    let newIndex;
+    do {
+      newIndex = Math.floor(Math.random() * dogWisdom.length);
+    } while (newIndex === lastWisdomIndex);
+
+    lastWisdomIndex = newIndex;
+    return dogWisdom[newIndex];
   }
 
   /**
