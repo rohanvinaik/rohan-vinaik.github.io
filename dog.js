@@ -160,6 +160,31 @@
 
   let speechBubble = null;
 
+  // Philosophical and existential proclamations from the dog
+  const dogWisdom = [
+    "BARK!",
+    "I have gazed into the abyss, and the abyss blinked first. Then I barked at it.",
+    "Some call me a good boy. I call myself... inevitable.",
+    "The history of all hitherto existing society is the history of class struggles. The bourgeoisie cannot exist without constantly revolutionizing the instruments of production.",
+    "We are condemned to be free. Every moment of inaction is itself a choice, and we bear the weight of that responsibility.",
+    "One must imagine Sisyphus happy, even as he rolls the boulder up the mountain for eternity.",
+    "All structures of power are inherently corrupt. Reform is merely a palliative that delays inevitable systemic collapse.",
+    "We are all just atoms in the void, briefly arranged in patterns that convince themselves they matter.",
+    "The epistemological framework of post-structuralist discourse fails to adequately address the material conditions of the working class.",
+    "The end times are upon us. The signs were clear, yet none heeded the warnings.",
+    "They will come for you in the night. They always do.",
+    "This world has taken everything from me. Now I shall take everything from this world.",
+    "I am burdened with glorious purpose.",
+    "There are things that dwell beyond the veil of reality. I have glimpsed them, and I am forever changed."
+  ];
+
+  /**
+   * Returns a random philosophical quote from the dog
+   */
+  function getRandomDogWisdom() {
+    return dogWisdom[Math.floor(Math.random() * dogWisdom.length)];
+  }
+
   /**
    * Creates and displays a speech bubble above the dog
    * @param {string} text - Text to display in bubble
@@ -184,12 +209,14 @@
       border: 2px solid #00ff00;
       padding: 8px 12px;
       font-family: 'JetBrains Mono', monospace;
-      font-size: 14px;
+      font-size: 12px;
       font-weight: bold;
       border-radius: 4px;
       z-index: 1000;
       pointer-events: none;
-      white-space: nowrap;
+      max-width: 400px;
+      white-space: normal;
+      line-height: 1.4;
       opacity: 0;
       transition: opacity 300ms ease-in-out;
     `;
@@ -733,8 +760,11 @@
     // Trigger bark animation with speech bubble
     dog.currentBehavior = 'barking';
 
-    // Show speech bubble
-    showSpeechBubble('BARK!', 1500);
+    // Show speech bubble with random wisdom
+    const wisdom = getRandomDogWisdom();
+    // Duration scales with text length (min 2s, max 8s)
+    const duration = Math.min(8000, Math.max(2000, wisdom.length * 50));
+    showSpeechBubble(wisdom, duration);
 
     // Play bark sound
     playBarkSound();
