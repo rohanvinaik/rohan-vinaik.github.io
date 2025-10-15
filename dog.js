@@ -15,6 +15,10 @@
   const SCALE = 3;
   const COLORS = { 0: null, 1: '#FFFFFF', 2: '#000000', 3: '#FFB6C1' };
 
+  // Position constants
+  const DOG_BASELINE = 60;      // Canvas bottom position
+  const SHADOW_BASELINE = 56;   // Shadow bottom position
+
   // Anchors and feature positions
   const LEG_GROUPS = [[5,6], [9,10], [16,17], [20,21]];
   const LEG_ROWS_FROM_BOTTOM = 6;
@@ -848,7 +852,7 @@
                   setTimeout(() => {
                     if (this.state === 'caught') {
                       dog.currentBehavior = 'idle';
-                      dog.canvasEl.style.bottom = '60px';
+                      dog.canvasEl.style.bottom = DOG_BASELINE + 'px';
                       this.enableInteraction();
                     }
                   }, 1500);
@@ -910,7 +914,7 @@
                 setTimeout(() => {
                   if (this.state === 'caught') {
                     dog.currentBehavior = 'idle';
-                    dog.canvasEl.style.bottom = '60px';
+                    dog.canvasEl.style.bottom = DOG_BASELINE + 'px';
                     this.enableInteraction();
                   }
                 }, 1500);
@@ -953,7 +957,7 @@
               const direction = mouseX > dogCenterX ? 1 : -1;
               dog.x += direction * moveSpeed;
               dog.x = Math.max(50, Math.min(window.innerWidth - 50, dog.x));
-              dog.canvasEl.style.left = dog.x + 'px';
+              dog.canvasEl.style.left = Math.round(dog.x) + 'px';
             }
           }
           break;
@@ -1204,8 +1208,8 @@
     shadow.id = 'dog-shadow';
     shadow.style.cssText = `
       position: fixed;
-      bottom: 56px;
-      left: ${dog.x}px;
+      bottom: ${SHADOW_BASELINE}px;
+      left: ${Math.round(dog.x)}px;
       width: 72px;
       height: 12px;
       background: radial-gradient(ellipse, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0) 70%);
@@ -1310,7 +1314,7 @@
       }
     }
 
-    // Blink every ~6 seconds for 5 frames
+    // Blink every ~3.3 seconds (0.5% chance per frame at 60fps) for 5 frames
     if (dog.blinkTimer <= 0 && Math.random() < 0.005) {
       dog.blinkTimer = 5;
     }
@@ -1320,10 +1324,13 @@
     // Walk frame index + body bounce
     let bodyIndex = 0;
     let offsetY = 0;
+    let totalVerticalOffset = 0; // Track total vertical displacement for shadow
+
     if (bodyPose === 'walk') {
       const prevBodyIndex = Math.floor((dog.frameCount - 1) / 8) % 4;
       bodyIndex = Math.floor(dog.frameCount / 8) % 4;
       offsetY = [0, -1, 0, +1][bodyIndex];
+      totalVerticalOffset = offsetY;
 
       // Footstep sounds on frames 0 and 2 (when feet touch ground)
       if (bodyIndex !== prevBodyIndex && (bodyIndex === 0 || bodyIndex === 2)) {
@@ -1337,10 +1344,27 @@
       const xOffset = Math.sin(t) * 15;
       const figureYOffset = Math.sin(2 * t) * 8;
 
-      dog.canvasEl.style.left = (dog.x + xOffset) + 'px';
-      dog.canvasEl.style.bottom = (60 + figureYOffset) + 'px';
+      dog.canvasEl.style.left = Math.round(dog.x + xOffset) + 'px';
+      dog.canvasEl.style.bottom = Math.round(DOG_BASELINE + figureYOffset) + 'px';
+
+      totalVerticalOffset = offsetY + figureYOffset;
     } else {
       offsetY = Math.round(Math.sin(dog.frameCount / 40) * 0.5);
+      totalVerticalOffset = offsetY;
+    }
+
+    // Update shadow to react to vertical motion
+    if (dog.shadowEl) {
+      // Shadow gets smaller/lighter when dog is higher (jumping/bouncing)
+      // normalizedHeight: 0 = on ground, negative = higher up
+      const normalizedHeight = -totalVerticalOffset / 10; // Scale down for subtlety
+      const shadowScale = lerp(1.0, 0.7, Math.max(0, normalizedHeight)); // Shrink when higher
+      const shadowOpacity = lerp(0.3, 0.15, Math.max(0, normalizedHeight)); // Fade when higher
+      const shadowBottom = SHADOW_BASELINE + Math.round(totalVerticalOffset * 0.3); // Shadow lags slightly
+
+      dog.shadowEl.style.transform = `scale(${shadowScale})`;
+      dog.shadowEl.style.opacity = shadowOpacity.toString();
+      dog.shadowEl.style.bottom = shadowBottom + 'px';
     }
 
     // Compose the frame
@@ -1925,7 +1949,7 @@
 
         setTimeout(() => {
           dog.currentBehavior = 'idle';
-          dog.canvasEl.style.bottom = '60px';
+          dog.canvasEl.style.bottom = DOG_BASELINE + 'px';
           scheduleNextBehavior();
         }, 1500);
       }
@@ -2166,7 +2190,7 @@
     if (dog.anticipationOffset !== 0 && dog.canvasEl) {
       const baseLeft = parseFloat(dog.canvasEl.style.left) || dog.x;
       const offsetX = dog.anticipationOffset * (dog.facingRight ? 1 : -1);
-      dog.canvasEl.style.left = (baseLeft + offsetX) + 'px';
+      dog.canvasEl.style.left = Math.round(baseLeft + offsetX) + 'px';
     }
 
     // Apply squash/stretch, breathing, and head tilt transforms
@@ -2195,14 +2219,7 @@
       dog.canvasEl.style.transform = transforms.join(' ') || '';
     }
 
-    // Update shadow scale based on y position (fake depth)
-    if (dog.shadowEl) {
-      const normalizedY = dog.y / window.innerHeight;
-      const scale = lerp(0.8, 1.2, normalizedY); // Larger shadow when "closer" (bottom of screen)
-      const opacity = lerp(0.2, 0.4, normalizedY);
-      dog.shadowEl.style.transform = `scale(${scale})`;
-      dog.shadowEl.style.opacity = opacity.toString();
-    }
+    // Note: Shadow is now updated in drawDog() based on vertical offset for better reactivity
   }
 
   function startAnimationLoop() {
@@ -2600,6 +2617,16 @@
 
     clearTimeout(dog.behaviorTimer);
 
+    // Clear thought bubble
+    if (thoughtBubbleInterval) {
+      clearInterval(thoughtBubbleInterval);
+      thoughtBubbleInterval = null;
+    }
+    if (thoughtBubble && thoughtBubble.parentNode) {
+      thoughtBubble.parentNode.removeChild(thoughtBubble);
+      thoughtBubble = null;
+    }
+
     // Clear micro-naughtiness timer and reset any nudged elements
     if (dog.microNaughtyTimer) {
       clearTimeout(dog.microNaughtyTimer);
@@ -2665,7 +2692,7 @@
 
       setTimeout(() => {
         dog.currentBehavior = 'idle';
-        dog.canvasEl.style.bottom = '60px';
+        dog.canvasEl.style.bottom = DOG_BASELINE + 'px';
         scheduleNextBehavior();
       }, 2000);
     }
