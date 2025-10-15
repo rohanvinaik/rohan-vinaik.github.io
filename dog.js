@@ -299,8 +299,14 @@
       this.x += this.vx;
       this.y += this.vy;
 
-      // Bounce on ground
+      // Air resistance (drag)
+      this.vx *= 0.99;
+      this.vy *= 0.99;
+
       const ground = window.innerHeight - 60;
+      const onGround = this.y >= ground;
+
+      // Bounce on ground
       if (this.y > ground && !this.bounced) {
         this.y = ground;
         this.vy *= -0.6; // Energy retention
@@ -310,6 +316,11 @@
         // Stop bouncing
         this.y = ground;
         this.vy = 0;
+      }
+
+      // Rolling friction when on ground
+      if (onGround) {
+        this.vx *= 0.95;
       }
 
       // Bounce off left/right walls
@@ -325,6 +336,12 @@
       if (this.y < 20) {
         this.y = 20;
         this.vy *= -0.5;
+      }
+
+      // Stop completely if velocity is very low
+      if (onGround && Math.abs(this.vx) < 0.1 && Math.abs(this.vy) < 0.1) {
+        this.vx = 0;
+        this.vy = 0;
       }
 
       // Update canvas position
