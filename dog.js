@@ -179,6 +179,7 @@
 
   let speechBubble = null;
   let isSpeaking = false; // Track if dog is currently speaking
+  let speechBubbleUpdateInterval = null; // Interval to update bubble position
 
   // Philosophical and existential proclamations from the dog
   const dogWisdom = [
@@ -252,6 +253,60 @@
   }
 
   /**
+   * Updates speech bubble position to follow the dog
+   */
+  function updateSpeechBubblePosition() {
+    if (!speechBubble || !dog.canvasEl) return;
+
+    const dogRect = dog.canvasEl.getBoundingClientRect();
+    const bubbleRect = speechBubble.getBoundingClientRect();
+
+    let bubbleX = dogRect.left + (dogRect.width / 2) - (bubbleRect.width / 2);
+    let bubbleY = dogRect.top - bubbleRect.height - 20;
+
+    // Viewport boundary checking
+    const viewportWidth = window.innerWidth;
+    if (bubbleX < 10) bubbleX = 10;
+    if (bubbleX + bubbleRect.width > viewportWidth - 10) {
+      bubbleX = viewportWidth - bubbleRect.width - 10;
+    }
+    if (bubbleY < 10) bubbleY = 10;
+
+    speechBubble.style.left = bubbleX + 'px';
+    speechBubble.style.top = bubbleY + 'px';
+
+    // Update tail position
+    const tailX = dogRect.left + (dogRect.width / 2) - bubbleX - 10;
+    if (speechBubble.styleEl) {
+      speechBubble.styleEl.textContent = `
+        .dog-speech-bubble::after {
+          content: '';
+          position: absolute;
+          bottom: -15px;
+          left: ${tailX}px;
+          width: 0;
+          height: 0;
+          border-left: 10px solid transparent;
+          border-right: 10px solid transparent;
+          border-top: 15px solid white;
+          filter: drop-shadow(0 2px 1px rgba(0, 0, 0, 0.1));
+        }
+        .dog-speech-bubble::before {
+          content: '';
+          position: absolute;
+          bottom: -18px;
+          left: ${tailX - 1}px;
+          width: 0;
+          height: 0;
+          border-left: 11px solid transparent;
+          border-right: 11px solid transparent;
+          border-top: 18px solid #222;
+        }
+      `;
+    }
+  }
+
+  /**
    * Creates and displays a speech bubble above the dog
    * @param {string} text - Text to display in bubble
    * @param {number} duration - How long to show bubble (ms)
@@ -260,6 +315,9 @@
     // Remove existing bubble if present
     if (speechBubble) {
       document.body.removeChild(speechBubble);
+      if (speechBubbleUpdateInterval) {
+        clearInterval(speechBubbleUpdateInterval);
+      }
     }
 
     // Mark dog as speaking
@@ -290,66 +348,18 @@
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     `;
 
-    // Position bubble above dog
-    const dogRect = dog.canvasEl.getBoundingClientRect();
-    let bubbleX = dogRect.left + (dogRect.width / 2);
-    let bubbleY = dogRect.top - 20; // Position above dog with space for tail
-
     document.body.appendChild(speechBubble);
 
-    // Get bubble dimensions for positioning
-    const bubbleRect = speechBubble.getBoundingClientRect();
-    bubbleX -= bubbleRect.width / 2; // Center horizontally
-    bubbleY -= bubbleRect.height; // Position above
-
-    // Viewport boundary checking
-    const viewportWidth = window.innerWidth;
-    const viewportHeight = window.innerHeight;
-
-    // Keep within horizontal bounds
-    if (bubbleX < 10) bubbleX = 10;
-    if (bubbleX + bubbleRect.width > viewportWidth - 10) {
-      bubbleX = viewportWidth - bubbleRect.width - 10;
-    }
-
-    // Keep within vertical bounds
-    if (bubbleY < 10) bubbleY = 10;
-
-    speechBubble.style.left = bubbleX + 'px';
-    speechBubble.style.top = bubbleY + 'px';
-
-    // Create speech bubble tail using pseudo-element
-    const tailX = dogRect.left + (dogRect.width / 2) - bubbleX - 10; // Offset for tail width
+    // Create style element for tail
     const style = document.createElement('style');
-    style.textContent = `
-      .dog-speech-bubble::after {
-        content: '';
-        position: absolute;
-        bottom: -15px;
-        left: ${tailX}px;
-        width: 0;
-        height: 0;
-        border-left: 10px solid transparent;
-        border-right: 10px solid transparent;
-        border-top: 15px solid white;
-        filter: drop-shadow(0 2px 1px rgba(0, 0, 0, 0.1));
-      }
-      .dog-speech-bubble::before {
-        content: '';
-        position: absolute;
-        bottom: -18px;
-        left: ${tailX - 1}px;
-        width: 0;
-        height: 0;
-        border-left: 11px solid transparent;
-        border-right: 11px solid transparent;
-        border-top: 18px solid #222;
-      }
-    `;
     document.head.appendChild(style);
-
-    // Store style element for cleanup
     speechBubble.styleEl = style;
+
+    // Initial position
+    updateSpeechBubblePosition();
+
+    // Update position continuously while bubble is visible
+    speechBubbleUpdateInterval = setInterval(updateSpeechBubblePosition, 16); // ~60fps
 
     // Fade in
     requestAnimationFrame(() => {
@@ -368,6 +378,10 @@
             }
             speechBubble = null;
             isSpeaking = false; // Mark dog as done speaking
+          }
+          if (speechBubbleUpdateInterval) {
+            clearInterval(speechBubbleUpdateInterval);
+            speechBubbleUpdateInterval = null;
           }
         }, 300);
       }
