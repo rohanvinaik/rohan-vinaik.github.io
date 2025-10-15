@@ -1186,7 +1186,17 @@
 
     // Ear twitch state
     lastEarTwitch: 0,
-    earTwitchCooldown: 5000 // Min time between twitches
+    earTwitchCooldown: 5000, // Min time between twitches
+
+    // Yawn state
+    isYawning: false,
+    yawnStartFrame: 0,
+    lastYawn: 0,
+
+    // Head tilt (curiosity)
+    headTilt: 0,
+    headTiltTarget: 0,
+    lastKeypress: 0
   };
 
   function createDogCanvas() {
@@ -1286,6 +1296,18 @@
       mouthPose = (m === 0) ? 'closed' : (m === 2) ? 'open' : 'half';
     } else if (dog.currentBehavior === 'excited') {
       tailPose = (dog.frameCount % 6 < 3) ? 'left' : 'right';
+    }
+
+    // Yawning animation - wide open mouth
+    if (dog.isYawning) {
+      const yawnProgress = (dog.frameCount - dog.yawnStartFrame) / 60; // Normalized 0-1 over 60 frames (1 second)
+      if (yawnProgress < 0.5) {
+        // Opening
+        mouthPose = 'open';
+      } else {
+        // Closing
+        mouthPose = yawnProgress < 0.75 ? 'half' : 'closed';
+      }
     }
 
     // Blink every ~6 seconds for 5 frames
@@ -2093,6 +2115,17 @@
       }
     }
 
+    // Head tilt physics (curiosity reaction to keyboard)
+    const timeSinceKeypress = Date.now() - dog.lastKeypress;
+    if (timeSinceKeypress < 3000) {
+      // Keep tilt for 3 seconds
+      dog.headTilt = lerp(dog.headTilt, dog.headTiltTarget, 0.2);
+    } else {
+      // Gradually return to neutral
+      dog.headTiltTarget = 0;
+      dog.headTilt = lerp(dog.headTilt, 0, 0.1);
+    }
+
     // Phase offsets for body parts (creates natural lag/inertia illusion)
     dog.headBobPhase = (dog.frameCount + 5) * 0.8;   // 5-frame offset, slightly slower
     dog.earFlopPhase = (dog.frameCount + 12) * 0.6;  // 12-frame offset, much slower
@@ -2136,20 +2169,30 @@
       dog.canvasEl.style.left = (baseLeft + offsetX) + 'px';
     }
 
-    // Apply squash/stretch and breathing transforms
+    // Apply squash/stretch, breathing, and head tilt transforms
     if (dog.canvasEl) {
       // Combine squash/stretch with breathing (breathing only when idle)
       const isIdle = !dog.isWalking && dog.currentBehavior !== 'excited' && dog.currentBehavior !== 'barking';
       const finalBreathingScale = isIdle ? breathingScale : 1.0;
 
+      // Build transform string
+      let transforms = [];
+
+      // Scale transforms
       if (dog.squashStretch !== 1.0) {
         const inverseStretch = 2 - dog.squashStretch; // Maintain volume
-        dog.canvasEl.style.transform = `scaleY(${dog.squashStretch * finalBreathingScale}) scaleX(${inverseStretch})`;
+        transforms.push(`scaleY(${dog.squashStretch * finalBreathingScale})`);
+        transforms.push(`scaleX(${inverseStretch})`);
       } else if (finalBreathingScale !== 1.0) {
-        dog.canvasEl.style.transform = `scale(${finalBreathingScale})`;
-      } else {
-        dog.canvasEl.style.transform = '';
+        transforms.push(`scale(${finalBreathingScale})`);
       }
+
+      // Head tilt rotation
+      if (Math.abs(dog.headTilt) > 0.1) {
+        transforms.push(`rotate(${dog.headTilt}deg)`);
+      }
+
+      dog.canvasEl.style.transform = transforms.join(' ') || '';
     }
 
     // Update shadow scale based on y position (fake depth)
@@ -2257,6 +2300,23 @@
               dog.anticipationOffset = Math.random() * 2 - 1;
             }, 800);
           }
+        }
+
+        // Yawning: triggered during sleepy times
+        const timeModifier = getTimeOfDayModifier();
+        const now = Date.now();
+        if (!dog.isYawning &&
+            timeModifier.mood === 'sleepy' &&
+            now - dog.lastYawn > 30000 && // At least 30s between yawns
+            dog.currentBehavior === 'idle' &&
+            Math.random() < 0.0008) {
+          dog.isYawning = true;
+          dog.yawnStartFrame = dog.frameCount;
+          dog.lastYawn = now;
+          playSighSound(); // Exhale sound during yawn
+          setTimeout(() => {
+            dog.isYawning = false;
+          }, 2000);
         }
 
         // Micro-naughtiness: occasionally nudge nearby elements for comedy
@@ -2614,6 +2674,12 @@
   document.addEventListener('keypress', (e) => {
     if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') {
       return;
+    }
+
+    // Head tilt on keypress (curiosity reaction)
+    if (dog.enabled && !dog.isWalking && dog.currentBehavior === 'idle') {
+      dog.lastKeypress = Date.now();
+      dog.headTiltTarget = (Math.random() < 0.5 ? -5 : 5); // Random tilt direction
     }
 
     commandBuffer += e.key;
