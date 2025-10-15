@@ -377,6 +377,18 @@
       "All structures of power are inherently corrupt. Reform is merely a palliative that delays inevitable systemic collapse.",
       "The epistemological framework of post-structuralist discourse fails to adequately address the material conditions of the working class.",
       "Kant's categorical imperative crumbles before the raw truth of lived experience!"
+    ],
+    nerdy: [
+      "01000010 01000001 01010010 01001011",
+      "Error 404: Treats Not Found",
+      "sudo apt-get treats",
+      "The mitochondria is the powerhouse of the cell",
+      "Lorem ipsum dolor sit woof",
+      "© 2025 Bork Industries. All rights reserved",
+      "Schrödinger's Dog: simultaneously good and also good",
+      "apt-get install treats -y --force-yes pls many thank",
+      "docker run treats:unlimited --please-docker-please",
+      "sudo give scratches --behind-ears --yes-there --wow perfect"
     ]
   };
 
@@ -397,7 +409,7 @@
       availableCategories = categories.filter(cat => cat !== mostRecentCategory);
     }
 
-    const shortCategories = ['simple', 'theatrical', 'grandiose'];
+    const shortCategories = ['simple', 'theatrical', 'grandiose', 'nerdy'];
     const lastWasVeryLong = lastWisdomQuote && lastWisdomQuote.length > 150;
 
     if (lastWasVeryLong && availableCategories.some(cat => shortCategories.includes(cat))) {
