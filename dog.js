@@ -159,6 +159,7 @@
   // ===========================================
 
   let speechBubble = null;
+  let isSpeaking = false; // Track if dog is currently speaking
 
   // Philosophical and existential proclamations from the dog
   const dogWisdom = [
@@ -224,6 +225,9 @@
     if (speechBubble) {
       document.body.removeChild(speechBubble);
     }
+
+    // Mark dog as speaking
+    isSpeaking = true;
 
     // Create speech bubble element
     speechBubble = document.createElement('div');
@@ -327,6 +331,7 @@
               document.head.removeChild(speechBubble.styleEl);
             }
             speechBubble = null;
+            isSpeaking = false; // Mark dog as done speaking
           }
         }, 300);
       }
@@ -880,6 +885,12 @@
   }
 
   function updateMovement() {
+    // Don't move while speaking (stop in place)
+    if (isSpeaking) {
+      dog.isWalking = false;
+      return;
+    }
+
     if (!dog.isWalking || dog.targetX === null) return;
 
     const distance = Math.abs(dog.targetX - dog.x);
@@ -910,6 +921,11 @@
   }
 
   function scheduleNextBehavior() {
+    // Don't schedule new behaviors while dog is speaking
+    if (isSpeaking) {
+      return;
+    }
+
     const behaviors = [
       { action: 'sit', duration: 5000, weight: 3 },
       { action: 'lie', duration: 8000, weight: 2 },
@@ -981,8 +997,8 @@
     dog.targetX = null;
     dog.chasingBall = false;
 
-    // Trigger bark animation with speech bubble
-    dog.currentBehavior = 'barking';
+    // Stop dog in place - become idle while speaking
+    dog.currentBehavior = 'idle';
 
     // Show speech bubble with random wisdom
     const wisdom = getRandomDogWisdom();
@@ -998,19 +1014,21 @@
     dog.tailWag.active = true;
     dog.tailWag.timer = 40;
 
-    // After bark, become excited
-    dog.behaviorTimer = setTimeout(() => {
-      dog.currentBehavior = 'excited';
-      dog.excitedStartFrame = dog.frameCount;
-      playHappySound();
+    // After speech ends, become excited
+    setTimeout(() => {
+      if (!isSpeaking) {
+        dog.currentBehavior = 'excited';
+        dog.excitedStartFrame = dog.frameCount;
+        playHappySound();
 
-      setTimeout(() => {
-        dog.currentBehavior = 'idle';
-        // Reset position when exiting excited state
-        dog.canvasEl.style.bottom = '60px';
-        scheduleNextBehavior();
-      }, 1500);
-    }, 1500);
+        setTimeout(() => {
+          dog.currentBehavior = 'idle';
+          // Reset position when exiting excited state
+          dog.canvasEl.style.bottom = '60px';
+          scheduleNextBehavior();
+        }, 1500);
+      }
+    }, duration);
 
     if (window.AchievementSystem) {
       window.AchievementSystem.incrementDog();
@@ -1049,24 +1067,32 @@
           fetchCount++;
           localStorage.setItem('dog-fetch-count', fetchCount.toString());
 
+          // Stay idle while showing speech
+          dog.currentBehavior = 'idle';
+
           // Show excited reaction
           const catchMessage = `Caught it! (${fetchCount}) - Try dragging the ball!`;
           const catchWordCount = catchMessage.split(/\s+/).length;
           const catchDuration = Math.max(2000, catchWordCount * 500);
           showSpeechBubble(catchMessage, catchDuration);
           playHappySound();
-          dog.currentBehavior = 'excited';
-          dog.excitedStartFrame = dog.frameCount;
 
-          // Enable dragging after excited animation
+          // After speech ends, become excited and enable dragging
           clearTimeout(dog.behaviorTimer);
           dog.behaviorTimer = setTimeout(() => {
-            dog.currentBehavior = 'idle';
-            dog.canvasEl.style.bottom = '60px';
+            if (!isSpeaking) {
+              dog.currentBehavior = 'excited';
+              dog.excitedStartFrame = dog.frameCount;
 
-            // Enable ball dragging
-            ball.enableDrag();
-          }, 2000);
+              setTimeout(() => {
+                dog.currentBehavior = 'idle';
+                dog.canvasEl.style.bottom = '60px';
+
+                // Enable ball dragging
+                ball.enableDrag();
+              }, 1500);
+            }
+          }, catchDuration);
         }
         // Check if ball is near dog and dog should chase (only if ball is free)
         else if (ball.isNearDog(dogX, dogY) && !dog.chasingBall && ballState === 'free') {
