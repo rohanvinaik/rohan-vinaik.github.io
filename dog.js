@@ -803,8 +803,9 @@
 
     // Show speech bubble with random wisdom
     const wisdom = getRandomDogWisdom();
-    // Duration scales with text length (min 2s, max 8s)
-    const duration = Math.min(8000, Math.max(2000, wisdom.length * 50));
+    // Duration based on word count: 500ms per word, minimum 2s
+    const wordCount = wisdom.split(/\s+/).length;
+    const duration = Math.max(2000, wordCount * 500);
     showSpeechBubble(wisdom, duration);
 
     // Play bark sound
@@ -867,7 +868,10 @@
           localStorage.setItem('dog-fetch-count', fetchCount.toString());
 
           // Show excited reaction
-          showSpeechBubble(`Caught it! (${fetchCount})`, 2000);
+          const catchMessage = `Caught it! (${fetchCount})`;
+          const catchWordCount = catchMessage.split(/\s+/).length;
+          const catchDuration = Math.max(2000, catchWordCount * 500);
+          showSpeechBubble(catchMessage, catchDuration);
           playHappySound();
           dog.currentBehavior = 'excited';
           dog.excitedStartFrame = dog.frameCount;
