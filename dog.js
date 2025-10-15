@@ -1029,7 +1029,7 @@
 
       case 'bark':
         dog.currentBehavior = 'barking';
-        playBarkSound();
+        // No sound for automatic barking - only when clicked
         dog.behaviorTimer = setTimeout(() => {
           dog.currentBehavior = 'idle';
           scheduleNextBehavior();
@@ -1125,7 +1125,7 @@
           const catchWordCount = catchMessage.split(/\s+/).length;
           const catchDuration = Math.max(2000, catchWordCount * 500);
           showSpeechBubble(catchMessage, catchDuration);
-          playHappySound();
+          // No sound for automatic ball catching - only when clicked
 
           // After speech ends, become excited and enable dragging
           clearTimeout(dog.behaviorTimer);
@@ -1365,13 +1365,16 @@
   // ============================================
   window.addEventListener('DOMContentLoaded', () => {
     const settings = JSON.parse(localStorage.getItem('dashboard-settings') || '{}');
-    if (settings.asciiDog) {
+
+    // Enable dog by default if not explicitly disabled
+    const shouldEnable = settings.asciiDog !== false; // true by default
+    if (shouldEnable) {
       enableDog();
     }
 
     const dogToggle = document.getElementById('enable-dog');
     if (dogToggle) {
-      dogToggle.checked = settings.asciiDog || false;
+      dogToggle.checked = shouldEnable;
       dogToggle.addEventListener('change', (e) => {
         if (e.target.checked) {
           enableDog();
