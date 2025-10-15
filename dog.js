@@ -137,14 +137,19 @@
   ];
 
   // Applies wag displacement to sprite pixels in-place
+  // 3-frame tail wag cycle: neutral (0) -> up (1) -> down (-1) -> neutral
   function applyTailWag(sprite, frame) {
     const p = sprite.pixels.map(r => r.slice());
-    const amp = frame % 2 === 0 ? 0 : 1; // wag amplitude
+    const wagCycle = [0, 1, 0, -1]; // 3-frame cycle with neutral
+    const phase = Math.floor(frame / 3) % 4;
+    const amp = wagCycle[phase];
+
     tailPixels.forEach(([y, x]) => {
       const ty = Math.max(0, Math.min(p.length - 1, y + amp));
       const tx = Math.min(p[0].length - 1, x);
       if (p[ty][tx] === 0) p[ty][tx] = 1;
-      if (amp && ty > 0) p[ty - 1][tx] = 0; // remove old
+      // Clear old positions
+      if (amp !== 0 && y >= 0 && y < p.length) p[y][x] = 0;
     });
     return { width: sprite.width, height: sprite.height, pixels: p };
   }
@@ -409,7 +414,10 @@
 
     // Ball chasing state
     chasingBall: false,
-    ballTarget: null
+    ballTarget: null,
+
+    // Excited state animation
+    excitedStartFrame: 0
   };
 
   // ============================================
@@ -462,8 +470,19 @@
         ? (bark ? dogSprites.barkOpenRight : dogSprites.barkClosedRight)
         : (bark ? dogSprites.barkOpenLeft  : dogSprites.barkClosedLeft);
     } else if (dog.currentBehavior === 'excited') {
-      const hop = Math.floor(dog.frameCount / 4) % 4;
-      yOffset = hop === 1 ? -3 : hop === 2 ? -1 : 0;
+      // Figure-8 hopping pattern
+      const t = (dog.frameCount - dog.excitedStartFrame) / 15; // Animation parameter
+      const hopPhase = Math.floor(dog.frameCount / 4) % 4;
+      yOffset = hopPhase === 1 ? -3 : hopPhase === 2 ? -1 : 0;
+
+      // Figure-8 horizontal movement (lemniscate curve)
+      const xOffset = Math.sin(t) * 15;
+      const figureYOffset = Math.sin(2 * t) * 8;
+
+      // Apply figure-8 position offset
+      dog.canvasEl.style.left = (dog.x + xOffset) + 'px';
+      dog.canvasEl.style.bottom = (60 + figureYOffset) + 'px';
+
       sprite = dog.facingRight ? dogSprites.standRight : dogSprites.standLeft;
     } else if (dog.isWalking) {
       const f = Math.floor(dog.walkFrame / 6) % 4;  // four-phase gait
@@ -475,10 +494,20 @@
       dog.walkFrame++;
     } else {
       sprite = dog.facingRight ? dogSprites.standRight : dogSprites.standLeft;
-      // Add breathing idle effect
-      if (!dog.isWalking && !dog.tailWag.active && dog.currentBehavior === 'idle') {
-        const breath = Math.sin(dog.frameCount / 60) * 0.5;
-        yOffset = breath;
+      // Add breathing idle effect with tail movement
+      if (!dog.isWalking && dog.currentBehavior === 'idle') {
+        // Organic breathing with slight variation
+        const breathCycle = dog.frameCount / 60;
+        const breath = Math.sin(breathCycle) * 0.5;
+        const microVariation = Math.sin(breathCycle * 0.7) * 0.1;
+        yOffset = breath + microVariation;
+
+        // Subtle tail sway synchronized with breathing (even when not actively wagging)
+        if (!dog.tailWag.active && dog.facingRight) {
+          // Activate subtle tail movement
+          dog.tailWag.active = true;
+          dog.tailWag.frame = Math.floor(breathCycle * 2); // Slow sway
+        }
       }
     }
 
@@ -685,10 +714,13 @@
     // After bark, become excited
     dog.behaviorTimer = setTimeout(() => {
       dog.currentBehavior = 'excited';
+      dog.excitedStartFrame = dog.frameCount;
       playHappySound();
 
       setTimeout(() => {
         dog.currentBehavior = 'idle';
+        // Reset position when exiting excited state
+        dog.canvasEl.style.bottom = '60px';
         scheduleNextBehavior();
       }, 1500);
     }, 1500);
@@ -735,10 +767,13 @@
           showSpeechBubble(`Caught it! (${fetchCount})`, 2000);
           playHappySound();
           dog.currentBehavior = 'excited';
+          dog.excitedStartFrame = dog.frameCount;
 
           clearTimeout(dog.behaviorTimer);
           dog.behaviorTimer = setTimeout(() => {
             dog.currentBehavior = 'idle';
+            // Reset position when exiting excited state
+            dog.canvasEl.style.bottom = '60px';
             scheduleNextBehavior();
           }, 2000);
         }
