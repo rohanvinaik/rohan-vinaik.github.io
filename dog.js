@@ -131,26 +131,45 @@
   // TAIL WAG SYSTEM
   // ===========================================
 
-  // Tail pixels (relative to top-left of sprite)
-  const tailPixels = [
-    [3, 2], [2, 3] // small up-curl on right-facing dog
+  // Tail definition for right-facing dog (left side of sprite)
+  // Each tail segment can move independently for fluid motion
+  const tailSegments = [
+    { y: 4, x: 0 },  // Top of tail (near back)
+    { y: 5, x: 0 },
+    { y: 6, x: 0 },  // Middle segments
+    { y: 7, x: 0 },
+    { y: 8, x: 1 }   // Tail tip (slightly inward)
   ];
 
-  // Applies wag displacement to sprite pixels in-place
-  // 3-frame tail wag cycle: neutral (0) -> up (1) -> down (-1) -> neutral
+  // Applies wag displacement to sprite pixels
+  // Creates side-to-side wagging motion
   function applyTailWag(sprite, frame) {
     const p = sprite.pixels.map(r => r.slice());
-    const wagCycle = [0, 1, 0, -1]; // 3-frame cycle with neutral
-    const phase = Math.floor(frame / 3) % 4;
-    const amp = wagCycle[phase];
 
-    tailPixels.forEach(([y, x]) => {
-      const ty = Math.max(0, Math.min(p.length - 1, y + amp));
-      const tx = Math.min(p[0].length - 1, x);
-      if (p[ty][tx] === 0) p[ty][tx] = 1;
-      // Clear old positions
-      if (amp !== 0 && y >= 0 && y < p.length) p[y][x] = 0;
+    // Wag cycle: left -> neutral -> right -> neutral
+    // Using sine wave for smooth motion
+    const phase = (frame / 4) % (Math.PI * 2);
+    const wagAmount = Math.round(Math.sin(phase) * 2); // -2 to +2 pixels horizontal
+
+    // Clear original tail positions
+    tailSegments.forEach(seg => {
+      if (p[seg.y] && p[seg.y][seg.x] === 1) {
+        p[seg.y][seg.x] = 0;
+      }
     });
+
+    // Draw tail at new positions with varying amplitude per segment
+    tailSegments.forEach((seg, i) => {
+      // Tip of tail moves more than base
+      const segmentMultiplier = (i + 1) / tailSegments.length;
+      const dx = Math.round(wagAmount * segmentMultiplier);
+      const newX = Math.max(0, Math.min(p[0].length - 1, seg.x + dx));
+
+      if (p[seg.y] && p[seg.y][newX] !== undefined) {
+        p[seg.y][newX] = 1;
+      }
+    });
+
     return { width: sprite.width, height: sprite.height, pixels: p };
   }
 
