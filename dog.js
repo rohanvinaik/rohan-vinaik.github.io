@@ -926,6 +926,13 @@
     // Cursor tracking
     cursorLookStrength: 0,
 
+    // Animation juice
+    anticipationOffset: 0,  // lean back before movement
+    squashStretch: 1.0,     // vertical scale factor
+    headBobPhase: 0,        // offset head bob timing
+    earFlopPhase: 0,        // offset ear flop timing
+    lastVelocitySign: 0,    // for detecting direction changes
+
     // Ball chasing state
     chasingBall: false,
     ballTarget: null,
@@ -1083,6 +1090,42 @@
   }
 
   // ===========================================
+  // VISUAL EFFECTS
+  // ===========================================
+
+  function spawnDustPuff(x, y) {
+    const puff = document.createElement('div');
+    const size = 6 + Math.random() * 4;
+    puff.style.cssText = `
+      position: fixed;
+      left: ${x - size/2}px;
+      top: ${y - size/2}px;
+      width: ${size}px;
+      height: ${size}px;
+      background: rgba(200, 200, 200, 0.6);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 499;
+      animation: dustFade 400ms ease-out forwards;
+    `;
+    document.body.appendChild(puff);
+    setTimeout(() => puff.remove(), 400);
+  }
+
+  // Inject dust animation keyframes
+  if (!document.getElementById('dust-keyframes')) {
+    const style = document.createElement('style');
+    style.id = 'dust-keyframes';
+    style.textContent = `
+      @keyframes dustFade {
+        0% { transform: scale(0.5) translateY(0); opacity: 0.6; }
+        100% { transform: scale(1.5) translateY(-10px); opacity: 0; }
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
+  // ===========================================
   // MOVEMENT & BEHAVIOR
   // ===========================================
 
@@ -1116,9 +1159,22 @@
       return;
     }
 
+    const wasMoving = Math.abs(dog.vx) > 0.5;
+    const currentVelocitySign = Math.sign(dog.vx);
+
     if (!dog.isWalking || dog.targetX === null) {
       // Smooth deceleration
+      const prevVx = dog.vx;
       dog.vx = lerp(dog.vx, 0, 0.2);
+
+      // Dust puff on stop
+      if (wasMoving && Math.abs(dog.vx) < 0.5 && Math.abs(prevVx) >= 0.5) {
+        const rect = dog.canvasEl.getBoundingClientRect();
+        spawnDustPuff(rect.left + rect.width/2, rect.bottom - 5);
+        // Overshoot then settle
+        dog.anticipationOffset = 2;
+      }
+
       if (Math.abs(dog.vx) < 0.01) dog.vx = 0;
       return;
     }
@@ -1138,10 +1194,36 @@
       return;
     }
 
+    // Detect direction change (quick turn)
+    const desiredSign = Math.sign(distance);
+    if (currentVelocitySign !== 0 && desiredSign !== currentVelocitySign && Math.abs(dog.vx) > 1) {
+      // Quick turn! Add anticipation and dust
+      dog.anticipationOffset = -3; // Lean back hard
+      const rect = dog.canvasEl.getBoundingClientRect();
+      spawnDustPuff(rect.left + rect.width/2, rect.bottom - 5);
+      spawnDustPuff(rect.left + rect.width/2 + (Math.random() - 0.5) * 10, rect.bottom - 3);
+      dog.squashStretch = 0.85; // Squash on turn
+    }
+
+    // Anticipation before starting to move
+    if (!wasMoving && absDistance > 10) {
+      dog.anticipationOffset = -2; // Lean back
+      setTimeout(() => {
+        dog.anticipationOffset = 1; // Spring forward
+      }, 80);
+    }
+
     // Acceleration towards target with arrival slowdown
     const targetVelocity = Math.sign(distance) * dog.walkSpeed;
     const arrivalFactor = Math.min(1, absDistance / 80); // Slow down within 80px
     dog.vx = lerp(dog.vx, targetVelocity * arrivalFactor, 0.15);
+
+    // Dust puff on fast acceleration
+    const justStartedMoving = !wasMoving && Math.abs(dog.vx) > 0.5;
+    if (justStartedMoving) {
+      const rect = dog.canvasEl.getBoundingClientRect();
+      spawnDustPuff(rect.left + rect.width/2, rect.bottom - 5);
+    }
 
     // Update position with sub-pixel precision
     dog.x += dog.vx * dt * 60; // Scale dt to maintain speed at 60fps
@@ -1150,6 +1232,9 @@
     if (Math.abs(dog.vx) > 0.5) {
       dog.facingRight = dog.vx > 0;
     }
+
+    // Store velocity sign for next frame
+    dog.lastVelocitySign = currentVelocitySign;
 
     // Boundary constraints
     const margin = 50;
@@ -1452,6 +1537,10 @@
   // ===========================================
 
   function updatePhysics(dt) {
+    // Phase offsets for body parts (creates natural lag/inertia illusion)
+    dog.headBobPhase = (dog.frameCount + 5) * 0.8;   // 5-frame offset, slightly slower
+    dog.earFlopPhase = (dog.frameCount + 12) * 0.6;  // 12-frame offset, much slower
+
     // Update springy tail
     if (dog.isWalking) {
       // Wag based on walking
@@ -1475,6 +1564,29 @@
     const spring = springDamper(dog.tailAngle, dog.tailTarget, dog.tailAngularVel, 80, 12, dt);
     dog.tailAngle = spring.position;
     dog.tailAngularVel = spring.velocity;
+
+    // Smooth recovery of anticipation offset (lean back/forward)
+    dog.anticipationOffset = lerp(dog.anticipationOffset, 0, 0.15);
+    if (Math.abs(dog.anticipationOffset) < 0.05) dog.anticipationOffset = 0;
+
+    // Smooth recovery of squash/stretch
+    dog.squashStretch = lerp(dog.squashStretch, 1.0, 0.2);
+    if (Math.abs(dog.squashStretch - 1.0) < 0.01) dog.squashStretch = 1.0;
+
+    // Apply anticipation offset to position (visual only, doesn't affect physics)
+    if (dog.anticipationOffset !== 0 && dog.canvasEl) {
+      const baseLeft = parseFloat(dog.canvasEl.style.left) || dog.x;
+      const offsetX = dog.anticipationOffset * (dog.facingRight ? 1 : -1);
+      dog.canvasEl.style.left = (baseLeft + offsetX) + 'px';
+    }
+
+    // Apply squash/stretch transform
+    if (dog.squashStretch !== 1.0 && dog.canvasEl) {
+      const inverseStretch = 2 - dog.squashStretch; // Maintain volume
+      dog.canvasEl.style.transform = `scaleY(${dog.squashStretch}) scaleX(${inverseStretch})`;
+    } else if (dog.canvasEl) {
+      dog.canvasEl.style.transform = '';
+    }
 
     // Update shadow scale based on y position (fake depth)
     if (dog.shadowEl) {
@@ -1744,6 +1856,30 @@
       } else {
         dog.cursorLookStrength = lerp(dog.cursorLookStrength, 0, 0.1);
       }
+    }
+  });
+
+  // Window blur/focus reactive behaviors
+  window.addEventListener('blur', () => {
+    if (dog.enabled && dog.currentBehavior !== 'lying') {
+      // User left! Curl up and sleep
+      executeBehavior('lie', 60000);
+    }
+  });
+
+  window.addEventListener('focus', () => {
+    if (dog.enabled && dog.currentBehavior === 'lying') {
+      // User's back! Excited zoomies
+      clearTimeout(dog.behaviorTimer);
+      dog.currentBehavior = 'excited';
+      dog.excitedStartFrame = dog.frameCount;
+      playHappySound();
+
+      setTimeout(() => {
+        dog.currentBehavior = 'idle';
+        dog.canvasEl.style.bottom = '60px';
+        scheduleNextBehavior();
+      }, 2000);
     }
   });
 
