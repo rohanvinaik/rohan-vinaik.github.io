@@ -220,12 +220,14 @@
     }
 
     // Match canvas to sprite, keep your 3× CSS scaling
-    canvas.width = sprite.width;
-    canvas.height = sprite.height;
+    const margin = 4; // pixels of breathing room
+    canvas.width  = sprite.width;
+    canvas.height = sprite.height + margin * 2;
     canvas.style.width = sprite.width * 3 + 'px';
-    canvas.style.height = sprite.height * 3 + 'px';
+    canvas.style.height = (sprite.height + margin * 2) * 3 + 'px';
 
-    if (yOffset) { ctx.save(); ctx.translate(0, yOffset); }
+    ctx.save();
+    ctx.translate(0, margin + yOffset); // center + apply offset
 
     const px = sprite.pixels;
     for (let y = 0; y < sprite.height; y++) {
@@ -243,7 +245,7 @@
       }
     }
 
-    if (yOffset) ctx.restore();
+    ctx.restore();
   }
 
   // ============================================
