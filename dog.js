@@ -430,7 +430,11 @@
     canCatch(dogX, dogY) {
       const dx = this.x - dogX;
       const dy = this.y - dogY;
-      return Math.sqrt(dx * dx + dy * dy) < 25;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+      // Larger catch radius and only when ball is on or near ground
+      const ground = window.innerHeight - 60;
+      const nearGround = this.y >= ground - 20;
+      return distance < 50 && nearGround;
     }
 
     destroy() {
@@ -885,9 +889,23 @@
 
         // If chasing, update target to ball position
         if (dog.chasingBall && ball) {
-          dog.targetX = ball.x;
-          dog.isWalking = true;
-          dog.facingRight = ball.x > dogX;
+          const distanceToBall = Math.abs(ball.x - dogX);
+
+          // Only move if ball is far enough away
+          if (distanceToBall > 30) {
+            dog.targetX = ball.x;
+            dog.isWalking = true;
+
+            // Only update facing direction if ball is significantly to one side
+            // This prevents rapid flipping when near the ball
+            if (distanceToBall > 15) {
+              dog.facingRight = ball.x > dogX;
+            }
+          } else {
+            // Stop moving when very close to ball
+            dog.isWalking = false;
+            dog.targetX = null;
+          }
         }
       }
 
