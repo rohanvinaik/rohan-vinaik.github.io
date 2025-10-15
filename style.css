@@ -16,8 +16,8 @@
   --text-primary: #e0e0e0;
   --text-secondary: #808080;
   --border-color: rgba(255, 255, 255, 0.1);
-  --accent: #00ff00;
-  --accent-dim: #00aa00;
+  --accent: #00ffff;
+  --accent-dim: #00aaaa;
   --accent-alt: #ffb000;
   --accent-cyan: #00ffff;
   --error: #ff0000;
@@ -273,6 +273,10 @@ body {
   border: 1px solid transparent;
   transition: all 0.1s ease;
   font-size: 0.8rem;
+}
+
+.external-link:visited {
+  color: var(--text-secondary);
 }
 
 .external-link:hover {
@@ -1019,6 +1023,10 @@ h1.section-title {
   color: var(--accent);
   text-decoration: none;
   transition: all 0.1s ease;
+}
+
+.info-link:visited {
+  color: var(--accent);
 }
 
 .info-link:hover {
