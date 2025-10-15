@@ -293,10 +293,13 @@
       yOffset = hop === 1 ? -3 : hop === 2 ? -1 : 0;
       sprite = dog.facingRight ? dogSprites.standRight : dogSprites.standLeft;
     } else if (dog.isWalking) {
-      const f = Math.floor(dog.walkFrame / 8) % 2;
+      // Add subtle walk bounce
+      const frame = Math.floor(dog.walkFrame / 8) % 2;
+      const bounce = Math.sin(dog.walkFrame / 8) * 1.2; // small up/down bob
+      yOffset = bounce;
       sprite = dog.facingRight
-        ? (f ? dogSprites.walk1Right : dogSprites.walk2Right)
-        : (f ? dogSprites.walk1Left  : dogSprites.walk2Left);
+        ? (frame ? dogSprites.walk1Right : dogSprites.walk2Right)
+        : (frame ? dogSprites.walk1Left  : dogSprites.walk2Left);
       dog.walkFrame++;
     } else {
       sprite = dog.facingRight ? dogSprites.standRight : dogSprites.standLeft;
