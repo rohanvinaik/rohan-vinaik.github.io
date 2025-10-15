@@ -311,6 +311,12 @@
   let ball = null;
   let fetchCount = parseInt(localStorage.getItem('dog-fetch-count') || '0');
 
+  // Tug-of-war game state
+  let ballState = 'free'; // 'free', 'held', 'dragging'
+  let dragStart = null;
+  let dragMovement = [];  // Track recent movements for stillness detection
+  let stillnessTimer = null;
+
   /**
    * Ball object for fetch mini-game
    * Handles physics, rendering, and collision
@@ -348,6 +354,124 @@
       this.ctx = this.canvas.getContext('2d');
       this.draw();
       document.body.appendChild(this.canvas);
+
+      // Bind event handlers for tug-of-war
+      this.onMouseDown = this.handleMouseDown.bind(this);
+      this.onMouseMove = this.handleMouseMove.bind(this);
+      this.onMouseUp = this.handleMouseUp.bind(this);
+    }
+
+    handleMouseDown(e) {
+      if (ballState === 'held') {
+        ballState = 'dragging';
+        dragStart = Date.now();
+        dragMovement = [];
+        clearTimeout(stillnessTimer);
+        stillnessTimer = null;
+        this.canvas.style.cursor = 'grabbing';
+      }
+    }
+
+    handleMouseMove(e) {
+      if (ballState === 'dragging') {
+        this.x = e.clientX;
+        this.y = e.clientY;
+
+        // Track movement for stillness detection
+        dragMovement.push({ x: e.clientX, y: e.clientY, time: Date.now() });
+
+        // Keep only last 30 positions (for ~1 second at 60fps)
+        if (dragMovement.length > 30) {
+          dragMovement.shift();
+        }
+
+        // Check for stillness
+        this.checkStillness();
+      }
+    }
+
+    handleMouseUp(e) {
+      if (ballState === 'dragging') {
+        // Check if we were still when released
+        if (this.isStill()) {
+          this.drop();
+        } else {
+          // Continue being held but not dragging
+          ballState = 'held';
+          this.canvas.style.cursor = 'grab';
+        }
+      }
+    }
+
+    checkStillness() {
+      if (this.isStill()) {
+        // Start timer if not already started
+        if (!stillnessTimer) {
+          stillnessTimer = setTimeout(() => {
+            if (ballState === 'dragging' && this.isStill()) {
+              this.drop();
+            }
+          }, 1000);
+        }
+      } else {
+        // Cancel timer if moving
+        if (stillnessTimer) {
+          clearTimeout(stillnessTimer);
+          stillnessTimer = null;
+        }
+      }
+    }
+
+    isStill() {
+      if (dragMovement.length < 10) return false;
+
+      // Check last 10 positions
+      const recentPositions = dragMovement.slice(-10);
+      const firstPos = recentPositions[0];
+
+      // Calculate max distance moved
+      let maxDistance = 0;
+      for (const pos of recentPositions) {
+        const dx = pos.x - firstPos.x;
+        const dy = pos.y - firstPos.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        maxDistance = Math.max(maxDistance, distance);
+      }
+
+      // Still if moved less than 5 pixels
+      return maxDistance < 5;
+    }
+
+    drop() {
+      ballState = 'free';
+      dragStart = null;
+      dragMovement = [];
+      clearTimeout(stillnessTimer);
+      stillnessTimer = null;
+
+      // Remove event listeners
+      this.canvas.removeEventListener('mousedown', this.onMouseDown);
+      document.removeEventListener('mousemove', this.onMouseMove);
+      document.removeEventListener('mouseup', this.onMouseUp);
+      this.canvas.style.pointerEvents = 'none';
+      this.canvas.style.cursor = 'default';
+
+      // Dog drops ball and returns to normal behavior
+      dog.currentBehavior = 'idle';
+      dog.canvasEl.style.bottom = '60px';
+      scheduleNextBehavior();
+
+      // Give ball slight downward velocity
+      this.vy = 2;
+      this.vx = 0;
+    }
+
+    enableDrag() {
+      this.canvas.style.pointerEvents = 'auto';
+      this.canvas.style.cursor = 'grab';
+      this.canvas.addEventListener('mousedown', this.onMouseDown);
+      document.addEventListener('mousemove', this.onMouseMove);
+      document.addEventListener('mouseup', this.onMouseUp);
     }
 
     draw() {
@@ -363,54 +487,84 @@
     }
 
     update() {
-      // Apply physics
-      this.vy += this.gravity;
-      this.x += this.vx;
-      this.y += this.vy;
-
-      // Air resistance (drag)
-      this.vx *= 0.99;
-      this.vy *= 0.99;
-
-      const ground = window.innerHeight - 60;
-      const onGround = this.y >= ground;
-
-      // Bounce on ground
-      if (this.y > ground && !this.bounced) {
-        this.y = ground;
-        this.vy *= -0.6; // Energy retention
-        this.vx *= 0.8;
-        this.bounced = true;
-      } else if (this.y > ground && this.bounced) {
-        // Stop bouncing
-        this.y = ground;
-        this.vy = 0;
-      }
-
-      // Rolling friction when on ground
-      if (onGround) {
-        this.vx *= 0.95;
-      }
-
-      // Bounce off left/right walls
-      if (this.x < 20) {
-        this.x = 20;
-        this.vx *= -0.7;
-      } else if (this.x > window.innerWidth - 20) {
-        this.x = window.innerWidth - 20;
-        this.vx *= -0.7;
-      }
-
-      // Bounce off top
-      if (this.y < 20) {
-        this.y = 20;
-        this.vy *= -0.5;
-      }
-
-      // Stop completely if velocity is very low
-      if (onGround && Math.abs(this.vx) < 0.1 && Math.abs(this.vy) < 0.1) {
+      // If being held or dragged, position at dog's mouth
+      if (ballState === 'held') {
+        const dogRect = dog.canvasEl.getBoundingClientRect();
+        // Position ball at dog's mouth (front center of sprite)
+        const mouthOffsetX = dog.facingRight ? 20 : -20;
+        this.x = dogRect.left + dogRect.width / 2 + mouthOffsetX;
+        this.y = dogRect.top + dogRect.height / 2 - 10;
         this.vx = 0;
         this.vy = 0;
+      } else if (ballState === 'dragging') {
+        // Ball position is updated by mouse movement
+        // Dog tries to follow
+        const dogRect = dog.canvasEl.getBoundingClientRect();
+        const dogX = dogRect.left + dogRect.width / 2;
+        const dx = this.x - dogX;
+
+        // Update dog facing direction
+        if (Math.abs(dx) > 20) {
+          dog.facingRight = dx > 0;
+        }
+
+        // Move dog towards ball (with some resistance)
+        const moveSpeed = 3;
+        if (Math.abs(dx) > 40) {
+          dog.x += dx > 0 ? moveSpeed : -moveSpeed;
+          dog.canvasEl.style.left = dog.x + 'px';
+        }
+      } else {
+        // Normal physics when free
+        // Apply physics
+        this.vy += this.gravity;
+        this.x += this.vx;
+        this.y += this.vy;
+
+        // Air resistance (drag)
+        this.vx *= 0.99;
+        this.vy *= 0.99;
+
+        const ground = window.innerHeight - 60;
+        const onGround = this.y >= ground;
+
+        // Bounce on ground
+        if (this.y > ground && !this.bounced) {
+          this.y = ground;
+          this.vy *= -0.6; // Energy retention
+          this.vx *= 0.8;
+          this.bounced = true;
+        } else if (this.y > ground && this.bounced) {
+          // Stop bouncing
+          this.y = ground;
+          this.vy = 0;
+        }
+
+        // Rolling friction when on ground
+        if (onGround) {
+          this.vx *= 0.95;
+        }
+
+        // Bounce off left/right walls
+        if (this.x < 20) {
+          this.x = 20;
+          this.vx *= -0.7;
+        } else if (this.x > window.innerWidth - 20) {
+          this.x = window.innerWidth - 20;
+          this.vx *= -0.7;
+        }
+
+        // Bounce off top
+        if (this.y < 20) {
+          this.y = 20;
+          this.vy *= -0.5;
+        }
+
+        // Stop completely if velocity is very low
+        if (onGround && Math.abs(this.vx) < 0.1 && Math.abs(this.vy) < 0.1) {
+          this.vx = 0;
+          this.vy = 0;
+        }
       }
 
       // Update canvas position
@@ -855,10 +1009,9 @@
         const dogY = dogRect.top + dogRect.height / 2;
 
         // Check if dog can catch ball
-        if (ball.canCatch(dogX, dogY)) {
+        if (ball.canCatch(dogX, dogY) && ballState === 'free') {
           // Dog caught the ball!
-          ball.destroy();
-          ball = null;
+          ballState = 'held';
           dog.chasingBall = false;
           dog.isWalking = false;
           dog.targetX = null;
@@ -868,7 +1021,7 @@
           localStorage.setItem('dog-fetch-count', fetchCount.toString());
 
           // Show excited reaction
-          const catchMessage = `Caught it! (${fetchCount})`;
+          const catchMessage = `Caught it! (${fetchCount}) - Try dragging the ball!`;
           const catchWordCount = catchMessage.split(/\s+/).length;
           const catchDuration = Math.max(2000, catchWordCount * 500);
           showSpeechBubble(catchMessage, catchDuration);
@@ -876,23 +1029,25 @@
           dog.currentBehavior = 'excited';
           dog.excitedStartFrame = dog.frameCount;
 
+          // Enable dragging after excited animation
           clearTimeout(dog.behaviorTimer);
           dog.behaviorTimer = setTimeout(() => {
             dog.currentBehavior = 'idle';
-            // Reset position when exiting excited state
             dog.canvasEl.style.bottom = '60px';
-            scheduleNextBehavior();
+
+            // Enable ball dragging
+            ball.enableDrag();
           }, 2000);
         }
-        // Check if ball is near dog and dog should chase
-        else if (ball.isNearDog(dogX, dogY) && !dog.chasingBall) {
+        // Check if ball is near dog and dog should chase (only if ball is free)
+        else if (ball.isNearDog(dogX, dogY) && !dog.chasingBall && ballState === 'free') {
           dog.chasingBall = true;
           clearTimeout(dog.behaviorTimer);
           dog.currentBehavior = 'walking';
         }
 
-        // If chasing, update target to ball position
-        if (dog.chasingBall && ball) {
+        // If chasing, update target to ball position (only if ball is free)
+        if (dog.chasingBall && ball && ballState === 'free') {
           const distanceToBall = Math.abs(ball.x - dogX);
 
           // Only move if ball is far enough away
@@ -1055,6 +1210,13 @@
       if (ball) {
         ball.destroy();
       }
+
+      // Reset ball state
+      ballState = 'free';
+      dragStart = null;
+      dragMovement = [];
+      clearTimeout(stillnessTimer);
+      stillnessTimer = null;
 
       // Create new ball at cursor position
       const dogRect = dog.canvasEl.getBoundingClientRect();
