@@ -7,7 +7,7 @@
   'use strict';
 
   // ============================================
-  // CLEAN SPRITE + DRAW LOGIC REBUILD
+  // SPRITE GENERATION FROM VERIFIED BASE (24×20)
   // ============================================
 
   // Color palette
@@ -18,130 +18,196 @@
     3: '#FFB6C1'        // pink tongue
   };
 
-  // ======================================================
-  // UNDERTALE-STYLE SPRITES (16×16, minimal, hand-defined)
-  // ======================================================
-  const dogSprites = (() => {
-    const W = 16, H = 16;
+  function deepCopyPixels(p) {
+    return p.map(row => row.slice());
+  }
 
-    const base = [
-      "................",
-      "...#####.........",
-      "..#######........",
-      ".##########......",
-      ".###########.....",
-      "#############....",
-      "#############....",
-      "#############....",
-      "#############....",
-      ".###.....###.....",
-      ".###.....###.....",
-      ".###.....###.....",
-      ".###.....###.....",
-      "................",
-      "................",
-      "................"
-    ];
+  function mirrorSprite(sprite) {
+    const pixels = sprite.pixels.map(row => [...row].reverse());
+    return { width: sprite.width, height: sprite.height, pixels };
+  }
 
-    const walk1 = [
-      "................",
-      "...#####.........",
-      "..#######........",
-      ".##########......",
-      ".###########.....",
-      "#############....",
-      "#############....",
-      "#############....",
-      "#############....",
-      ".###.....###.....",
-      ".###......###....",
-      ".###......###....",
-      ".###.....###.....",
-      "................",
-      "................",
-      "................"
-    ];
-
-    const walk2 = [
-      "................",
-      "...#####.........",
-      "..#######........",
-      ".##########......",
-      ".###########.....",
-      "#############....",
-      "#############....",
-      "#############....",
-      "#############....",
-      ".###......###....",
-      ".###.....###.....",
-      ".###.....###.....",
-      ".###......###....",
-      "................",
-      "................",
-      "................"
-    ];
-
-    const barkClosed = [...base];
-    const barkOpen = barkClosed.map((r, i) =>
-      i === 4 ? r.replace("#####", "##..#") : r
-    );
-
-    const sit = [
-      "................",
-      "...#####.........",
-      "..#######........",
-      ".##########......",
-      ".###########.....",
-      "###########......",
-      "###########......",
-      "###########......",
-      "..#########......",
-      "..#########......",
-      "...#######.......",
-      "...#######.......",
-      "................",
-      "................",
-      "................",
-      "................"
-    ];
-
-    const lie = [
-      "................",
-      "................",
-      "....########....",
-      "...##########...",
-      "..############..",
-      ".#############..",
-      ".#############..",
-      ".#############..",
-      "....#######.....",
-      "....#######.....",
-      "................",
-      "................",
-      "................",
-      "................",
-      "................",
-      "................"
-    ];
-
-    const mirror = arr => arr.map(r => [...r].reverse().join(''));
-
-    function encode(shape) {
-      return shape.map(row => [...row].map(c => (c === '#' ? 1 : 0)));
+  // Find contiguous bottom-leg column ranges once (robust to small changes)
+  function detectLegRanges(basePixels) {
+    const h = basePixels.length, w = basePixels[0].length;
+    const bottomRows = 4;                       // sample last few rows
+    const sums = new Array(w).fill(0);
+    for (let y = h - bottomRows; y < h; y++) {
+      for (let x = 0; x < w; x++) sums[x] += basePixels[y][x];
     }
+    const ranges = [];
+    let start = null, prev = null;
+    for (let x = 0; x < w; x++) {
+      if (sums[x] > 0) {
+        if (start === null) start = prev = x;
+        else if (x === prev + 1) prev = x;
+        else { ranges.push([start, prev]); start = prev = x; }
+      } else if (start !== null) {
+        ranges.push([start, prev]); start = prev = null;
+      }
+    }
+    if (start !== null) ranges.push([start, prev]);
+    return ranges;
+  }
 
-    return {
-      standRight: { width: W, height: H, pixels: encode(base) },
-      standLeft:  { width: W, height: H, pixels: encode(mirror(base)) },
-      walk1:      { width: W, height: H, pixels: encode(walk1) },
-      walk2:      { width: W, height: H, pixels: encode(walk2) },
-      barkClosed: { width: W, height: H, pixels: encode(barkClosed) },
-      barkOpen:   { width: W, height: H, pixels: encode(barkOpen) },
-      sit:        { width: W, height: H, pixels: encode(sit) },
-      lie1:       { width: W, height: H, pixels: encode(lie) },
-      lie2:       { width: W, height: H, pixels: encode(lie) }
-    };
-  })();
+  // Lift a leg group by 1px: move its lowest white pixel up by 1
+  function liftLegGroup(pixels, x0, x1) {
+    const h = pixels.length;
+    for (let x = x0; x <= x1; x++) {
+      // find the bottom-most 1 in this column
+      for (let y = h - 1; y >= 1; y--) {
+        if (pixels[y][x] === 1 && pixels[y - 1][x] === 0) {
+          pixels[y][x] = 0;
+          pixels[y - 1][x] = 1;
+          break;
+        }
+      }
+    }
+  }
+
+  // Make two walk frames by alternately lifting leg pairs 1&3 vs 2&4
+  function makeWalkFrames(base, legRanges) {
+    const walk1 = deepCopyPixels(base.pixels);
+    const walk2 = deepCopyPixels(base.pixels);
+    if (legRanges.length >= 4) {
+      // 0 & 2 lift in frame1; 1 & 3 lift in frame2
+      liftLegGroup(walk1, legRanges[0][0], legRanges[0][1]);
+      liftLegGroup(walk1, legRanges[2][0], legRanges[2][1]);
+      liftLegGroup(walk2, legRanges[1][0], legRanges[1][1]);
+      liftLegGroup(walk2, legRanges[3][0], legRanges[3][1]);
+    } else {
+      // Fallback: alternate even/odd leg clusters
+      legRanges.forEach((r, i) => {
+        if (i % 2 === 0) liftLegGroup(walk1, r[0], r[1]);
+        else             liftLegGroup(walk2, r[0], r[1]);
+      });
+    }
+    return [
+      { width: base.width, height: base.height, pixels: walk1 },
+      { width: base.width, height: base.height, pixels: walk2 }
+    ];
+  }
+
+  // Tiny mouth toggle near the snout for bark frames.
+  function makeBarkFrames(base, facing = 'right') {
+    const closed = deepCopyPixels(base.pixels);
+    const open   = deepCopyPixels(base.pixels);
+    const w = base.width, h = base.height;
+
+    // heuristic mouth patch location (front/top quadrant)
+    const patchY = Math.max(3, Math.floor(h * 0.35));
+    const patchX = facing === 'right' ? Math.floor(w * 0.42) : Math.floor(w * 0.58);
+
+    // Ensure we place the mouth into the white area (so it shows)
+    for (let dy = 0; dy < 3; dy++) {
+      for (let dx = 0; dx < 2; dx++) {
+        const y = patchY + dy, x = patchX + dx;
+        if (y >= 0 && y < h && x >= 0 && x < w && open[y][x] === 1) {
+          open[y][x] = 0;             // open mouth = hole in white
+        }
+      }
+    }
+    // closed == unchanged base
+    return [
+      { width: base.width, height: base.height, pixels: closed },
+      { width: base.width, height: base.height, pixels: open }
+    ];
+  }
+
+  // Sit: trim a little height from the front legs
+  function makeSitFrame(base, legRanges) {
+    const sit = deepCopyPixels(base.pixels);
+    // Raise the two front-leg groups slightly
+    const toRaise = legRanges.length >= 2 ? [legRanges[0], legRanges[1]] : legRanges;
+    toRaise.forEach(r => liftLegGroup(sit, r[0], r[1]));
+    return { width: base.width, height: base.height, pixels: sit };
+  }
+
+  // Lie: shift the top two rows down ~2 px and flatten feet
+  function makeLieFrames(base) {
+    const lie1 = deepCopyPixels(base.pixels);
+    const lie2 = deepCopyPixels(base.pixels);
+    const h = base.height, w = base.width;
+
+    // Vertical squash: move the top 3 rows down by 1/2 pixels (discrete version)
+    for (let y = 1; y < h; y++) for (let x = 0; x < w; x++) {
+      if (lie1[y - 1][x] === 1 && lie1[y][x] === 0) {
+        lie1[y][x] = 1; lie1[y - 1][x] = 0;
+      }
+    }
+    // Breath alt: do a second pass one row further
+    for (let y = 1; y < h; y++) for (let x = 0; x < w; x++) {
+      if (lie2[y - 1][x] === 1 && lie2[y][x] === 0 && Math.random() < 0.5) {
+        lie2[y][x] = 1; lie2[y - 1][x] = 0;
+      }
+    }
+    return [
+      { width: base.width, height: base.height, pixels: lie1 },
+      { width: base.width, height: base.height, pixels: lie2 }
+    ];
+  }
+
+  // ---------- Base sprite from your reference (24×20) ----------
+  // 0 = transparent, 1 = white. (No black outline needed.)
+  const baseStandRight = {
+    width: 24,
+    height: 20,
+    pixels: [
+      [0,1,1,0,1,1,1,1,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0],
+      [0,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0],
+      [0,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0],
+      [0,1,1,0,1,1,1,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0],
+      [1,1,1,0,1,1,1,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0],
+      [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,1],
+      [1,1,1,1,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,1],
+      [1,0,0,1,0,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+      [1,1,1,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+      [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+      [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+      [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+      [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+      [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+      [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0],
+      [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0],
+      [1,1,1,0,0,0,1,1,0,0,0,1,1,0,0,0,1,1,0,0,0,1,1,1],
+      [1,1,1,0,0,0,1,1,0,0,0,1,1,0,0,0,1,1,0,0,0,1,1,1],
+      [1,1,1,0,0,0,1,1,0,0,0,1,1,0,0,0,1,1,0,0,0,1,1,1],
+      [1,1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0]
+    ]
+  };
+
+  // Build the whole suite
+  const legRanges = detectLegRanges(baseStandRight.pixels);
+  const [walk1R, walk2R] = makeWalkFrames(baseStandRight, legRanges);
+  const [barkClosedR, barkOpenR] = makeBarkFrames(baseStandRight, 'right');
+  const [lie1R, lie2R] = makeLieFrames(baseStandRight);
+  const sitR = makeSitFrame(baseStandRight, legRanges);
+
+  const baseStandLeft  = mirrorSprite(baseStandRight);
+  const [walk1L, walk2L] = [mirrorSprite(walk1R), mirrorSprite(walk2R)];
+  const [barkClosedL, barkOpenL] = [mirrorSprite(barkClosedR), mirrorSprite(barkOpenR)];
+  const [lie1L, lie2L] = [mirrorSprite(lie1R), mirrorSprite(lie2R)];
+  const sitL = mirrorSprite(sitR);
+
+  // Export object in the same shape your code expects
+  const dogSprites = {
+    standRight: baseStandRight,
+    standLeft:  baseStandLeft,
+    walk1Right: walk1R,
+    walk2Right: walk2R,
+    walk1Left:  walk1L,
+    walk2Left:  walk2L,
+    barkClosedRight: barkClosedR,
+    barkOpenRight:   barkOpenR,
+    barkClosedLeft:  barkClosedL,
+    barkOpenLeft:    barkOpenL,
+    sitRight:  sitR,
+    sitLeft:   sitL,
+    lie1Right: lie1R,
+    lie2Right: lie2R,
+    lie1Left:  lie1L,
+    lie2Left:  lie2L
+  };
 
   // ============================================
   // DOG STATE
@@ -176,13 +242,13 @@
   function createDogCanvas() {
     const canvas = document.createElement('canvas');
     canvas.id = 'dog-canvas';
-    canvas.width = 16;  // Initial size, will be dynamically adjusted
-    canvas.height = 16;
+    canvas.width = 24;  // Initial size (24x20), will be dynamically adjusted
+    canvas.height = 20;
     canvas.style.position = 'fixed';
     canvas.style.bottom = '60px';
     canvas.style.left = dog.x + 'px';
-    canvas.style.width = '48px';   // Initial display at 3x size
-    canvas.style.height = '48px';
+    canvas.style.width = '72px';   // Initial display at 3x size
+    canvas.style.height = '60px';
     canvas.style.imageRendering = 'pixelated';
     canvas.style.imageRendering = '-moz-crisp-edges';
     canvas.style.imageRendering = 'crisp-edges';
@@ -198,7 +264,7 @@
   }
 
   // ============================================
-  // DRAW PIXEL DOG - Rebuilt Animation Logic
+  // DRAW LOGIC (keeps your state machine intact)
   // ============================================
   function drawDog() {
     if (!dog.ctx) return;
@@ -210,61 +276,57 @@
     let sprite;
     let yOffset = 0;
 
-    switch (dog.currentBehavior) {
-      case 'sitting':
-        sprite = dogSprites.sit;
-        break;
-
-      case 'lying':
-        sprite = (Math.floor(dog.frameCount / 60) % 2 === 0)
-          ? dogSprites.lie1
-          : dogSprites.lie2;
-        break;
-
-      case 'barking':
-        sprite = (Math.floor(dog.frameCount / 8) % 2 === 0)
-          ? dogSprites.barkClosed
-          : dogSprites.barkOpen;
-        break;
-
-      case 'excited':
-        const hop = Math.floor(dog.frameCount / 4) % 4;
-        yOffset = hop === 1 ? -3 : hop === 2 ? -1 : 0;
-        sprite = dog.facingRight ? dogSprites.standRight : dogSprites.standLeft;
-        break;
-
-      default:
-        if (dog.isWalking) {
-          const f = Math.floor(dog.walkFrame / 8) % 2;
-          sprite = dog.facingRight
-            ? (f ? dogSprites.walk1 : dogSprites.walk2)
-            : (f ? dogSprites.walk2 : dogSprites.walk1);
-          dog.walkFrame++;
-        } else {
-          sprite = dog.facingRight ? dogSprites.standRight : dogSprites.standLeft;
-        }
-        break;
+    if (dog.currentBehavior === 'sitting') {
+      sprite = dog.facingRight ? dogSprites.sitRight : dogSprites.sitLeft;
+    } else if (dog.currentBehavior === 'lying') {
+      const breath = Math.floor(dog.frameCount / 60) % 2;
+      sprite = dog.facingRight
+        ? (breath ? dogSprites.lie1Right : dogSprites.lie2Right)
+        : (breath ? dogSprites.lie1Left  : dogSprites.lie2Left);
+    } else if (dog.currentBehavior === 'barking') {
+      const bark = Math.floor(dog.frameCount / 8) % 2;
+      sprite = dog.facingRight
+        ? (bark ? dogSprites.barkOpenRight : dogSprites.barkClosedRight)
+        : (bark ? dogSprites.barkOpenLeft  : dogSprites.barkClosedLeft);
+    } else if (dog.currentBehavior === 'excited') {
+      const hop = Math.floor(dog.frameCount / 4) % 4;
+      yOffset = hop === 1 ? -3 : hop === 2 ? -1 : 0;
+      sprite = dog.facingRight ? dogSprites.standRight : dogSprites.standLeft;
+    } else if (dog.isWalking) {
+      const f = Math.floor(dog.walkFrame / 8) % 2;
+      sprite = dog.facingRight
+        ? (f ? dogSprites.walk1Right : dogSprites.walk2Right)
+        : (f ? dogSprites.walk1Left  : dogSprites.walk2Left);
+      dog.walkFrame++;
+    } else {
+      sprite = dog.facingRight ? dogSprites.standRight : dogSprites.standLeft;
     }
 
-    // Resize canvas dynamically for sprite
+    // Match canvas to sprite, keep your 3× CSS scaling
     canvas.width = sprite.width;
     canvas.height = sprite.height;
     canvas.style.width = sprite.width * 3 + 'px';
     canvas.style.height = sprite.height * 3 + 'px';
 
-    if (yOffset !== 0) ctx.save(), ctx.translate(0, yOffset);
+    if (yOffset) { ctx.save(); ctx.translate(0, yOffset); }
 
     const px = sprite.pixels;
     for (let y = 0; y < sprite.height; y++) {
       for (let x = 0; x < sprite.width; x++) {
-        const colorIndex = px[y][x];
-        if (!colorIndex) continue;
-        ctx.fillStyle = COLORS[colorIndex];
-        ctx.fillRect(x, y, 1, 1);
+        if (px[y][x] === 1) {
+          ctx.fillStyle = COLORS[1];
+          ctx.fillRect(x, y, 1, 1);
+        } else if (px[y][x] === 2) {
+          ctx.fillStyle = COLORS[2];
+          ctx.fillRect(x, y, 1, 1);
+        } else if (px[y][x] === 3) {
+          ctx.fillStyle = COLORS[3];
+          ctx.fillRect(x, y, 1, 1);
+        }
       }
     }
 
-    if (yOffset !== 0) ctx.restore();
+    if (yOffset) ctx.restore();
   }
 
   // ============================================
