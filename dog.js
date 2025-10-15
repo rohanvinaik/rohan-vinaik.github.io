@@ -25,6 +25,20 @@
   // Utilities
   const copy2D = (m) => m.map(r => r.slice());
   const zero = (w,h) => Array.from({length:h},()=>Array(w).fill(0));
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
+
+  // Easing functions
+  const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3);
+  const easeInOutSine = (t) => -(Math.cos(Math.PI * t) - 1) / 2;
+
+  // Spring damper for physics-based motion
+  function springDamper(current, target, velocity, k = 60, c = 10, dt = 1/60) {
+    const acceleration = -k * (current - target) - c * velocity;
+    const newVelocity = velocity + acceleration * dt;
+    const newPosition = current + newVelocity * dt;
+    return { position: newPosition, velocity: newVelocity };
+  }
 
   function blitWhite(dst, pts) {
     for (const {x,y} of pts) if (y>=0&&y<dst.length&&x>=0&&x<dst[0].length) dst[y][x] = 1;
@@ -878,7 +892,9 @@
     ctx: null,
     enabled: false,
 
-    x: 200,
+    // Sub-pixel position (floats)
+    x: 200.0,
+    vx: 0.0,
     y: window.innerHeight - 120,
 
     targetX: null,
@@ -894,11 +910,21 @@
 
     animationFrame: null,
     frameCount: 0,
+    accumulator: 0,
+    lastTime: performance.now(),
 
     // Animation state
     mouthPhase: 0,
     tailPhase: 0,
     blinkTimer: 0,
+
+    // Springy tail physics
+    tailAngle: 0,      // current angle
+    tailAngularVel: 0, // angular velocity
+    tailTarget: 0,     // target angle
+
+    // Cursor tracking
+    cursorLookStrength: 0,
 
     // Ball chasing state
     chasingBall: false,
@@ -915,6 +941,14 @@
       currentSprite: null,  // Override sprite for special behaviors
       inProgress: false,
       chewTarget: null
+    },
+
+    // Behavior cooldowns
+    behaviorCooldowns: {
+      sit: 0,
+      lie: 0,
+      bark: 0,
+      walk: 0
     }
   };
 
@@ -1075,58 +1109,97 @@
     else dog.facingRight = false;
   }
 
-  function updateMovement() {
+  function updateMovement(dt) {
     if (isSpeaking) {
       dog.isWalking = false;
+      dog.vx = 0;
       return;
     }
 
-    if (!dog.isWalking || dog.targetX === null) return;
+    if (!dog.isWalking || dog.targetX === null) {
+      // Smooth deceleration
+      dog.vx = lerp(dog.vx, 0, 0.2);
+      if (Math.abs(dog.vx) < 0.01) dog.vx = 0;
+      return;
+    }
 
-    const distance = Math.abs(dog.targetX - dog.x);
+    const distance = dog.targetX - dog.x;
+    const absDistance = Math.abs(distance);
 
-    if (distance < dog.walkSpeed) {
+    // Arrival steering: slow down near target
+    if (absDistance < dog.walkSpeed) {
       dog.x = dog.targetX;
       dog.isWalking = false;
       dog.targetX = null;
       dog.walkFrame = 0;
+      dog.vx = 0;
 
       scheduleNextBehavior();
       return;
     }
 
-    if (dog.targetX > dog.x) {
-      dog.x += dog.walkSpeed;
-      dog.facingRight = true;
-    } else {
-      dog.x -= dog.walkSpeed;
-      dog.facingRight = false;
+    // Acceleration towards target with arrival slowdown
+    const targetVelocity = Math.sign(distance) * dog.walkSpeed;
+    const arrivalFactor = Math.min(1, absDistance / 80); // Slow down within 80px
+    dog.vx = lerp(dog.vx, targetVelocity * arrivalFactor, 0.15);
+
+    // Update position with sub-pixel precision
+    dog.x += dog.vx * dt * 60; // Scale dt to maintain speed at 60fps
+
+    // Update facing direction with slight hysteresis
+    if (Math.abs(dog.vx) > 0.5) {
+      dog.facingRight = dog.vx > 0;
     }
 
+    // Boundary constraints
     const margin = 50;
-    dog.x = Math.max(margin, Math.min(window.innerWidth - margin, dog.x));
+    dog.x = clamp(dog.x, margin, window.innerWidth - margin);
 
-    dog.canvasEl.style.left = dog.x + 'px';
+    // Render position (snap to int)
+    const renderX = (dog.x + 0.5) | 0;
+    dog.canvasEl.style.left = renderX + 'px';
+    if (dog.shadowEl) {
+      dog.shadowEl.style.left = renderX + 'px';
+    }
   }
 
   function scheduleNextBehavior() {
     if (isSpeaking) return;
 
+    // Decay cooldowns
+    const now = Date.now();
+    for (const key in dog.behaviorCooldowns) {
+      if (dog.behaviorCooldowns[key] > 0) {
+        dog.behaviorCooldowns[key] = Math.max(0, dog.behaviorCooldowns[key] - (now - dog.lastInteraction));
+      }
+    }
+
     const behaviors = [
-      { action: 'sit', duration: 5000, weight: 3 },
-      { action: 'lie', duration: 8000, weight: 2 },
-      { action: 'stand', duration: 3000, weight: 4 },
-      { action: 'walk', duration: 0, weight: 3 },
-      { action: 'bark', duration: 2000, weight: 1 }
+      { action: 'sit', duration: 5000, weight: 3, cooldown: 8000 },
+      { action: 'lie', duration: 8000, weight: 2, cooldown: 15000 },
+      { action: 'stand', duration: 3000, weight: 4, cooldown: 5000 },
+      { action: 'walk', duration: 0, weight: 3, cooldown: 6000 },
+      { action: 'bark', duration: 2000, weight: 1, cooldown: 10000 }
     ];
 
-    const totalWeight = behaviors.reduce((sum, b) => sum + b.weight, 0);
+    // Filter out behaviors on cooldown
+    const available = behaviors.filter(b => dog.behaviorCooldowns[b.action] <= 0);
+
+    if (available.length === 0) {
+      // Fallback to stand if everything is on cooldown
+      executeBehavior('stand', 3000);
+      return;
+    }
+
+    // Weighted random selection from available behaviors
+    const totalWeight = available.reduce((sum, b) => sum + b.weight, 0);
     let random = Math.random() * totalWeight;
 
-    for (const behavior of behaviors) {
+    for (const behavior of available) {
       random -= behavior.weight;
       if (random <= 0) {
         executeBehavior(behavior.action, behavior.duration);
+        dog.behaviorCooldowns[behavior.action] = behavior.cooldown;
         break;
       }
     }
@@ -1282,8 +1355,8 @@
     const target = nearbyElements[Math.floor(Math.random() * nearbyElements.length)];
     const targetRect = target.getBoundingClientRect();
 
-    // Walk to the target
-    dog.targetX = targetRect.left - 50;
+    // Walk to the target (convert to float)
+    dog.targetX = targetRect.left - 50.0;
     dog.isWalking = true;
     dog.facingRight = dog.targetX > dog.x;
 
@@ -1378,66 +1451,117 @@
   // MAIN ANIMATION LOOP
   // ===========================================
 
+  function updatePhysics(dt) {
+    // Update springy tail
+    if (dog.isWalking) {
+      // Wag based on walking
+      const phase = (dog.frameCount / 8) % 2;
+      dog.tailTarget = (phase < 1) ? -0.3 : 0.3;
+    } else if (dog.currentBehavior === 'excited') {
+      // Fast wag when excited
+      const phase = (dog.frameCount / 4) % 2;
+      dog.tailTarget = (phase < 1) ? -0.5 : 0.5;
+    } else {
+      // Idle wag
+      if (dog.tailPhase && dog.frameCount % 12 < 6) {
+        const phase = Math.floor(dog.frameCount / 6) % 2;
+        dog.tailTarget = (phase === 0) ? -0.2 : 0.2;
+      } else {
+        dog.tailTarget = 0;
+      }
+    }
+
+    // Apply spring physics to tail
+    const spring = springDamper(dog.tailAngle, dog.tailTarget, dog.tailAngularVel, 80, 12, dt);
+    dog.tailAngle = spring.position;
+    dog.tailAngularVel = spring.velocity;
+
+    // Update shadow scale based on y position (fake depth)
+    if (dog.shadowEl) {
+      const normalizedY = dog.y / window.innerHeight;
+      const scale = lerp(0.8, 1.2, normalizedY); // Larger shadow when "closer" (bottom of screen)
+      const opacity = lerp(0.2, 0.4, normalizedY);
+      dog.shadowEl.style.transform = `scale(${scale})`;
+      dog.shadowEl.style.opacity = opacity.toString();
+    }
+  }
+
   function startAnimationLoop() {
-    function animate() {
+    const FIXED_DT = 1/60;
+    let accumulator = 0;
+    let lastTime = performance.now();
+
+    function animate(now) {
       if (!dog.enabled) return;
 
-      // Update ball physics - GameBall handles all state transitions internally
-      if (ball) {
-        ball.update();
+      const deltaTime = Math.min((now - lastTime) / 1000, 0.1); // Cap at 100ms
+      lastTime = now;
+      accumulator += deltaTime;
 
-        // Dog reaction to ball state
-        const feetX = ball.getFeetX();
-        const feetY = ball.getFeetY();
+      // Fixed timestep updates
+      while (accumulator >= FIXED_DT) {
+        // Update ball physics
+        if (ball) {
+          ball.update();
 
-        switch (ball.state) {
-          case 'flying':
-          case 'grounded':
-            // Start chasing if ball is near and dog isn't already chasing
-            if (!dog.chasingBall && ball.isNear(feetX, feetY)) {
-              dog.chasingBall = true;
-              clearTimeout(dog.behaviorTimer);
-              dog.currentBehavior = 'walking';
-            }
+          // Dog reaction to ball state
+          const feetX = ball.getFeetX();
+          const feetY = ball.getFeetY();
 
-            // Chase behavior - walk toward ball
-            if (dog.chasingBall) {
-              const distanceToBall = Math.abs(ball.x - feetX);
-
-              if (distanceToBall > 30) {
-                dog.targetX = ball.x;
-                dog.isWalking = true;
-
-                if (distanceToBall > 15) {
-                  dog.facingRight = ball.x > feetX;
-                }
-              } else {
-                dog.isWalking = false;
-                dog.targetX = null;
+          switch (ball.state) {
+            case 'flying':
+            case 'grounded':
+              // Start chasing if ball is near and dog isn't already chasing
+              if (!dog.chasingBall && ball.isNear(feetX, feetY)) {
+                dog.chasingBall = true;
+                clearTimeout(dog.behaviorTimer);
+                dog.currentBehavior = 'walking';
               }
-            }
-            break;
 
-          case 'caught':
-          case 'tug':
-            // Ball is in dog's mouth - no chasing needed
-            dog.chasingBall = false;
-            break;
+              // Chase behavior - walk toward ball
+              if (dog.chasingBall) {
+                const distanceToBall = Math.abs(ball.x - feetX);
+
+                if (distanceToBall > 30) {
+                  dog.targetX = ball.x;
+                  dog.isWalking = true;
+
+                  if (distanceToBall > 15) {
+                    dog.facingRight = ball.x > feetX;
+                  }
+                } else {
+                  dog.isWalking = false;
+                  dog.targetX = null;
+                }
+              }
+              break;
+
+            case 'caught':
+            case 'tug':
+              // Ball is in dog's mouth - no chasing needed
+              dog.chasingBall = false;
+              break;
+          }
         }
+
+        updateMovement(FIXED_DT);
+        updatePhysics(FIXED_DT);
+
+        const timeSinceInteraction = Date.now() - dog.lastInteraction;
+        if (timeSinceInteraction > 60000 && dog.currentBehavior !== 'lying' && !dog.chasingBall) {
+          executeBehavior('lie', 30000);
+        }
+
+        accumulator -= FIXED_DT;
       }
 
-      updateMovement();
+      // Render (variable rate)
       drawDog();
-
-      const timeSinceInteraction = Date.now() - dog.lastInteraction;
-      if (timeSinceInteraction > 60000 && dog.currentBehavior !== 'lying' && !dog.chasingBall) {
-        executeBehavior('lie', 30000);
-      }
 
       dog.animationFrame = requestAnimationFrame(animate);
     }
 
-    animate();
+    animate(lastTime);
   }
 
   // ===========================================
@@ -1551,10 +1675,13 @@
       dog.shadowEl.style.display = 'block';
     }
 
-    dog.x = 100 + Math.random() * (window.innerWidth - 200);
-    dog.canvasEl.style.left = dog.x + 'px';
+    // Initialize with float precision
+    dog.x = 100.0 + Math.random() * (window.innerWidth - 200);
+    dog.vx = 0.0;
+    const renderX = (dog.x + 0.5) | 0;
+    dog.canvasEl.style.left = renderX + 'px';
     if (dog.shadowEl) {
-      dog.shadowEl.style.left = dog.x + 'px';
+      dog.shadowEl.style.left = renderX + 'px';
     }
 
     // Initialize naughty mode
@@ -1597,9 +1724,27 @@
   let lastMouseX = window.innerWidth / 2;
   let lastMouseY = window.innerHeight / 2;
 
+  // Cursor tracking for reactive behaviors
   document.addEventListener('mousemove', (e) => {
     lastMouseX = e.clientX;
     lastMouseY = e.clientY;
+
+    // Update cursor look strength based on distance to dog
+    if (dog.enabled && dog.canvasEl) {
+      const rect = dog.canvasEl.getBoundingClientRect();
+      const dogCenterX = rect.left + rect.width / 2;
+      const dogCenterY = rect.top + rect.height / 2;
+      const dx = lastMouseX - dogCenterX;
+      const dy = lastMouseY - dogCenterY;
+      const distance = Math.hypot(dx, dy);
+
+      // Look-at within 200px, pounce trigger under 60px
+      if (distance < 200) {
+        dog.cursorLookStrength = lerp(dog.cursorLookStrength, 1 - distance / 200, 0.1);
+      } else {
+        dog.cursorLookStrength = lerp(dog.cursorLookStrength, 0, 0.1);
+      }
+    }
   });
 
   document.addEventListener('keypress', (e) => {
