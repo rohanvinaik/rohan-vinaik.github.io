@@ -180,6 +180,8 @@
   let speechBubble = null;
   let isSpeaking = false; // Track if dog is currently speaking
   let speechBubbleUpdateInterval = null; // Interval to update bubble position
+  let speechBubbleFadeTimeout = null; // Timeout for bubble fade-out
+  let speechBubbleRemoveTimeout = null; // Timeout for bubble removal
 
   // Philosophical and existential proclamations from the dog
   const dogWisdom = [
@@ -312,12 +314,29 @@
    * @param {number} duration - How long to show bubble (ms)
    */
   function showSpeechBubble(text, duration = 1500) {
+    // Clear any existing timeouts/intervals to prevent premature removal
+    if (speechBubbleFadeTimeout) {
+      clearTimeout(speechBubbleFadeTimeout);
+      speechBubbleFadeTimeout = null;
+    }
+    if (speechBubbleRemoveTimeout) {
+      clearTimeout(speechBubbleRemoveTimeout);
+      speechBubbleRemoveTimeout = null;
+    }
+    if (speechBubbleUpdateInterval) {
+      clearInterval(speechBubbleUpdateInterval);
+      speechBubbleUpdateInterval = null;
+    }
+
     // Remove existing bubble if present
     if (speechBubble) {
-      document.body.removeChild(speechBubble);
-      if (speechBubbleUpdateInterval) {
-        clearInterval(speechBubbleUpdateInterval);
+      if (speechBubble.parentNode) {
+        document.body.removeChild(speechBubble);
       }
+      if (speechBubble.styleEl && speechBubble.styleEl.parentNode) {
+        document.head.removeChild(speechBubble.styleEl);
+      }
+      speechBubble = null;
     }
 
     // Mark dog as speaking
@@ -363,14 +382,16 @@
 
     // Fade in
     requestAnimationFrame(() => {
-      speechBubble.style.opacity = '1';
+      if (speechBubble) {
+        speechBubble.style.opacity = '1';
+      }
     });
 
-    // Fade out and remove
-    setTimeout(() => {
+    // Fade out and remove with tracked timeouts
+    speechBubbleFadeTimeout = setTimeout(() => {
       if (speechBubble) {
         speechBubble.style.opacity = '0';
-        setTimeout(() => {
+        speechBubbleRemoveTimeout = setTimeout(() => {
           if (speechBubble && speechBubble.parentNode) {
             document.body.removeChild(speechBubble);
             if (speechBubble.styleEl && speechBubble.styleEl.parentNode) {
@@ -383,6 +404,8 @@
             clearInterval(speechBubbleUpdateInterval);
             speechBubbleUpdateInterval = null;
           }
+          speechBubbleFadeTimeout = null;
+          speechBubbleRemoveTimeout = null;
         }, 300);
       }
     }, duration);
