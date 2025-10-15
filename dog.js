@@ -127,6 +127,28 @@
     lieLeft: mirror(lie)
   };
 
+  // ===========================================
+  // TAIL WAG SYSTEM
+  // ===========================================
+
+  // Tail pixels (relative to top-left of sprite)
+  const tailPixels = [
+    [3, 2], [2, 3] // small up-curl on right-facing dog
+  ];
+
+  // Applies wag displacement to sprite pixels in-place
+  function applyTailWag(sprite, frame) {
+    const p = sprite.pixels.map(r => r.slice());
+    const amp = frame % 2 === 0 ? 0 : 1; // wag amplitude
+    tailPixels.forEach(([y, x]) => {
+      const ty = Math.max(0, Math.min(p.length - 1, y + amp));
+      const tx = Math.min(p[0].length - 1, x);
+      if (p[ty][tx] === 0) p[ty][tx] = 1;
+      if (amp && ty > 0) p[ty - 1][tx] = 0; // remove old
+    });
+    return { width: sprite.width, height: sprite.height, pixels: p };
+  }
+
   // ============================================
   // DOG STATE
   // ============================================
@@ -151,7 +173,14 @@
     lastInteraction: Date.now(),
 
     animationFrame: null,
-    frameCount: 0
+    frameCount: 0,
+
+    tailWag: {
+      active: false,
+      timer: 0,
+      frame: 0,
+      lastToggle: 0
+    }
   };
 
   // ============================================
@@ -217,6 +246,31 @@
       dog.walkFrame++;
     } else {
       sprite = dog.facingRight ? dogSprites.standRight : dogSprites.standLeft;
+    }
+
+    // Tail wag behavior
+    if (!dog.tailWag.active) {
+      // idle: random wag chance
+      if (!dog.isWalking && Math.random() < 0.002) {
+        dog.tailWag.active = true;
+        dog.tailWag.timer = 20 + Math.floor(Math.random() * 20);
+      }
+    } else {
+      // active wag
+      dog.tailWag.frame++;
+      dog.tailWag.timer--;
+      if (dog.tailWag.timer <= 0) {
+        dog.tailWag.active = false;
+        dog.tailWag.frame = 0;
+      }
+    }
+
+    // wag always active while walking
+    if (dog.isWalking) dog.tailWag.active = true;
+
+    // apply wag transform
+    if (dog.tailWag.active && dog.facingRight) {
+      sprite = applyTailWag(sprite, dog.tailWag.frame);
     }
 
     // Match canvas to sprite, keep your 3× CSS scaling
@@ -374,6 +428,10 @@
     dog.targetX = null;
 
     dog.currentBehavior = 'excited';
+
+    // Toggle tail wag on click
+    dog.tailWag.active = !dog.tailWag.active;
+    dog.tailWag.timer = dog.tailWag.active ? 9999 : 0;
 
     playHappySound();
 
