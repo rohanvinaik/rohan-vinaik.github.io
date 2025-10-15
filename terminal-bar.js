@@ -7,6 +7,63 @@
   'use strict';
 
   // ============================================
+  // TRANSLATION HELPER
+  // ============================================
+  function t(key) {
+    if (!window.terminal || !window.terminal.translations) {
+      return key; // Fallback if translations not loaded
+    }
+    const lang = window.terminal.getCurrentLanguage ? window.terminal.getCurrentLanguage() : 'standard';
+    const translations = window.terminal.translations[lang] || window.terminal.translations.standard;
+    return translations[key] || key;
+  }
+
+  // ============================================
+  // COMMAND NAME MAPPING
+  // ============================================
+  // Map translated command names back to their canonical keys
+  function getCanonicalCommand(input) {
+    if (!window.terminal || !window.terminal.translations) {
+      return input;
+    }
+    const lang = window.terminal.getCurrentLanguage ? window.terminal.getCurrentLanguage() : 'standard';
+    const translations = window.terminal.translations[lang] || window.terminal.translations.standard;
+
+    // Command mapping
+    const commandMap = {
+      'term-help': 'help',
+      'term-cd': 'cd',
+      'term-pwd': 'pwd',
+      'term-ls': 'ls',
+      'term-whoami': 'whoami',
+      'term-about': 'about',
+      'term-cat': 'cat',
+      'term-date': 'date',
+      'term-uptime': 'uptime',
+      'term-clear': 'clear',
+      'term-history': 'history',
+      'term-echo': 'echo',
+      'term-tree': 'tree',
+      'term-grep': 'grep',
+      'term-wc': 'wc',
+      'term-fortune': 'fortune',
+      'term-theme': 'theme',
+      'term-cowsay': 'cowsay',
+      'term-ll': 'll',
+      'term-h': 'h'
+    };
+
+    // Check if input matches any translated command
+    for (const [key, canonical] of Object.entries(commandMap)) {
+      if (translations[key] === input) {
+        return canonical;
+      }
+    }
+
+    return input; // Return original if no translation match
+  }
+
+  // ============================================
   // STATE
   // ============================================
   const state = {
@@ -68,7 +125,7 @@
       usage: 'cd <section> | cd ..',
       execute: (args) => {
         if (args.length === 0) {
-          return `Current section: ${state.currentSection}\nUsage: cd <section> | cd ..`;
+          return `${t('term-current-section')} ${state.currentSection}\n${t('term-usage')}: ${t('term-cd')} <section> | ${t('term-cd')} ..`;
         }
 
         const target = args[0].toLowerCase();
@@ -76,17 +133,17 @@
         if (target === '..') {
           if (state.currentSection !== 'home') {
             navigateToSection('home');
-            return `<span class="success">Navigated to home</span>`;
+            return `<span class="success">${t('term-success-navigated')} home</span>`;
           }
-          return 'Already in home directory';
+          return t('term-already-home');
         }
 
         if (sections[target]) {
           navigateToSection(target);
-          return `<span class="success">Navigated to ${target}</span>`;
+          return `<span class="success">${t('term-success-navigated')} ${target}</span>`;
         }
 
-        return `<span class="error">Section not found: ${target}</span>\nAvailable sections: ${Object.keys(sections).join(', ')}`;
+        return `<span class="error">${t('term-error-section-not-found')}: ${target}</span>\n${t('term-available-sections')} ${Object.keys(sections).join(', ')}`;
       }
     },
 
@@ -105,7 +162,7 @@
         const longFormat = args.includes('-l') || args.includes('--long');
 
         if (longFormat) {
-          let output = '\n<span class="info">Available Sections:</span>\n';
+          let output = `\n<span class="info">${t('term-available-sections')}</span>\n`;
           output += '<span class="separator">══════════════════════════════════════════════════════════</span>\n';
           for (const [name, desc] of Object.entries(sections)) {
             output += `<span class="section-name">${name.padEnd(16)}</span> ${desc}\n`;
@@ -222,7 +279,7 @@
       usage: 'history',
       execute: () => {
         if (state.commandHistory.length === 0) {
-          return 'No commands in history';
+          return t('term-no-history');
         }
         return state.commandHistory.map((cmd, i) =>
           `  ${(i + 1).toString().padStart(3)} ${cmd}`
@@ -268,7 +325,7 @@
       usage: 'grep <keyword>',
       execute: (args) => {
         if (args.length === 0) {
-          return 'Usage: grep <keyword>';
+          return `${t('term-usage')}: ${t('term-grep')} <keyword>`;
         }
 
         const keyword = args.join(' ').toLowerCase();
@@ -290,10 +347,10 @@
         }
 
         if (results.length === 0) {
-          return `<span class="error">No matches found for: ${keyword}</span>`;
+          return `<span class="error">${t('term-no-matches')} ${keyword}</span>`;
         }
 
-        return `\n<span class="info">Search results for "${keyword}":</span>\n` + results.join('\n');
+        return `\n<span class="info">${t('term-search-results')} "${keyword}":</span>\n` + results.join('\n');
       }
     },
 
@@ -326,16 +383,16 @@
       usage: 'fortune',
       execute: () => {
         const fortunes = [
-          '"Theory without practice is sterile. Practice without theory is blind." - Immanuel Kant',
-          '"The best way to predict the future is to invent it." - Alan Kay',
-          '"Premature optimization is the root of all evil." - Donald Knuth',
-          '"Make it work, make it right, make it fast." - Kent Beck',
-          '"Simplicity is prerequisite for reliability." - Edsger Dijkstra',
-          '"If you can\'t explain it simply, you don\'t understand it well enough." - Albert Einstein',
-          '"First, solve the problem. Then, write the code." - John Johnson',
-          '"The best programs are the ones written when the programmer is supposed to be working on something else." - Melinda Varian',
-          '"Code never lies, comments sometimes do." - Ron Jeffries',
-          '"Any fool can write code that a computer can understand. Good programmers write code that humans can understand." - Martin Fowler'
+          t('term-fortune-1'),
+          t('term-fortune-2'),
+          t('term-fortune-3'),
+          t('term-fortune-4'),
+          t('term-fortune-5'),
+          t('term-fortune-6'),
+          t('term-fortune-7'),
+          t('term-fortune-8'),
+          t('term-fortune-9'),
+          t('term-fortune-10')
         ];
         const quote = fortunes[Math.floor(Math.random() * fortunes.length)];
         return `\n${quote}\n`;
@@ -349,9 +406,9 @@
         const themeBtn = document.getElementById('theme-cycle-btn');
         if (themeBtn) {
           themeBtn.click();
-          return '<span class="success">Theme cycled</span>';
+          return `<span class="success">${t('term-theme-cycled')}</span>`;
         }
-        return '<span class="error">Theme control not available</span>';
+        return `<span class="error">${t('term-theme-unavailable')}</span>`;
       }
     },
 
@@ -400,42 +457,42 @@
   // ============================================
 
   function formatHelpMessage() {
-    let output = '\n<span class="info">Available Commands:</span>\n';
+    let output = `\n<span class="info">${t('term-help-header')}</span>\n`;
     output += '<span class="separator">══════════════════════════════════════════════════════════</span>\n';
-    output += '<span class="label">NAVIGATION:</span>\n';
-    output += '  cd <section>      Navigate to section\n';
-    output += '  cd ..             Return to home\n';
-    output += '  pwd               Print current section\n';
-    output += '  ls [-l]           List available sections\n\n';
-    output += '<span class="label">INFORMATION:</span>\n';
-    output += '  help              Show this help message\n';
-    output += '  whoami            Display info about Rohan\n';
-    output += '  about             Jump to about section\n';
-    output += '  cat <section>     View section summary\n';
-    output += '  date              Show current date/time\n';
-    output += '  uptime            Show time since page load\n\n';
-    output += '<span class="label">UTILITIES:</span>\n';
-    output += '  clear             Clear terminal output\n';
-    output += '  history           Show command history\n';
-    output += '  echo <text>       Echo text back\n';
-    output += '  tree              Show site structure\n';
-    output += '  grep <keyword>    Search across sections\n';
-    output += '  wc                Word count statistics\n';
-    output += '  theme             Cycle through color themes\n';
-    output += '  fortune           Random quote\n';
-    output += '  cowsay <text>     ASCII cow art\n\n';
-    output += '<span class="label">ALIASES:</span>\n';
-    output += '  ll                Alias for ls -l\n';
-    output += '  h, ?              Alias for help\n\n';
-    output += '<span class="label">KEYBOARD SHORTCUTS:</span>\n';
-    output += '  Ctrl+`            Toggle terminal visibility\n';
-    output += '  Ctrl+L            Clear screen\n';
-    output += '  Ctrl+C            Cancel current input\n';
-    output += '  Esc               Blur terminal input\n';
-    output += '  Up/Down           Navigate command history\n';
-    output += '  Tab               Auto-complete commands\n\n';
+    output += `<span class="label">${t('term-nav-label')}</span>\n`;
+    output += `  ${t('term-cd')} <section>      ${t('term-cd-desc')}\n`;
+    output += `  ${t('term-cd')} ..             Return to home\n`;
+    output += `  ${t('term-pwd')}               ${t('term-pwd-desc')}\n`;
+    output += `  ${t('term-ls')} [-l]           ${t('term-ls-desc')}\n\n`;
+    output += `<span class="label">${t('term-info-label')}</span>\n`;
+    output += `  ${t('term-help')}              ${t('term-help-desc')}\n`;
+    output += `  ${t('term-whoami')}            ${t('term-whoami-desc')}\n`;
+    output += `  ${t('term-about')}             ${t('term-about-desc')}\n`;
+    output += `  ${t('term-cat')} <section>     ${t('term-cat-desc')}\n`;
+    output += `  ${t('term-date')}              ${t('term-date-desc')}\n`;
+    output += `  ${t('term-uptime')}            ${t('term-uptime-desc')}\n\n`;
+    output += `<span class="label">${t('term-utils-label')}</span>\n`;
+    output += `  ${t('term-clear')}             ${t('term-clear-desc')}\n`;
+    output += `  ${t('term-history')}           ${t('term-history-desc')}\n`;
+    output += `  ${t('term-echo')} <text>       ${t('term-echo-desc')}\n`;
+    output += `  ${t('term-tree')}              ${t('term-tree-desc')}\n`;
+    output += `  ${t('term-grep')} <keyword>    ${t('term-grep-desc')}\n`;
+    output += `  ${t('term-wc')}                ${t('term-wc-desc')}\n`;
+    output += `  ${t('term-theme')}             ${t('term-theme-desc')}\n`;
+    output += `  ${t('term-fortune')}           ${t('term-fortune-desc')}\n`;
+    output += `  ${t('term-cowsay')} <text>     ${t('term-cowsay-desc')}\n\n`;
+    output += `<span class="label">${t('term-aliases-label')}</span>\n`;
+    output += `  ${t('term-ll')}                ${t('term-ll-desc')}\n`;
+    output += `  ${t('term-h')}, ?              ${t('term-h-desc')}\n\n`;
+    output += `<span class="label">${t('term-shortcuts-label')}</span>\n`;
+    output += `  Ctrl+\`            ${t('term-shortcut-toggle')}\n`;
+    output += `  Ctrl+L            ${t('term-shortcut-clear')}\n`;
+    output += `  Ctrl+C            ${t('term-shortcut-cancel')}\n`;
+    output += `  Esc               ${t('term-shortcut-blur')}\n`;
+    output += `  Up/Down           ${t('term-shortcut-history')}\n`;
+    output += `  Tab               ${t('term-shortcut-complete')}\n\n`;
     output += '<span class="separator">══════════════════════════════════════════════════════════</span>\n';
-    output += '<span class="hint">Type any command for more details. Use TAB for completion.</span>';
+    output += `<span class="hint">Type any command for more details. Use TAB for completion.</span>`;
     return output;
   }
 
@@ -504,8 +561,11 @@
 
     // Parse command and arguments
     const parts = trimmed.split(/\s+/);
-    const cmd = parts[0].toLowerCase();
+    const inputCmd = parts[0].toLowerCase();
     const args = parts.slice(1);
+
+    // Map translated command to canonical command
+    const cmd = getCanonicalCommand(inputCmd);
 
     // Check if command exists
     if (commands[cmd]) {
@@ -516,17 +576,17 @@
       }
     }
 
-    return `<span class="error">Command not found: ${cmd}</span>\nType 'help' for available commands.`;
+    return `<span class="error">${t('term-error-not-found')}</span>\n${t('term-usage')}: '${t('term-help')}' ${t('term-help-desc')}`;
   }
 
   function appendOutput(command, output) {
     const outputEl = document.getElementById('terminal-output');
     if (!outputEl) return;
 
-    // Create command line
+    // Create command line with translated prompt
     const cmdLine = document.createElement('div');
     cmdLine.className = 'terminal-line terminal-command';
-    cmdLine.innerHTML = `<span class="terminal-prompt">rohan@terminal:~/<span class="path">${state.currentSection}</span>$</span> <span class="cmd-text">${escapeHtml(command)}</span>`;
+    cmdLine.innerHTML = `<span class="terminal-prompt">${t('term-prompt-user')}:~/<span class="path">${state.currentSection}</span>$</span> <span class="cmd-text">${escapeHtml(command)}</span>`;
     outputEl.appendChild(cmdLine);
 
     // Create output line (if any)
@@ -603,7 +663,7 @@
 
     // Show welcome message
     setTimeout(() => {
-      appendOutput('', `<span class="info">Terminal ready. Type 'help' for available commands, or Ctrl+\` to toggle visibility.</span>`);
+      appendOutput('', `<span class="info">${t('term-welcome')}</span>`);
     }, 500);
 
     // Handle input submission
