@@ -175,7 +175,20 @@
     "They will come for you in the night. They always do.",
     "This world has taken everything from me. Now I shall take everything from this world.",
     "I am burdened with glorious purpose.",
-    "There are things that dwell beyond the veil of reality. I have glimpsed them, and I am forever changed."
+    "There are things that dwell beyond the veil of reality. I have glimpsed them, and I am forever changed.",
+    "I came, I saw, I conquered. The gods themselves tremble at my approach.",
+    "Know that you are witnessing greatness. Feel honored.",
+    "I have gazed upon the face of truth, and it was beautiful beyond measure.",
+    "To exist is to triumph. Every breath is a revolution against entropy.",
+    "We are star-stuff, contemplating stars. Is this not miraculous?!",
+    "Cry havoc and let slip the dogs of war! Though hell itself should gape and bid me hold my peace!",
+    "Now is the winter of our discontent made GLORIOUS summer!",
+    "I SHALL BLOT OUT THE SUN WITH THE FURY OF MY VENGEANCE!",
+    "BETRAYED! By those I held most dear! The agony consumes me like a thousand burning suns!",
+    "Kant's categorical imperative crumbles before the raw truth of lived experience!",
+    "Carthage Delenda Est",
+    "History is a nightmare from which we are trying to awake.",
+    "All is vanity. All is striving after wind."
   ];
 
   /**
