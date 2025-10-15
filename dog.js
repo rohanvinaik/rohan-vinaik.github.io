@@ -47,28 +47,42 @@
   // Define core poses
   const stand = { width: 24, height: 20, pixels: base24x20 };
 
-  // Create walk frames manually (simplified Undertale logic)
-  function offsetLegs(frame, shiftPattern) {
-    const p = deepCopy(frame.pixels);
-    const legCols = [[5,7],[10,12],[16,18],[20,22]]; // approximate 4 legs
-    shiftPattern.forEach((dy, i) => {
-      const [x0,x1] = legCols[i];
+  // Fix leg groups: four clean, two-pixel-wide legs
+  const LEG_GROUPS = [
+    [5,6],   // front-left
+    [9,10],  // back-left
+    [16,17], // front-right
+    [20,21]  // back-right
+  ];
+
+  // Safer offset function (clear before draw)
+  function offsetLegsClean(base, shiftPattern) {
+    const p = deepCopy(base.pixels);
+    const h = p.length;
+
+    LEG_GROUPS.forEach(([x0, x1], i) => {
+      const dy = shiftPattern[i];
       for (let x = x0; x <= x1; x++) {
-        for (let y = p.length - 1; y >= 1; y--) {
-          if (p[y][x] === 1) {
-            p[y][x] = 0;
-            const ny = Math.min(p.length - 1, y + dy);
-            p[ny][x] = 1;
-            break;
-          }
+        // find lowest white pixel
+        let bottom = null;
+        for (let y = h - 1; y >= 0; y--) {
+          if (p[y][x] === 1) { bottom = y; break; }
+        }
+        if (bottom != null) {
+          p[bottom][x] = 0;                     // clear old
+          const ny = Math.min(h - 1, bottom + dy);
+          if (ny >= 0 && ny < h) p[ny][x] = 1;  // set new
         }
       }
     });
     return { width: 24, height: 20, pixels: p };
   }
 
-  const walk1 = offsetLegs(stand, [-1,0,1,0]);  // left front up, right rear down
-  const walk2 = offsetLegs(stand, [0,1,0,-1]);  // opposite phase
+  // Proper walk cycle (4 phases, clear gait)
+  const walk1 = offsetLegsClean(stand, [-1, 0, +1, 0]);
+  const walk2 = offsetLegsClean(stand, [0, +1, 0, -1]);
+  const walk3 = offsetLegsClean(stand, [+1, 0, -1, 0]);
+  const walk4 = offsetLegsClean(stand, [0, -1, 0, +1]);
 
   // Bark frames: toggle 2 pixels for mouth near snout
   function makeBark(base) {
@@ -85,8 +99,8 @@
   const [barkClosed, barkOpen] = makeBark(stand);
 
   // Sit and lie frames for completeness
-  const sit = offsetLegs(stand, [0,1,0,1]);
-  const lie = offsetLegs(stand, [2,2,2,2]);
+  const sit = offsetLegsClean(stand, [0,1,0,1]);
+  const lie = offsetLegsClean(stand, [2,2,2,2]);
 
   // Mirror for left-facing
   function mirror(sprite){return{width:sprite.width,height:sprite.height,pixels:sprite.pixels.map(r=>r.slice().reverse())}}
@@ -97,8 +111,12 @@
     standLeft: mirror(stand),
     walk1Right: walk1,
     walk2Right: walk2,
+    walk3Right: walk3,
+    walk4Right: walk4,
     walk1Left: mirror(walk1),
     walk2Left: mirror(walk2),
+    walk3Left: mirror(walk3),
+    walk4Left: mirror(walk4),
     barkClosedRight: barkClosed,
     barkOpenRight: barkOpen,
     barkClosedLeft: mirror(barkClosed),
@@ -190,13 +208,12 @@
       yOffset = hop === 1 ? -3 : hop === 2 ? -1 : 0;
       sprite = dog.facingRight ? dogSprites.standRight : dogSprites.standLeft;
     } else if (dog.isWalking) {
-      // Add subtle walk bounce
-      const frame = Math.floor(dog.walkFrame / 8) % 2;
-      const bounce = Math.sin(dog.walkFrame / 8) * 1.2; // small up/down bob
+      const f = Math.floor(dog.walkFrame / 6) % 4;  // four-phase gait
+      const bounce = [0, -1, 0, +1][f];             // small vertical bob
       yOffset = bounce;
-      sprite = dog.facingRight
-        ? (frame ? dogSprites.walk1Right : dogSprites.walk2Right)
-        : (frame ? dogSprites.walk1Left  : dogSprites.walk2Left);
+      const rightFrames = [dogSprites.walk1Right, dogSprites.walk2Right, dogSprites.walk3Right, dogSprites.walk4Right];
+      const leftFrames = [dogSprites.walk1Left, dogSprites.walk2Left, dogSprites.walk3Left, dogSprites.walk4Left];
+      sprite = dog.facingRight ? rightFrames[f] : leftFrames[f];
       dog.walkFrame++;
     } else {
       sprite = dog.facingRight ? dogSprites.standRight : dogSprites.standLeft;
