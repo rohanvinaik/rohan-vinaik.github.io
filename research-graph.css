@@ -2,7 +2,8 @@
 .graph-container {
   position: relative;
   width: 100%;
-  min-height: 1200px;
+  height: 85vh;
+  min-height: 800px;
   background: #000;
   border: 1px solid var(--border);
   margin: 24px 0;

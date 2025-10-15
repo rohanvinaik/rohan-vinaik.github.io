@@ -20,6 +20,11 @@ class ResearchGraph {
     this.createControls();
     this.createFilters();
     this.createLegend();
+
+    // Set initial scale immediately to prevent tiny display
+    this.scale = 0.7;
+    this.applyTransform();
+
     this.renderNodes();
     this.renderConnections();
     this.attachEventListeners();
@@ -447,31 +452,36 @@ class ResearchGraph {
     const containerHeight = this.container.clientHeight;
 
     // Add padding around the graph
-    const padding = 50;
+    const padding = 80;
     const scaleX = (containerWidth - padding * 2) / graphWidth;
     const scaleY = (containerHeight - padding * 2) / graphHeight;
-    this.scale = Math.min(scaleX, scaleY, 1);
+    this.scale = Math.min(scaleX, scaleY, 0.9); // Cap at 0.9 for better visibility
 
-    // Center both horizontally and vertically
+    // Center horizontally, but position near top (30% from top instead of 50%)
     this.panX = (containerWidth - graphWidth * this.scale) / 2 - minX * this.scale;
-    this.panY = (containerHeight - graphHeight * this.scale) / 2 - minY * this.scale;
+    this.panY = (containerHeight * 0.15) - minY * this.scale + padding;
 
     this.applyTransform();
   }
 
   centerGraph() {
+    // Set initial scale to ensure visibility
+    this.scale = 0.7;
+
     // Wait for DOM to fully render before fitting to screen
-    requestAnimationFrame(() => {
+    setTimeout(() => {
       requestAnimationFrame(() => {
-        this.fitToScreen();
+        requestAnimationFrame(() => {
+          this.fitToScreen();
+        });
       });
-    });
+    }, 100);
 
     // Also re-center when the section becomes visible
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting && entry.intersectionRatio > 0.5) {
-          setTimeout(() => this.fitToScreen(), 100);
+          setTimeout(() => this.fitToScreen(), 150);
         }
       });
     }, { threshold: 0.5 });
