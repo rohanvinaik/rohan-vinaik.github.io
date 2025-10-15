@@ -113,7 +113,7 @@
   let settings = {
     volume: 80,
     accent: 'green',
-    background: 'black',
+    background: 'gray',
     language: 'standard'
   };
 
@@ -417,7 +417,7 @@
         settings = {
           volume: 80,
           accent: 'green',
-          background: 'black',
+          background: 'gray',
           language: 'standard'
         };
         applySettings();
