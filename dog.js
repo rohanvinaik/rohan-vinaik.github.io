@@ -1,27 +1,46 @@
 // ============================================
 // CUTE PIXEL ART DOG COMPANION
-// Based on Undertale's Annoying Dog
+// Pose-based sprite engine with layers
 // ============================================
 
 (function() {
   'use strict';
 
   // ======================================================
-  // CLEAN, HAND-DEFINED SPRITE SET (24×20, no floatiness)
+  // POSE-BASED SPRITE ENGINE (24×20 base, 28×24 viewport)
   // ======================================================
 
-  // Color palette
-  const COLORS = {
-    0: null,            // transparent
-    1: '#FFFFFF',       // white (body)
-    2: '#000000',       // black outline
-    3: '#FFB6C1'        // pink tongue
-  };
+  const BODY_W = 24, BODY_H = 20;
+  const VIEW_W = 28, VIEW_H = 24;
+  const SCALE = 3;
+  const COLORS = { 0: null, 1: '#FFFFFF', 2: '#000000', 3: '#FFB6C1' };
 
-  function deepCopy(p) { return p.map(r => r.slice()); }
+  // Anchors and feature positions
+  const LEG_GROUPS = [[5,6], [9,10], [16,17], [20,21]];
+  const LEG_ROWS_FROM_BOTTOM = 4;
+  const MOUTH_ANCHOR = { x: 12, y: 5 };
+  const TAIL_ANCHOR = { x: 21, y: 6 };
+  const EYE_PIXELS = [{x:7,y:3}, {x:9,y:3}];
 
-  // Verified base from improved clean reference (white=1, transparent=0)
-  const base24x20 = [
+  // Utilities
+  const copy2D = (m) => m.map(r => r.slice());
+  const zero = (w,h) => Array.from({length:h},()=>Array(w).fill(0));
+
+  function blitWhite(dst, pts) {
+    for (const {x,y} of pts) if (y>=0&&y<dst.length&&x>=0&&x<dst[0].length) dst[y][x] = 1;
+  }
+  function blitErase(dst, pts) {
+    for (const {x,y} of pts) if (y>=0&&y<dst.length&&x>=0&&x<dst[0].length) dst[y][x] = 0;
+  }
+  function blitColor(dst, pts, colorIndex) {
+    for (const {x,y} of pts) if (y>=0&&y<dst.length&&x>=0&&x<dst[0].length) dst[y][x] = colorIndex;
+  }
+  function mirror(mat) {
+    return mat.map(row => row.slice().reverse());
+  }
+
+  // Base body sprite (24×20)
+  const BASE_BODY = [
     [0,1,1,0,1,1,1,1,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0],
     [0,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0],
     [0,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0],
@@ -30,147 +49,266 @@
     [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,1],
     [1,1,1,1,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,1],
     [1,0,0,1,0,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-    [1,1,1,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+    [1,1,1,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
     [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
     [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
     [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
     [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
     [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
     [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0],
-    [0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0],
-    [0,1,1,1,0,0,0,1,1,0,0,0,0,0,0,1,1,0,0,0,1,1,1,0],
-    [0,1,1,1,0,0,0,1,1,0,0,0,0,0,0,1,1,0,0,0,1,1,1,0],
-    [0,1,1,1,0,0,0,1,1,0,0,0,0,0,0,1,1,0,0,0,1,1,1,0],
-    [0,1,1,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,1,0,0,0]
+    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0],
+    [1,1,1,0,0,0,1,1,0,0,0,1,1,0,0,0,1,1,0,0,0,1,1,1],
+    [1,1,1,0,0,0,1,1,0,0,0,1,1,0,0,0,1,1,0,0,0,1,1,1],
+    [1,1,1,0,0,0,1,1,0,0,0,1,1,0,0,0,1,1,0,0,0,1,1,1],
+    [1,1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0]
   ];
 
-  // Define core poses
-  const stand = { width: 24, height: 20, pixels: base24x20 };
-
-  // Fix leg groups: four clean legs (matches improved base sprite)
-  const LEG_GROUPS = [
-    [1,3],   // front-left (3px wide)
-    [7,8],   // back-left (2px wide)
-    [15,16], // back-right (2px wide)
-    [20,22]  // front-right (3px wide)
-  ];
-
-  // Safer offset function (clear before draw)
-  function offsetLegsClean(base, shiftPattern) {
-    const p = deepCopy(base.pixels);
-    const h = p.length;
-
-    LEG_GROUPS.forEach(([x0, x1], i) => {
-      const dy = shiftPattern[i];
+  // Frame factory
+  function clearLegArea(body) {
+    const p = copy2D(body);
+    for (const [x0,x1] of LEG_GROUPS) {
+      for (let y = BODY_H - LEG_ROWS_FROM_BOTTOM; y < BODY_H; y++) {
+        for (let x = x0; x <= x1; x++) p[y][x] = 0;
+      }
+    }
+    return p;
+  }
+  function paintLegs(p, offsets) {
+    for (let i=0; i<LEG_GROUPS.length; i++) {
+      const [x0,x1] = LEG_GROUPS[i];
+      const dy = offsets[i] | 0;
       for (let x = x0; x <= x1; x++) {
-        // find lowest white pixel
-        let bottom = null;
-        for (let y = h - 1; y >= 0; y--) {
-          if (p[y][x] === 1) { bottom = y; break; }
-        }
-        if (bottom != null) {
-          p[bottom][x] = 0;                     // clear old
-          const ny = Math.min(h - 1, bottom + dy);
-          if (ny >= 0 && ny < h) p[ny][x] = 1;  // set new
+        for (let k = 0; k < LEG_ROWS_FROM_BOTTOM; k++) {
+          const y = BODY_H - 1 - k + dy;
+          if (y >= 0 && y < BODY_H) p[y][x] = 1;
         }
       }
-    });
-    return { width: 24, height: 20, pixels: p };
+    }
   }
 
-  // Proper walk cycle (4 phases, clear gait)
-  const walk1 = offsetLegsClean(stand, [-1, 0, +1, 0]);
-  const walk2 = offsetLegsClean(stand, [0, +1, 0, -1]);
-  const walk3 = offsetLegsClean(stand, [+1, 0, -1, 0]);
-  const walk4 = offsetLegsClean(stand, [0, -1, 0, +1]);
-
-  // Bark frames: toggle 2 pixels for mouth near snout
-  function makeBark(base) {
-    const closed = deepCopy(base.pixels);
-    const open = deepCopy(base.pixels);
-    const mouthY = 5, mouthX = 2;
-    open[mouthY+1][mouthX+15] = 0;
-    open[mouthY+2][mouthX+15] = 0;
-    return [
-      { width: 24, height: 20, pixels: closed },
-      { width: 24, height: 20, pixels: open }
-    ];
-  }
-  const [barkClosed, barkOpen] = makeBark(stand);
-
-  // Sit and lie frames for completeness
-  const sit = offsetLegsClean(stand, [0,1,0,1]);
-  const lie = offsetLegsClean(stand, [2,2,2,2]);
-
-  // Mirror for left-facing
-  function mirror(sprite){return{width:sprite.width,height:sprite.height,pixels:sprite.pixels.map(r=>r.slice().reverse())}}
-
-  // Final sprite map
-  const dogSprites = {
-    standRight: stand,
-    standLeft: mirror(stand),
-    walk1Right: walk1,
-    walk2Right: walk2,
-    walk3Right: walk3,
-    walk4Right: walk4,
-    walk1Left: mirror(walk1),
-    walk2Left: mirror(walk2),
-    walk3Left: mirror(walk3),
-    walk4Left: mirror(walk4),
-    barkClosedRight: barkClosed,
-    barkOpenRight: barkOpen,
-    barkClosedLeft: mirror(barkClosed),
-    barkOpenLeft: mirror(barkOpen),
-    sitRight: sit,
-    sitLeft: mirror(sit),
-    lieRight: lie,
-    lieLeft: mirror(lie)
-  };
+  // Body frames: stand + 4-phase walk cycle
+  const BODY_FRAMES = (() => {
+    const stand = copy2D(BASE_BODY);
+    const walk1 = clearLegArea(BASE_BODY); paintLegs(walk1, [-1, 0, +1, 0]);
+    const walk2 = clearLegArea(BASE_BODY); paintLegs(walk2, [ 0,+1,  0,-1]);
+    const walk3 = clearLegArea(BASE_BODY); paintLegs(walk3, [+1, 0, -1, 0]);
+    const walk4 = clearLegArea(BASE_BODY); paintLegs(walk4, [ 0,-1,  0,+1]);
+    return {
+      right: { stand, walk: [walk1, walk2, walk3, walk4] },
+      left:  { stand: mirror(stand), walk: [mirror(walk1), mirror(walk2), mirror(walk3), mirror(walk4)] }
+    };
+  })();
 
   // ===========================================
-  // TAIL WAG SYSTEM
+  // NAUGHTY MODE SPRITES (24×20)
   // ===========================================
 
-  // Tail definition for right-facing dog (left side of sprite)
-  // Each tail segment can move independently for fluid motion
-  const tailSegments = [
-    { y: 4, x: 0 },  // Top of tail (near back)
-    { y: 5, x: 0 },
-    { y: 6, x: 0 },  // Middle segments
-    { y: 7, x: 0 },
-    { y: 8, x: 1 }   // Tail tip (slightly inward)
+  const ROLL_SPRITES = [
+    // roll1
+    [[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+     [0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0],
+     [0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0],
+     [0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0],
+     [0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0],
+     [0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0],
+     [0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0],
+     [0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0],
+     [0,1,1,1,1,1,1,1,1,1,1,1,1,0,0,1,1,1,0,0,0,0,0,0],
+     [0,1,1,1,1,1,1,1,1,1,1,1,1,0,0,1,1,1,0,0,0,0,0,0],
+     [0,0,0,1,1,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]],
+    // roll2
+    [[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+     [0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0],
+     [0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0],
+     [0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0],
+     [0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0],
+     [0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0],
+     [0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0],
+     [0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0],
+     [0,0,1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0],
+     [0,0,1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0],
+     [0,0,0,0,1,1,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0],
+     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]],
+    // roll3
+    [[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+     [0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0],
+     [0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0],
+     [0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0],
+     [0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0],
+     [0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0],
+     [0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0],
+     [0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0],
+     [0,0,0,1,1,1,1,1,1,1,1,1,1,0,0,1,1,1,1,1,0,0,0,0],
+     [0,0,0,1,1,1,1,1,1,1,1,1,1,0,0,1,1,1,1,1,0,0,0,0],
+     [0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0],
+     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]],
+    // roll4
+    [[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+     [0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0],
+     [0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0],
+     [0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0],
+     [0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0],
+     [0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0],
+     [0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0],
+     [0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0],
+     [0,0,0,0,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0],
+     [0,0,0,0,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0],
+     [0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,1,1,0,0,0,0,0,0],
+     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]]
   ];
 
-  // Applies wag displacement to sprite pixels
-  // Creates side-to-side wagging motion
-  function applyTailWag(sprite, frame) {
-    const p = sprite.pixels.map(r => r.slice());
+  const CHEW_CLOSED_RIGHT = [
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0],
+    [0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0],
+    [0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0],
+    [0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0],
+    [0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0],
+    [0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0],
+    [0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0],
+    [0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0],
+    [0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+  ];
 
-    // Wag cycle: left -> neutral -> right -> neutral
-    // Using sine wave for smooth motion
-    const phase = (frame / 4) % (Math.PI * 2);
-    const wagAmount = Math.round(Math.sin(phase) * 2); // -2 to +2 pixels horizontal
+  const CHEW_OPEN_RIGHT = [
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0],
+    [0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0],
+    [0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,0,0,0,0],
+    [0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,0,0,0,0],
+    [0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0],
+    [0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0],
+    [0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0],
+    [0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0],
+    [0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+  ];
 
-    // Clear original tail positions
-    tailSegments.forEach(seg => {
-      if (p[seg.y] && p[seg.y][seg.x] === 1) {
-        p[seg.y][seg.x] = 0;
+  // Mouth overlays
+  function mouthMask(kind, facing='right') {
+    const dx = facing === 'right' ? MOUTH_ANCHOR.x : BODY_W - 1 - MOUTH_ANCHOR.x - 2;
+    const dy = MOUTH_ANCHOR.y;
+    const pts = [];
+    if (kind === 'half') {
+      pts.push({x:dx+0,y:dy+1},{x:dx+1,y:dy+1});
+    } else if (kind === 'open') {
+      pts.push({x:dx+0,y:dy+1},{x:dx+1,y:dy+1},{x:dx+0,y:dy+2},{x:dx+1,y:dy+2});
+    }
+    return pts;
+  }
+
+  // Tail overlays
+  function tailPixels(kind, facing='right') {
+    const baseX = facing === 'right' ? TAIL_ANCHOR.x : BODY_W - 1 - TAIL_ANCHOR.x;
+    const baseY = TAIL_ANCHOR.y;
+    switch (kind) {
+      case 'left':   return [{x:baseX,y:baseY},{x:baseX-1,y:baseY+1},{x:baseX-2,y:baseY+2}];
+      case 'right':  return [{x:baseX,y:baseY},{x:baseX+1,y:baseY+1},{x:baseX+2,y:baseY+2}];
+      default:       return [{x:baseX,y:baseY},{x:baseX,y:baseY+1}];
+    }
+  }
+
+  // Eyes
+  const EYES_NORMAL = EYE_PIXELS;
+  const EYES_LEFT = (side) => EYE_PIXELS.map(({x,y}) =>
+    side==='left' ? {x:BODY_W-1-x,y} : {x,y});
+
+  // Compose layered frame
+  function composeFrame(opts) {
+    const { facingRight, bodyPose, bodyIndex, mouthPose, tailPose, blink } = opts;
+
+    const side = facingRight ? 'right' : 'left';
+    const body = bodyPose === 'walk'
+      ? BODY_FRAMES[side].walk[bodyIndex % 4]
+      : BODY_FRAMES[side].stand;
+
+    const frame = copy2D(body);
+
+    // Mouth layer
+    const mPts = mouthMask(mouthPose, side);
+    blitErase(frame, mPts);
+
+    // Tail layer
+    const tp = tailPixels(tailPose, side);
+    const tx0 = Math.max(0, (facingRight?TAIL_ANCHOR.x:BODY_W-1-TAIL_ANCHOR.x)-3);
+    const ty0 = Math.max(0, TAIL_ANCHOR.y-1);
+    const clearPts = [];
+    for (let yy=ty0; yy<ty0+4 && yy<BODY_H; yy++)
+      for (let xx=tx0; xx<tx0+7 && xx<BODY_W; xx++) clearPts.push({x:xx,y:yy});
+    blitErase(frame, clearPts);
+    blitWhite(frame, tp);
+
+    // Eyes layer
+    if (!blink) {
+      const ep = facingRight ? EYES_NORMAL : EYES_LEFT('left');
+      blitColor(frame, ep, 2);
+    }
+
+    return frame;
+  }
+
+  function drawMatrix(ctx, mat, ox, oy) {
+    for (let y=0; y<mat.length; y++) {
+      const row = mat[y];
+      for (let x=0; x<row.length; x++) {
+        const c = COLORS[row[x]];
+        if (!c) continue;
+        ctx.fillStyle = c;
+        ctx.fillRect(ox + x, oy + y, 1, 1);
       }
-    });
-
-    // Draw tail at new positions with varying amplitude per segment
-    tailSegments.forEach((seg, i) => {
-      // Tip of tail moves more than base
-      const segmentMultiplier = (i + 1) / tailSegments.length;
-      const dx = Math.round(wagAmount * segmentMultiplier);
-      const newX = Math.max(0, Math.min(p[0].length - 1, seg.x + dx));
-
-      if (p[seg.y] && p[seg.y][newX] !== undefined) {
-        p[seg.y][newX] = 1;
-      }
-    });
-
-    return { width: sprite.width, height: sprite.height, pixels: p };
+    }
   }
 
   // ===========================================
@@ -178,20 +316,14 @@
   // ===========================================
 
   let speechBubble = null;
-  let isSpeaking = false; // Track if dog is currently speaking
-  let speechBubbleUpdateInterval = null; // Interval to update bubble position
-  let speechBubbleFadeTimeout = null; // Timeout for bubble fade-out
-  let speechBubbleRemoveTimeout = null; // Timeout for bubble removal
+  let isSpeaking = false;
+  let speechBubbleUpdateInterval = null;
+  let speechBubbleFadeTimeout = null;
+  let speechBubbleRemoveTimeout = null;
 
-  // Philosophical and existential proclamations from the dog, organized by tone
+  // Philosophical quotes organized by tone
   const dogWisdomByCategory = {
-    // Simple, short exclamations
-    simple: [
-      "BARK!",
-      "Carthage Delenda Est"
-    ],
-
-    // Classical philosophy and existentialism
+    simple: ["BARK!", "Carthage Delenda Est"],
     philosophical: [
       "We are condemned to be free. Every moment of inaction is itself a choice, and we bear the weight of that responsibility.",
       "One must imagine Sisyphus happy, even as he rolls the boulder up the mountain for eternity.",
@@ -200,8 +332,6 @@
       "All is vanity. All is striving after wind.",
       "History is a nightmare from which we are trying to awake."
     ],
-
-    // Grandiose and epic declarations
     grandiose: [
       "I came, I saw, I conquered. The gods themselves tremble at my approach.",
       "Know that you are witnessing greatness. Feel honored.",
@@ -210,16 +340,12 @@
       "To exist is to triumph. Every breath is a revolution against entropy.",
       "We are star-stuff, contemplating stars. Is this not miraculous?!"
     ],
-
-    // Dramatic/theatrical (Shakespeare, etc)
     theatrical: [
       "Cry havoc and let slip the dogs of war! Though hell itself should gape and bid me hold my peace!",
       "Now is the winter of our discontent made GLORIOUS summer!",
       "I SHALL BLOT OUT THE SUN WITH THE FURY OF MY VENGEANCE!",
       "BETRAYED! By those I held most dear! The agony consumes me like a thousand burning suns!"
     ],
-
-    // Dark and ominous
     ominous: [
       "I have gazed into the abyss, and the abyss blinked first. Then I barked at it.",
       "The end times are upon us. The signs were clear, yet none heeded the warnings.",
@@ -229,8 +355,6 @@
       "I have walked through the valley of death and emerged transformed—hollowed out, a vessel of pure purpose.",
       "I have gazed upon the face of truth, and it was beautiful beyond measure."
     ],
-
-    // Edgy/angsty teen drama
     edgy: [
       "This is the skin of a killer, Bella.",
       "I'm not like other girls. I'm broken in ways you can't even imagine.",
@@ -248,8 +372,6 @@
       "The night is my only friend. It understands my darkness.",
       "I collect broken things. Mostly myself."
     ],
-
-    // Intellectual/academic
     intellectual: [
       "The history of all hitherto existing society is the history of class struggles. The bourgeoisie cannot exist without constantly revolutionizing the instruments of production.",
       "All structures of power are inherently corrupt. Reform is merely a palliative that delays inevitable systemic collapse.",
@@ -258,57 +380,34 @@
     ]
   };
 
-  // Track recent quote categories and the last quote to ensure variety
   let lastWisdomQuote = null;
-  let recentCategories = []; // Track last 3 categories
+  let recentCategories = [];
 
-  /**
-   * Returns a random philosophical quote from the dog
-   * Ensures varied tone and prevents same category appearing more than 2-3 times in a row
-   */
   function getRandomDogWisdom() {
     const categories = Object.keys(dogWisdomByCategory);
-
-    // Count how many times the most recent category appears in recent history
     const mostRecentCategory = recentCategories[recentCategories.length - 1];
     let recentSameCategoryCount = 0;
     for (let i = recentCategories.length - 1; i >= 0; i--) {
-      if (recentCategories[i] === mostRecentCategory) {
-        recentSameCategoryCount++;
-      } else {
-        break;
-      }
+      if (recentCategories[i] === mostRecentCategory) recentSameCategoryCount++;
+      else break;
     }
 
-    // Build list of available categories
-    // If we've had 2 of the same category in a row, exclude that category
     let availableCategories = categories;
     if (recentSameCategoryCount >= 2) {
       availableCategories = categories.filter(cat => cat !== mostRecentCategory);
     }
 
-    // Also consider length variety - alternate between short and long quotes
-    // Categorize by length: simple/theatrical are generally shorter, intellectual/philosophical are longer
     const shortCategories = ['simple', 'theatrical', 'grandiose'];
-    const longCategories = ['philosophical', 'intellectual', 'ominous', 'edgy'];
-
-    // Check if last quote was long or short
-    const lastWasLong = lastWisdomQuote && lastWisdomQuote.length > 80;
     const lastWasVeryLong = lastWisdomQuote && lastWisdomQuote.length > 150;
 
-    // If last 2 quotes were long, prefer short categories
     if (lastWasVeryLong && availableCategories.some(cat => shortCategories.includes(cat))) {
       const shortAvailable = availableCategories.filter(cat => shortCategories.includes(cat));
-      if (shortAvailable.length > 0) {
-        availableCategories = shortAvailable;
-      }
+      if (shortAvailable.length > 0) availableCategories = shortAvailable;
     }
 
-    // Select random category from available options
     const selectedCategory = availableCategories[Math.floor(Math.random() * availableCategories.length)];
     const quotesInCategory = dogWisdomByCategory[selectedCategory];
 
-    // Select random quote from that category, ensuring it's different from last quote
     let selectedQuote;
     let attempts = 0;
     do {
@@ -316,19 +415,13 @@
       attempts++;
     } while (selectedQuote === lastWisdomQuote && quotesInCategory.length > 1 && attempts < 10);
 
-    // Update tracking
     recentCategories.push(selectedCategory);
-    if (recentCategories.length > 3) {
-      recentCategories.shift(); // Keep only last 3
-    }
+    if (recentCategories.length > 3) recentCategories.shift();
     lastWisdomQuote = selectedQuote;
 
     return selectedQuote;
   }
 
-  /**
-   * Updates speech bubble position to follow the dog
-   */
   function updateSpeechBubblePosition() {
     if (!speechBubble || !dog.canvasEl) return;
 
@@ -338,7 +431,6 @@
     let bubbleX = dogRect.left + (dogRect.width / 2) - (bubbleRect.width / 2);
     let bubbleY = dogRect.top - bubbleRect.height - 20;
 
-    // Viewport boundary checking
     const viewportWidth = window.innerWidth;
     if (bubbleX < 10) bubbleX = 10;
     if (bubbleX + bubbleRect.width > viewportWidth - 10) {
@@ -349,7 +441,6 @@
     speechBubble.style.left = bubbleX + 'px';
     speechBubble.style.top = bubbleY + 'px';
 
-    // Update tail position
     const tailX = dogRect.left + (dogRect.width / 2) - bubbleX - 10;
     if (speechBubble.styleEl) {
       speechBubble.styleEl.textContent = `
@@ -380,46 +471,24 @@
     }
   }
 
-  /**
-   * Creates and displays a speech bubble above the dog
-   * @param {string} text - Text to display in bubble
-   * @param {number} duration - How long to show bubble (ms)
-   */
   function showSpeechBubble(text, duration = 1500) {
-    // Clear any existing timeouts/intervals to prevent premature removal
-    if (speechBubbleFadeTimeout) {
-      clearTimeout(speechBubbleFadeTimeout);
-      speechBubbleFadeTimeout = null;
-    }
-    if (speechBubbleRemoveTimeout) {
-      clearTimeout(speechBubbleRemoveTimeout);
-      speechBubbleRemoveTimeout = null;
-    }
-    if (speechBubbleUpdateInterval) {
-      clearInterval(speechBubbleUpdateInterval);
-      speechBubbleUpdateInterval = null;
-    }
+    if (speechBubbleFadeTimeout) clearTimeout(speechBubbleFadeTimeout);
+    if (speechBubbleRemoveTimeout) clearTimeout(speechBubbleRemoveTimeout);
+    if (speechBubbleUpdateInterval) clearInterval(speechBubbleUpdateInterval);
 
-    // Remove existing bubble if present
     if (speechBubble) {
-      if (speechBubble.parentNode) {
-        document.body.removeChild(speechBubble);
-      }
+      if (speechBubble.parentNode) document.body.removeChild(speechBubble);
       if (speechBubble.styleEl && speechBubble.styleEl.parentNode) {
         document.head.removeChild(speechBubble.styleEl);
       }
       speechBubble = null;
     }
 
-    // Mark dog as speaking
     isSpeaking = true;
 
-    // Create speech bubble element
     speechBubble = document.createElement('div');
     speechBubble.className = 'dog-speech-bubble';
     speechBubble.textContent = text;
-
-    // Traditional comic speech bubble styling
     speechBubble.style.cssText = `
       position: fixed;
       background: white;
@@ -441,25 +510,17 @@
 
     document.body.appendChild(speechBubble);
 
-    // Create style element for tail
     const style = document.createElement('style');
     document.head.appendChild(style);
     speechBubble.styleEl = style;
 
-    // Initial position
     updateSpeechBubblePosition();
+    speechBubbleUpdateInterval = setInterval(updateSpeechBubblePosition, 16);
 
-    // Update position continuously while bubble is visible
-    speechBubbleUpdateInterval = setInterval(updateSpeechBubblePosition, 16); // ~60fps
-
-    // Fade in
     requestAnimationFrame(() => {
-      if (speechBubble) {
-        speechBubble.style.opacity = '1';
-      }
+      if (speechBubble) speechBubble.style.opacity = '1';
     });
 
-    // Fade out and remove with tracked timeouts
     speechBubbleFadeTimeout = setTimeout(() => {
       if (speechBubble) {
         speechBubble.style.opacity = '0';
@@ -470,7 +531,7 @@
               document.head.removeChild(speechBubble.styleEl);
             }
             speechBubble = null;
-            isSpeaking = false; // Mark dog as done speaking
+            isSpeaking = false;
           }
           if (speechBubbleUpdateInterval) {
             clearInterval(speechBubbleUpdateInterval);
@@ -484,40 +545,25 @@
   }
 
   // ===========================================
-  // BALL THROWING GAME
+  // GAMEPLAY: BALL THROW, CATCH & TUG-OF-WAR
   // ===========================================
 
   let ball = null;
   let fetchCount = parseInt(localStorage.getItem('dog-fetch-count') || '0');
-
-  // Tug-of-war game state
-  let ballState = 'free'; // 'free', 'held', 'dragging'
+  let tugStartTime = 0;
   let dragStart = null;
-  let dragMovement = [];  // Track recent movements for stillness detection
-  let stillnessTimer = null;
+  let dragMovement = [];
 
-  /**
-   * Ball object for fetch mini-game
-   * Handles physics, rendering, and collision
-   */
-  class Ball {
-    constructor(x, y, targetX, targetY) {
+  class GameBall {
+    constructor(x, y) {
       this.x = x;
       this.y = y;
-
-      // Calculate initial velocity based on distance to dog
-      const dx = targetX - x;
-      const dy = targetY - y;
-      const distance = Math.sqrt(dx * dx + dy * dy);
-
-      this.vx = (dx / distance) * Math.min(distance / 20, 15);
-      this.vy = (dy / distance) * Math.min(distance / 20, 15) - 8; // Arc upward
-
-      this.gravity = 0.4;
-      this.bounced = false;
+      this.vx = 0;
+      this.vy = 0;
+      this.gravity = 0.45;
       this.radius = 4;
+      this.state = 'idle'; // 'idle', 'flying', 'grounded', 'caught', 'tug'
 
-      // Create canvas for ball
       this.canvas = document.createElement('canvas');
       this.canvas.width = 8;
       this.canvas.height = 8;
@@ -534,118 +580,240 @@
       this.draw();
       document.body.appendChild(this.canvas);
 
-      // Bind event handlers for tug-of-war
       this.onMouseDown = this.handleMouseDown.bind(this);
       this.onMouseMove = this.handleMouseMove.bind(this);
       this.onMouseUp = this.handleMouseUp.bind(this);
     }
 
+    throw(startX, startY, targetX, targetY) {
+      const dx = targetX - startX;
+      const dy = targetY - startY;
+      const dist = Math.hypot(dx, dy);
+      const speed = Math.min(dist / 8, 22);
+      this.vx = (dx / dist) * speed;
+      this.vy = (dy / dist) * (speed / 18) - 9;
+      this.x = startX;
+      this.y = startY;
+      this.state = 'flying';
+    }
+
     handleMouseDown(e) {
-      if (ballState === 'held') {
-        ballState = 'dragging';
+      if (this.state === 'caught') {
+        this.state = 'tug';
+        tugStartTime = Date.now();
         dragStart = Date.now();
         dragMovement = [];
-        clearTimeout(stillnessTimer);
-        stillnessTimer = null;
         this.canvas.style.cursor = 'grabbing';
+        dog.currentBehavior = 'tug';
       }
     }
 
     handleMouseMove(e) {
-      if (ballState === 'dragging') {
-        this.x = e.clientX;
-        this.y = e.clientY;
-
-        // Track movement for stillness detection
+      if (this.state === 'tug') {
         dragMovement.push({ x: e.clientX, y: e.clientY, time: Date.now() });
-
-        // Keep only last 30 positions (for ~1 second at 60fps)
-        if (dragMovement.length > 30) {
-          dragMovement.shift();
-        }
-
-        // Check for stillness
-        this.checkStillness();
+        if (dragMovement.length > 30) dragMovement.shift();
       }
     }
 
     handleMouseUp(e) {
-      if (ballState === 'dragging') {
-        // Check if we were still when released
-        if (this.isStill()) {
-          this.drop();
+      if (this.state === 'tug') {
+        // Release ball - it flies away
+        this.state = 'flying';
+
+        // Calculate throw direction from drag
+        if (dragMovement.length >= 2) {
+          const first = dragMovement[0];
+          const last = dragMovement[dragMovement.length - 1];
+          const dt = (last.time - first.time) / 1000;
+          if (dt > 0) {
+            this.vx = ((last.x - first.x) / dt) * 0.3;
+            this.vy = ((last.y - first.y) / dt) * 0.3 - 3;
+          } else {
+            this.vx = (Math.random() - 0.5) * 8;
+            this.vy = -5;
+          }
         } else {
-          // Continue being held but not dragging
-          ballState = 'held';
-          this.canvas.style.cursor = 'grab';
+          this.vx = (Math.random() - 0.5) * 8;
+          this.vy = -5;
         }
+
+        this.canvas.style.cursor = 'default';
+        this.canvas.removeEventListener('mousedown', this.onMouseDown);
+        document.removeEventListener('mousemove', this.onMouseMove);
+        document.removeEventListener('mouseup', this.onMouseUp);
+        this.canvas.style.pointerEvents = 'none';
+
+        dog.currentBehavior = 'barking';
+        playBarkSound();
+
+        setTimeout(() => {
+          if (dog.currentBehavior === 'barking') {
+            dog.currentBehavior = 'idle';
+          }
+        }, 500);
+
+        dragStart = null;
+        dragMovement = [];
       }
     }
 
-    checkStillness() {
-      if (this.isStill()) {
-        // Start timer if not already started
-        if (!stillnessTimer) {
-          stillnessTimer = setTimeout(() => {
-            if (ballState === 'dragging' && this.isStill()) {
-              this.drop();
+    update() {
+      switch (this.state) {
+        case 'flying':
+          this.vy += this.gravity;
+          this.x += this.vx;
+          this.y += this.vy;
+
+          // Ground collision
+          const ground = window.innerHeight - 60;
+          if (this.y >= ground) {
+            this.y = ground;
+            this.vy *= -0.45;
+            this.vx *= 0.8;
+            if (Math.abs(this.vx) < 0.5 && Math.abs(this.vy) < 1) {
+              this.state = 'grounded';
+              this.vx = 0;
+              this.vy = 0;
             }
-          }, 1000);
-        }
-      } else {
-        // Cancel timer if moving
-        if (stillnessTimer) {
-          clearTimeout(stillnessTimer);
-          stillnessTimer = null;
-        }
+          }
+
+          // Wall collisions
+          if (this.x < 20) {
+            this.x = 20;
+            this.vx *= -0.7;
+          } else if (this.x > window.innerWidth - 20) {
+            this.x = window.innerWidth - 20;
+            this.vx *= -0.7;
+          }
+
+          // Catch check - use mouth position
+          const mouth = this.getMouthPosition();
+          const dist = Math.hypot(this.x - mouth.x, this.y - mouth.y);
+          if (dist < 28 && this.vy > 0 && this.y > mouth.y - 30) {
+            this.state = 'caught';
+            dog.currentBehavior = 'catch';
+            dog.frameCount = 0;
+
+            fetchCount++;
+            localStorage.setItem('dog-fetch-count', fetchCount.toString());
+
+            const catchMessage = `Caught it! (${fetchCount}) - Click to play tug-of-war!`;
+            const catchWordCount = catchMessage.split(/\s+/).length;
+            const catchDuration = Math.max(2000, catchWordCount * 500);
+            showSpeechBubble(catchMessage, catchDuration);
+
+            setTimeout(() => {
+              if (this.state === 'caught') {
+                dog.currentBehavior = 'excited';
+                dog.excitedStartFrame = dog.frameCount;
+                playHappySound();
+
+                setTimeout(() => {
+                  if (this.state === 'caught') {
+                    dog.currentBehavior = 'idle';
+                    dog.canvasEl.style.bottom = '60px';
+                    this.enableInteraction();
+                  }
+                }, 1500);
+              }
+            }, catchDuration);
+          }
+          break;
+
+        case 'caught':
+          const m = this.getMouthPosition();
+          this.x = m.x;
+          this.y = m.y;
+          break;
+
+        case 'tug':
+          // Oscillating resistance during tug-of-war
+          const tension = Math.sin(Date.now() / 100) * 3;
+          const anchor = this.getMouthPosition();
+          this.x = anchor.x + (dog.facingRight ? 12 + tension : -12 - tension);
+          this.y = anchor.y;
+
+          // Dog follows mouse during tug with resistance
+          if (dragMovement.length > 0) {
+            const mouseX = dragMovement[dragMovement.length - 1].x;
+            const centerX = window.innerWidth / 2;
+            const pullDirection = mouseX - centerX;
+
+            // Update dog facing based on pull direction
+            if (Math.abs(pullDirection) > 50) {
+              dog.facingRight = pullDirection > 0;
+            }
+
+            // Dog resists being pulled too far
+            const dogRect = dog.canvasEl.getBoundingClientRect();
+            const dogCenterX = dogRect.left + dogRect.width / 2;
+            const distanceFromMouse = Math.abs(mouseX - dogCenterX);
+
+            if (distanceFromMouse > 100) {
+              const moveSpeed = 2;
+              const direction = mouseX > dogCenterX ? 1 : -1;
+              dog.x += direction * moveSpeed;
+              dog.x = Math.max(50, Math.min(window.innerWidth - 50, dog.x));
+              dog.canvasEl.style.left = dog.x + 'px';
+            }
+          }
+          break;
+
+        case 'grounded':
+        case 'idle':
+          // Check if dog is near to pick up
+          const feetX = this.getFeetX();
+          const feetY = this.getFeetY();
+          const distToFeet = Math.hypot(this.x - feetX, this.y - feetY);
+          if (distToFeet < 50 && dog.chasingBall) {
+            this.state = 'caught';
+            dog.chasingBall = false;
+            dog.isWalking = false;
+            dog.targetX = null;
+            dog.currentBehavior = 'idle';
+
+            fetchCount++;
+            localStorage.setItem('dog-fetch-count', fetchCount.toString());
+
+            const pickupMessage = `Got it! (${fetchCount})`;
+            showSpeechBubble(pickupMessage, 2000);
+            playHappySound();
+
+            setTimeout(() => {
+              if (this.state === 'caught') {
+                this.enableInteraction();
+              }
+            }, 2000);
+          }
+          break;
       }
+
+      this.canvas.style.left = (this.x - 12) + 'px';
+      this.canvas.style.top = (this.y - 12) + 'px';
     }
 
-    isStill() {
-      if (dragMovement.length < 10) return false;
-
-      // Check last 10 positions
-      const recentPositions = dragMovement.slice(-10);
-      const firstPos = recentPositions[0];
-
-      // Calculate max distance moved
-      let maxDistance = 0;
-      for (const pos of recentPositions) {
-        const dx = pos.x - firstPos.x;
-        const dy = pos.y - firstPos.y;
-        const distance = Math.sqrt(dx * dx + dy * dy);
-        maxDistance = Math.max(maxDistance, distance);
-      }
-
-      // Still if moved less than 5 pixels
-      return maxDistance < 5;
+    getMouthPosition() {
+      const rect = dog.canvasEl.getBoundingClientRect();
+      const x = rect.left + (dog.facingRight ? rect.width * 0.75 : rect.width * 0.25);
+      const y = rect.top + rect.height * 0.4;
+      return { x, y };
     }
 
-    drop() {
-      ballState = 'free';
-      dragStart = null;
-      dragMovement = [];
-      clearTimeout(stillnessTimer);
-      stillnessTimer = null;
-
-      // Remove event listeners
-      this.canvas.removeEventListener('mousedown', this.onMouseDown);
-      document.removeEventListener('mousemove', this.onMouseMove);
-      document.removeEventListener('mouseup', this.onMouseUp);
-      this.canvas.style.pointerEvents = 'none';
-      this.canvas.style.cursor = 'default';
-
-      // Dog drops ball and returns to normal behavior
-      dog.currentBehavior = 'idle';
-      dog.canvasEl.style.bottom = '60px';
-      scheduleNextBehavior();
-
-      // Give ball slight downward velocity
-      this.vy = 2;
-      this.vx = 0;
+    getFeetX() {
+      const rect = dog.canvasEl.getBoundingClientRect();
+      return rect.left + rect.width / 2;
     }
 
-    enableDrag() {
+    getFeetY() {
+      const rect = dog.canvasEl.getBoundingClientRect();
+      return rect.top + rect.height;
+    }
+
+    isNear(x, y) {
+      return Math.hypot(this.x - x, this.y - y) < 120;
+    }
+
+    enableInteraction() {
       this.canvas.style.pointerEvents = 'auto';
       this.canvas.style.cursor = 'grab';
       this.canvas.addEventListener('mousedown', this.onMouseDown);
@@ -656,135 +824,28 @@
     draw() {
       this.ctx.clearRect(0, 0, 8, 8);
       this.ctx.fillStyle = '#ff6600';
-      // Draw 8x8 pixel circle
       this.ctx.fillRect(2, 1, 4, 1);
       this.ctx.fillRect(1, 2, 6, 4);
       this.ctx.fillRect(2, 6, 4, 1);
-      // Highlight
       this.ctx.fillStyle = '#ffaa44';
       this.ctx.fillRect(3, 2, 2, 1);
     }
 
-    update() {
-      // If being held or dragged, position at dog's mouth
-      if (ballState === 'held') {
-        const dogRect = dog.canvasEl.getBoundingClientRect();
-        // Position ball at dog's mouth (front center of sprite)
-        const mouthOffsetX = dog.facingRight ? 20 : -20;
-        this.x = dogRect.left + dogRect.width / 2 + mouthOffsetX;
-        this.y = dogRect.top + dogRect.height / 2 - 10;
-        this.vx = 0;
-        this.vy = 0;
-      } else if (ballState === 'dragging') {
-        // Ball position is updated by mouse movement
-        // Dog tries to follow
-        const dogRect = dog.canvasEl.getBoundingClientRect();
-        const dogX = dogRect.left + dogRect.width / 2;
-        const dx = this.x - dogX;
-
-        // Update dog facing direction
-        if (Math.abs(dx) > 20) {
-          dog.facingRight = dx > 0;
-        }
-
-        // Move dog towards ball (with some resistance)
-        const moveSpeed = 3;
-        if (Math.abs(dx) > 40) {
-          dog.x += dx > 0 ? moveSpeed : -moveSpeed;
-          dog.canvasEl.style.left = dog.x + 'px';
-        }
-      } else {
-        // Normal physics when free
-        // Apply physics
-        this.vy += this.gravity;
-        this.x += this.vx;
-        this.y += this.vy;
-
-        // Air resistance (drag)
-        this.vx *= 0.99;
-        this.vy *= 0.99;
-
-        const ground = window.innerHeight - 60;
-        const onGround = this.y >= ground;
-
-        // Bounce on ground
-        if (this.y > ground && !this.bounced) {
-          this.y = ground;
-          this.vy *= -0.6; // Energy retention
-          this.vx *= 0.8;
-          this.bounced = true;
-        } else if (this.y > ground && this.bounced) {
-          // Stop bouncing
-          this.y = ground;
-          this.vy = 0;
-        }
-
-        // Rolling friction when on ground
-        if (onGround) {
-          this.vx *= 0.95;
-        }
-
-        // Bounce off left/right walls
-        if (this.x < 20) {
-          this.x = 20;
-          this.vx *= -0.7;
-        } else if (this.x > window.innerWidth - 20) {
-          this.x = window.innerWidth - 20;
-          this.vx *= -0.7;
-        }
-
-        // Bounce off top
-        if (this.y < 20) {
-          this.y = 20;
-          this.vy *= -0.5;
-        }
-
-        // Stop completely if velocity is very low
-        if (onGround && Math.abs(this.vx) < 0.1 && Math.abs(this.vy) < 0.1) {
-          this.vx = 0;
-          this.vy = 0;
-        }
-      }
-
-      // Update canvas position
-      this.canvas.style.left = (this.x - 12) + 'px';
-      this.canvas.style.top = (this.y - 12) + 'px';
-
-      // Ball is never truly off-screen now, return false
-      return false;
-    }
-
-    isNearDog(dogX, dogY) {
-      const dx = this.x - dogX;
-      const dy = this.y - dogY;
-      return Math.sqrt(dx * dx + dy * dy) < 100;
-    }
-
-    canCatch(dogX, dogY) {
-      const dx = this.x - dogX;
-      const dy = this.y - dogY;
-      const distance = Math.sqrt(dx * dx + dy * dy);
-      // Larger catch radius and only when ball is on or near ground
-      const ground = window.innerHeight - 60;
-      const nearGround = this.y >= ground - 20;
-      return distance < 50 && nearGround;
-    }
-
     destroy() {
+      this.canvas.removeEventListener('mousedown', this.onMouseDown);
+      document.removeEventListener('mousemove', this.onMouseMove);
+      document.removeEventListener('mouseup', this.onMouseUp);
       if (this.canvas && this.canvas.parentNode) {
         document.body.removeChild(this.canvas);
       }
     }
   }
 
-  // Track ball chase timeout
-  let ballChaseTimeout = null;
+  // ===========================================
+  // DOG STATE & ANIMATION
+  // ===========================================
 
-  // ===========================================
-  // DOG STATE
-  // ===========================================
   let dog = {
-    element: null,
     canvasEl: null,
     shadowEl: null,
     ctx: null,
@@ -807,26 +868,30 @@
     animationFrame: null,
     frameCount: 0,
 
-    tailWag: {
-      active: false,
-      timer: 0,
-      frame: 0,
-      lastToggle: 0
-    },
+    // Animation state
+    mouthPhase: 0,
+    tailPhase: 0,
+    blinkTimer: 0,
 
     // Ball chasing state
     chasingBall: false,
     ballTarget: null,
 
     // Excited state animation
-    excitedStartFrame: 0
+    excitedStartFrame: 0,
+
+    // Naughty mode state
+    naughtyMode: {
+      isIdle: false,
+      idleStartTime: null,
+      idleThreshold: 45000, // 45 seconds
+      currentSprite: null,  // Override sprite for special behaviors
+      inProgress: false,
+      chewTarget: null
+    }
   };
 
-  // ============================================
-  // CANVAS SETUP
-  // ============================================
   function createDogCanvas() {
-    // Create shadow element (oval under dog)
     const shadow = document.createElement('div');
     shadow.id = 'dog-shadow';
     shadow.style.cssText = `
@@ -844,16 +909,15 @@
     document.body.appendChild(shadow);
     dog.shadowEl = shadow;
 
-    // Create dog canvas
     const canvas = document.createElement('canvas');
     canvas.id = 'dog-canvas';
-    canvas.width = 24;  // Initial size (24x20), will be dynamically adjusted
-    canvas.height = 20;
+    canvas.width = VIEW_W;
+    canvas.height = VIEW_H;
     canvas.style.position = 'fixed';
     canvas.style.bottom = '60px';
     canvas.style.left = dog.x + 'px';
-    canvas.style.width = '72px';   // Initial display at 3x size
-    canvas.style.height = '60px';
+    canvas.style.width = (VIEW_W * SCALE) + 'px';
+    canvas.style.height = (VIEW_H * SCALE) + 'px';
     canvas.style.imageRendering = 'pixelated';
     canvas.style.imageRendering = '-moz-crisp-edges';
     canvas.style.imageRendering = 'crisp-edges';
@@ -866,141 +930,100 @@
     document.body.appendChild(canvas);
     dog.canvasEl = canvas;
     dog.ctx = canvas.getContext('2d');
+    dog.ctx.imageSmoothingEnabled = false;
   }
 
-  // ============================================
-  // DRAW LOGIC (keeps your state machine intact)
-  // ============================================
   function drawDog() {
-    if (!dog.ctx) return;
-
     const ctx = dog.ctx;
+    if (!ctx) return;
+
     const canvas = dog.canvasEl;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    let sprite;
-    let yOffset = 0;
+    // Check for naughty mode sprite override
+    if (dog.naughtyMode.currentSprite) {
+      const ox = Math.floor((VIEW_W - BODY_W) / 2);
+      const oy = Math.floor((VIEW_H - BODY_H) / 2);
+      drawMatrix(ctx, dog.naughtyMode.currentSprite, ox, oy);
+      dog.frameCount++;
+      return;
+    }
 
-    if (dog.currentBehavior === 'sitting') {
-      sprite = dog.facingRight ? dogSprites.sitRight : dogSprites.sitLeft;
-    } else if (dog.currentBehavior === 'lying') {
-      sprite = dog.facingRight ? dogSprites.lieRight : dogSprites.lieLeft;
-    } else if (dog.currentBehavior === 'barking') {
-      const bark = Math.floor(dog.frameCount / 8) % 2;
-      sprite = dog.facingRight
-        ? (bark ? dogSprites.barkOpenRight : dogSprites.barkClosedRight)
-        : (bark ? dogSprites.barkOpenLeft  : dogSprites.barkClosedLeft);
+    // Behavior → appearance mapping
+    let bodyPose = 'stand';
+    let mouthPose = 'closed';
+    let tailPose = 'neutral';
+
+    if (dog.isWalking) {
+      bodyPose = 'walk';
+      tailPose = (dog.frameCount % 10 < 5) ? 'left' : 'right';
+    } else {
+      // Idle wag randomly
+      if (dog.frameCount % 180 === 0 && Math.random() < 0.25) {
+        dog.tailPhase = 1;
+      }
+      if (dog.tailPhase) {
+        const p = (Math.floor(dog.frameCount/6) % 2);
+        tailPose = p ? 'left' : 'right';
+      }
+    }
+
+    if (dog.currentBehavior === 'barking') {
+      const m = Math.floor(dog.frameCount / 6) % 4;
+      mouthPose = (m === 0) ? 'closed' : (m === 2) ? 'open' : 'half';
     } else if (dog.currentBehavior === 'excited') {
-      // Figure-8 hopping pattern
-      const t = (dog.frameCount - dog.excitedStartFrame) / 15; // Animation parameter
-      const hopPhase = Math.floor(dog.frameCount / 4) % 4;
-      yOffset = hopPhase === 1 ? -3 : hopPhase === 2 ? -1 : 0;
+      tailPose = (dog.frameCount % 6 < 3) ? 'left' : 'right';
+    }
 
-      // Figure-8 horizontal movement (lemniscate curve)
+    // Blink every ~6 seconds for 5 frames
+    if (dog.blinkTimer <= 0 && Math.random() < 0.005) {
+      dog.blinkTimer = 5;
+    }
+    const blink = dog.blinkTimer > 0;
+    if (dog.blinkTimer > 0) dog.blinkTimer--;
+
+    // Walk frame index + body bounce
+    let bodyIndex = 0;
+    let offsetY = 0;
+    if (bodyPose === 'walk') {
+      bodyIndex = Math.floor(dog.frameCount / 8) % 4;
+      offsetY = [0, -1, 0, +1][bodyIndex];
+    } else if (dog.currentBehavior === 'excited') {
+      const hopPhase = Math.floor(dog.frameCount / 4) % 4;
+      offsetY = hopPhase === 1 ? -3 : hopPhase === 2 ? -1 : 0;
+
+      const t = (dog.frameCount - dog.excitedStartFrame) / 15;
       const xOffset = Math.sin(t) * 15;
       const figureYOffset = Math.sin(2 * t) * 8;
 
-      // Apply figure-8 position offset
       dog.canvasEl.style.left = (dog.x + xOffset) + 'px';
       dog.canvasEl.style.bottom = (60 + figureYOffset) + 'px';
-
-      sprite = dog.facingRight ? dogSprites.standRight : dogSprites.standLeft;
-    } else if (dog.isWalking) {
-      const f = Math.floor(dog.walkFrame / 6) % 4;  // four-phase gait
-      const bounce = [0, -1, 0, +1][f];             // small vertical bob
-      yOffset = bounce;
-      const rightFrames = [dogSprites.walk1Right, dogSprites.walk2Right, dogSprites.walk3Right, dogSprites.walk4Right];
-      const leftFrames = [dogSprites.walk1Left, dogSprites.walk2Left, dogSprites.walk3Left, dogSprites.walk4Left];
-      sprite = dog.facingRight ? rightFrames[f] : leftFrames[f];
-      dog.walkFrame++;
     } else {
-      sprite = dog.facingRight ? dogSprites.standRight : dogSprites.standLeft;
-      // Add breathing idle effect with tail movement
-      if (!dog.isWalking && dog.currentBehavior === 'idle') {
-        // Organic breathing with slight variation
-        const breathCycle = dog.frameCount / 60;
-        const breath = Math.sin(breathCycle) * 0.5;
-        const microVariation = Math.sin(breathCycle * 0.7) * 0.1;
-        yOffset = breath + microVariation;
-
-        // Subtle tail sway synchronized with breathing (even when not actively wagging)
-        if (!dog.tailWag.active && dog.facingRight) {
-          // Activate subtle tail movement
-          dog.tailWag.active = true;
-          dog.tailWag.frame = Math.floor(breathCycle * 2); // Slow sway
-        }
-      }
+      offsetY = Math.round(Math.sin(dog.frameCount / 40) * 0.5);
     }
 
-    // Tail wag behavior
-    if (!dog.tailWag.active) {
-      // idle: random wag chance
-      if (!dog.isWalking && Math.random() < 0.002) {
-        dog.tailWag.active = true;
-        dog.tailWag.timer = 20 + Math.floor(Math.random() * 20);
-      }
-    } else {
-      // active wag
-      dog.tailWag.frame++;
-      dog.tailWag.timer--;
-      if (dog.tailWag.timer <= 0) {
-        dog.tailWag.active = false;
-        dog.tailWag.frame = 0;
-      }
-    }
+    // Compose the frame
+    const fr = composeFrame({
+      facingRight: dog.facingRight,
+      bodyPose,
+      bodyIndex,
+      mouthPose,
+      tailPose,
+      blink
+    });
 
-    // wag always active while walking
-    if (dog.isWalking) dog.tailWag.active = true;
+    // Center in viewport
+    const ox = Math.floor((VIEW_W - BODY_W) / 2);
+    const oy = Math.floor((VIEW_H - BODY_H) / 2) + offsetY;
 
-    // apply wag transform
-    if (dog.tailWag.active && dog.facingRight) {
-      sprite = applyTailWag(sprite, dog.tailWag.frame);
-    }
+    drawMatrix(ctx, fr, ox, oy);
 
-    // Match canvas to sprite, keep your 3× CSS scaling
-    const margin = 4; // pixels of breathing room
-    canvas.width  = sprite.width;
-    canvas.height = sprite.height + margin * 2;
-    canvas.style.width = sprite.width * 3 + 'px';
-    canvas.style.height = (sprite.height + margin * 2) * 3 + 'px';
-
-    ctx.save();
-    ctx.translate(0, margin + yOffset); // center + apply offset
-
-    const px = sprite.pixels;
-    for (let y = 0; y < sprite.height; y++) {
-      for (let x = 0; x < sprite.width; x++) {
-        if (px[y][x] === 1) {
-          ctx.fillStyle = COLORS[1];
-          ctx.fillRect(x, y, 1, 1);
-        } else if (px[y][x] === 2) {
-          ctx.fillStyle = COLORS[2];
-          ctx.fillRect(x, y, 1, 1);
-        } else if (px[y][x] === 3) {
-          ctx.fillStyle = COLORS[3];
-          ctx.fillRect(x, y, 1, 1);
-        }
-      }
-    }
-
-    ctx.restore();
-
-    // Update shadow based on vertical offset
-    if (dog.shadowEl) {
-      // Shadow scales inversely with yOffset (smaller when dog is higher up)
-      // yOffset ranges from ~-3 to +1, so shadow should be smaller when negative
-      const shadowScale = 1 - (yOffset / 20); // Subtle scaling
-      const shadowOpacity = Math.max(0.15, 0.3 - Math.abs(yOffset) / 15);
-
-      dog.shadowEl.style.opacity = shadowOpacity.toString();
-      dog.shadowEl.style.transform = `scaleX(${shadowScale})`;
-      dog.shadowEl.style.left = dog.canvasEl.style.left;
-    }
+    dog.frameCount++;
   }
 
-  // ============================================
+  // ===========================================
   // MOVEMENT & BEHAVIOR
-  // ============================================
+  // ===========================================
 
   function pickRandomDestination() {
     const screenWidth = window.innerWidth;
@@ -1008,7 +1031,6 @@
     const minX = margin;
     const maxX = screenWidth - margin;
 
-    // Ensure destinations stay within bounds
     const destinations = [
       { x: Math.max(minX, Math.min(maxX, margin)) },
       { x: Math.max(minX, Math.min(maxX, screenWidth - margin)) },
@@ -1022,15 +1044,11 @@
     dog.isWalking = true;
     dog.currentBehavior = 'walking';
 
-    if (dest.x > dog.x) {
-      dog.facingRight = true;
-    } else {
-      dog.facingRight = false;
-    }
+    if (dest.x > dog.x) dog.facingRight = true;
+    else dog.facingRight = false;
   }
 
   function updateMovement() {
-    // Don't move while speaking (stop in place)
     if (isSpeaking) {
       dog.isWalking = false;
       return;
@@ -1058,7 +1076,6 @@
       dog.facingRight = false;
     }
 
-    // Clamp dog position within screen bounds
     const margin = 50;
     dog.x = Math.max(margin, Math.min(window.innerWidth - margin, dog.x));
 
@@ -1066,10 +1083,7 @@
   }
 
   function scheduleNextBehavior() {
-    // Don't schedule new behaviors while dog is speaking
-    if (isSpeaking) {
-      return;
-    }
+    if (isSpeaking) return;
 
     const behaviors = [
       { action: 'sit', duration: 5000, weight: 3 },
@@ -1124,7 +1138,6 @@
 
       case 'bark':
         dog.currentBehavior = 'barking';
-        // No sound for automatic barking - only when clicked
         dog.behaviorTimer = setTimeout(() => {
           dog.currentBehavior = 'idle';
           scheduleNextBehavior();
@@ -1133,33 +1146,28 @@
     }
   }
 
-  // ============================================
-  // PET INTERACTION
-  // ============================================
   function petDog() {
     clearTimeout(dog.behaviorTimer);
     dog.isWalking = false;
     dog.targetX = null;
     dog.chasingBall = false;
 
-    // Stop dog in place - become idle while speaking
+    // Reset naughty mode
+    resetIdleTimer();
+    dog.naughtyMode.inProgress = false;
+    dog.naughtyMode.currentSprite = null;
+
     dog.currentBehavior = 'idle';
 
-    // Show speech bubble with random wisdom
     const wisdom = getRandomDogWisdom();
-    // Duration based on word count: 500ms per word, minimum 2s
     const wordCount = wisdom.split(/\s+/).length;
     const duration = Math.max(2000, wordCount * 500);
     showSpeechBubble(wisdom, duration);
 
-    // Play bark sound
     playBarkSound();
 
-    // Activate tail wag
-    dog.tailWag.active = true;
-    dog.tailWag.timer = 40;
+    dog.tailPhase = 1;
 
-    // After speech ends, become excited
     setTimeout(() => {
       if (!isSpeaking) {
         dog.currentBehavior = 'excited';
@@ -1168,7 +1176,6 @@
 
         setTimeout(() => {
           dog.currentBehavior = 'idle';
-          // Reset position when exiting excited state
           dog.canvasEl.style.bottom = '60px';
           scheduleNextBehavior();
         }, 1500);
@@ -1182,89 +1189,213 @@
     dog.lastInteraction = Date.now();
   }
 
-  // ============================================
+  // ===========================================
+  // NAUGHTY MODE BEHAVIORS
+  // ===========================================
+
+  function doWander() {
+    if (dog.naughtyMode.inProgress) return;
+    dog.naughtyMode.inProgress = true;
+
+    const duration = 3000 + Math.random() * 4000;
+    pickRandomDestination();
+
+    setTimeout(() => {
+      dog.naughtyMode.inProgress = false;
+      dog.isWalking = false;
+      dog.targetX = null;
+      dog.currentBehavior = 'idle';
+    }, duration);
+  }
+
+  function doRollOver() {
+    if (dog.naughtyMode.inProgress) return;
+    dog.naughtyMode.inProgress = true;
+
+    dog.isWalking = false;
+    dog.targetX = null;
+    dog.currentBehavior = 'rolling';
+
+    let frameIndex = 0;
+    const rollInterval = setInterval(() => {
+      dog.naughtyMode.currentSprite = ROLL_SPRITES[frameIndex % 4];
+      frameIndex++;
+
+      if (frameIndex >= 16) { // 4 cycles through all 4 frames
+        clearInterval(rollInterval);
+        dog.naughtyMode.currentSprite = null;
+        dog.currentBehavior = 'idle';
+        dog.naughtyMode.inProgress = false;
+      }
+    }, 150);
+  }
+
+  function doChewBox() {
+    if (dog.naughtyMode.inProgress) return;
+    dog.naughtyMode.inProgress = true;
+
+    // Find a nearby DOM element to "chew"
+    const allElements = Array.from(document.querySelectorAll('.project-box, .skill-item, .list-item, button, a'));
+    const dogRect = dog.canvasEl.getBoundingClientRect();
+    const dogCenterX = dogRect.left + dogRect.width / 2;
+
+    // Find elements within reasonable distance
+    const nearbyElements = allElements.filter(el => {
+      const rect = el.getBoundingClientRect();
+      const elCenterX = rect.left + rect.width / 2;
+      const distance = Math.abs(elCenterX - dogCenterX);
+      return distance < 300 && rect.top < window.innerHeight - 200;
+    });
+
+    if (nearbyElements.length === 0) {
+      dog.naughtyMode.inProgress = false;
+      return;
+    }
+
+    const target = nearbyElements[Math.floor(Math.random() * nearbyElements.length)];
+    const targetRect = target.getBoundingClientRect();
+
+    // Walk to the target
+    dog.targetX = targetRect.left - 50;
+    dog.isWalking = true;
+    dog.facingRight = dog.targetX > dog.x;
+
+    const checkArrival = setInterval(() => {
+      if (!dog.isWalking || Math.abs(dog.x - dog.targetX) < 30) {
+        clearInterval(checkArrival);
+        dog.isWalking = false;
+        dog.targetX = null;
+
+        // Start chewing animation
+        dog.currentBehavior = 'chewing';
+        dog.naughtyMode.chewTarget = target;
+
+        let chewFrame = 0;
+        const chewInterval = setInterval(() => {
+          dog.naughtyMode.currentSprite = chewFrame % 2 === 0 ? CHEW_CLOSED_RIGHT : CHEW_OPEN_RIGHT;
+          chewFrame++;
+
+          // Shake the target element
+          if (target && target.parentNode) {
+            const shake = Math.sin(chewFrame * 0.5) * 3;
+            target.style.transform = `translateX(${shake}px) rotate(${shake * 0.5}deg)`;
+          }
+
+          if (chewFrame >= 20) {
+            clearInterval(chewInterval);
+            if (target && target.parentNode) {
+              target.style.transform = '';
+            }
+            dog.naughtyMode.currentSprite = null;
+            dog.naughtyMode.chewTarget = null;
+            dog.currentBehavior = 'idle';
+            dog.naughtyMode.inProgress = false;
+          }
+        }, 200);
+      }
+    }, 100);
+  }
+
+  function doIdleSit() {
+    if (dog.naughtyMode.inProgress) return;
+    dog.naughtyMode.inProgress = true;
+
+    dog.isWalking = false;
+    dog.targetX = null;
+    dog.currentBehavior = 'sitting';
+
+    setTimeout(() => {
+      dog.currentBehavior = 'idle';
+      dog.naughtyMode.inProgress = false;
+    }, 5000 + Math.random() * 5000);
+  }
+
+  function doNap() {
+    if (dog.naughtyMode.inProgress) return;
+    dog.naughtyMode.inProgress = true;
+
+    dog.isWalking = false;
+    dog.targetX = null;
+    dog.currentBehavior = 'lying';
+
+    setTimeout(() => {
+      dog.currentBehavior = 'idle';
+      dog.naughtyMode.inProgress = false;
+    }, 8000 + Math.random() * 7000);
+  }
+
+  function triggerNaughtyBehavior() {
+    if (dog.naughtyMode.inProgress) return;
+
+    const behaviors = [
+      { fn: doWander, weight: 3 },
+      { fn: doRollOver, weight: 2 },
+      { fn: doChewBox, weight: 2 },
+      { fn: doIdleSit, weight: 2 },
+      { fn: doNap, weight: 1 }
+    ];
+
+    const totalWeight = behaviors.reduce((sum, b) => sum + b.weight, 0);
+    let random = Math.random() * totalWeight;
+
+    for (const behavior of behaviors) {
+      random -= behavior.weight;
+      if (random <= 0) {
+        behavior.fn();
+        break;
+      }
+    }
+  }
+
+  // ===========================================
   // MAIN ANIMATION LOOP
-  // ============================================
+  // ===========================================
+
   function startAnimationLoop() {
     function animate() {
       if (!dog.enabled) return;
 
-      dog.frameCount++;
-
-      // Update ball physics
+      // Update ball physics - GameBall handles all state transitions internally
       if (ball) {
         ball.update();
 
-        // Get dog position for collision detection
-        const dogRect = dog.canvasEl.getBoundingClientRect();
-        const dogX = dogRect.left + dogRect.width / 2;
-        const dogY = dogRect.top + dogRect.height / 2;
+        // Dog reaction to ball state
+        const feetX = ball.getFeetX();
+        const feetY = ball.getFeetY();
 
-        // Check if dog can catch ball
-        if (ball.canCatch(dogX, dogY) && ballState === 'free') {
-          // Dog caught the ball!
-          ballState = 'held';
-          dog.chasingBall = false;
-          dog.isWalking = false;
-          dog.targetX = null;
-
-          // Increment fetch count
-          fetchCount++;
-          localStorage.setItem('dog-fetch-count', fetchCount.toString());
-
-          // Stay idle while showing speech
-          dog.currentBehavior = 'idle';
-
-          // Show excited reaction
-          const catchMessage = `Caught it! (${fetchCount}) - Try dragging the ball!`;
-          const catchWordCount = catchMessage.split(/\s+/).length;
-          const catchDuration = Math.max(2000, catchWordCount * 500);
-          showSpeechBubble(catchMessage, catchDuration);
-          // No sound for automatic ball catching - only when clicked
-
-          // After speech ends, become excited and enable dragging
-          clearTimeout(dog.behaviorTimer);
-          dog.behaviorTimer = setTimeout(() => {
-            if (!isSpeaking) {
-              dog.currentBehavior = 'excited';
-              dog.excitedStartFrame = dog.frameCount;
-
-              setTimeout(() => {
-                dog.currentBehavior = 'idle';
-                dog.canvasEl.style.bottom = '60px';
-
-                // Enable ball dragging
-                ball.enableDrag();
-              }, 1500);
+        switch (ball.state) {
+          case 'flying':
+          case 'grounded':
+            // Start chasing if ball is near and dog isn't already chasing
+            if (!dog.chasingBall && ball.isNear(feetX, feetY)) {
+              dog.chasingBall = true;
+              clearTimeout(dog.behaviorTimer);
+              dog.currentBehavior = 'walking';
             }
-          }, catchDuration);
-        }
-        // Check if ball is near dog and dog should chase (only if ball is free)
-        else if (ball.isNearDog(dogX, dogY) && !dog.chasingBall && ballState === 'free') {
-          dog.chasingBall = true;
-          clearTimeout(dog.behaviorTimer);
-          dog.currentBehavior = 'walking';
-        }
 
-        // If chasing, update target to ball position (only if ball is free)
-        if (dog.chasingBall && ball && ballState === 'free') {
-          const distanceToBall = Math.abs(ball.x - dogX);
+            // Chase behavior - walk toward ball
+            if (dog.chasingBall) {
+              const distanceToBall = Math.abs(ball.x - feetX);
 
-          // Only move if ball is far enough away
-          if (distanceToBall > 30) {
-            dog.targetX = ball.x;
-            dog.isWalking = true;
+              if (distanceToBall > 30) {
+                dog.targetX = ball.x;
+                dog.isWalking = true;
 
-            // Only update facing direction if ball is significantly to one side
-            // This prevents rapid flipping when near the ball
-            if (distanceToBall > 15) {
-              dog.facingRight = ball.x > dogX;
+                if (distanceToBall > 15) {
+                  dog.facingRight = ball.x > feetX;
+                }
+              } else {
+                dog.isWalking = false;
+                dog.targetX = null;
+              }
             }
-          } else {
-            // Stop moving when very close to ball
-            dog.isWalking = false;
-            dog.targetX = null;
-          }
+            break;
+
+          case 'caught':
+          case 'tug':
+            // Ball is in dog's mouth - no chasing needed
+            dog.chasingBall = false;
+            break;
         }
       }
 
@@ -1282,9 +1413,10 @@
     animate();
   }
 
-  // ============================================
+  // ===========================================
   // SOUND EFFECTS
-  // ============================================
+  // ===========================================
+
   function playBarkSound() {
     const settings = JSON.parse(localStorage.getItem('dashboard-settings') || '{}');
     if (settings.volume && settings.volume > 0) {
@@ -1305,9 +1437,7 @@
           oscillator.frequency.value = 200;
         }, 50);
         setTimeout(() => oscillator.stop(), 150);
-      } catch (e) {
-        // Fail silently
-      }
+      } catch (e) {}
     }
   }
 
@@ -1330,15 +1460,56 @@
         setTimeout(() => { oscillator.frequency.value = 500; }, 100);
         setTimeout(() => { oscillator.frequency.value = 600; }, 200);
         setTimeout(() => oscillator.stop(), 300);
-      } catch (e) {
-        // Fail silently
-      }
+      } catch (e) {}
     }
   }
 
-  // ============================================
+  // ===========================================
+  // NAUGHTY MODE: USER ACTIVITY TRACKING
+  // ===========================================
+
+  let naughtyModeCheckInterval = null;
+
+  function resetIdleTimer() {
+    dog.naughtyMode.isIdle = false;
+    dog.naughtyMode.idleStartTime = Date.now();
+  }
+
+  function checkIdleStatus() {
+    if (!dog.enabled || dog.naughtyMode.inProgress) return;
+
+    const timeSinceActivity = Date.now() - dog.naughtyMode.idleStartTime;
+
+    if (timeSinceActivity > dog.naughtyMode.idleThreshold && !dog.naughtyMode.isIdle) {
+      dog.naughtyMode.isIdle = true;
+      triggerNaughtyBehavior();
+    }
+  }
+
+  function setupUserActivityTracking() {
+    // Reset idle timer on user activity
+    const activityHandler = () => resetIdleTimer();
+
+    document.addEventListener('mousemove', activityHandler);
+    document.addEventListener('mousedown', activityHandler);
+    document.addEventListener('keydown', activityHandler);
+    document.addEventListener('touchstart', activityHandler);
+
+    // Check idle status every 2 seconds
+    naughtyModeCheckInterval = setInterval(checkIdleStatus, 2000);
+  }
+
+  function teardownUserActivityTracking() {
+    if (naughtyModeCheckInterval) {
+      clearInterval(naughtyModeCheckInterval);
+      naughtyModeCheckInterval = null;
+    }
+  }
+
+  // ===========================================
   // ENABLE/DISABLE DOG
-  // ============================================
+  // ===========================================
+
   function enableDog() {
     if (dog.enabled) return;
 
@@ -1358,6 +1529,10 @@
     if (dog.shadowEl) {
       dog.shadowEl.style.left = dog.x + 'px';
     }
+
+    // Initialize naughty mode
+    dog.naughtyMode.idleStartTime = Date.now();
+    setupUserActivityTracking();
 
     startAnimationLoop();
 
@@ -1382,16 +1557,19 @@
     }
 
     clearTimeout(dog.behaviorTimer);
+
+    // Teardown naughty mode
+    teardownUserActivityTracking();
   }
 
-  // ============================================
+  // ===========================================
   // KEYBOARD CONTROLS
-  // ============================================
+  // ===========================================
+
   let commandBuffer = '';
   let lastMouseX = window.innerWidth / 2;
   let lastMouseY = window.innerHeight / 2;
 
-  // Track mouse position for ball throwing
   document.addEventListener('mousemove', (e) => {
     lastMouseX = e.clientX;
     lastMouseY = e.clientY;
@@ -1404,33 +1582,23 @@
 
     commandBuffer += e.key;
 
-    // Ball throwing: 'b' key
     if (e.key === 'b' && dog.enabled) {
-      // Remove old ball if exists
       if (ball) {
         ball.destroy();
       }
 
-      // Reset ball state
-      ballState = 'free';
-      dragStart = null;
-      dragMovement = [];
-      clearTimeout(stillnessTimer);
-      stillnessTimer = null;
+      // Create new ball and throw it toward the dog's mouth
+      const mouth = { x: 0, y: 0 };
+      if (dog.canvasEl) {
+        const rect = dog.canvasEl.getBoundingClientRect();
+        mouth.x = rect.left + (dog.facingRight ? rect.width * 0.75 : rect.width * 0.25);
+        mouth.y = rect.top + rect.height * 0.4;
+      }
 
-      // Create new ball at cursor position
-      const dogRect = dog.canvasEl.getBoundingClientRect();
-      const dogX = dogRect.left + dogRect.width / 2;
-      const dogY = dogRect.top + dogRect.height / 2;
-
-      ball = new Ball(lastMouseX, lastMouseY, dogX, dogY);
-
-      // Stop current behavior and prepare to chase
-      clearTimeout(ballChaseTimeout);
-      ballChaseTimeout = null;
+      ball = new GameBall(lastMouseX, lastMouseY);
+      ball.throw(lastMouseX, lastMouseY, mouth.x, mouth.y);
     }
 
-    // Hidden trigger: "gooddog"
     if (commandBuffer.endsWith('gooddog')) {
       if (dog.enabled) {
         petDog();
@@ -1446,23 +1614,24 @@
     }
   });
 
-  // ============================================
+  // ===========================================
   // EXPORT FUNCTIONS
-  // ============================================
+  // ===========================================
+
   window.ASCIIDog = {
     enable: enableDog,
     disable: disableDog,
     isEnabled: () => dog.enabled
   };
 
-  // ============================================
+  // ===========================================
   // LOAD SAVED STATE
-  // ============================================
+  // ===========================================
+
   window.addEventListener('DOMContentLoaded', () => {
     const settings = JSON.parse(localStorage.getItem('dashboard-settings') || '{}');
 
-    // Enable dog by default if not explicitly disabled
-    const shouldEnable = settings.asciiDog !== false; // true by default
+    const shouldEnable = settings.asciiDog !== false;
     if (shouldEnable) {
       enableDog();
     }
