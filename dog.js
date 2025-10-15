@@ -385,6 +385,7 @@
   let dog = {
     element: null,
     canvasEl: null,
+    shadowEl: null,
     ctx: null,
     enabled: false,
 
@@ -424,6 +425,25 @@
   // CANVAS SETUP
   // ============================================
   function createDogCanvas() {
+    // Create shadow element (oval under dog)
+    const shadow = document.createElement('div');
+    shadow.id = 'dog-shadow';
+    shadow.style.cssText = `
+      position: fixed;
+      bottom: 56px;
+      left: ${dog.x}px;
+      width: 72px;
+      height: 12px;
+      background: radial-gradient(ellipse, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0) 70%);
+      border-radius: 50%;
+      z-index: 499;
+      pointer-events: none;
+      display: none;
+    `;
+    document.body.appendChild(shadow);
+    dog.shadowEl = shadow;
+
+    // Create dog canvas
     const canvas = document.createElement('canvas');
     canvas.id = 'dog-canvas';
     canvas.width = 24;  // Initial size (24x20), will be dynamically adjusted
@@ -563,6 +583,18 @@
     }
 
     ctx.restore();
+
+    // Update shadow based on vertical offset
+    if (dog.shadowEl) {
+      // Shadow scales inversely with yOffset (smaller when dog is higher up)
+      // yOffset ranges from ~-3 to +1, so shadow should be smaller when negative
+      const shadowScale = 1 - (yOffset / 20); // Subtle scaling
+      const shadowOpacity = Math.max(0.15, 0.3 - Math.abs(yOffset) / 15);
+
+      dog.shadowEl.style.opacity = shadowOpacity.toString();
+      dog.shadowEl.style.transform = `scaleX(${shadowScale})`;
+      dog.shadowEl.style.left = dog.canvasEl.style.left;
+    }
   }
 
   // ============================================
@@ -873,9 +905,15 @@
     }
 
     dog.canvasEl.style.display = 'block';
+    if (dog.shadowEl) {
+      dog.shadowEl.style.display = 'block';
+    }
 
     dog.x = 100 + Math.random() * (window.innerWidth - 200);
     dog.canvasEl.style.left = dog.x + 'px';
+    if (dog.shadowEl) {
+      dog.shadowEl.style.left = dog.x + 'px';
+    }
 
     startAnimationLoop();
 
@@ -889,6 +927,10 @@
 
     if (dog.canvasEl) {
       dog.canvasEl.style.display = 'none';
+    }
+
+    if (dog.shadowEl) {
+      dog.shadowEl.style.display = 'none';
     }
 
     if (dog.animationFrame) {
