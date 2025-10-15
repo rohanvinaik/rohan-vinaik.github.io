@@ -45,6 +45,16 @@ const GRAPH_DATA = {
       position: { x: 400, y: 300 }
     },
     {
+      id: 'analog-computing-survey',
+      title: 'ANALOG COMPUTING',
+      subtitle: 'Hybrid Architectures',
+      description: 'Scalable analog-digital systems survey',
+      type: 'theory',
+      status: 'published',
+      tags: ['ANALOG-COMPUTING', 'NEUROMORPHIC', 'MEMRISTIVE', 'SURVEY'],
+      position: { x: 500, y: 300 }
+    },
+    {
       id: 'genomevault',
       title: 'GENOMEVAULT',
       subtitle: 'Privacy-Preserving Genomics',
@@ -167,6 +177,7 @@ const GRAPH_DATA = {
     { from: 'behavioral-holography', to: 'rev', label: 'evolved approach', type: 'iteration' },
     { from: 'hdc-survey', to: 'genomevault', label: 'semantic encoding', type: 'informs' },
     { from: 'hdc-survey', to: 'biocomputing', label: 'vector models', type: 'informs' },
+    { from: 'analog-computing-survey', to: 'biocomputing', label: 'hybrid architectures', type: 'informs' },
 
     // TIER 2 → TIER 4: Platform technology to refined methods
     { from: 'genomevault', to: 'hbt', label: 'HDC + ZK', type: 'technology' },
