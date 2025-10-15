@@ -11,7 +11,7 @@
   const translations = {
     standard: {
       role: 'INDEPENDENT RESEARCHER',
-      focus: 'AI SECURITY & CRYPTOGRAPHY',
+      focus: 'COMPUTATIONAL BIOLOGY · HDC · THEORY',
       location: 'CALIFORNIA, USA',
       status: 'AVAILABLE',
       'nav-home': 'home',
