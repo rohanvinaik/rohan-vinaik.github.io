@@ -201,36 +201,37 @@
     speechBubble.className = 'dog-speech-bubble';
     speechBubble.textContent = text;
 
-    // Terminal aesthetic styling
+    // Traditional comic speech bubble styling
     speechBubble.style.cssText = `
       position: fixed;
-      background: #0a0a0a;
-      color: #00ff00;
-      border: 2px solid #00ff00;
-      padding: 8px 12px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 12px;
-      font-weight: bold;
-      border-radius: 4px;
+      background: white;
+      color: #222;
+      border: 2px solid #222;
+      padding: 12px 16px;
+      font-family: 'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', cursive, sans-serif;
+      font-size: 13px;
+      border-radius: 20px;
       z-index: 1000;
       pointer-events: none;
       max-width: 400px;
       white-space: normal;
-      line-height: 1.4;
+      line-height: 1.5;
       opacity: 0;
       transition: opacity 300ms ease-in-out;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     `;
 
     // Position bubble above dog
     const dogRect = dog.canvasEl.getBoundingClientRect();
     let bubbleX = dogRect.left + (dogRect.width / 2);
-    let bubbleY = dogRect.top - 40; // 40px above dog
+    let bubbleY = dogRect.top - 20; // Position above dog with space for tail
 
     document.body.appendChild(speechBubble);
 
     // Get bubble dimensions for positioning
     const bubbleRect = speechBubble.getBoundingClientRect();
     bubbleX -= bubbleRect.width / 2; // Center horizontally
+    bubbleY -= bubbleRect.height; // Position above
 
     // Viewport boundary checking
     const viewportWidth = window.innerWidth;
@@ -243,10 +244,43 @@
     }
 
     // Keep within vertical bounds
-    if (bubbleY < 10) bubbleY = dogRect.bottom + 10; // Show below if too high
+    if (bubbleY < 10) bubbleY = 10;
 
     speechBubble.style.left = bubbleX + 'px';
     speechBubble.style.top = bubbleY + 'px';
+
+    // Create speech bubble tail using pseudo-element
+    const tailX = dogRect.left + (dogRect.width / 2) - bubbleX - 10; // Offset for tail width
+    const style = document.createElement('style');
+    style.textContent = `
+      .dog-speech-bubble::after {
+        content: '';
+        position: absolute;
+        bottom: -15px;
+        left: ${tailX}px;
+        width: 0;
+        height: 0;
+        border-left: 10px solid transparent;
+        border-right: 10px solid transparent;
+        border-top: 15px solid white;
+        filter: drop-shadow(0 2px 1px rgba(0, 0, 0, 0.1));
+      }
+      .dog-speech-bubble::before {
+        content: '';
+        position: absolute;
+        bottom: -18px;
+        left: ${tailX - 1}px;
+        width: 0;
+        height: 0;
+        border-left: 11px solid transparent;
+        border-right: 11px solid transparent;
+        border-top: 18px solid #222;
+      }
+    `;
+    document.head.appendChild(style);
+
+    // Store style element for cleanup
+    speechBubble.styleEl = style;
 
     // Fade in
     requestAnimationFrame(() => {
@@ -260,6 +294,9 @@
         setTimeout(() => {
           if (speechBubble && speechBubble.parentNode) {
             document.body.removeChild(speechBubble);
+            if (speechBubble.styleEl && speechBubble.styleEl.parentNode) {
+              document.head.removeChild(speechBubble.styleEl);
+            }
             speechBubble = null;
           }
         }, 300);
