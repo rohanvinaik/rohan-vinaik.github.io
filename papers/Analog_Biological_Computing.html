@@ -1,0 +1,1019 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Analog and Biological Computing | Rohan Vinaik</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --text: #e0e0e0;
+      --text-secondary: #a0a0a0;
+      --accent: #00ff00;
+      --border: #333;
+      --code-bg: #1a1a1a;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'JetBrains Mono', monospace;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 20px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    h1 {
+      color: var(--accent);
+      font-size: 1.5rem;
+      margin-bottom: 8px;
+      letter-spacing: 0.02em;
+    }
+    h2 {
+      color: var(--accent);
+      font-size: 1.1rem;
+      margin-top: 32px;
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    h3 {
+      color: var(--accent);
+      font-size: 0.95rem;
+      margin-top: 24px;
+      margin-bottom: 12px;
+    }
+    h4 {
+      color: var(--text);
+      font-size: 0.85rem;
+      margin-top: 20px;
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+    p { margin-bottom: 16px; font-size: 0.85rem; }
+    a {
+      color: var(--accent);
+      text-decoration: none;
+      border-bottom: 1px dotted var(--accent);
+    }
+    a:hover { border-bottom-style: solid; }
+    .back-link {
+      display: inline-block;
+      margin-bottom: 24px;
+      font-size: 0.85rem;
+    }
+    .paper-meta {
+      color: var(--text-secondary);
+      font-size: 0.75rem;
+      margin-bottom: 24px;
+    }
+    .abstract {
+      background: var(--code-bg);
+      padding: 20px;
+      border-left: 3px solid var(--accent);
+      margin-bottom: 32px;
+      font-size: 0.85rem;
+    }
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 32px;
+    }
+    .tag {
+      background: var(--code-bg);
+      padding: 4px 12px;
+      border: 1px solid var(--border);
+      font-size: 0.7rem;
+      color: var(--accent);
+      text-decoration: none;
+      border-bottom: none;
+    }
+    .tag:hover {
+      background: var(--accent);
+      color: var(--bg);
+      border-color: var(--accent);
+    }
+    .quick-nav {
+      background: var(--code-bg);
+      padding: 16px;
+      margin-bottom: 32px;
+      border: 1px solid var(--border);
+    }
+    .quick-nav h3 {
+      margin-top: 0;
+      font-size: 0.85rem;
+    }
+    .quick-nav ul {
+      list-style: none;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .quick-nav a {
+      font-size: 0.75rem;
+      border-bottom: none;
+      padding: 4px 0;
+      display: block;
+    }
+    .quick-nav a:hover { color: var(--bg); background: var(--accent); padding-left: 8px; }
+    .code-block {
+      background: var(--code-bg);
+      padding: 16px;
+      margin: 16px 0;
+      border-left: 3px solid var(--border);
+      font-size: 0.8rem;
+      overflow-x: auto;
+      white-space: pre;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    ul, ol {
+      margin-left: 24px;
+      margin-bottom: 16px;
+      font-size: 0.85rem;
+    }
+    li { margin-bottom: 8px; }
+    .references {
+      font-size: 0.75rem;
+      margin-top: 32px;
+    }
+    .references ol {
+      padding-left: 20px;
+    }
+    .references li {
+      margin-bottom: 12px;
+      line-height: 1.5;
+    }
+    @media (max-width: 768px) {
+      body { padding: 12px; }
+      h1 { font-size: 1.2rem; }
+      h2 { font-size: 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<a href="../index.html#reference" class="back-link">← Back to References</a>
+
+<h1>Analog and Biological Computing: Continuous Dynamics in Computational Systems</h1>
+<div class="paper-meta">January 2025 · Technical Reference</div>
+
+<div class="tags">
+  <a href="../index.html?filter=ANALOG-COMPUTING" class="tag">[ANALOG-COMPUTING]</a>
+  <a href="../index.html?filter=BIOLOGICAL-COMPUTING" class="tag">[BIOLOGICAL-COMPUTING]</a>
+  <a href="../index.html?filter=CONTINUOUS-DYNAMICS" class="tag">[CONTINUOUS-DYNAMICS]</a>
+  <a href="../index.html?filter=MOLECULAR-COMPUTATION" class="tag">[MOLECULAR-COMPUTATION]</a>
+  <a href="../index.html?filter=NEUROMORPHIC-SYSTEMS" class="tag">[NEUROMORPHIC-SYSTEMS]</a>
+  <a href="../index.html?filter=DNA-COMPUTING" class="tag">[DNA-COMPUTING]</a>
+  <a href="../index.html?filter=PHYSICAL-COMPUTATION" class="tag">[PHYSICAL-COMPUTATION]</a>
+  <a href="../index.html?filter=MEMBRANE-COMPUTING" class="tag">[MEMBRANE-COMPUTING]</a>
+  <a href="../index.html?filter=ENERGY-LANDSCAPES" class="tag">[ENERGY-LANDSCAPES]</a>
+  <a href="../index.html?filter=HYBRID-COMPUTING" class="tag">[HYBRID-COMPUTING]</a>
+</div>
+
+<div class="abstract">
+  <strong>Abstract:</strong> Analog and biological computing represent computational paradigms fundamentally distinct from digital von Neumann architectures. These systems leverage continuous physical dynamics, parallel processing at molecular scales, and emergent computational properties arising from material substrates. This document synthesizes theoretical foundations spanning biochemical computation, neuromorphic systems, molecular computing, physical analog devices, and hybrid analog-digital architectures. We explore how biological systems achieve computation through constraint satisfaction in continuous state spaces, how physical dynamics implement mathematical functions, and how these principles inform future computing paradigms including DNA computing, synthetic biology, memristive devices, and quantum-analog hybrids.
+</div>
+
+<div class="quick-nav">
+  <h3>Quick Navigation</h3>
+  <ul>
+    <li><a href="#foundations">1. Foundations of Analog Computation</a></li>
+    <li><a href="#biological">2. Biological Computing Paradigms</a></li>
+    <li><a href="#substrates">3. Physical Substrates for Computation</a></li>
+    <li><a href="#mathematical">4. Mathematical Models</a></li>
+    <li><a href="#molecular">5. Molecular and Chemical Computing</a></li>
+    <li><a href="#neuromorphic">6. Neuromorphic Computing</a></li>
+    <li><a href="#energy">7. Energy Landscapes</a></li>
+    <li><a href="#hybrid">8. Hybrid Analog-Digital Systems</a></li>
+    <li><a href="#limits">9. Theoretical Limits</a></li>
+    <li><a href="#future">10. Future Directions</a></li>
+    <li><a href="#references">References</a></li>
+  </ul>
+</div>
+
+<h2 id="foundations">1. Foundations of Analog Computation</h2>
+
+<h3>1.1 Continuous vs. Discrete Computation</h3>
+
+<p><strong>Digital Paradigm:</strong></p>
+<div class="code-block">State space: Discrete (binary strings)
+Transitions: Deterministic rules
+Time: Discrete steps
+Information: Shannon entropy (bits)</div>
+
+<p><strong>Analog Paradigm:</strong></p>
+<div class="code-block">State space: Continuous manifolds
+Transitions: Differential equations
+Time: Continuous flow
+Information: Fisher information (nats)</div>
+
+<p><strong>Fundamental Distinction:</strong></p>
+<div class="code-block">Digital: x ∈ {0,1}^n, f: {0,1}^n → {0,1}^m
+Analog: x ∈ ℝ^n, f: ℝ^n → ℝ^m
+
+Digital computation: x(t+1) = f(x(t))
+Analog computation: dx/dt = f(x(t))</div>
+
+<h3>1.2 Physical Realizations</h3>
+
+<p><strong>Historical Analog Computers:</strong></p>
+<ul>
+  <li>Differential analyzers (mechanical integration)</li>
+  <li>Electrical analog computers (op-amp circuits)</li>
+  <li>Hydraulic computers (fluid flow)</li>
+  <li>Slide rules (logarithmic scales)</li>
+</ul>
+
+<p><strong>Modern Analog Computing:</strong></p>
+<ul>
+  <li>Memristive crossbars (resistive switching)</li>
+  <li>Optical computing (photonic interference)</li>
+  <li>Molecular computing (chemical reactions)</li>
+  <li>Quantum-analog systems (continuous variables)</li>
+</ul>
+
+<p><strong>Key Insight:</strong> Physical laws naturally implement mathematical operations</p>
+<div class="code-block">Kirchhoff's laws → Linear algebra
+Chemical kinetics → Differential equations
+Wave interference → Fourier transforms
+Energy minimization → Optimization</div>
+
+<h3>1.3 Advantages and Limitations</h3>
+
+<p><strong>Advantages:</strong></p>
+<div class="code-block">1. Energy efficiency: Physics performs computation "for free"
+2. Parallelism: Massive parallelism at molecular scale
+3. Speed: Physical processes can be extremely fast
+4. Continuous: Natural for continuous optimization problems
+5. Noise tolerance: Some problems benefit from stochasticity</div>
+
+<p><strong>Limitations:</strong></p>
+<div class="code-block">1. Precision: Limited by physical noise, typically ~8-12 bits
+2. Programmability: Reconfiguration often requires physical changes
+3. Scalability: Interconnection and calibration challenges
+4. Verification: Difficult to verify correctness
+5. Digital interface: Conversion overhead (ADC/DAC)</div>
+
+<p><strong>Theoretical Result (Shannon-Hartley):</strong></p>
+<div class="code-block">For analog channel with bandwidth B, signal power S, noise power N:
+  Capacity = B log₂(1 + S/N) bits/second
+
+Implication: Finite precision inherent to physical systems</div>
+
+<h2 id="biological">2. Biological Computing Paradigms</h2>
+
+<h3>2.1 Cellular Computation</h3>
+
+<p><strong>Genetic Regulatory Networks:</strong></p>
+<div class="code-block">State: Protein concentrations c ∈ ℝ₊^n
+Dynamics: dc/dt = f(c, θ) where f encodes gene interactions
+
+Example (Repressilator):
+  dx₁/dt = α/(1 + x₃^n) - x₁
+  dx₂/dt = α/(1 + x₁^n) - x₂
+  dx₃/dt = α/(1 + x₂^n) - x₃
+
+Result: Oscillatory behavior (biological clock)</div>
+
+<p><strong>Signal Transduction Cascades:</strong></p>
+<div class="code-block">Input: Extracellular ligand binding
+Processing: Phosphorylation cascades
+Output: Transcription factor activation
+
+Computation: Signal amplification, filtering, integration</div>
+
+<p><strong>Biological Logic Gates:</strong></p>
+<div class="code-block">AND gate: Require both transcription factors
+OR gate: Either transcription factor sufficient
+NOT gate: Repressor binding
+XOR gate: Composed gates with feedback
+
+Example: Synthetic biology toggle switch (Gardner et al. 2000)</div>
+
+<h3>2.2 Neural Computation</h3>
+
+<p><strong>Neuron as Computational Unit:</strong></p>
+<div class="code-block">Membrane potential: dV/dt = (I_ext - I_ion(V))/C
+
+Hodgkin-Huxley model:
+  C dV/dt = I_ext - ḡ_Na m³h(V - E_Na)
+                  - ḡ_K n⁴(V - E_K)
+                  - ḡ_L(V - E_L)
+  dm/dt = α_m(V)(1-m) - β_m(V)m
+  dh/dt = α_h(V)(1-h) - β_h(V)h
+  dn/dt = α_n(V)(1-n) - β_n(V)n
+
+Rich dynamics: Spiking, bursting, adaptation, resonance</div>
+
+<p><strong>Network Computation:</strong></p>
+<div class="code-block">Attractor networks: Pattern completion
+Winner-take-all: Selection/decision making
+Oscillator networks: Temporal binding
+Reservoir computing: Temporal processing</div>
+
+<p><strong>Synaptic Plasticity:</strong></p>
+<div class="code-block">Hebbian learning: Δw ∝ x_pre · x_post
+STDP: Δw = f(Δt) where Δt = t_post - t_pre
+Homeostatic: Maintain firing rate in stable range
+
+Enables: Learning, memory, adaptation</div>
+
+<h3>2.3 Morphogenetic Computation</h3>
+
+<p><strong>Turing Patterns:</strong></p>
+<div class="code-block">Reaction-diffusion system:
+  ∂u/∂t = D_u ∇²u + f(u,v)
+  ∂v/∂t = D_v ∇²v + g(u,v)
+
+Example (Activator-Inhibitor):
+  f(u,v) = a - bu + u²/v
+  g(u,v) = u² - v
+
+Result: Spatial patterns (spots, stripes) from homogeneous initial conditions
+Application: Animal coat patterns, digit formation</div>
+
+<p><strong>Physical Morphogenesis:</strong></p>
+<div class="code-block">Cellular mechanics: Forces → Shape changes
+Chemical gradients: Morphogen diffusion → Position information
+Gene expression: Concentration thresholds → Cell fate decisions
+
+Computation: Position-dependent differentiation without central control</div>
+
+<h2 id="substrates">3. Physical Substrates for Computation</h2>
+
+<h3>3.1 Memristive Systems</h3>
+
+<p><strong>Memristor Dynamics:</strong></p>
+<div class="code-block">Constitutive relation: dφ/dt = M(q) · i
+where φ = flux, q = charge, M = memristance
+
+Memory effect: Resistance depends on history of current
+  R(t) = R(q(t)) = R(∫₀ᵗ i(τ)dτ)
+
+Computational use:
+  - Analog weights in neural networks
+  - Non-volatile memory
+  - In-memory computing (computation at storage location)</div>
+
+<p><strong>Crossbar Arrays:</strong></p>
+<div class="code-block">Architecture: N×M grid of memristors
+Operation: V_out = (G · V_in) where G = conductance matrix
+
+Advantage: O(1) matrix-vector multiply
+  vs. O(NM) digital operations
+
+Application: Neuromorphic hardware, analog dot products</div>
+
+<p><strong>Material Systems:</strong></p>
+<ul>
+  <li>Titanium dioxide (TiO₂)</li>
+  <li>Phase-change materials (Ge₂Sb₂Te₅)</li>
+  <li>Ferroelectric materials</li>
+  <li>Organic memristors</li>
+</ul>
+
+<h3>3.2 Optical Computing</h3>
+
+<p><strong>Coherent Optical Processing:</strong></p>
+<div class="code-block">Fourier transform: Natural operation via lens
+  f(x,y) --[lens]--> F(k_x, k_y)
+
+Convolution: Multiplication in frequency domain
+Correlation: Pattern matching via optical correlation
+
+Advantage: Speed of light, massive parallelism</div>
+
+<p><strong>Photonic Neural Networks:</strong></p>
+<div class="code-block">Weight matrix: Mach-Zehnder interferometer mesh
+Nonlinearity: Photodetection + modulation
+Activation: Optical nonlinear materials
+
+Advantage: Low latency (<1 ns), energy efficiency
+Limitation: Fabrication complexity</div>
+
+<p><strong>Quantum Optical Computing:</strong></p>
+<div class="code-block">Continuous-variable quantum computing:
+  - Squeezed light states
+  - Homodyne detection
+  - Gaussian operations
+
+Application: Quantum sampling, optimization</div>
+
+<h3>3.3 Molecular Computing</h3>
+
+<p><strong>DNA Computing:</strong></p>
+<div class="code-block">Hamiltonian path problem (Adleman 1994):
+  Encoding: Cities → DNA sequences
+  Mixing: Random hybridization explores paths
+  Selection: PCR amplification + gel electrophoresis
+  Readout: Sequencing
+
+Advantage: Massive parallelism (10²⁰ molecules)
+Limitation: Slow (days), error-prone</div>
+
+<p><strong>Chemical Reaction Networks (CRNs):</strong></p>
+<div class="code-block">Formal model:
+  Reactions: Species X₁,...,Xₙ
+  Rate equations: dX_i/dt = Σⱼ s_ij v_j(X)
+
+Computational universality:
+  CRNs can simulate Turing machines (Soloveichik et al. 2008)
+
+Example (2-input AND gate):
+  Reactions: A + B → C (and logic)
+  Concentration C(t) represents computation</div>
+
+<p><strong>Protein Folding as Computation:</strong></p>
+<div class="code-block">Input: Amino acid sequence
+Computation: Energy minimization in conformational space
+Output: 3D structure (functional state)
+
+Efficiency: ~10⁻⁶ s to fold small proteins (vs. years for simulation)</div>
+
+<h2 id="mathematical">4. Mathematical Models of Continuous Computation</h2>
+
+<h3>4.1 Dynamical Systems Theory</h3>
+
+<p><strong>General Continuous Computation:</strong></p>
+<div class="code-block">State: x ∈ M (smooth manifold)
+Dynamics: dx/dt = f(x, u)
+where u = input, f = vector field
+
+Computation as trajectory: x(t) = Φ_t(x₀, u)
+Output: y = h(x)</div>
+
+<p><strong>Fixed Points and Attractors:</strong></p>
+<div class="code-block">Fixed point: f(x*) = 0
+Stability: Eigenvalues of Jacobian ∂f/∂x|_{x*}
+
+Attractor computation:
+  Initialize near x₀
+  Evolve under dynamics
+  Read out at x* (stable state)
+
+Example: Hopfield networks, associative memory</div>
+
+<p><strong>Limit Cycles and Oscillators:</strong></p>
+<div class="code-block">Periodic orbit: γ(t + T) = γ(t)
+
+Phase oscillators: dθ/dt = ω + K sin(θ - φ)
+Coupled oscillators: Synchronization, pattern generation
+
+Application: Central pattern generators (locomotion)</div>
+
+<h3>4.2 Gradient Descent in Physical Systems</h3>
+
+<p><strong>Energy-Based Computation:</strong></p>
+<div class="code-block">Energy function: E: ℝ^n → ℝ
+Dynamics: dx/dt = -∇E(x) + noise
+
+Computation: E(x*) = min E(x)
+Result: Optimization via physical relaxation
+
+Examples:
+  - Protein folding: Minimize free energy
+  - Ising model: Minimize spin energy
+  - Neural networks: Minimize loss function</div>
+
+<p><strong>Simulated Annealing in Physical Systems:</strong></p>
+<div class="code-block">Temperature schedule: T(t) → 0 as t → ∞
+Boltzmann distribution: P(x) ∝ exp(-E(x)/k_B T)
+
+Physical implementation:
+  - Thermal annealing (metallurgy)
+  - Quantum annealing (D-Wave)
+  - Stochastic neural networks</div>
+
+<h3>4.3 Reservoir Computing</h3>
+
+<p><strong>Echo State Networks / Liquid State Machines:</strong></p>
+<div class="code-block">Architecture:
+  Input: u(t) ∈ ℝ^m
+  Reservoir: dx/dt = -x + f(Wx + W_in u)
+  Output: y(t) = W_out x(t)
+
+Key property: Only output weights W_out trained
+
+Advantages:
+  - Exploits complex dynamics of reservoir
+  - Computationally cheap training
+  - Physical reservoirs possible (no gradient needed)</div>
+
+<p><strong>Physical Reservoirs:</strong></p>
+<div class="code-block">Examples:
+  - Water surface waves
+  - Mechanical systems (springs, masses)
+  - Optical systems (lasers, fiber optics)
+  - Spin systems (magnetic materials)
+  - Biological neural tissue
+
+Requirement: Rich, complex, nonlinear dynamics</div>
+
+<h2 id="molecular">5. Molecular and Chemical Computing</h2>
+
+<h3>5.1 DNA Computing Models</h3>
+
+<p><strong>Sticker Model:</strong></p>
+<div class="code-block">Data structure: DNA strands with sticky ends
+Operations:
+  - Annealing: Complementary binding
+  - Ligation: Covalent bonding
+  - Separation: Melting, gel electrophoresis
+  - Amplification: PCR
+
+Computational power: NP problems via massive parallelism</div>
+
+<p><strong>DNA Origami:</strong></p>
+<div class="code-block">Technique: Folding long DNA scaffold with short staples
+Application: Nanoscale structures, drug delivery, sensors
+
+Computational interpretation:
+  Input: Staple sequence design
+  Computation: Self-assembly via base pairing
+  Output: 3D nanostructure</div>
+
+<p><strong>DNA Neural Networks:</strong></p>
+<div class="code-block">Winner-take-all circuit (Qian & Winfree 2011):
+  - DNA strands compete via strand displacement
+  - Highest concentration wins
+  - Analog concentrations → Digital decision
+
+Demonstration: Square root computation via chemistry</div>
+
+<h3>5.2 Membrane Computing (P Systems)</h3>
+
+<p><strong>Abstract Model:</strong></p>
+<div class="code-block">Structure: Nested membranes (cell compartments)
+Objects: Multiset of symbols (molecules)
+Rules: Context-sensitive rewriting rules
+
+Example:
+  Compartment 1: {a²b} with rule ab → c
+  Compartment 2: {c} with rule c → d
+  Communication: Objects pass between membranes
+
+Computational power: P systems with active membranes are universal</div>
+
+<p><strong>Biological Correspondence:</strong></p>
+<div class="code-block">Cell membrane: Selective permeability
+Organelles: Specialized compartments
+Molecular transport: Active/passive diffusion
+Chemical reactions: State transitions</div>
+
+<h3>5.3 Enzyme Kinetics as Computation</h3>
+
+<p><strong>Michaelis-Menten Dynamics:</strong></p>
+<div class="code-block">Reaction: E + S ⇌ ES → E + P
+
+Rate equation:
+  v = (V_max [S])/(K_m + [S])
+
+Computational interpretation:
+  - Saturating response: Nonlinear activation function
+  - K_m: Threshold parameter
+  - Cascades: Multi-layer computation</div>
+
+<p><strong>Boolean Logic with Enzymes:</strong></p>
+<div class="code-block">AND gate: Two substrates required
+  E + S₁ + S₂ → E + P
+
+OR gate: Either substrate sufficient
+  E + S₁ → E + P₁
+  E + S₂ → E + P₂
+
+Advantage: Biocompatible, in vivo sensing/computation</div>
+
+<h2 id="neuromorphic">6. Neuromorphic and Brain-Inspired Computing</h2>
+
+<h3>6.1 Spiking Neural Networks</h3>
+
+<p><strong>Integrate-and-Fire Neuron:</strong></p>
+<div class="code-block">Voltage dynamics:
+  τ dV/dt = -(V - V_rest) + R I(t)
+
+Spike: When V ≥ V_th, emit spike and reset V → V_reset
+
+Temporal coding:
+  - Rate code: Spike frequency
+  - Temporal code: Precise spike timing
+  - Population code: Distributed representation</div>
+
+<p><strong>STDP (Spike-Timing-Dependent Plasticity):</strong></p>
+<div class="code-block">Learning rule:
+  Δw = η · f(Δt) where Δt = t_post - t_pre
+
+Typical form:
+  f(Δt) = A_+ exp(-Δt/τ_+)     if Δt > 0 (potentiation)
+          -A_- exp(Δt/τ_-)     if Δt < 0 (depression)
+
+Biological substrate: Ca²⁺-dependent synaptic modification</div>
+
+<p><strong>Neuromorphic Chips:</strong></p>
+<div class="code-block">Examples:
+  - IBM TrueNorth: 1M neurons, 256M synapses
+  - Intel Loihi: Programmable synapses, on-chip learning
+  - BrainScaleS: Analog neurons, accelerated time
+  - SpiNNaker: Digital, ARM cores
+
+Advantages:
+  - Energy efficiency: ~1000× vs GPU
+  - Event-driven: Sparse computation
+  - Asynchronous: No global clock</div>
+
+<h3>6.2 Continuous Attractor Networks</h3>
+
+<p><strong>Ring Attractor (Head Direction):</strong></p>
+<div class="code-block">Network: Neurons arranged in ring, Mexican hat connectivity
+
+Dynamics:
+  τ du_i/dt = -u_i + Σⱼ w_ij σ(u_j) + I_i
+
+Connectivity: w_ij = w₀ cos(θ_i - θ_j)
+
+Result: Continuous family of stable states (bump can be anywhere)
+Application: Spatial memory, working memory</div>
+
+<p><strong>Line Attractor (Integration):</strong></p>
+<div class="code-block">Perfect integration: τ du/dt = I(t)
+
+Implementation:
+  - Recurrent excitation balances decay
+  - Stable activity for any u ∈ [u_min, u_max]
+
+Application: Eye position, decision accumulation</div>
+
+<h3>6.3 Predictive Coding and Free Energy</h3>
+
+<p><strong>Hierarchical Generative Model:</strong></p>
+<div class="code-block">Level i:
+  State: x_i
+  Prediction: x̂_i = g_i(x_{i+1})
+  Error: ε_i = x_i - x̂_i
+
+Dynamics:
+  τ dx_i/dt = -ε_i + ε_{i-1}
+
+Minimizes: Prediction error across hierarchy</div>
+
+<p><strong>Free Energy Principle:</strong></p>
+<div class="code-block">Variational free energy:
+  F = D_KL[q(x|s) || p(x)] - E_q[log p(s|x)]
+
+Agent dynamics: Minimize F
+  Perception: Update q (inference)
+  Action: Change s (active inference)
+
+Interpretation: Brain as Bayesian inference machine</div>
+
+<h2 id="energy">7. Energy Landscapes and Computation</h2>
+
+<h3>7.1 Waddington Landscape</h3>
+
+<p><strong>Epigenetic Landscape:</strong></p>
+<div class="code-block">State: Cell differentiation state x ∈ ℝ^n
+Energy: U(x) = epigenetic potential
+
+Dynamics: dx/dt = -∇U(x) + noise
+
+Valleys: Stable cell types (differentiated states)
+Ridges: Barriers between cell types
+Computation: Developmental trajectory as hill descent</div>
+
+<p><strong>Landscape Engineering:</strong></p>
+<div class="code-block">Reprogramming: Add energy term to lower barrier
+  U_new(x) = U(x) - λ · R(x)
+  where R favors target state
+
+Example: iPSCs (induced pluripotent stem cells)
+  Yamanaka factors → Reshape landscape → Pluripotency</div>
+
+<h3>7.2 Spin Glass Models</h3>
+
+<p><strong>Ising Model:</strong></p>
+<div class="code-block">Energy: H = -Σ_{<i,j>} J_ij s_i s_j - Σ_i h_i s_i
+where s_i ∈ {-1, +1}, J_ij = coupling, h_i = field
+
+Computation: Find ground state s* minimizing H
+
+Physical realization:
+  - Magnetic spins
+  - Optical parametric oscillators
+  - Quantum annealing processors</div>
+
+<p><strong>Hopfield Networks:</strong></p>
+<div class="code-block">Energy: E = -½ Σ_{i,j} w_ij s_i s_j + Σ_i θ_i s_i
+
+Dynamics: s_i(t+1) = sign(Σ_j w_ij s_j(t) - θ_i)
+
+Properties:
+  - Energy decreases with updates (Lyapunov function)
+  - Fixed points = local minima
+  - Can store patterns as attractors
+
+Capacity: ~0.14N patterns for N neurons</div>
+
+<h3>7.3 Protein Folding Landscape</h3>
+
+<p><strong>Funnel Theory:</strong></p>
+<div class="code-block">Energy surface: Funnel-shaped toward native state
+Entropy: Decreases toward native state
+Free energy: F = U - TS
+
+Computation:
+  Initial: Random coil (high entropy)
+  Process: Hydrophobic collapse, secondary structure
+  Final: Native state (low free energy)
+
+Time: Microseconds to seconds (Levinthal paradox resolved)</div>
+
+<p><strong>Folding Pathways:</strong></p>
+<div class="code-block">Not exhaustive search (Levinthal's paradox)
+Hierarchical assembly:
+  1. Secondary structure (α-helices, β-sheets)
+  2. Hydrophobic collapse
+  3. Tertiary structure formation
+  4. Fine-tuning
+
+Molten globule: Intermediate state</div>
+
+<h2 id="hybrid">8. Hybrid Analog-Digital Systems</h2>
+
+<h3>8.1 ADC/DAC Interfaces</h3>
+
+<p><strong>Conversion Overhead:</strong></p>
+<div class="code-block">Analog-to-Digital Converter (ADC):
+  Input: Continuous voltage V ∈ [0, V_ref]
+  Output: Digital code d ∈ {0, 1, ..., 2^n-1}
+  Time: ~10 ns (fast ADC)
+  Power: ~10 mW
+
+Digital-to-Analog Converter (DAC):
+  Similar trade-offs in reverse
+
+Challenge: Conversion latency, power in hybrid systems</div>
+
+<p><strong>Hybrid Architectures:</strong></p>
+<div class="code-block">Pattern 1: Analog processing + digital control
+  - Analog: Dense matrix operations
+  - Digital: Logic, memory, control flow
+
+Pattern 2: Digital input/output + analog compute
+  - Store digitally (non-volatile)
+  - Compute in analog domain (efficiency)
+  - Convert back for storage/transmission
+
+Pattern 3: Co-processing
+  - Offload specific operations to analog accelerator
+  - Keep most computation digital</div>
+
+<h3>8.2 Mixed-Signal Neural Networks</h3>
+
+<p><strong>Analog Neurons + Digital Synapses:</strong></p>
+<div class="code-block">Neuron: Analog integrator (op-amp, capacitor)
+  V_out = ∫ I_in dt
+
+Synapse: Digital weight memory + analog multiplication
+  I_synapse = w_digital · V_pre (using DAC)
+
+Advantage: High-precision weights, analog neuron dynamics</div>
+
+<p><strong>Digital Neurons + Analog Synapses:</strong></p>
+<div class="code-block">Neuron: Digital accumulator + threshold
+Synapse: Memristor with analog conductance
+
+Advantage: Robust neurons, dense analog weight storage
+
+Example: RRAM (resistive RAM) crossbar arrays
+  Conductance: Analog state
+  Read: Digital voltage input → analog current</div>
+
+<h3>8.3 Kolmogorov-Arnold Network (KAN) Implementation</h3>
+
+<p><strong>Analog KAN Architecture:</strong></p>
+<div class="code-block">Standard form: f(x) = Σᵢ Φᵢ(Σⱼ φᵢⱼ(xⱼ))
+
+Analog implementation:
+  Inner functions φᵢⱼ: Analog nonlinear circuits
+  Summation Σⱼ: Current summing (Kirchhoff)
+  Outer functions Φᵢ: Analog activation
+  Final sum Σᵢ: Current summing
+
+Advantage:
+  - All nonlinear operations in analog (efficient)
+  - Natural parallel evaluation
+  - Low latency (~nanoseconds)</div>
+
+<h2 id="limits">9. Theoretical Limits and Capabilities</h2>
+
+<h3>9.1 Computational Power</h3>
+
+<p><strong>Church-Turing Thesis Extended:</strong></p>
+<div class="code-block">Question: Can analog computation exceed Turing machines?
+
+Results:
+  - With real numbers: Yes (hypercomputation possible)
+  - With physical realism: No (bounded precision → finite states)
+
+Physical limitation:
+  Precision ~ log₂(S/N) bits where S = signal, N = noise
+  Finite precision → Equivalent to finite Turing machine</div>
+
+<p><strong>Analog Hypercomputation (Theoretical):</strong></p>
+<div class="code-block">If infinite precision possible:
+  - Can solve halting problem
+  - Can compute uncomputable functions
+
+Reality: Physical noise prevents infinite precision
+  Quantum: ~60 qubits max
+  Thermal: kT limits precision
+  Measurement: Heisenberg uncertainty</div>
+
+<h3>9.2 Energy Efficiency</h3>
+
+<p><strong>Landauer's Limit:</strong></p>
+<div class="code-block">Minimum energy to erase 1 bit:
+  E_min = kT ln(2) ≈ 3 × 10⁻²¹ J at T=300K
+
+For reversible computation: No thermodynamic minimum
+
+Biological systems approach Landauer limit:
+  - Molecular motors: ~20 kT per step
+  - Neurons: ~10⁻¹⁵ J per spike (10⁹ × Landauer)</div>
+
+<p><strong>Analog Advantage:</strong></p>
+<div class="code-block">Analog operations don't require bit erasure
+  - Continuous → No discrete state erasure
+  - Can be fully reversible (Hamiltonian dynamics)
+
+Example: Quantum analog computation (Continuous variables)
+  Energy per operation: Can approach zero</div>
+
+<h3>9.3 Noise and Robustness</h3>
+
+<p><strong>Stochastic Computation:</strong></p>
+<div class="code-block">Noise sources:
+  - Thermal: kT fluctuations
+  - Shot noise: Discrete charge carriers
+  - Quantum: Heisenberg uncertainty
+
+Noise can be beneficial:
+  - Stochastic resonance
+  - Simulated annealing
+  - Exploration in learning</div>
+
+<p><strong>Error Correction in Analog:</strong></p>
+<div class="code-block">Digital: Redundancy + error-correcting codes
+Analog:
+  - Averaging over ensemble
+  - Feedback stabilization
+  - Robust attractors (wide basins)
+
+Biological example: Cell fate decisions
+  Noise helps escape metastable states
+  Attractors provide robustness</div>
+
+<h2 id="future">10. Future Directions and Open Problems</h2>
+
+<h3>10.1 Theoretical Questions</h3>
+
+<p><strong>Open Problem 1: Analog Computational Complexity</strong></p>
+<div class="code-block">Question: What is analog equivalent of P vs NP?
+
+Challenges:
+  - Define "time" for continuous systems
+  - Account for precision requirements
+  - Relate to digital complexity classes
+
+Partial results:
+  - Some analog systems solve NP problems in polynomial time
+  - But require exponential precision</div>
+
+<p><strong>Open Problem 2: Biological Algorithms</strong></p>
+<div class="code-block">Question: What algorithms do cells use?
+
+Examples:
+  - Protein folding: Faster than exhaustive search
+  - Development: Coordinate differentiation
+  - Immune system: Learn new antigens
+
+Unknown:
+  - Formal algorithmic description
+  - Complexity analysis
+  - Transferability to engineered systems</div>
+
+<p><strong>Open Problem 3: Physical Limits of Analog Computation</strong></p>
+<div class="code-block">Questions:
+  - What operations are "free" (no energy cost)?
+  - Can analog outperform digital given physical constraints?
+  - Optimal hybrid analog-digital architectures?
+
+Requires: Physics + computer science + information theory</div>
+
+<h3>10.2 Engineering Directions</h3>
+
+<p><strong>Synthetic Biology Circuits:</strong></p>
+<div class="code-block">Goal: Programmable cellular computation
+
+Challenges:
+  - Context dependence (parts don't compose simply)
+  - Limited dynamic range
+  - Slow compared to electronics
+  - Cell-to-cell variability
+
+Opportunities:
+  - In vivo sensing and actuation
+  - Drug delivery with computation
+  - Synthetic organs</div>
+
+<p><strong>Molecular Electronics:</strong></p>
+<div class="code-block">Goal: Computing at molecular scale
+
+Approaches:
+  - Molecular switches (molecules as transistors)
+  - DNA-based circuits
+  - Protein-based logic
+
+Challenges:
+  - Fabrication at nanoscale
+  - Addressing individual molecules
+  - Thermal stability</div>
+
+<p><strong>Quantum-Analog Hybrid:</strong></p>
+<div class="code-block">Idea: Continuous-variable quantum + analog classical
+
+Quantum part: Gaussian states, squeezing
+Classical part: High-speed classical control
+
+Application:
+  - Quantum sensing with analog processing
+  - Hybrid optimization
+  - Quantum-classical neural networks</div>
+
+<h3>10.3 Conceptual Frameworks</h3>
+
+<p><strong>Computing in Material Substrates:</strong></p>
+<div class="code-block">Paradigm shift: Computation as physical property
+
+Examples:
+  - Mechanical metamaterials (programmable structures)
+  - Active matter (swimming microrobots)
+  - Soft robots (continuous deformation)
+
+Question: What can we compute with any given material?</div>
+
+<p><strong>Embodied Cognition:</strong></p>
+<div class="code-block">Hypothesis: Morphology simplifies control
+
+Examples:
+  - Passive dynamics (robot walking)
+  - Compliant manipulation (soft grippers)
+  - Physical reservoir (body as computer)
+
+Implication: Body shape and computation co-evolved</div>
+
+<p><strong>Thermodynamic Computing:</strong></p>
+<div class="code-block">Idea: Use thermodynamic fluctuations for computation
+
+Stochastic thermodynamics:
+  - Information ↔ Energy conversion
+  - Maxwell's demon
+  - Entropy production in computation
+
+Open question: Optimal use of thermal fluctuations?</div>
+
+<div class="references">
+  <h2 id="references">References</h2>
+
+  <h3>Foundational Works</h3>
+  <ol>
+    <li>Bush, V. (1931). The differential analyzer. <em>Journal of the Franklin Institute</em>.</li>
+    <li>Hodgkin, A. L., & Huxley, A. F. (1952). A quantitative description of membrane current. <em>The Journal of Physiology</em>.</li>
+    <li>Turing, A. M. (1952). The chemical basis of morphogenesis. <em>Philosophical Transactions of the Royal Society B</em>.</li>
+    <li>Adleman, L. M. (1994). Molecular computation of solutions to combinatorial problems. <em>Science</em>, 266(5187), 1021-1024.</li>
+  </ol>
+
+  <h3>Modern Developments</h3>
+  <ol start="5">
+    <li>Maass, W., Natschläger, T., & Markram, H. (2002). Real-time computing without stable states. <em>Neural Computation</em>, 14(11), 2531-2560.</li>
+    <li>Qian, L., & Winfree, E. (2011). Scaling up digital circuit computation with DNA strand displacement cascades. <em>Science</em>, 332(6034), 1196-1201.</li>
+    <li>Merolla, P. A., et al. (2014). A million spiking-neuron integrated circuit with a scalable communication network. <em>Science</em>, 345(6197), 668-673.</li>
+    <li>Strukov, D. B., et al. (2008). The missing memristor found. <em>Nature</em>, 453(7191), 80-83.</li>
+  </ol>
+
+  <h3>Theoretical Frameworks</h3>
+  <ol start="9">
+    <li>Friston, K. (2010). The free-energy principle: a unified brain theory? <em>Nature Reviews Neuroscience</em>, 11(2), 127-138.</li>
+    <li>Landauer, R. (1961). Irreversibility and heat generation in the computing process. <em>IBM Journal of Research and Development</em>, 5(3), 183-191.</li>
+    <li>Păun, G. (2000). Computing with membranes. <em>Journal of Computer and System Sciences</em>, 61(1), 108-143.</li>
+  </ol>
+</div>
+
+</body>
+</html>

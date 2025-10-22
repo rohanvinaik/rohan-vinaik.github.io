@@ -1,0 +1,1833 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Constraint-Oriented Emergent Computation: A Unified Framework | Rohan Vinaik</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --text: #e0e0e0;
+      --text-secondary: #a0a0a0;
+      --accent: #00ff00;
+      --border: #333;
+      --code-bg: #1a1a1a;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'JetBrains Mono', monospace;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 20px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    h1 {
+      color: var(--accent);
+      font-size: 1.5rem;
+      margin-bottom: 8px;
+      letter-spacing: 0.02em;
+    }
+    h2 {
+      color: var(--accent);
+      font-size: 1.1rem;
+      margin-top: 32px;
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    h3 {
+      color: var(--accent);
+      font-size: 0.95rem;
+      margin-top: 24px;
+      margin-bottom: 12px;
+    }
+    h4 {
+      color: var(--text);
+      font-size: 0.85rem;
+      margin-top: 20px;
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+    p { margin-bottom: 16px; font-size: 0.85rem; }
+    a {
+      color: var(--accent);
+      text-decoration: none;
+      border-bottom: 1px dotted var(--accent);
+    }
+    a:hover { border-bottom-style: solid; }
+    .back-link {
+      display: inline-block;
+      margin-bottom: 24px;
+      font-size: 0.85rem;
+    }
+    .paper-meta {
+      color: var(--text-secondary);
+      font-size: 0.75rem;
+      margin-bottom: 24px;
+    }
+    .abstract {
+      background: var(--code-bg);
+      padding: 20px;
+      border-left: 3px solid var(--accent);
+      margin-bottom: 32px;
+      font-size: 0.85rem;
+    }
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 32px;
+    }
+    .tag {
+      background: var(--code-bg);
+      padding: 4px 12px;
+      border: 1px solid var(--border);
+      font-size: 0.7rem;
+      color: var(--accent);
+      text-decoration: none;
+      border-bottom: none;
+    }
+    .tag:hover {
+      background: var(--accent);
+      color: var(--bg);
+      border-color: var(--accent);
+    }
+    .quick-nav {
+      background: var(--code-bg);
+      padding: 16px;
+      margin-bottom: 32px;
+      border: 1px solid var(--border);
+    }
+    .quick-nav h3 {
+      margin-top: 0;
+      font-size: 0.85rem;
+    }
+    .quick-nav ul {
+      list-style: none;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .quick-nav a {
+      font-size: 0.75rem;
+      border-bottom: none;
+      padding: 4px 0;
+      display: block;
+    }
+    .quick-nav a:hover { color: var(--bg); background: var(--accent); padding-left: 8px; }
+    pre {
+      background: var(--code-bg);
+      padding: 16px;
+      border-left: 3px solid var(--border);
+      overflow-x: auto;
+      margin-bottom: 16px;
+      font-size: 0.75rem;
+      line-height: 1.4;
+    }
+    code {
+      background: var(--code-bg);
+      padding: 2px 6px;
+      font-size: 0.8rem;
+    }
+    pre code {
+      padding: 0;
+      background: transparent;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      font-size: 0.75rem;
+    }
+    th, td {
+      border: 1px solid var(--border);
+      padding: 12px;
+      text-align: left;
+    }
+    th {
+      background: var(--code-bg);
+      color: var(--accent);
+      font-weight: 600;
+    }
+    ul, ol {
+      margin-bottom: 16px;
+      padding-left: 20px;
+    }
+    li {
+      margin-bottom: 8px;
+      font-size: 0.85rem;
+    }
+    .references {
+      font-size: 0.75rem;
+      margin-top: 32px;
+    }
+    .references ol {
+      padding-left: 20px;
+    }
+    .references li {
+      margin-bottom: 12px;
+      line-height: 1.5;
+    }
+    @media (max-width: 768px) {
+      body { padding: 12px; }
+      h1 { font-size: 1.2rem; }
+      h2 { font-size: 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<a href="../index.html#reference" class="back-link">← Back to Reference</a>
+
+<h1>Constraint-Oriented Emergent Computation: A Unified Framework</h1>
+<div class="paper-meta">January 2025 · Technical Reference</div>
+
+<div class="tags">
+  <a href="../index.html?filter=CONSTRAINT-SATISFACTION" class="tag">[CONSTRAINT-SATISFACTION]</a>
+  <a href="../index.html?filter=EMERGENT-COMPUTATION" class="tag">[EMERGENT-COMPUTATION]</a>
+  <a href="../index.html?filter=INFORMATION-THEORY" class="tag">[INFORMATION-THEORY]</a>
+  <a href="../index.html?filter=THERMODYNAMICS" class="tag">[THERMODYNAMICS]</a>
+  <a href="../index.html?filter=DISTRIBUTED-SYSTEMS" class="tag">[DISTRIBUTED-SYSTEMS]</a>
+  <a href="../index.html?filter=BIOLOGICAL-COMPUTING" class="tag">[BIOLOGICAL-COMPUTING]</a>
+  <a href="../index.html?filter=SUBSTRATE-INDEPENDENT" class="tag">[SUBSTRATE-INDEPENDENT]</a>
+  <a href="../index.html?filter=VARIATIONAL-PRINCIPLES" class="tag">[VARIATIONAL-PRINCIPLES]</a>
+  <a href="../index.html?filter=FREE-ENERGY" class="tag">[FREE-ENERGY]</a>
+  <a href="../index.html?filter=ENTROPY-DYNAMICS" class="tag">[ENTROPY-DYNAMICS]</a>
+</div>
+
+<div class="abstract">
+  <strong>Abstract:</strong> Constraint-Oriented Emergent Computation (COEC) provides a substrate-independent framework for understanding computation as the evolution of physical or biological systems through constrained state spaces. Unlike traditional computational models based on discrete logic or symbolic manipulation, COEC formalizes computation as trajectories through energy-information landscapes, guided by boundary conditions and driven by entropy minimization. This framework unifies computational principles across scales—from protein folding to neural dynamics to ecosystem evolution—by recognizing that purposeful behavior emerges from distributed constraints without centralized control. We establish formal connections between computational substrates and thermodynamic, informational, and variational principles, providing mathematical language for understanding computation in biological systems, distributed networks, and novel computing substrates.
+</div>
+
+<div class="quick-nav">
+  <h3>Quick Navigation</h3>
+  <ul>
+    <li><a href="#foundational-principles">1. Foundational Principles</a></li>
+    <li><a href="#mathematical-formalism">2. Mathematical Formalism</a></li>
+    <li><a href="#constraint-taxonomy">3. Constraint Taxonomy</a></li>
+    <li><a href="#energy-information-landscapes">4. Energy-Information Landscapes</a></li>
+    <li><a href="#computational-classes">5. Computational Classes</a></li>
+    <li><a href="#entropy-dynamics">6. Entropy Dynamics and Equilibrium</a></li>
+    <li><a href="#applications">7. Applications</a></li>
+    <li><a href="#design-principles">8. Design Principles</a></li>
+    <li><a href="#connections">9. Connections to Existing Frameworks</a></li>
+    <li><a href="#future-directions">10. Future Directions</a></li>
+    <li><a href="#references">References</a></li>
+  </ul>
+</div>
+
+<h2 id="foundational-principles">1. Foundational Principles</h2>
+
+<h3>1.1 Core Insight</h3>
+
+<p><strong>Central Thesis:</strong> Computation is not inherently tied to discrete state transitions or symbolic manipulation. Instead, computation can be understood as the natural evolution of physical systems through constrained state spaces, where outcomes emerge from the interplay between substrate properties, boundary conditions, and information-theoretic principles.</p>
+
+<p>Traditional computational models (Turing machines, Boolean circuits, cellular automata) assume:</p>
+<ul>
+  <li>Discrete states and transitions</li>
+  <li>Explicit rules or programs</li>
+  <li>Centralized control or coordination</li>
+  <li>Clear separation between "program" and "data"</li>
+</ul>
+
+<p>COEC recognizes that many computational phenomena—particularly in biological systems—exhibit:</p>
+<ul>
+  <li>Continuous or hybrid state spaces</li>
+  <li>Emergent behavior from local interactions</li>
+  <li>Distributed processing without centralized control</li>
+  <li>Integrated structure-function relationships</li>
+</ul>
+
+<p><strong>Fundamental Observation:</strong> Biological systems demonstrate sophisticated computational behavior without relying on symbolic logic or centralized programs. Proteins fold into functional configurations, cells process environmental signals, embryos develop complex organisms—all without explicit algorithms.</p>
+
+<h3>1.2 Computation as Constraint Satisfaction</h3>
+
+<p><strong>Definition:</strong> In COEC, computation is the process by which a system navigates its state space to satisfy multiple, often competing, constraints.</p>
+
+<p><strong>Formal Statement:</strong></p>
+<pre><code>Given:
+  - Initial state s₀ ∈ S (configuration space)
+  - Constraint set C = {c₁, c₂, ..., cₙ}
+  - Energy-information landscape E: S → ℝ
+
+Computation is the trajectory:
+  s₀ → s₁ → s₂ → ... → s*
+
+where s* minimizes:
+  E(s) + λ·∑ᵢ penalty(cᵢ(s))
+</code></pre>
+
+<p><strong>Key Properties:</strong></p>
+
+<ol>
+  <li><strong>Decentralization:</strong> No global controller dictates transitions; evolution follows local gradients and constraints</li>
+  <li><strong>Holographic:</strong> Information about constraints is distributed throughout the system, not localized</li>
+  <li><strong>Robust:</strong> Partial constraint violations lead to approximate solutions rather than failure</li>
+  <li><strong>Adaptive:</strong> Constraints themselves can evolve based on system state or environmental conditions</li>
+</ol>
+
+<h3>1.3 Emergence and Reduction</h3>
+
+<p><strong>Emergence Principle:</strong> Complex computational behaviors arise from simple local rules operating under constraints, without being explicitly programmed into the system.</p>
+
+<p><strong>Examples:</strong></p>
+
+<h4>Protein Folding</h4>
+<pre><code>Local rules:
+  - Hydrophobic residues avoid water
+  - Hydrogen bonds form between compatible groups
+  - Steric constraints prevent atomic overlap
+
+Emergent computation:
+  - 3D structure emerges from local interactions
+  - Functional sites appear at specific locations
+  - Allosteric regulation through conformational changes
+
+No "program" specifies the final structure—it emerges from constraint satisfaction.
+</code></pre>
+
+<h4>Swarm Intelligence</h4>
+<pre><code>Local rules (per agent):
+  - Maintain minimum distance from neighbors
+  - Align velocity with nearby agents
+  - Move toward local center of mass
+
+Emergent computation:
+  - Coordinated flock movement
+  - Obstacle avoidance
+  - Resource optimization
+
+No central coordinator—behavior emerges from distributed constraints.
+</code></pre>
+
+<p><strong>Reductionism vs. Emergence:</strong> COEC provides a middle path:</p>
+<ul>
+  <li><strong>Not purely reductionist:</strong> Higher-level properties are not simply sums of lower-level components</li>
+  <li><strong>Not purely emergent:</strong> Computational outcomes are grounded in physical laws and constraint structures</li>
+  <li><strong>Explanatory bridge:</strong> Formal mathematical relationships connect substrate properties to emergent behaviors</li>
+</ul>
+
+<h2 id="mathematical-formalism">2. Mathematical Formalism</h2>
+
+<h3>2.1 Core Definitions</h3>
+
+<p><strong>Definition 1 (COEC System):</strong> A Constraint-Oriented Emergent Computation system is a 7-tuple:</p>
+<pre><code>(S, C, E, Φ, R, I, P)
+
+where:
+  S: Computational substrate with configuration space Ω_S
+  C: Constraint set {c₁, c₂, ..., cₙ}
+  E: Energy-information landscape E: Ω_S → ℝ
+  Φ: Evolution operator Φ: Ω_S × ℝ₊ → Ω_S
+  R: Residual function (output/terminal configuration)
+  I: Information structure (organization of processing)
+  P: Precision weighting (relative constraint importance)
+</code></pre>
+
+<p><strong>Definition 2 (Computation):</strong> Computation is formally defined as:</p>
+<pre><code>R = Φ(S || C, E, I, P)
+
+where Φ(S || C, E, I, P) represents the trajectory from initial state S₀
+under specified constraints, landscape, information structure, and precision weights.
+</code></pre>
+
+<p><strong>Example (Protein Folding):</strong></p>
+<pre><code>S: Unfolded polypeptide chain (random coil)
+C: {
+     c_covalent: Bond length/angle constraints
+     c_steric: Non-overlapping atoms
+     c_hydrophobic: Hydrophobic effect
+     c_hydrogen: Hydrogen bonding patterns
+   }
+E: Free energy landscape G(conformation)
+Φ: Molecular dynamics / Langevin equation
+R: Native folded structure
+I: Local-to-global information propagation (folding pathway)
+P: {
+     p_covalent = 10.0 (very high - bonds rarely break)
+     p_steric = 5.0 (high - physical constraint)
+     p_hydrophobic = 2.0 (moderate - thermodynamic preference)
+     p_hydrogen = 1.5 (moderate-low - many competing arrangements)
+   }
+</code></pre>
+
+<h3>2.2 Information-Theoretic Framework</h3>
+
+<p><strong>Axiom 1 (Entropy Minimization):</strong> COEC systems evolve toward states that minimize uncertainty while satisfying constraints:</p>
+
+<pre><code>Δ S_system ≤ 0  (in closed systems)
+Δ S_total ≥ 0  (including environment)
+
+The system reduces its own entropy by exporting entropy to environment.
+</code></pre>
+
+<p><strong>Information Gain from Constraints:</strong></p>
+<pre><code>ΔI(S, C) = H(S) - H(S|C)
+
+where:
+  H(S): Shannon entropy of unconstrained state space
+  H(S|C): Conditional entropy given constraints
+  ΔI(S, C): Information provided by constraint application
+</code></pre>
+
+<p><strong>Example (DNA Sequence):</strong></p>
+<pre><code>Unconstrained: 4ᴺ possible sequences for N bases
+  H(S) = N·log₂(4) = 2N bits
+
+With constraint "must encode functional protein":
+  H(S|C) ≈ N·log₂(2.5) ≈ 1.32N bits
+  (reduced alphabet due to codon degeneracy and functional constraints)
+
+Information gain: ΔI ≈ 0.68N bits per constraint
+</code></pre>
+
+<p><strong>Axiom 2 (Mutual Information Preservation):</strong> Systems maintain mutual information between internal state and environmental regularities:</p>
+
+<pre><code>I(S_internal ; E_environment) ≥ threshold
+
+This ensures:
+  - Adaptability: System responds to environmental changes
+  - Structural integrity: Core functions preserved despite perturbations
+  - Predictive capacity: Internal models approximate external dynamics
+</code></pre>
+
+<h3>2.3 Variational Principles</h3>
+
+<p><strong>Free Energy Functional:</strong> COEC systems minimize variational free energy:</p>
+
+<pre><code>F[s] = E_physical[s] + β·E_information[s] - T·S_entropy[s]
+
+where:
+  E_physical: Physical energy (mechanical, chemical, electromagnetic)
+  E_information: Information-theoretic cost of state
+  S_entropy: State entropy (statistical/thermodynamic)
+  β: Information-energy coupling constant
+  T: Temperature (in thermodynamic interpretation)
+</code></pre>
+
+<p><strong>Gradient Flow Dynamics:</strong></p>
+<pre><code>ds/dt = -∇_s F[s] + ξ(t)
+
+where:
+  ∇_s F: Gradient of free energy with respect to state
+  ξ(t): Stochastic noise (thermal fluctuations, measurement noise)
+
+This is a stochastic gradient descent in the free energy landscape.
+</code></pre>
+
+<p><strong>Connection to Machine Learning:</strong> This formulation connects COEC to:</p>
+<ul>
+  <li><strong>Variational inference:</strong> F is analogous to Evidence Lower Bound (ELBO)</li>
+  <li><strong>Active inference:</strong> Organisms minimize surprise (free energy)</li>
+  <li><strong>Gradient-based optimization:</strong> Standard ML training algorithms</li>
+</ul>
+
+<h2 id="constraint-taxonomy">3. Constraint Taxonomy</h2>
+
+<h3>3.1 Temporal Classification</h3>
+
+<h4>Static Constraints</h4>
+<p>Fixed throughout computation</p>
+<pre><code>Examples:
+  - Physical laws (conservation of energy, momentum)
+  - Geometric boundaries (container walls, membrane permeability)
+  - Chemical stoichiometry (mass balance in reactions)
+
+Properties:
+  - Time-invariant: c(s, t) = c(s) for all t
+  - External imposition: Often set by environment or system design
+  - Hard enforcement: Violations typically impossible or catastrophic
+</code></pre>
+
+<h4>Dynamic Constraints</h4>
+<p>Changing during computation</p>
+<pre><code>Examples:
+  - Resource availability (nutrients, energy, space)
+  - Environmental conditions (temperature, pH, light)
+  - Developmental stages (morphogen gradients, cell fate determination)
+
+Properties:
+  - Time-varying: c(s, t) changes with t
+  - Contextual: Depend on current system state or external factors
+  - Adaptive response: System must track constraint changes
+</code></pre>
+
+<h4>Adaptive Constraints</h4>
+<p>Modified by the system itself</p>
+<pre><code>Examples:
+  - Neural plasticity (synaptic weights adjust based on activity)
+  - Evolutionary fitness landscapes (change as populations evolve)
+  - Regulatory networks (feedback modifies gene expression thresholds)
+
+Properties:
+  - Self-modifying: c_{t+1} = f(c_t, s_t)
+  - Learning: Constraints encode "experience" or "memory"
+  - Meta-stability: Can exhibit hysteresis or path-dependence
+</code></pre>
+
+<h3>3.2 Implementation Mechanisms</h3>
+
+<h4>Topological Constraints</h4>
+<p>Restrictions on connectivity or spatial arrangement</p>
+<pre><code>Examples:
+  - Network topology (which neurons can connect)
+  - Membrane compartmentalization (which molecules can interact)
+  - Spatial organization (tissue architecture, organelle positioning)
+
+Mathematical representation:
+  c_topology(s) = indicator[graph(s) ⊆ allowed_topologies]
+
+Enforcement: Physical structure, diffusion barriers, geometric compatibility
+</code></pre>
+
+<h4>Energetic Constraints</h4>
+<p>Biases in energy landscape</p>
+<pre><code>Examples:
+  - Hydrophobic effect (drives protein folding)
+  - Electrochemical gradients (power active transport)
+  - Binding affinities (determine molecular recognition)
+
+Mathematical representation:
+  c_energy(s) = exp(-ΔG(s)/kT)
+  where ΔG(s) is free energy change in state s
+
+Enforcement: Thermodynamic favorability, kinetic barriers, energy coupling
+</code></pre>
+
+<h4>Informational Constraints</h4>
+<p>Restrictions on signal propagation</p>
+<pre><code>Examples:
+  - Shannon capacity limits (channel bandwidth)
+  - Fidelity requirements (error rates in replication)
+  - Coding constraints (genetic code, neural population codes)
+
+Mathematical representation:
+  c_info(s) = 1 if I(S;R) ≥ I_min else 0
+  where I(S;R) is mutual information between source S and receiver R
+
+Enforcement: Physical channel properties, noise characteristics, coding schemes
+</code></pre>
+
+<h4>Boundary Constraints</h4>
+<p>Interfaces separating internal and external</p>
+<pre><code>Examples:
+  - Cell membranes (selective permeability)
+  - Organism-environment interfaces (sensory organs, effectors)
+  - System boundaries in distributed computing (network interfaces)
+
+Mathematical representation:
+  c_boundary(s) = properties of ∂Ω (boundary of domain Ω)
+
+Enforcement: Physical membranes, information filters, access control mechanisms
+</code></pre>
+
+<h3>3.3 Precision and Reliability</h3>
+
+<h4>High-Precision Constraints</h4>
+<p>Strongly enforced, little flexibility</p>
+<pre><code>Characteristics:
+  - Large penalties for violation: λᵢ >> average
+  - Small tolerance: |c_actual - c_target| < ε_small
+  - Critical for function: Violations catastrophic
+
+Examples:
+  - DNA replication fidelity (~10⁻¹⁰ error rate)
+  - Covalent bond lengths (±0.01 Å tolerance)
+  - Action potential threshold (narrow voltage range)
+</code></pre>
+
+<h4>Low-Precision Constraints</h4>
+<p>Weakly enforced, greater flexibility</p>
+<pre><code>Characteristics:
+  - Small penalties for violation: λᵢ ~ average
+  - Large tolerance: |c_actual - c_target| < ε_large
+  - Contributory but not critical: Violations reduce optimality but don't fail
+
+Examples:
+  - Codon usage bias (preference, not requirement)
+  - Protein secondary structure propensities (tendencies, not rules)
+  - Neural firing rate preferences (homeostatic targets, not fixed points)
+</code></pre>
+
+<h4>Context-Dependent Precision</h4>
+<p>Importance varies with system state</p>
+<pre><code>Mathematical representation:
+  P(c, s, t) = p_base + Σⱼ w_j · context_j(s, t)
+
+where context_j represents various state-dependent factors
+
+Examples:
+  - Metabolic regulation: Enzyme constraints tighten when substrate scarce
+  - Developmental checkpoints: Cell cycle constraints strengthen at transitions
+  - Attention mechanisms: Relevant constraints weighted higher in context
+</code></pre>
+
+<h2 id="energy-information-landscapes">4. Energy-Information Landscapes</h2>
+
+<h3>4.1 Landscape Construction</h3>
+
+<p><strong>Definition:</strong> The energy-information landscape is a function E: Ω_S → ℝ that combines physical energy with informational constraints:</p>
+
+<pre><code>E(s) = E_physical(s) + β·E_information(s)
+
+where:
+  E_physical: Traditional energy (kinetic + potential + thermal)
+  E_information: Cost associated with information processing/storage
+  β: Coupling constant (units: energy/bit)
+</code></pre>
+
+<h4>Components</h4>
+
+<p><strong>Physical Energy:</strong></p>
+<pre><code>E_physical(s) = Σᵢ [kinetic + potential + interaction]
+
+Examples:
+  - Molecular: Bond energies, van der Waals, electrostatic
+  - Cellular: ATP hydrolysis, membrane potential, osmotic pressure
+  - Neural: Metabolic cost of firing, synaptic maintenance
+  - Ecological: Resource acquisition costs, predation risks
+</code></pre>
+
+<p><strong>Informational Energy:</strong></p>
+<pre><code>E_information(s) = k·T·ln(2)·I(s)
+
+where I(s) is information content (in bits) of state s
+
+This connects thermodynamics to information theory via Landauer's principle:
+  Minimum energy to erase one bit: E_min = kT ln(2) ≈ 3×10⁻²¹ J at 300K
+</code></pre>
+
+<h3>4.2 Constraint Integration</h3>
+
+<h4>Soft Constraints</h4>
+<p>Incorporated as energy terms</p>
+<pre><code>E_total(s) = E_base(s) + Σᵢ λᵢ·penalty(cᵢ(s))
+
+where:
+  penalty(c) = {
+    0                    if constraint satisfied
+    (c_target - c)²      for continuous constraints (quadratic penalty)
+    λ_violation          for discrete violations (binary penalty)
+  }
+
+This creates "valleys" in landscape at constraint-satisfying states.
+</code></pre>
+
+<h4>Hard Constraints</h4>
+<p>Define feasible region</p>
+<pre><code>Ω_feasible = {s ∈ Ω_S : ∀i, c_i(s) = true}
+
+System confined to Ω_feasible through infinite potential walls:
+  E(s) = {
+    E_total(s)    if s ∈ Ω_feasible
+    ∞            if s ∉ Ω_feasible
+  }
+
+Examples: Physical impossibilities, conservation laws, logical contradictions
+</code></pre>
+
+<h3>4.3 Dynamics on Landscapes</h3>
+
+<h4>Gradient Descent</h4>
+<p>Deterministic evolution</p>
+<pre><code>ds/dt = -∇E(s)
+
+Properties:
+  - Converges to local minima
+  - Fast for well-conditioned landscapes
+  - Can get trapped in suboptimal states
+
+Used when thermal noise negligible or system heavily damped.
+</code></pre>
+
+<h4>Stochastic Dynamics</h4>
+<p>Thermally-driven exploration</p>
+<pre><code>ds/dt = -∇E(s) + √(2kT)·ξ(t)
+
+where ξ(t) is white noise (Gaussian, zero mean, unit variance)
+
+Properties:
+  - Boltzmann distribution at equilibrium: P(s) ∝ exp(-E(s)/kT)
+  - Can escape local minima if T sufficient
+  - Balances exploitation (gradient) and exploration (noise)
+
+Models physical systems at finite temperature (molecular dynamics, diffusion).
+</code></pre>
+
+<h4>Transition Rates</h4>
+<p>Kinetic theory</p>
+<pre><code>Rate of transition s_a → s_b:
+  k(s_a → s_b) = ν·exp(-(E_barrier - E_a)/kT)
+
+where:
+  ν: Attempt frequency (typically ~10¹²-10¹⁴ Hz for molecular systems)
+  E_barrier: Energy of transition state
+  E_a: Energy of initial state
+
+This gives Arrhenius kinetics, fundamental to chemical reaction rates.
+</code></pre>
+
+<h4>Comparison Table</h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Regime</th>
+      <th>Temperature</th>
+      <th>Behavior</th>
+      <th>Example</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>T → 0</td>
+      <td>Very low</td>
+      <td>Deterministic, gets stuck in nearest minimum</td>
+      <td>Simulated annealing final stage</td>
+    </tr>
+    <tr>
+      <td>T ~ E_barrier/k</td>
+      <td>Moderate</td>
+      <td>Stochastic, can overcome barriers, explores multiple minima</td>
+      <td>Room-temperature molecular dynamics</td>
+    </tr>
+    <tr>
+      <td>T >> E_barrier/k</td>
+      <td>High</td>
+      <td>Random diffusion, all states accessible</td>
+      <td>High-temperature protein unfolding</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="computational-classes">5. Computational Classes</h2>
+
+<p>COEC systems span a spectrum of computational capabilities, classified by residual function types and constraint dynamics.</p>
+
+<h3>5.1 SS-COEC (Static-Structural)</h3>
+
+<p><strong>Definition:</strong> Systems producing stable structural configurations as output.</p>
+
+<pre><code>R_SS = s* where s* is an attractor state
+  (ds/dt = 0 and stable)
+</code></pre>
+
+<p><strong>Characteristics:</strong></p>
+<ul>
+  <li>Energy landscapes with distinct minima</li>
+  <li>Computation terminates when equilibrium reached</li>
+  <li>Output encoded in spatial configuration</li>
+  <li>Memory through structure</li>
+</ul>
+
+<p><strong>Examples:</strong></p>
+
+<h4>Protein Folding</h4>
+<pre><code>Input: Amino acid sequence (primary structure)
+Computation: Conformational search in energy landscape
+Output: Native 3D structure (tertiary/quaternary)
+Attractor: Global free energy minimum
+
+Typical time: μs - seconds
+Energy scale: ~10-100 kcal/mol stability
+</code></pre>
+
+<h4>Self-Assembly</h4>
+<pre><code>Input: Mixture of molecular components
+Computation: Diffusion + selective binding
+Output: Ordered supramolecular structure
+Examples: Viral capsids, ribosomes, cytoskeleton
+
+Driven by: Hydrophobic effect, electrostatics, shape complementarity
+</code></pre>
+
+<h4>Crystallization</h4>
+<pre><code>Input: Supersaturated solution
+Computation: Nucleation + growth
+Output: Crystal lattice
+Applications: Materials science, structural biology (X-ray crystallography)
+</code></pre>
+
+<p><strong>Computational Complexity:</strong></p>
+<ul>
+  <li>State space: Exponential in system size (e.g., 3^N conformations for N residues)</li>
+  <li>With constraints: Polynomial-time solvable for linear constraints, NP-hard for non-linear</li>
+  <li>Practical algorithms: Gradient descent, simulated annealing, genetic algorithms</li>
+</ul>
+
+<h3>5.2 DB-COEC (Dynamic-Behavioral)</h3>
+
+<p><strong>Definition:</strong> Systems producing stable temporal patterns as output.</p>
+
+<pre><code>R_DB = {s(t) : t ∈ [t₀, t₀+Δ]}
+
+for some time window Δ, with periodic or quasi-periodic behavior
+</code></pre>
+
+<p><strong>Characteristics:</strong></p>
+<ul>
+  <li>Limit cycles or strange attractors</li>
+  <li>Information encoded in rhythms, phases, frequencies</li>
+  <li>Ongoing computation (does not terminate)</li>
+  <li>Memory through dynamic state</li>
+</ul>
+
+<p><strong>Examples:</strong></p>
+
+<h4>Circadian Clocks</h4>
+<pre><code>Input: Light-dark cycles (zeitgeber)
+Computation: Transcription-translation feedback loops
+Output: ~24-hour oscillation in gene expression
+Key genes: CLOCK, BMAL1, PER, CRY
+
+Mechanism:
+  - Positive feedback: CLOCK-BMAL1 activate PER-CRY
+  - Negative feedback: PER-CRY inhibit CLOCK-BMAL1
+  - Time delay (hours) from transcription → translation → nuclear import
+
+Result: Sustained oscillation without external driving (free-running rhythm)
+</code></pre>
+
+<h4>Cardiac Pacemaker</h4>
+<pre><code>Input: Autonomic nervous system modulation
+Computation: Coupled oscillators in sinoatrial node
+Output: Regular heartbeat (~60-100 bpm at rest)
+
+Mechanism:
+  - "Funny current" (I_f): Spontaneous depolarization
+  - Ca²⁺ clock: Rhythmic calcium release
+  - Synchronization: Gap junctions couple pacemaker cells
+
+Can be entrained by sympathetic (speed up) or parasympathetic (slow down) input.
+</code></pre>
+
+<h4>Neural Oscillations</h4>
+<pre><code>Input: Synaptic inputs, neuromodulators
+Computation: Network dynamics (excitation-inhibition balance)
+Output: Brain rhythms (delta, theta, alpha, beta, gamma)
+
+Functions:
+  - Theta (4-8 Hz): Memory encoding in hippocampus
+  - Alpha (8-12 Hz): Resting state, attention
+  - Gamma (30-100 Hz): Feature binding, consciousness
+
+Mechanism: Interplay between excitatory pyramidal cells and inhibitory interneurons
+</code></pre>
+
+<p><strong>Computational Complexity:</strong></p>
+<ul>
+  <li>Stability analysis: Linearization around fixed points (Jacobian eigenvalues)</li>
+  <li>Bifurcation theory: Parameter values where qualitative behavior changes</li>
+  <li>Limit cycle finding: Typically requires numerical integration (ODE solvers)</li>
+</ul>
+
+<h3>5.3 DM-COEC (Distributed-Multiplicative)</h3>
+
+<p><strong>Definition:</strong> Systems where computation emerges from interactions across multiple subsystems.</p>
+
+<pre><code>R_DM = f({s₁(t), s₂(t), ..., sₙ(t)})
+
+where f is a non-trivial function (not just summation)
+</code></pre>
+
+<p><strong>Characteristics:</strong></p>
+<ul>
+  <li>Non-local information processing</li>
+  <li>Constraints operate across system boundaries</li>
+  <li>Often exhibit scale-free or hierarchical properties</li>
+  <li>Emergent collective behavior</li>
+</ul>
+
+<p><strong>Examples:</strong></p>
+
+<h4>Immune System</h4>
+<pre><code>Components:
+  - Dendritic cells: Antigen presentation
+  - T cells: Adaptive immunity (helper & cytotoxic)
+  - B cells: Antibody production
+  - NK cells: Innate immunity
+
+Computation:
+  - Recognize self vs. non-self (millions of potential antigens)
+  - Generate specific antibodies (somatic hypermutation)
+  - Remember pathogens (immunological memory)
+
+Emergent properties:
+  - No single cell "knows" full immune state
+  - Distributed memory across T/B cell populations
+  - Self-tolerance emerges from clonal deletion + regulatory T cells
+
+Residual: Pathogen clearance + long-term immunity
+</code></pre>
+
+<h4>Ecological Networks</h4>
+<pre><code>Components:
+  - Species populations
+  - Trophic interactions (predator-prey)
+  - Mutualistic relationships (pollinators, mycorrhizae)
+  - Competitive exclusion
+
+Computation:
+  - Resource allocation and energy flow
+  - Population dynamics (Lotka-Volterra equations)
+  - Ecosystem stability and resilience
+
+Emergent properties:
+  - Keystone species effects
+  - Trophic cascades
+  - Biodiversity maintenance
+
+Residual: Stable ecosystem configuration (or succession trajectory)
+</code></pre>
+
+<h4>Markets and Economies</h4>
+<pre><code>Components:
+  - Individual agents (consumers, firms)
+  - Price signals
+  - Supply-demand dynamics
+  - Regulatory constraints
+
+Computation:
+  - Resource allocation (labor, capital, goods)
+  - Price discovery
+  - Innovation and adaptation
+
+Emergent properties:
+  - Market equilibria
+  - Business cycles
+  - Wealth distributions (often power-law)
+
+Residual: Economic outcomes (GDP, employment, inequality)
+</code></pre>
+
+<p><strong>Computational Complexity:</strong></p>
+<ul>
+  <li>Agent-based models: Simulate individual components + interactions</li>
+  <li>Mean-field approximations: Average over many individuals</li>
+  <li>Network analysis: Graph-theoretic measures (centrality, modularity, clustering)</li>
+  <li>Typically requires large-scale simulation (millions of agents/time steps)</li>
+</ul>
+
+<h3>5.4 AP-COEC (Adaptive-Plastic)</h3>
+
+<p><strong>Definition:</strong> Systems that modify their own constraints based on experience.</p>
+
+<pre><code>C_{t+1} = f(C_t, s_t, history)
+
+System structure evolves during computation.
+</code></pre>
+
+<p><strong>Characteristics:</strong></p>
+<ul>
+  <li>Self-modification capability</li>
+  <li>Learning and memory through constraint changes</li>
+  <li>Can exhibit hysteresis and path-dependence</li>
+  <li>Balances exploitation (current constraints) and exploration (constraint modification)</li>
+</ul>
+
+<p><strong>Examples:</strong></p>
+
+<h4>Neural Plasticity</h4>
+<pre><code>Mechanisms:
+  - Short-term: Synaptic facilitation/depression (seconds-minutes)
+  - Long-term potentiation (LTP): Persistent strengthening (hours-days)
+  - Long-term depression (LTD): Persistent weakening
+  - Structural: Synapse formation/elimination, dendritic spine changes
+
+Learning rules:
+  - Hebbian: "Neurons that fire together, wire together"
+    Δw_ij ∝ x_i·x_j (correlation-based)
+
+  - Spike-timing dependent plasticity (STDP):
+    Δw = {
+      A_+ exp(-Δt/τ_+)    if pre-synaptic spike before post (Δt > 0)
+      -A_- exp(Δt/τ_-)    if post before pre (Δt < 0)
+    }
+
+  - Homeostatic: Maintain overall activity levels
+    Δw ∝ (target_rate - actual_rate)
+
+Computation: Experience-dependent circuit refinement
+Residual: Learned behaviors, memories
+</code></pre>
+
+<h4>Evolutionary Dynamics</h4>
+<pre><code>Mechanisms:
+  - Mutation: Random changes to genotype
+  - Recombination: Mixing of genetic material (sexual reproduction)
+  - Selection: Differential reproduction based on fitness
+  - Genetic drift: Random sampling effects (especially in small populations)
+
+Fitness landscape:
+  - Genotype space: All possible sequences
+  - Fitness function: F(genotype) → reproductive success
+  - Peaks: High-fitness genotypes
+  - Valleys: Low-fitness genotypes
+
+Adaptive dynamics:
+  - Hill climbing: Populations move toward fitness peaks
+  - Epistasis: Gene interactions create rugged landscapes
+  - Shifting targets: Fitness landscapes change (co-evolution, environment)
+
+Computation: Exploration of genotype space, optimization of fitness
+Residual: Adapted organisms, new species
+</code></pre>
+
+<p><strong>Computational Complexity:</strong></p>
+<ul>
+  <li>Learning: Often gradient-based (backpropagation in neural nets)</li>
+  <li>Evolution: Population-based search (genetic algorithms)</li>
+  <li>Meta-learning: "Learning to learn" (optimize learning rules themselves)</li>
+  <li>Generally more expensive than fixed-structure computation due to exploration overhead</li>
+</ul>
+
+<h3>5.5 PP-COEC (Predictive-Probabilistic)</h3>
+
+<p><strong>Definition:</strong> Systems using internal models to anticipate future states.</p>
+
+<pre><code>R_PP = argmin_s E_model[error(s_predicted, s_actual)]
+
+System maintains generative model of environment.
+</code></pre>
+
+<p><strong>Characteristics:</strong></p>
+<ul>
+  <li>Internal world models (representations of external dynamics)</li>
+  <li>Prediction error minimization drives behavior</li>
+  <li>Active inference: Act to confirm predictions (not just passively observe)</li>
+  <li>Continuous updating of models based on forecast accuracy</li>
+</ul>
+
+<p><strong>Examples:</strong></p>
+
+<h4>Predictive Coding in Perception</h4>
+<pre><code>Hierarchical generative model:
+  Level n: Higher-level abstract features
+    ↓ (top-down predictions)
+  Level n-1: Mid-level features
+    ↓
+  Level 1: Low-level sensory input
+    ↑ (bottom-up prediction errors)
+
+Process:
+  1. Higher levels predict lower levels
+  2. Compute prediction errors: ε = actual - predicted
+  3. Errors propagate up hierarchy
+  4. Update predictions to minimize errors
+
+Example: Visual perception
+  - V1 predicts pixel intensities
+  - V2 predicts V1 activations (edges, textures)
+  - V4 predicts V2 activations (shapes, objects)
+  - IT predicts V4 activations (faces, categories)
+
+Computation: Hierarchical inference about causes of sensory data
+Residual: Interpreted percept (what the system "sees")
+</code></pre>
+
+<h4>Motor Control</h4>
+<pre><code>Forward model:
+  Predicts sensory consequences of motor commands
+  Input: Motor command
+  Output: Predicted sensory feedback
+
+Inverse model:
+  Computes motor commands to achieve desired sensory state
+  Input: Desired state
+  Output: Required motor command
+
+Internal model:
+  Efference copy: Sent to sensory areas to predict feedback
+  Corollary discharge: Distinguishes self-generated from externally-caused sensation
+
+Example: Reaching movement
+  1. Goal: Touch target
+  2. Inverse model: Compute required joint angles
+  3. Forward model: Predict visual/proprioceptive feedback
+  4. Execute movement
+  5. Compare predicted vs. actual feedback
+  6. Update models if mismatch (motor learning)
+
+Computation: Planning and execution of actions
+Residual: Successful interaction with environment
+</code></pre>
+
+<h4>Active Inference</h4>
+<pre><code>Free energy principle:
+  F = D_KL[q(θ|s) || p(θ)] - E_q[log p(s|θ)]
+
+  where:
+    q(θ|s): Internal belief about hidden states θ given observations s
+    p(θ): Prior belief about hidden states
+    p(s|θ): Likelihood of observations given hidden states
+
+Minimize F by:
+  - Perception: Update q(θ|s) (belief updating)
+  - Action: Change s (selectively sample observations)
+
+Both minimize surprise = prediction error
+
+Example: Organism seeking food
+  - Internal model: "Food typically found in location X"
+  - Perception: Update belief about current food location
+  - Action: Move to location predicted to have food
+  - If food found: Prediction confirmed
+  - If food not found: Update model (learn)
+
+Computation: Closed-loop interaction with environment
+Residual: Minimized free energy (reduced surprise, maintained homeostasis)
+</code></pre>
+
+<p><strong>Computational Complexity:</strong></p>
+<ul>
+  <li>Inference: Variational methods, message passing, sampling algorithms</li>
+  <li>Learning: Gradient descent on free energy</li>
+  <li>Planning: Search in belief space (can be exponential in horizon length)</li>
+  <li>Modern implementations: Variational autoencoders (VAEs), world models in RL</li>
+</ul>
+
+<h2 id="entropy-dynamics">6. Entropy Dynamics and Equilibrium</h2>
+
+<h3>6.1 Second Law and COEC</h3>
+
+<p><strong>Thermodynamic Foundation:</strong> COEC systems obey the second law of thermodynamics:</p>
+
+<pre><code>dS_total/dt = dS_system/dt + dS_environment/dt ≥ 0
+
+For living/computing systems (open, far from equilibrium):
+  dS_system/dt < 0  (local entropy decrease)
+  dS_environment/dt > |dS_system/dt|  (greater environmental entropy increase)
+
+Net effect: Total entropy increases, but system becomes more ordered.
+</code></pre>
+
+<p><strong>Entropy Production:</strong></p>
+<pre><code>σ = dS_total/dt ≥ 0
+
+Sources of entropy production:
+  - Heat dissipation (irreversible processes)
+  - Information processing (Landauer's principle)
+  - Friction, diffusion, chemical reactions
+
+Minimizing σ while maintaining function is key efficiency goal.
+</code></pre>
+
+<p><strong>Example (ATP-Driven Transport):</strong></p>
+<pre><code>ATP + H₂O → ADP + Pᵢ + energy
+
+Free energy released: ~30 kJ/mol under physiological conditions
+
+Used to:
+  - Pump ions against concentration gradients
+  - Drive unfavorable chemical reactions
+  - Power molecular motors (myosin, kinesin, dynein)
+
+Efficiency: Typically 40-70% (rest dissipated as heat)
+
+Entropy accounting:
+  - System: Order increases (concentrated ions, synthesized macromolecules)
+  - Environment: Entropy increases (heat release, disorder in ATP hydrolysis)
+  - Total: Net entropy increase satisfies second law
+</code></pre>
+
+<h3>6.2 Cognitive Equilibrium</h3>
+
+<p><strong>Definition:</strong> A system is in cognitive equilibrium when entropy dynamics satisfy:</p>
+
+<pre><code>dS/dt < 0  (decreasing entropy - increasing order)
+d²S/dt² ≈ 0  (stable rate of change)
+
+This characterizes "normal" computation - system is organized and not undergoing rapid changes.
+</code></pre>
+
+<p><strong>Disrupted Equilibrium:</strong> When d²S/dt² >> 0, system is accelerating toward disorder, triggering adaptive responses:</p>
+
+<pre><code>Trigger condition:
+  if d²S/dt² > θ_threshold:
+    initiate_adaptation()
+
+Adaptive responses:
+  1. Constraint modification (strengthen or weaken specific constraints)
+  2. Topological reconfiguration (change connectivity)
+  3. Node birth/death (add or remove components)
+  4. Precision reweighting (adjust relative importance of constraints)
+
+Goal: Return to d²S/dt² ≈ 0 (cognitive equilibrium)
+</code></pre>
+
+<p><strong>Example (Cellular Stress Response):</strong></p>
+<pre><code>Normal conditions:
+  - Stable protein folding (dS/dt < 0)
+  - Balanced synthesis/degradation (d²S/dt² ≈ 0)
+
+Heat shock:
+  - Proteins begin to unfold (dS/dt increases)
+  - Unfolded protein accumulates (d²S/dt² >> 0)
+  - Triggers heat shock response
+
+Adaptive response:
+  - Upregulate heat shock proteins (HSP70, HSP90) - add components
+  - Increase chaperone activity - modify constraints
+  - Pause translation - reconfigure priorities
+  - Degrade misfolded proteins - remove damaged nodes
+
+Result:
+  - Proteins refold (dS/dt decreases)
+  - New equilibrium established (d²S/dt² → 0)
+  - Increased thermotolerance (constraint set updated)
+</code></pre>
+
+<p><strong>Mathematical Formulation:</strong></p>
+<pre><code>Constraint evolution function:
+  C_{t+1} = f(C_t, dS/dt, d²S/dt²)
+
+Simple linear model:
+  ΔC = -α(dS/dt) - β(d²S/dt²)
+
+where α, β are gain parameters
+
+This creates negative feedback: increasing disorder triggers constraint strengthening.
+</code></pre>
+
+<h3>6.3 Non-Equilibrium Steady States</h3>
+
+<p><strong>Definition:</strong> Many COEC systems maintain non-equilibrium steady states through continuous energy/material throughput:</p>
+
+<pre><code>At steady state:
+  dS_system/dt = constant ≠ 0
+  S_system ≠ S_equilibrium
+
+Examples:
+  - Living cells: Constant metabolism maintains organization
+  - Ecosystems: Energy flow (sunlight → photosynthesis → food web)
+  - Economic systems: Production and consumption cycles
+</code></pre>
+
+<p><strong>Dissipative Structures (Prigogine):</strong></p>
+<pre><code>Characteristics:
+  - Emerge spontaneously in open systems far from equilibrium
+  - Self-organize when energy flow exceeds critical threshold
+  - Maintain order by dissipating energy
+
+Examples:
+  - Bénard convection cells (heated fluid forms hexagonal patterns)
+  - Belousov-Zhabotinsky reaction (chemical oscillations and waves)
+  - Biological morphogenesis (Turing patterns in development)
+
+Mathematical criterion:
+  Ė > Ė_critical  (energy flow rate threshold)
+
+Below threshold: Homogeneous state
+Above threshold: Ordered pattern emerges
+</code></pre>
+
+<p><strong>Example (Bacterial Chemotaxis):</strong></p>
+<pre><code>System: E. coli swimming in chemical gradient
+
+Steady state:
+  - Constant tumbling/running frequency
+  - Net drift up concentration gradient
+  - Continuous energy expenditure (flagellar rotation)
+
+Entropy balance:
+  - System: Organized motion toward attractant (dS_system < 0)
+  - Environment: Metabolic heat release (dS_env > |dS_system|)
+  - Net: Entropy production (dS_total > 0)
+
+Not at equilibrium:
+  - Remove energy source: System relaxes to random walk
+  - True equilibrium: No directed motion, uniform distribution
+
+Computation: Gradient sensing and directed migration
+</code></pre>
+
+<h2 id="applications">7. Applications</h2>
+
+<h3>7.1 Biological Systems</h3>
+
+<h4>Protein Design</h4>
+<pre><code>Goal: Engineer proteins with desired functions
+
+COEC Formulation:
+  - S: Amino acid sequence space
+  - C: {c_fold, c_stability, c_activity, c_specificity}
+  - E: Free energy landscape + functional cost
+  - R: Designed sequence
+
+Approach:
+  1. Define functional constraints (binding target, catalytic mechanism)
+  2. Map to sequence-structure relationships
+  3. Optimize sequence to satisfy constraints
+  4. Validate experimentally
+
+Tools:
+  - Rosetta: Structure prediction and design
+  - AlphaFold: Structure from sequence (learned model)
+  - Directed evolution: Iterative constraint satisfaction
+
+Success stories:
+  - De novo enzymes (Kemp eliminase, Diels-Alderase)
+  - Protein switches (light-activated, ligand-gated)
+  - Therapeutic proteins (optimized antibodies)
+</code></pre>
+
+<h4>Synthetic Biology Circuits</h4>
+<pre><code>Goal: Design genetic circuits implementing logical functions
+
+COEC Formulation:
+  - S: Gene regulatory network (nodes = genes, edges = regulations)
+  - C: {c_logic, c_robustness, c_orthogonality, c_load}
+  - E: Fitness landscape (function + metabolic cost)
+  - R: Functional genetic circuit
+
+Examples:
+  - Toggle switch (Gardner & Collins 2000): Bistable memory
+  - Repressilator (Elowitz & Leibler 2000): Oscillator
+  - Logic gates: AND, OR, NOT, NOR implemented with transcription factors
+  - Band-pass filters, pulse generators, edge detectors
+
+Challenges:
+  - Context dependence: Parts don't compose predictably
+  - Metabolic burden: Circuits compete for cellular resources
+  - Evolution: Circuits degrade over generations
+
+COEC insights:
+  - Design for constraint satisfaction (not just connectivity)
+  - Anticipate constraint interactions (burden, cross-talk)
+  - Use modular hierarchical designs (manage complexity)
+</code></pre>
+
+<h3>7.2 Distributed Computing</h3>
+
+<h4>Consensus Algorithms</h4>
+<pre><code>Goal: Agreement among distributed nodes despite failures
+
+COEC Formulation:
+  - S: System state (node beliefs/values)
+  - C: {c_agreement, c_validity, c_termination, c_fault_tolerance}
+  - E: Communication cost + latency
+  - R: Consensus value
+
+Classical algorithms:
+  - Paxos: 2-phase commit, requires majority
+  - Raft: Leader-based, simpler than Paxos
+  - Byzantine fault tolerance: Up to f=⌊(n-1)/3⌋ Byzantine failures
+
+COEC perspective:
+  - Constraint: ≥ (n+f)/2 nodes must agree (quorum)
+  - Evolution: Message passing updates beliefs
+  - Energy: Network bandwidth, computation time
+  - Emergence: Agreement without global controller
+
+Applications:
+  - Blockchain: Proof-of-work, proof-of-stake
+  - Distributed databases: Spanner, CockroachDB
+  - Cloud services: Zookeeper, etcd
+</code></pre>
+
+<h4>Swarm Robotics</h4>
+<pre><code>Goal: Collective behavior from simple individual rules
+
+COEC Formulation:
+  - S: Positions and states of all robots
+  - C: {c_collision_avoidance, c_formation, c_coverage, c_communication}
+  - E: Task objective (area coverage, target tracking, etc.)
+  - R: Desired collective behavior
+
+Algorithms:
+  - Reynolds rules (boids): Separation, alignment, cohesion
+  - Artificial potential fields: Attraction to goals, repulsion from obstacles
+  - Consensus protocols: Agree on directions/speeds
+
+Examples:
+  - Formation control: Maintain geometric shape while moving
+  - Area coverage: Divide space among robots (Voronoi tessellation)
+  - Collective transport: Multiple robots carry single object
+
+COEC insights:
+  - Local constraints + simple rules → complex emergence
+  - No centralized planning, yet coordinated behavior
+  - Robust to individual failures (graceful degradation)
+</code></pre>
+
+<h3>7.3 Neural Networks and AI</h3>
+
+<h4>Neuromorphic Computing</h4>
+<pre><code>Goal: Hardware implementing brain-like computation
+
+COEC Formulation:
+  - S: Neuronal states (voltages, currents, spikes)
+  - C: {c_connectivity, c_plasticity, c_homeostasis, c_energy}
+  - E: Metabolic energy cost
+  - R: Computed function (classification, prediction, control)
+
+Hardware:
+  - IBM TrueNorth: 1 million neurons, 256 million synapses
+  - Intel Loihi: On-chip learning, event-driven
+  - BrainScaleS: Analog neurons, 10,000× faster than biology
+  - SpiNNaker: Digital, ARM processors per neuron
+
+Advantages:
+  - Energy efficiency: 10³-10⁶× less power than GPUs
+  - Event-driven: Sparse computation (only on spikes)
+  - Asynchronous: No global clock
+  - Fault-tolerant: Graceful degradation
+
+COEC perspective:
+  - Constraints define network topology and learning rules
+  - Energy landscape shaped by synaptic weights
+  - Adaptation through plasticity (constraint modification)
+  - Emergence: Intelligent behavior from local interactions
+</code></pre>
+
+<h4>Reinforcement Learning</h4>
+<pre><code>Goal: Agent learns optimal policy through interaction
+
+COEC Formulation:
+  - S: State-action space
+  - C: {c_safety, c_efficiency, c_exploration}
+  - E: Expected return (discounted future reward)
+  - R: Optimal policy π*(s)
+
+Algorithms:
+  - Q-learning: Learn value of state-action pairs
+  - Policy gradient: Directly optimize policy
+  - Actor-critic: Combine value and policy learning
+
+Connection to COEC:
+  - Free energy minimization: RL as inference (Friston, Dayan)
+  - Constraints as intrinsic motivation or reward shaping
+  - Exploration-exploitation: Balance satisfying known constraints vs. discovering new ones
+
+Applications:
+  - Game playing: AlphaGo, Dota 2, StarCraft II
+  - Robotics: Locomotion, manipulation, navigation
+  - Resource management: Data centers, traffic control
+</code></pre>
+
+<h2 id="design-principles">8. Design Principles</h2>
+
+<h3>8.1 Constraint Engineering</h3>
+
+<p><strong>Principle:</strong> Instead of specifying behaviors directly, engineer constraints such that desired behaviors emerge naturally.</p>
+
+<p><strong>Methodology:</strong></p>
+<pre><code>1. Identify desired residual function R*
+2. Reverse-engineer constraint set C such that:
+     Φ(S || C, E) yields R* with high probability
+3. Implement constraints through:
+   - Physical structures (geometry, materials)
+   - Chemical properties (binding affinities, reaction rates)
+   - Informational rules (communication protocols, access control)
+</code></pre>
+
+<p><strong>Example (Microfluidic Cell Sorting):</strong></p>
+<pre><code>Goal: Separate cells by mechanical properties (e.g., deformability)
+
+Traditional approach:
+  - Active sorting: Detect cell properties, actuate gates
+  - Requires: Sensors, controllers, actuators
+  - Complex, expensive, slow
+
+COEC approach:
+  - Passive sorting: Geometric constraints naturally separate cells
+  - Design: Channel tapers, pillar arrays, bifurcations
+  - Implementation:
+      c_geometry: Channel narrows → more deformable cells squeeze through
+      c_flow: Pressure gradient → cells flow toward low resistance
+      c_obstacle: Pillars deflect rigid cells more than soft cells
+
+Result: Sorting emerges from constraint satisfaction, no active control needed
+
+Advantages:
+  - Simple, cheap (no electronics)
+  - Fast, parallel (continuous flow)
+  - Robust (no moving parts to fail)
+</code></pre>
+
+<h3>8.2 Energy Landscape Architecture</h3>
+
+<p><strong>Principle:</strong> Shape energy landscapes to guide system evolution toward desired attractors.</p>
+
+<p><strong>Methodology:</strong></p>
+<pre><code>1. Characterize natural energy landscape E₀
+2. Identify desired attractors (goal states)
+3. Design modifications ΔE creating basins of attraction
+4. Implement E = E₀ + ΔE through:
+   - Chemical potentials (concentration gradients)
+   - Temperature gradients (thermophoresis)
+   - External fields (electric, magnetic, optical)
+</code></pre>
+
+<p><strong>Example (Directed Protein Evolution):</strong></p>
+<pre><code>Goal: Evolve protein with improved function
+
+Natural landscape E₀:
+  - Random mutations → mostly neutral or deleterious
+  - Rare beneficial mutations → fitness peaks
+
+Landscape engineering ΔE:
+  - Phage display: Link genotype (DNA) to phenotype (displayed protein)
+  - Selection: Bind desired target
+  - Amplification: Replicate selected clones
+  - Iteration: Repeat selection/amplification cycles
+
+Effect on landscape:
+  - Favorable mutations: Amplified (lower effective energy)
+  - Unfavorable mutations: Depleted (higher effective energy)
+  - Fitness peaks: Correspond to high-affinity binders
+
+Result: Population climbs fitness peak orders of magnitude faster than natural evolution
+
+Applications:
+  - Antibody optimization (pharmaceutical development)
+  - Enzyme engineering (industrial catalysis)
+  - Biosensor development (diagnostic tools)
+</code></pre>
+
+<h3>8.3 Multi-Scale Constraint Composition</h3>
+
+<p><strong>Principle:</strong> Combine constraints operating at different spatial/temporal scales for complex computations.</p>
+
+<p><strong>Methodology:</strong></p>
+<pre><code>1. Decompose problem into hierarchical levels:
+     Micro-scale: Local interactions
+     Meso-scale: Intermediate structures
+     Macro-scale: System-level behavior
+
+2. Define constraints at each level:
+     C_micro, C_meso, C_macro
+
+3. Ensure cross-scale consistency:
+     Emergent properties at level n inform constraints at level n+1
+     Higher-level constraints guide lower-level dynamics
+
+4. Implement through nested or interlocking physical structures
+</code></pre>
+
+<p><strong>Example (Tissue Engineering):</strong></p>
+<pre><code>Goal: Grow functional tissue (e.g., cardiac patch for heart repair)
+
+Multi-scale constraints:
+
+Molecular (nm):
+  - c_ECM: Extracellular matrix proteins (collagen, fibronectin)
+  - c_integrin: Cell-matrix adhesion molecules
+  - c_cadherin: Cell-cell adhesion
+
+Cellular (μm):
+  - c_morphology: Cell shape and orientation
+  - c_differentiation: Stem cell fate specification
+  - c_proliferation: Cell division rates
+
+Tissue (mm):
+  - c_architecture: 3D organization and patterning
+  - c_vascularization: Blood vessel network formation
+  - c_mechanical: Contractile force generation
+
+Organ (cm):
+  - c_integration: Graft-host connection
+  - c_function: Pump blood effectively
+  - c_remodeling: Adapt to mechanical environment
+
+Implementation:
+  - Scaffold: Provides mechanical and topological constraints
+  - Growth factors: Guide differentiation and proliferation
+  - Mechanical stimulation: Bioreactor mimics physiological forces
+  - Vascular channels: Facilitate nutrient/waste exchange
+
+Result: Constraints at each scale collectively produce functional tissue
+</code></pre>
+
+<h2 id="connections">9. Connections to Existing Frameworks</h2>
+
+<h3>9.1 Active Inference and Free Energy Principle</h3>
+
+<p><strong>Friston's Free Energy Principle (FEP):</strong> Biological systems minimize variational free energy to maintain homeostasis and adapt to their environment.</p>
+
+<p><strong>Connection to COEC:</strong></p>
+<pre><code>Free energy:
+  F[q] = E_q[log q(θ|s) - log p(θ,s)]
+
+Decomposition:
+  F = complexity - accuracy
+
+where:
+  Complexity: D_KL[q(θ|s) || p(θ)] (prior deviation)
+  Accuracy: E_q[log p(s|θ)] (data fit)
+
+COEC equivalence:
+  - Complexity ≈ Information cost in COEC energy landscape
+  - Accuracy ≈ Constraint satisfaction (fit to observations)
+  - Minimizing F ≈ Trajectory toward low-energy, high-constraint-satisfaction state
+
+Both frameworks:
+  - Emphasize prediction error minimization
+  - Unify perception and action (active inference)
+  - Ground cognition in physics (thermodynamics, information theory)
+</code></pre>
+
+<p><strong>Differences:</strong></p>
+<pre><code>FEP:
+  - Primarily applied to neuroscience and cognitive science
+  - Emphasizes Bayesian inference and probabilistic models
+  - Focused on biological organisms
+
+COEC:
+  - Substrate-independent (applies to any physical system)
+  - Emphasizes constraint satisfaction and emergent computation
+  - Encompasses non-biological systems (materials, ecosystems, markets)
+</code></pre>
+
+<h3>9.2 Cellular Automata and Complexity Theory</h3>
+
+<p><strong>Cellular Automata (CA):</strong> Discrete dynamical systems with local update rules.</p>
+
+<p><strong>Connection to COEC:</strong></p>
+<pre><code>CA as COEC:
+  - S: Grid of cells, each in discrete state
+  - C: Local update rules (fixed or adaptive)
+  - E: Implicit (rules define transitions, no explicit energy)
+  - Φ: Synchronous or asynchronous updates
+  - R: Emergent global patterns
+
+Examples:
+  - Conway's Game of Life: Simple rules → complex patterns
+  - Elementary CA (Wolfram): 256 rules, classes (fixed, periodic, chaotic, complex)
+  - Langton's ant: Turns on square color, changes color → emergent highway
+
+COEC perspective:
+  - CA rules = constraints on state transitions
+  - Emergence = residual function from constraint interaction
+  - Classes relate to attractor types (SS, DB)
+</code></pre>
+
+<p><strong>Differences:</strong></p>
+<pre><code>CA:
+  - Discrete space, time, states
+  - Deterministic (typically)
+  - Homogeneous rules (same everywhere)
+
+COEC:
+  - Continuous or hybrid allowed
+  - Stochastic allowed
+  - Heterogeneous (spatially-varying constraints)
+</code></pre>
+
+<h3>9.3 Chemical Reaction Networks</h3>
+
+<p><strong>CRN Theory:</strong> Dynamics of interacting chemical species.</p>
+
+<p><strong>Connection to COEC:</strong></p>
+<pre><code>CRN as COEC:
+  - S: Concentrations of species {X₁, X₂, ..., Xₙ}
+  - C: Stoichiometric constraints (mass balance, detailed balance)
+  - E: Chemical potential landscape (Gibbs free energy)
+  - Φ: Reaction kinetics (mass action, Michaelis-Menten, etc.)
+  - R: Equilibrium concentrations or steady-state oscillations
+
+Examples:
+  - Brusselator: Oscillating reaction system
+  - Lotka-Volterra: Predator-prey dynamics (chemical analog)
+  - Biochemical oscillators: Circadian clocks, glycolysis
+
+COEC insights:
+  - CRN computation: Pattern formation, oscillations, decision-making
+  - Constraints: Stoichiometry dictates possible transformations
+  - Emergence: Complex dynamics from simple reaction rules
+</code></pre>
+
+<p><strong>Relationship:</strong></p>
+<pre><code>CRNs are a specific instantiation of COEC in chemical domain:
+  - Energy landscape = chemical potential
+  - Constraints = conservation laws + kinetics
+  - Computation = reaching equilibrium or steady state
+</code></pre>
+
+<h2 id="future-directions">10. Future Directions</h2>
+
+<h3>10.1 Theoretical Advances</h3>
+
+<h4>Complexity Theory for COEC</h4>
+<pre><code>Open questions:
+  - What is analog/continuous equivalent of P vs NP?
+  - Can COEC systems solve NP-hard problems efficiently?
+  - Formal relationships between COEC classes and traditional complexity classes
+
+Potential approaches:
+  - Real computation (Blum-Shub-Smale model)
+  - Natural computing complexity
+  - Thermodynamic cost of computation
+</code></pre>
+
+<h4>Formal Verification</h4>
+<pre><code>Challenge: Prove that COEC system satisfies specification
+
+Techniques:
+  - Lyapunov functions: Prove convergence to desired attractors
+  - Barrier certificates: Prove safety constraints always satisfied
+  - Model checking: Exhaustively verify finite-state approximations
+
+Tools needed:
+  - Compositional methods (verify subsystems independently)
+  - Probabilistic verification (handle stochasticity)
+  - Scalable algorithms (realistic system sizes)
+</code></pre>
+
+<h3>10.2 Experimental Validation</h3>
+
+<h4>Quantitative Measurements</h4>
+<pre><code>Key metrics to validate COEC theory:
+
+1. Entropy dynamics:
+   - Measure dS/dt, d²S/dt² in biological systems
+   - Correlation with adaptive responses
+   - Test cognitive equilibrium hypothesis
+
+2. Constraint satisfaction:
+   - Quantify constraint violations over time
+   - Measure precision weights empirically
+   - Validate energy-information landscape structure
+
+3. Computational efficiency:
+   - Compare COEC-based algorithms to traditional methods
+   - Measure energy consumption (Landauer's principle)
+   - Benchmark on standardized problem sets
+</code></pre>
+
+<h4>Biological Systems</h4>
+<pre><code>Proposed experiments:
+
+1. Protein folding:
+   - Track folding trajectories in real-time (single-molecule FRET)
+   - Measure free energy landscape experimentally
+   - Test COEC predictions of folding pathways
+
+2. Gene regulatory networks:
+   - Perturb constraints (knockouts, overexpression)
+   - Measure adaptation timescales and mechanisms
+   - Validate d²S/dt² trigger hypothesis
+
+3. Neural plasticity:
+   - Record synaptic changes during learning
+   - Test precision weighting of different plasticity mechanisms
+   - Compare to COEC adaptive constraint models
+</code></pre>
+
+<h3>10.3 Novel Applications</h3>
+
+<h4>Unconventional Computing Substrates</h4>
+<pre><code>Opportunities:
+
+1. Molecular computing:
+   - DNA strand displacement cascades
+   - Enzymatic reaction networks
+   - Peptide-based logic
+
+COEC design:
+  - Encode constraints in molecular structures
+  - Computation emerges from hybridization/binding/catalysis
+  - Applications: Biosensors, drug delivery, diagnostics
+
+2. Memristive systems:
+   - Crossbar arrays of resistive memory
+   - Analog computation through Ohm's law
+   - In-memory computing (minimize data movement)
+
+COEC design:
+  - Constraints encoded as conductance values
+  - Matrix-vector products as constraint satisfaction
+  - Applications: Neuromorphic chips, analog AI accelerators
+
+3. Quantum-inspired:
+   - Quantum annealing (D-Wave)
+   - Coherent Ising machines (optical parametric oscillators)
+   - Not universal quantum computers, but COEC-like optimization
+
+COEC design:
+  - Problem mapped to energy landscape
+  - Quantum/classical dynamics explore landscape
+  - Applications: Combinatorial optimization, sampling
+</code></pre>
+
+<h4>Hybrid Systems</h4>
+<pre><code>Combining traditional and COEC computation:
+
+Architecture:
+  - Digital: Precise control, complex logic, data storage
+  - COEC: Approximate optimization, pattern matching, analog computation
+
+Example: Neuromorphic-digital hybrid
+  - Digital: Spiking neural network control, data routing
+  - Analog/COEC: Synaptic matrix multiplication, neuron dynamics
+  - Advantages: Best of both worlds (precision + efficiency)
+
+Applications:
+  - Edge AI: Low-power inference on IoT devices
+  - Scientific computing: PDE solvers with analog acceleration
+  - Robotics: Real-time sensorimotor control
+</code></pre>
+
+<h2>Conclusion</h2>
+
+<p>Constraint-Oriented Emergent Computation provides a unifying framework for understanding computation across diverse substrates—from molecular dynamics to ecological networks. By recognizing that computation emerges from systems navigating constrained state spaces, guided by energy-information landscapes and thermodynamic principles, COEC offers both analytical tools and design principles.</p>
+
+<p><strong>Key insights:</strong></p>
+
+<ol>
+  <li><strong>Substrate independence:</strong> Computation is not tied to digital electronics or symbolic manipulation. Any physical system satisfying appropriate constraints can compute.</li>
+  <li><strong>Emergence through constraints:</strong> Complex behavior arises not from centralized programs but from local interactions under boundary conditions.</li>
+  <li><strong>Information-thermodynamic grounding:</strong> Computation is fundamentally limited by physical laws. Understanding these limits is essential for designing efficient systems.</li>
+  <li><strong>Design philosophy:</strong> Engineer constraints, not behaviors. Shape energy landscapes rather than specify algorithms.</li>
+  <li><strong>Robustness through distribution:</strong> Holographic, distributed representations are inherently fault-tolerant.</li>
+</ol>
+
+<p><strong>Future outlook:</strong></p>
+
+<p>As we develop novel computing substrates (molecular, memristive, quantum-inspired), COEC provides conceptual and mathematical frameworks for harnessing their capabilities. By learning from biological systems—which have evolved exquisite constraint-based computation over billions of years—we can design artificial systems that are more efficient, adaptive, and robust.</p>
+
+<p>The convergence of neuroscience, physics, computer science, and engineering under the COEC framework suggests we are entering a new era of computing—one that transcends the von Neumann bottleneck and embraces the physics of information processing in all its manifestations.</p>
+
+<div class="references">
+  <h2 id="references">References</h2>
+
+  <h3>Foundational Theory</h3>
+  <ol>
+    <li>Friston, K. (2010). The free-energy principle: a unified brain theory? <em>Nature Reviews Neuroscience</em>, 11(2), 127-138.</li>
+    <li>Kauffman, S. A. (1993). <em>The Origins of Order: Self-Organization and Selection in Evolution</em>. Oxford University Press.</li>
+    <li>Hopfield, J. J. (1982). Neural networks and physical systems with emergent collective computational abilities. <em>PNAS</em>, 79(8), 2554-2558.</li>
+    <li>Prigogine, I. (1980). <em>From Being to Becoming: Time and Complexity in the Physical Sciences</em>. W. H. Freeman.</li>
+  </ol>
+
+  <h3>Biological Applications</h3>
+  <ol start="5">
+    <li>Anfinsen, C. B. (1973). Principles that govern protein folding. <em>Science</em>, 181(4096), 223-230.</li>
+    <li>Elowitz, M. B., & Leibler, S. (2000). A synthetic oscillatory network of transcriptional regulators. <em>Nature</em>, 403(6767), 335-338.</li>
+    <li>Takahashi, J. S. (2017). Transcriptional architecture of the mammalian circadian clock. <em>Nature Reviews Genetics</em>, 18(3), 164-179.</li>
+  </ol>
+
+  <h3>Computing Theory</h3>
+  <ol start="8">
+    <li>Landauer, R. (1961). Irreversibility and heat generation in the computing process. <em>IBM Journal of Research and Development</em>, 5(3), 183-191.</li>
+    <li>Adleman, L. M. (1994). Molecular computation of solutions to combinatorial problems. <em>Science</em>, 266(5187), 1021-1024.</li>
+    <li>Maass, W., Natschläger, T., & Markram, H. (2002). Real-time computing without stable states. <em>Neural Computation</em>, 14(11), 2531-2560.</li>
+  </ol>
+
+  <h3>Systems Theory</h3>
+  <ol start="11">
+    <li>Turing, A. M. (1952). The chemical basis of morphogenesis. <em>Philosophical Transactions of the Royal Society B</em>, 237(641), 37-72.</li>
+    <li>Wolfram, S. (2002). <em>A New Kind of Science</em>. Wolfram Media.</li>
+    <li>Mitchell, M. (2009). <em>Complexity: A Guided Tour</em>. Oxford University Press.</li>
+  </ol>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Compositional Semantics: Algebraic Structures for Meaning | Rohan Vinaik</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --text: #e0e0e0;
+      --text-secondary: #a0a0a0;
+      --accent: #00ff00;
+      --border: #333;
+      --code-bg: #1a1a1a;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'JetBrains Mono', monospace;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 20px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    h1 {
+      color: var(--accent);
+      font-size: 1.5rem;
+      margin-bottom: 8px;
+      letter-spacing: 0.02em;
+    }
+    h2 {
+      color: var(--accent);
+      font-size: 1.1rem;
+      margin-top: 32px;
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    h3 {
+      color: var(--accent);
+      font-size: 0.95rem;
+      margin-top: 24px;
+      margin-bottom: 12px;
+    }
+    h4 {
+      color: var(--text);
+      font-size: 0.85rem;
+      margin-top: 20px;
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+    p { margin-bottom: 16px; font-size: 0.85rem; }
+    ul, ol { margin-bottom: 16px; padding-left: 24px; font-size: 0.85rem; }
+    li { margin-bottom: 8px; }
+    a {
+      color: var(--accent);
+      text-decoration: none;
+      border-bottom: 1px dotted var(--accent);
+    }
+    a:hover { border-bottom-style: solid; }
+    .back-link {
+      display: inline-block;
+      margin-bottom: 24px;
+      font-size: 0.85rem;
+    }
+    .paper-meta {
+      color: var(--text-secondary);
+      font-size: 0.75rem;
+      margin-bottom: 24px;
+    }
+    .abstract {
+      background: var(--code-bg);
+      padding: 20px;
+      border-left: 3px solid var(--accent);
+      margin-bottom: 32px;
+      font-size: 0.85rem;
+    }
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 32px;
+    }
+    .tag {
+      background: var(--code-bg);
+      padding: 4px 12px;
+      border: 1px solid var(--border);
+      font-size: 0.7rem;
+      color: var(--accent);
+      text-decoration: none;
+      border-bottom: none;
+    }
+    .tag:hover {
+      background: var(--accent);
+      color: var(--bg);
+      border-color: var(--accent);
+    }
+    .quick-nav {
+      background: var(--code-bg);
+      padding: 16px;
+      margin-bottom: 32px;
+      border: 1px solid var(--border);
+    }
+    .quick-nav h3 {
+      margin-top: 0;
+      font-size: 0.85rem;
+    }
+    .quick-nav ul {
+      list-style: none;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .quick-nav a {
+      font-size: 0.75rem;
+      border-bottom: none;
+      padding: 4px 0;
+      display: block;
+    }
+    .quick-nav a:hover { color: var(--bg); background: var(--accent); padding-left: 8px; }
+    .references {
+      font-size: 0.75rem;
+      margin-top: 32px;
+    }
+    .references ol {
+      padding-left: 20px;
+    }
+    .references li {
+      margin-bottom: 12px;
+      line-height: 1.5;
+    }
+    @media (max-width: 768px) {
+      body { padding: 12px; }
+      h1 { font-size: 1.2rem; }
+      h2 { font-size: 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<a href="../index.html#reference" class="back-link">← Back to Reference</a>
+
+<h1>Compositional Semantics: Algebraic Structures for Meaning</h1>
+<div class="paper-meta">January 2025 · Technical Reference · Version 2.0</div>
+
+<div class="tags">
+  <a href="../index.html?filter=COMPOSITIONAL-SEMANTICS" class="tag">COMPOSITIONAL-SEMANTICS</a>
+  <a href="../index.html?filter=FORMAL-SEMANTICS" class="tag">FORMAL-SEMANTICS</a>
+  <a href="../index.html?filter=LAMBDA-CALCULUS" class="tag">LAMBDA-CALCULUS</a>
+  <a href="../index.html?filter=TYPE-THEORY" class="tag">TYPE-THEORY</a>
+  <a href="../index.html?filter=VECTOR-SYMBOLIC-ARCHITECTURES" class="tag">VECTOR-SYMBOLIC-ARCHITECTURES</a>
+  <a href="../index.html?filter=DISTRIBUTIONAL-SEMANTICS" class="tag">DISTRIBUTIONAL-SEMANTICS</a>
+  <a href="../index.html?filter=ALGEBRAIC-STRUCTURES" class="tag">ALGEBRAIC-STRUCTURES</a>
+  <a href="../index.html?filter=NLP" class="tag">NLP</a>
+  <a href="../index.html?filter=KNOWLEDGE-REPRESENTATION" class="tag">KNOWLEDGE-REPRESENTATION</a>
+  <a href="../index.html?filter=COGNITIVE-ARCHITECTURE" class="tag">COGNITIVE-ARCHITECTURE</a>
+</div>
+
+<div class="abstract">
+  <strong>Abstract:</strong> Compositional semantics investigates how complex meanings arise systematically from simpler components through well-defined operations. This algebraic approach to meaning provides the theoretical foundation for understanding how finite lexicons generate infinite expressivity, how languages remain learnable despite their complexity, and how computational systems can process and reason about meaning. The field draws on mathematics (algebra, category theory, type theory), linguistics (formal semantics, syntax-semantics interface), computer science (natural language processing, knowledge representation), and cognitive science (mental representation, conceptual structure). The fundamental insight—that "the meaning of the whole is a function of the meanings of the parts and the way they are combined"—appears across remarkably diverse phenomena, from natural language understanding to vector symbolic architectures, from quantum computing to brain representations. This document surveys the mathematical structures, operational mechanisms, theoretical frameworks, and open questions that characterize compositional approaches to meaning.
+</div>
+
+<div class="quick-nav">
+  <h3>Quick Navigation</h3>
+  <ul>
+    <li><a href="#foundational">1. Foundational Principles</a></li>
+    <li><a href="#algebraic">2. Algebraic Structures for Composition</a></li>
+    <li><a href="#operations">3. Compositional Operations</a></li>
+    <li><a href="#types">4. Type Systems and Grammatical Constraints</a></li>
+    <li><a href="#frameworks">5. Semantic Frameworks</a></li>
+    <li><a href="#quantification">6. Quantification and Scope</a></li>
+    <li><a href="#context">7. Context, Intensionality, and Dynamics</a></li>
+    <li><a href="#computational">8. Computational Implementation</a></li>
+    <li><a href="#cognitive">9. Cognitive and Philosophical Implications</a></li>
+    <li><a href="#future">10. Future Directions</a></li>
+    <li><a href="#references">References</a></li>
+  </ul>
+</div>
+
+<h2 id="foundational">1. Foundational Principles</h2>
+
+<h3>1.1 Frege's Principle of Compositionality</h3>
+
+<p>The principle of compositionality, attributed to Gottlob Frege, states that the meaning of a complex expression is determined by the meanings of its constituent parts and the manner in which they are combined. Formally, we can express this as:</p>
+
+<p>\[⟦α \circ β⟧ = f(⟦α⟧, ⟦β⟧, \circ)\]</p>
+
+<p>where \(⟦·⟧\) denotes the semantic interpretation function, \(\alpha\) and \(\beta\) are constituents, \(\circ\) represents their syntactic combination, and \(f\) is the composition function. This deceptively simple statement has profound implications for language, cognition, and computation.</p>
+
+<p><strong>Implications for expressivity:</strong> With a finite lexicon of perhaps 50,000 words, speakers can produce and comprehend an unbounded number of novel utterances. This infinite expressivity from finite resources is possible precisely because meanings compose—new expressions inherit systematic relationships to familiar ones through shared compositional structure.</p>
+
+<p><strong>Implications for learnability:</strong> Children acquire language without exhaustive exposure to all possible sentences. Compositional semantics explains this remarkable feat: once a child masters the meaning of constituent parts and composition rules, they can interpret novel combinations correctly. The learning problem reduces from memorizing infinite sentence meanings to learning finite vocabulary and compositional principles.</p>
+
+<p><strong>Implications for systematicity:</strong> If you understand "the cat chased the mouse," you necessarily understand "the mouse chased the cat"—the reversal is systematic rather than arbitrary. This systematicity follows directly from compositionality: the structural relationships between constituents remain consistent across different configurations.</p>
+
+<h3>1.2 Systematicity and Productivity</h3>
+
+<p><strong>Systematicity</strong> refers to the intrinsic connection between a system's ability to represent certain states of affairs and its ability to represent structurally related states. In language, this means that capacities come in families: if you can think "John loves Mary," you can think "Mary loves John"; if you can represent "larger than," you can represent "smaller than"; if you understand "above," you understand "below."</p>
+
+<p>The systematicity of thought and language poses a challenge for non-compositional theories. Connectionists models that learn input-output mappings without explicit compositional structure must separately acquire each systematic relationship, whereas compositional systems get systematicity "for free" from their architecture. The debate over whether connectionist networks can exhibit genuine systematicity remains active, particularly as attention mechanisms and transformer architectures blur the distinction between explicit and implicit composition.</p>
+
+<p><strong>Productivity</strong> extends compositionality to recursive structures. Language allows arbitrarily deep embedding: "The cat sat on the mat" becomes "The cat that I saw yesterday sat on the mat that was on the porch" becomes "The cat that I saw yesterday when I visited my friend sat on the mat that was on the porch that needed repair..." This recursive productivity emerges naturally from compositional rules that can apply to their own outputs.</p>
+
+<p>Mathematical structures exhibit similar productivity: from finite digits {0-9}, we generate unlimited numbers through place-value composition; from basic logical connectives {¬, ∧, ∨, →}, we build arbitrarily complex formulas. The parallel suggests that compositional structure is not peculiar to language but reflects general principles of information organization.</p>
+
+<h3>1.3 Challenges to Strict Compositionality</h3>
+
+<p>While compositionality provides an elegant theoretical framework, natural language presents numerous challenges. Idioms ("kick the bucket"), metaphors ("time is money"), context-dependent expressions ("bank" meaning financial institution vs. river edge), and pragmatic enrichment ("some" typically implying "not all") all seem to violate straightforward compositionality.</p>
+
+<p>Modern approaches address these challenges by enriching rather than abandoning compositionality. Frame semantics incorporates background knowledge; dynamic semantics treats meaning as context-update potential; type coercion allows reinterpretation of constituent types; and construction grammar recognizes that syntactic patterns themselves can carry meaning. The question becomes not whether compositionality holds absolutely, but how to characterize the space of compositional operations and when non-compositional shortcuts prove more efficient.</p>
+
+<h2 id="algebraic">2. Algebraic Structures for Composition</h2>
+
+<p>The mathematical study of composition reveals that different algebraic structures correspond to different kinds of semantic operations. Understanding these structures clarifies what compositional operations are possible, what properties they exhibit, and how they relate to one another.</p>
+
+<h3>2.1 Monoids: The Simplest Composition</h3>
+
+<p>A <strong>monoid</strong> consists of a set \(M\) equipped with an associative binary operation \(\otimes\) and an identity element \(e\):</p>
+<ul>
+<li><strong>Associativity:</strong> \((a \otimes b) \otimes c = a \otimes (b \otimes c)\)</li>
+<li><strong>Identity:</strong> \(e \otimes a = a \otimes e = a\)</li>
+</ul>
+
+<p>String concatenation provides the canonical example: combining "hello" with "world" via concatenation yields "helloworld," the empty string serves as identity, and order matters (concatenation is non-commutative) but parenthesization doesn't (associativity).</p>
+
+<p>Monoids appear throughout semantics. Propositional logic under conjunction forms a monoid (with TRUE as identity). Events under temporal succession form a monoid. Even distributional semantic vectors under a normalized addition operation approximate monoidal structure. The ubiquity of monoids suggests that sequential, cumulative composition represents a fundamental semantic pattern.</p>
+
+<h3>2.2 Groups: Adding Inverses</h3>
+
+<p>A <strong>group</strong> extends a monoid by requiring that each element has an inverse: for every \(a\), there exists \(a^{-1}\) such that \(a \otimes a^{-1} = a^{-1} \otimes a = e\).</p>
+
+<p>Groups capture reversible transformations. Spatial relations form a group: if "left" is an operation, "right" is its inverse. Symmetry operations form groups: rotations, reflections, and their compositions. In semantics, groups model phenomena like negation (NOT as inverse), perspective shifts (buyer ↔ seller), and tense (past ↔ future).</p>
+
+<p>The group structure guarantees certain logical properties. If meanings relate through group operations, questions have unique answers ("If A is to the left of B, then B is to the right of A" follows necessarily). This contrasts with looser algebraic structures where such guarantees fail.</p>
+
+<h3>2.3 Vector Spaces: Linear Composition</h3>
+
+<p>Vector spaces provide the foundation for distributional semantics. A <strong>vector space</strong> \(V\) over a field (typically real numbers \(\mathbb{R}\)) supports:</p>
+<ul>
+<li><strong>Vector addition:</strong> \(\mathbf{v} + \mathbf{w}\)</li>
+<li><strong>Scalar multiplication:</strong> \(\alpha\mathbf{v}\)</li>
+<li><strong>Linear combination:</strong> \(\alpha_1\mathbf{v}_1 + \alpha_2\mathbf{v}_2 + ... + \alpha_n\mathbf{v}_n\)</li>
+</ul>
+
+<p>The power of vector spaces lies in their rich geometric structure. Meanings become points in high-dimensional space, semantic similarity corresponds to geometric proximity (typically measured by cosine similarity), and composition becomes vector arithmetic. The famous "king - man + woman ≈ queen" example demonstrates how vector addition can capture analogical relationships.</p>
+
+<p>Crucially, vector spaces admit <strong>linear transformations</strong>: functions \(T: V \rightarrow W\) satisfying \(T(\alpha\mathbf{v} + \beta\mathbf{w}) = \alpha T(\mathbf{v}) + \beta T(\mathbf{w})\). These transformations can represent functions (verb meanings as matrices transforming noun vectors), modifications (adjectives as transformation operators), and compositional rules (syntax-driven semantic composition as learned linear operations).</p>
+
+<h3>2.4 Tensor Algebras: Structured Composition</h3>
+
+<p><strong>Tensor products</strong> generalize composition beyond simple addition. The tensor product \(\mathbf{v} \otimes \mathbf{w}\) creates a higher-dimensional object that preserves information about both constituents and their relationship. For vectors in \(\mathbb{R}^m\) and \(\mathbb{R}^n\), their tensor product lives in \(\mathbb{R}^{m \times n}\).</p>
+
+<p>This structured composition proves essential for representing grammatical relations. A sentence isn't merely the sum of its word vectors—it's a structured combination where subjects relate to verbs differently than objects do. Tensor products can encode these distinctions: "dog bites man" and "man bites dog" decompose into different tensor structures despite using the same words.</p>
+
+<p>Tensor algebras encompass multiple composition operations:</p>
+<ul>
+<li><strong>Tensor product</strong> \(\otimes\): Creates structured combinations</li>
+<li><strong>Tensor contraction:</strong> Extracts relationships between parts</li>
+<li><strong>Wedge product</strong> \(\wedge\): Antisymmetric combination (order matters)</li>
+<li><strong>Clifford product:</strong> Combines geometric and algebraic operations</li>
+</ul>
+
+<p>Each operation corresponds to different semantic phenomena. Tensor products handle predicate-argument structure; contraction implements binding and quantification; wedge products capture temporal or causal ordering.</p>
+
+<h2 id="operations">3. Compositional Operations</h2>
+
+<h3>3.1 Function Application and Lambda Calculus</h3>
+
+<p><strong>Function application</strong> provides the most direct compositional mechanism: meanings are functions, and composition is function application. A verb like "sleeps" has type \(e \rightarrow t\) (entity to truth-value), so applying it to a name like "John" yields a proposition: \(\text{sleeps}(\text{John})\).</p>
+
+<p>The <strong>lambda calculus</strong> formalizes this approach through three operations:</p>
+<ul>
+<li><strong>Abstraction:</strong> \(\lambda x.E\) creates a function</li>
+<li><strong>Application:</strong> \((\lambda x.E) M\) applies function to argument</li>
+<li><strong>Reduction:</strong> \((\lambda x.E) M \rightarrow E[x:=M]\) (substitution)</li>
+</ul>
+
+<p>Lambda calculus elegantly handles variable binding, scope, and quantification. "Every student sleeps" becomes: \(\forall x(\text{student}(x) \rightarrow \text{sleeps}(x))\), where the quantifier binds the variable through lambda abstraction.</p>
+
+<p><strong>Higher-order functions</strong> extend the power significantly. Adverbs modify verbs: "slowly" might be \(\lambda V\lambda x.V(x) \wedge \text{slow}(V,x)\), taking a verb meaning \(V\) and returning a modified verb meaning. This capacity for functions to take functions as arguments and return functions as values makes lambda calculus Turing-complete—capable of arbitrary computation through pure composition.</p>
+
+<h3>3.2 Binding Through Circular Convolution</h3>
+
+<p><strong>Circular convolution</strong> implements variable binding in vector symbolic architectures. For vectors \(\mathbf{a}, \mathbf{b} \in \mathbb{R}^n\), circular convolution is defined as:</p>
+
+<p>\[(a \star b)_k = \sum_{i=0}^{n-1} a_i \cdot b_{(k-i) \bmod n}\]</p>
+
+<p>This operation has remarkable properties for composing distributed representations:</p>
+<ul>
+<li><strong>Approximate inverse:</strong> \(\mathbf{a} \star \mathbf{b} \star \mathbf{b}^{-1} \approx \mathbf{a}\) allows unbinding</li>
+<li><strong>Commutativity:</strong> \(\mathbf{a} \star \mathbf{b} = \mathbf{b} \star \mathbf{a}\) (order doesn't matter for binding)</li>
+<li><strong>Distributed structure:</strong> Bound pairs distribute across the vector dimensions</li>
+</ul>
+
+<p>To represent "John loves Mary," we might compute: \(\mathbf{v}_{\text{agent}} \star \mathbf{v}_{\text{John}} + \mathbf{v}_{\text{theme}} \star \mathbf{v}_{\text{Mary}} + \mathbf{v}_{\text{loves}}\). Each role-filler pair binds through convolution, and the whole composes through superposition (addition). Querying for "who is the agent?" involves: \((\mathbf{v}_{\text{sentence}} \star \mathbf{v}_{\text{agent}}^{-1})\), which extracts the bound filler.</p>
+
+<p>This binding mechanism scales to complex nested structures while maintaining fixed-dimensional representations—a key advantage for neural implementations where dimensionality typically remains constant across network layers.</p>
+
+<h3>3.3 Superposition and Bundling</h3>
+
+<p><strong>Superposition</strong> combines multiple vectors through addition (often normalized): \(\mathbf{v}_{\text{bundle}} = (\mathbf{v}_1 + \mathbf{v}_2 + ... + \mathbf{v}_n) / ||\mathbf{v}_1 + \mathbf{v}_2 + ... + \mathbf{v}_n||\). This operation implements a distributed "OR"—the bundle is similar to all of its constituents.</p>
+
+<p>The power of superposition emerges from holographic-like properties. Each constituent contributes to the whole, and the whole can be queried for any constituent through similarity measures. Damage to the representation (random deletion of dimensions) degrades gracefully rather than catastrophically—a property called <em>robust degradation</em>.</p>
+
+<p>Superposition enables compact encoding of sets, categories, and alternatives. The concept "fruit" might superpose vectors for {apple, orange, banana, ...}. Querying similarity between "apple" and "fruit" reveals high overlap because "apple" is a constituent of the "fruit" bundle.</p>
+
+<p>Limitations arise when bundling too many similar vectors—interference can make constituents difficult to separate. The capacity of superposition depends on the sparsity and distinctiveness of the bundled vectors. In high-dimensional spaces with orthogonal vectors, thousands of items can bundle effectively; with correlated low-dimensional vectors, capacity drops dramatically.</p>
+
+<h2 id="types">4. Type Systems and Grammatical Constraints</h2>
+
+<p>Type systems formalize which compositions are well-formed. Just as programming languages use types to prevent nonsensical operations (you can't add a string to a boolean), semantic type systems ensure compositional well-formedness.</p>
+
+<h3>4.1 Simply Typed Lambda Calculus</h3>
+
+<p><strong>Simply typed lambda calculus</strong> assigns types to expressions and enforces type-correct composition. Basic types include:</p>
+<ul>
+<li>\(e\): entities (individuals)</li>
+<li>\(t\): truth values (propositions)</li>
+</ul>
+
+<p>Function types combine these: \(e \rightarrow t\) maps entities to truth values (properties), \((e \rightarrow t) \rightarrow t\) maps properties to truth values (quantifiers), etc.</p>
+
+<p><strong>Type-driven composition</strong> ensures syntactic structure corresponds to semantic operations. If "dog" has type \(e \rightarrow t\) and "brown" has type \((e \rightarrow t) \rightarrow (e \rightarrow t)\), then "brown dog" automatically computes the correct composition: "brown" modifies "dog" to yield another property of type \(e \rightarrow t\).</p>
+
+<p>The simply typed system prevents semantic anomalies. "Colorless green ideas sleep furiously" is syntactically well-formed but semantically anomalous because it violates selectional restrictions (type mismatches between predicates and arguments). While such violations occur in natural language (via metaphor, coercion, or creativity), they mark departures from compositional norms.</p>
+
+<h3>4.2 Dependent and Linear Types</h3>
+
+<p><strong>Dependent types</strong> allow types to depend on values, dramatically increasing expressiveness. Instead of just "list of integers," we can specify "list of length \(n\) for particular \(n\)." In semantics, dependent types capture phenomena like anaphora resolution where the interpretation of "it" depends on specific previously mentioned entities.</p>
+
+<p>Dependent types prove central to proof assistants like Coq and Lean, where propositions are types and proofs are terms. The Curry-Howard correspondence establishes deep connections between type theory, logic, and computation—connections that illuminate how meaning, inference, and computation interrelate.</p>
+
+<p><strong>Linear types</strong> enforce resource-conscious composition. In linear type systems, terms must be used exactly once—no copying or discarding. This restriction naturally models quantum computing (quantum states can't be cloned), resource management (consumable objects), and certain linguistic phenomena (reflexives that must bind exactly once).</p>
+
+<p>Linear logic extends this to semantic composition, distinguishing resource-sensitive operations (where premises "consume" their inputs) from structural operations (where premises remain available). This proves relevant for understanding conversational dynamics, information update, and situated language use.</p>
+
+<h2 id="frameworks">5. Semantic Frameworks</h2>
+
+<h3>5.1 Montague Semantics</h3>
+
+<p><strong>Montague semantics</strong> translates natural language into intensional logic, providing a rigorous compositional foundation. Richard Montague's revolutionary insight was that natural language could receive the same formal treatment as logical languages, with syntax-driven semantic interpretation rules.</p>
+
+<p>The framework employs <strong>possible worlds semantics</strong>: propositions denote sets of possible worlds (those where the proposition is true), properties denote functions from worlds to sets of entities, and intensions provide meanings across worlds while extensions are world-relative denotations.</p>
+
+<p>For example, "unicorn" has an intension (the property of being a unicorn, meaningful across worlds) but empty extension in the actual world (no actual unicorns exist). "Necessarily true" statements are those true in all accessible worlds; "possibly true" statements are those true in at least one accessible world.</p>
+
+<p>Montague semantics compositionally handles complex phenomena like quantification, intensional verbs ("seek," "believe"), and modal expressions ("must," "might"). Its formal rigor made it foundational to theoretical semantics, though its psychological reality remains debated.</p>
+
+<h3>5.2 Distributional Semantics</h3>
+
+<p><strong>Distributional semantics</strong> takes an empirical, corpus-driven approach: word meanings emerge from co-occurrence patterns. Firth's dictum—"you shall know a word by the company it keeps"—summarizes the philosophy. Words appearing in similar contexts should have similar meanings.</p>
+
+<p>The vector space model implements this idea: represent each word as a vector where dimensions correspond to contexts (other words, documents, or syntactic positions), and values reflect co-occurrence frequency. Dimensionality reduction (SVD, NMF) or dense embeddings (Word2Vec, GloVe) compress these sparse high-dimensional representations into manageable vectors.</p>
+
+<p><strong>Composition in distributional semantics</strong> proves more challenging than in formal semantics. Simple vector addition works surprisingly well for many tasks ("king" - "man" + "woman" ≈ "queen"), but fails for others (negation, disjunction, complex syntactic structures). More sophisticated approaches employ:</p>
+<ul>
+<li>Weighted addition based on syntactic structure</li>
+<li>Tensor products for structured composition</li>
+<li>Neural composition functions (recursive networks, transformers)</li>
+<li>Learnable composition operators</li>
+</ul>
+
+<p>The integration of distributional and formal semantics remains an active research frontier. Can we ground logical operations in distributional representations? Can we extract formal structures from learned embeddings? Do transformer models learn compositional rules or exploit statistical patterns? These questions sit at the intersection of linguistics, machine learning, and cognitive science.</p>
+
+<h3>5.3 Frame Semantics and Conceptual Structure</h3>
+
+<p><strong>Frame semantics</strong> (Charles Fillmore) emphasizes that word meanings invoke structured conceptual frames with roles and relationships. Understanding "buy" requires knowing about commercial transactions: there's a buyer, seller, goods, payment, and transfer of ownership. These frame elements structure our semantic knowledge and guide interpretation.</p>
+
+<p>The frame perspective explains why simple compositional rules can fail. "Buy" and "sell" describe the same event from different perspectives, yet "John bought the car from Mary" and "Mary sold the car to John" aren't fully synonymous—each foregrounds different aspects (buyer's vs. seller's perspective). Frames capture this structured background knowledge.</p>
+
+<p><strong>FrameNet</strong> catalogs thousands of semantic frames and their linguistic realizations. Frames like COMMERCIAL_TRANSACTION, MOTION, CAUSATION, and PERCEPTION provide templates for organizing semantic knowledge. Computational systems can use frames for information extraction, question answering, and semantic role labeling.</p>
+
+<p>Frames connect to other semantic approaches: they can be formalized in logic, learned from corpora, represented as structured vectors, or implemented in neural networks. The frame concept itself proves compositional—frames combine and embed (COMMERCIAL_TRANSACTION might involve sub-frames for POSSESSION, EXCHANGE, VALUATION).</p>
+
+<h2 id="quantification">6. Quantification and Scope</h2>
+
+<h3>6.1 Generalized Quantifiers</h3>
+
+<p>Classical logical quantifiers (∀, ∃) extend to <strong>generalized quantifiers</strong> treating quantification as relations between sets. Instead of just "all" and "some," we get "most," "few," "many," "at least three," etc.</p>
+
+<p>Formally, a generalized quantifier \(Q\) relates two sets \(A\) (restrictor) and \(B\) (scope): \(Q(A)(B)\) is true iff \((A,B)\) satisfies \(Q\)'s defining condition. For example:</p>
+<ul>
+<li>\(\text{every}(A)(B)\) iff \(A \subseteq B\)</li>
+<li>\(\text{some}(A)(B)\) iff \(A \cap B \neq \emptyset\)</li>
+<li>\(\text{most}(A)(B)\) iff \(|A \cap B| > |A - B|\)</li>
+</ul>
+
+<p><strong>Conservativity</strong> constrains natural language quantifiers: \(Q(A)(B)\) depends only on \(A \cap B\) and \(A - B\), not on elements outside \(A\). "Every student sleeps" depends only on students, not non-students. This linguistic universal follows from cognitive constraints on quantifier processing.</p>
+
+<p><strong>Monotonicity</strong> properties determine how quantifiers behave under set expansion/contraction:</p>
+<ul>
+<li><strong>Upward monotone:</strong> \(A \subseteq B\) implies \(Q(C)(A) \rightarrow Q(C)(B)\) ("some students" → "some people")</li>
+<li><strong>Downward monotone:</strong> \(B \subseteq A\) implies \(Q(C)(A) \rightarrow Q(C)(B)\) ("no students" → "no graduate students")</li>
+<li><strong>Non-monotone:</strong> "exactly three" is neither</li>
+</ul>
+
+<p>Monotonicity governs inference patterns and interacts with other semantic phenomena like negative polarity items ("any" in "I don't have any money" but not "*I have any money").</p>
+
+<h3>6.2 Scope and Ambiguity</h3>
+
+<p><strong>Scope ambiguity</strong> arises when multiple operators (quantifiers, negation, modals) can take scope over each other in different orders. "Every student read a book" admits two readings:</p>
+
+<ol>
+<li><strong>Surface scope</strong> (∀ > ∃): Every student \(x\) read some book \(y\) (possibly different books)
+   \[\forall x[\text{student}(x) \rightarrow \exists y[\text{book}(y) \wedge \text{read}(x,y)]]\]</li>
+
+<li><strong>Inverse scope</strong> (∃ > ∀): There's a book \(y\) such that every student read it (same book)
+   \[\exists y[\text{book}(y) \wedge \forall x[\text{student}(x) \rightarrow \text{read}(x,y)]]\]</li>
+</ol>
+
+<p>Mechanisms for handling scope include:</p>
+<ul>
+<li><strong>Quantifier Raising (QR):</strong> Transform syntax to make scope explicit at logical form</li>
+<li><strong>Cooper Storage:</strong> Accumulate quantifiers during composition, discharge later</li>
+<li><strong>Continuation Semantics:</strong> Represent meanings as functions over continuations, automatically handling scope</li>
+</ul>
+
+<p>The choice between these mechanisms depends on whether we prioritize surface compositionality (deriving meanings directly from syntax) or semantic flexibility (allowing meanings to reorganize after initial composition).</p>
+
+<h2 id="context">7. Context, Intensionality, and Dynamics</h2>
+
+<h3>7.1 Possible Worlds and Intensions</h3>
+
+<p><strong>Intensional semantics</strong> distinguishes between extension (actual denotation) and intension (meaning across possible worlds). This distinction proves crucial for attitude verbs, modals, and counterfactuals.</p>
+
+<p>Consider "John believes Mary is a spy." If Mary is actually a teacher, can we substitute "teacher" for "spy"? No—John's belief depends on intensional properties (what he thinks about Mary) rather than extensional facts (what Mary actually is). Intensional contexts are <strong>opaque</strong> to substitution.</p>
+
+<p>Modal operators exemplify intensionality. "Necessarily P" means P holds in all accessible possible worlds; "Possibly P" means P holds in some accessible world. The accessibility relation between worlds determines the flavor of modality (logical necessity, physical possibility, epistemic necessity, deontic obligation).</p>
+
+<p><strong>Counterpart theory</strong> handles intensional identity. When we say "I might have been a doctor" (contrary to fact), we're not claiming I exist in another world, but rather that my counterpart in that world is a doctor. This avoids metaphysical puzzles about transworld identity while preserving our intuitions about modal claims.</p>
+
+<h3>7.2 Context-Dependent Interpretation</h3>
+
+<p><strong>Context dependence</strong> pervades language. Indexicals like "I," "here," "now" require contextual resolution. Demonstratives like "this," "that" depend on situational salience. Even common nouns exhibit context sensitivity—"tall" means different things for buildings vs. basketball players.</p>
+
+<p><strong>Kaplan's logic of demonstratives</strong> formalizes context dependence through two-dimensional semantics:</p>
+<ul>
+<li><strong>Character:</strong> Function from context to content (what "I" means in different contexts)</li>
+<li><strong>Content:</strong> Function from world to extension (what the content picks out in different possible worlds)</li>
+</ul>
+
+<p>This framework elegantly handles expressions that vary across contexts but remain constant across possible worlds for a fixed context. "I am here now" is trivially true in any context (character determines truth) but contingent within any context (content could vary across worlds if circumstances differed).</p>
+
+<p><strong>Presupposition</strong> adds another layer. "The king of France is bald" presupposes France has a king. If the presupposition fails, the sentence lacks a truth value rather than being simply false. Presupposition projection through compositional structure raises challenging technical questions about how presuppositions compose.</p>
+
+<h3>7.3 Dynamic Semantics</h3>
+
+<p><strong>Dynamic semantics</strong> reconceives meaning as context-change potential rather than truth conditions. Sentences don't just describe states of affairs—they update information states.</p>
+
+<p><strong>Discourse Representation Theory (DRT)</strong> implements this idea: interpret discourse as building Discourse Representation Structures (DRSs) that accumulate discourse referents and conditions. Anaphora resolution becomes straightforward: "A man walked in. He sat down" introduces discourse referent \(x\) for "a man," available when interpreting "he."</p>
+
+<p><strong>Update semantics</strong> formalizes context update operations. Information states are sets of possible worlds (epistemic states), and sentences eliminate worlds inconsistent with their content. Conditionals, questions, and imperatives all define specific update operations on information states.</p>
+
+<p>Dynamic approaches dissolve certain puzzles. Why can't indefinites take wide scope ("A student read every book" can't mean ∃ > ∀)? In dynamic semantics, indefinites don't quantify—they introduce discourse referents whose potential for anaphoric reference depends on structural accessibility. Scope effects follow from discourse structure rather than logical form.</p>
+
+<h2 id="computational">8. Computational Implementation</h2>
+
+<h3>8.1 Semantic Parsing</h3>
+
+<p><strong>Semantic parsing</strong> translates natural language into formal meaning representations executable by machines. Target representations include lambda calculus expressions, SQL queries, action plans for robots, or nodes in knowledge graphs.</p>
+
+<p>Traditional approaches employed hand-crafted grammars with compositional interpretation rules. Modern neural approaches learn end-to-end mappings from text to logical forms, often through sequence-to-sequence models with attention mechanisms. Hybrid approaches combine neural parsing with symbolic execution, leveraging neural networks' pattern-matching abilities and symbolic systems' interpretability.</p>
+
+<p><strong>Challenges</strong> include handling ambiguity (multiple valid parses), capturing long-range dependencies (embedding "who" questions), and generalizing beyond training distributions (novel domains, constructions, or vocabulary). Neural models excel at pattern completion but struggle with systematic generalization that symbolic systems handle naturally.</p>
+
+<h3>8.2 Compositional Neural Models</h3>
+
+<p><strong>Neural composition functions</strong> learn how to combine vector representations. Recursive neural networks (RNNs) process tree structures recursively: compute parent vector from children via learned transformations. Tree-LSTMs augment this with gating mechanisms for better gradient flow.</p>
+
+<p><strong>Attention mechanisms</strong> revolutionized composition by allowing flexible weighting of constituents. In transformer models, multi-head attention enables different heads to specialize in different compositional relationships (subject-verb agreement, modifier attachment, etc.), discovering compositional structure from data rather than requiring it to be specified.</p>
+
+<p>Do these models genuinely compose, or do they exploit statistical patterns that approximate composition? Evidence suggests transformers learn hierarchical syntactic structures and systematic compositional operations, but questions remain about their compositional generalization to novel structures.</p>
+
+<h3>8.3 Reasoning and Inference</h3>
+
+<p><strong>Natural logic</strong> enables efficient inference without full-scale theorem proving. By tracking monotonicity (upward/downward entailing contexts) and polarity (positive/negative), natural logic systems solve textual entailment: "All students passed" entails "Some students passed" (downward to upward), but doesn't entail "All graduate students passed" (concept narrowing in downward context).</p>
+
+<p><strong>Automated theorem provers</strong> handle more complex inference. Given premises in first-order logic, provers search for derivations of conclusions using resolution, unification, and other inference rules. Modern provers (E, Vampire, Prover9) handle many thousands of axioms efficiently.</p>
+
+<p><strong>Neural-symbolic integration</strong> combines neural learning with symbolic reasoning. Differentiable logic allows gradient-based learning of logical rules. Neural theorem provers use learned heuristics to guide symbolic search. These hybrid systems aim to combine neural networks' generalization with symbolic systems' interpretability and systematic reasoning.</p>
+
+<h2 id="cognitive">9. Cognitive and Philosophical Implications</h2>
+
+<h3>9.1 Language of Thought</h3>
+
+<p>Fodor's <strong>language of thought (LOT)</strong> hypothesis proposes that mental representations have compositional, combinatorial structure analogous to language. Thoughts are formulae in an internal "mentalese" combining primitive concepts through operations resembling syntax.</p>
+
+<p>The arguments for LOT mirror arguments for compositional semantics: productivity (infinite thoughts from finite primitives), systematicity (ability to think "aRb" implies ability to think "bRa"), and compositionality of inference (systematic relationships between related thoughts). LOT predicts that cognitive processes operate over structured representations, not merely associative networks.</p>
+
+<p>Critics object that neural implementations seem more connectionist (distributed, continuous) than symbolic (discrete, structural). Defenders respond that compositional structure can be implemented in distributed representations (as in vector symbolic architectures), making the debate less about neural vs. symbolic than about representational structure.</p>
+
+<h3>9.2 Compositionality Across Domains</h3>
+
+<p>Compositional principles extend beyond language. <strong>Music</strong> exhibits compositional structure: melodies from notes, harmonies from simultaneous notes, phrases from melodic/harmonic patterns, movements from phrases. <strong>Visual scenes</strong> compose: objects from features, scenes from object arrangements, narratives from scene sequences.</p>
+
+<p><strong>Mathematics</strong> is inherently compositional: complex expressions from basic operations, proofs from inference rules, theories from axioms. The universality of compositional structure suggests it reflects deep principles about how information can be organized rather than peculiarities of human language.</p>
+
+<p><strong>Analogical reasoning</strong> exploits compositional structure. To map source domain to target domain, align compositional structure: roles, relations, and patterns transfer while surface features differ. Structure-mapping theory formalizes this, predicting that higher-order relations (relations between relations) drive analogical inference—a compositional hierarchy.</p>
+
+<h3>9.3 Open Questions</h3>
+
+<p><strong>Emergence:</strong> Do genuinely novel properties emerge from composition, or is emergence illusory—merely computational complexity hiding complete reducibility to parts? "Water is wet" seems emergent (individual H₂O molecules aren't wet), yet reductionists argue this is just failure to compute consequences of molecular interactions.</p>
+
+<p><strong>Optimality:</strong> Is compositionality optimal for biological cognition, or merely a good-enough solution? Perhaps radically different architectures could prove more efficient for certain computational problems. Alien minds might organize information non-compositionally yet achieve intelligence.</p>
+
+<p><strong>Boundaries:</strong> Where does composition stop and holistic processing begin? Some suggest composition handles systematic, productive aspects while holistic templates handle frequent, idiomatic patterns. The boundaries remain unclear.</p>
+
+<h2 id="future">10. Future Directions</h2>
+
+<h3>10.1 Multimodal Composition</h3>
+
+<p>How do meanings compose across modalities—language, vision, action, sound? A gesture might bind with speech ("Put it there" + pointing), visual context might restrict quantifier domains ("Pick up the red block" interpreted relative to visible blocks), and actions might complete sentences ("Can you pass the... " + reaching).</p>
+
+<p><strong>Grounded semantics</strong> anchors linguistic meanings in perceptual and motor systems. "Red" means something partly in virtue of visual representations of red stimuli; "grasp" means something partly through motor schemas for grasping. How these groundings compose with purely linguistic meaning remains unclear.</p>
+
+<h3>10.2 Neural-Symbolic Integration</h3>
+
+<p>Can we unify neural learning with symbolic compositionality? Promising approaches include:</p>
+<ul>
+<li><strong>Differentiable logic:</strong> Relax discrete logical operations to continuous approximations amenable to gradient descent</li>
+<li><strong>Program synthesis:</strong> Learn to generate symbolic programs from examples</li>
+<li><strong>Neuro-symbolic architectures:</strong> Neural modules connected through symbolic interfaces, enabling both learning and compositional reasoning</li>
+</ul>
+
+<p>These hybrid systems might reconcile empiricist learning (from data) with rationalist structure (compositional systematicity).</p>
+
+<h3>10.3 Quantum Semantics</h3>
+
+<p>Quantum theory inspires novel semantic frameworks. Quantum superposition resembles semantic ambiguity; quantum entanglement resembles semantic correlations; quantum measurement resembles context-dependent disambiguation.</p>
+
+<p><strong>Quantum natural language processing</strong> represents words as density matrices, composition as tensor products, and disambiguation as measurement. This framework captures non-classical semantic phenomena like conjunction fallacies and order effects in judgment. Whether quantum models illuminate deep truths about meaning or merely provide convenient mathematics remains debated.</p>
+
+<div class="references">
+  <h2 id="references">References</h2>
+
+  <h3>Foundational Texts</h3>
+  <ol>
+    <li><strong>Frege, G.</strong> (1892). Über Sinn und Bedeutung. <em>Zeitschrift für Philosophie und philosophische Kritik</em>.</li>
+    <li><strong>Montague, R.</strong> (1973). The proper treatment of quantification in ordinary English. In <em>Approaches to Natural Language</em>.</li>
+    <li><strong>Partee, B.H., et al.</strong> (1990). <em>Mathematical Methods in Linguistics</em>. Kluwer.</li>
+  </ol>
+
+  <h3>Formal Semantics</h3>
+  <ol start="4">
+    <li><strong>Heim, I. & Kratzer, A.</strong> (1998). <em>Semantics in Generative Grammar</em>. Blackwell.</li>
+    <li><strong>Chierchia, G. & McConnell-Ginet, S.</strong> (2000). <em>Meaning and Grammar</em>. MIT Press.</li>
+  </ol>
+
+  <h3>Computational Approaches</h3>
+  <ol start="6">
+    <li><strong>Jurafsky, D. & Martin, J.H.</strong> (2023). <em>Speech and Language Processing</em> (3rd ed.). Prentice Hall.</li>
+    <li><strong>Clark, S.</strong> (2015). Vector space models of lexical meaning. In <em>Handbook of Contemporary Semantic Theory</em>.</li>
+  </ol>
+
+  <h3>Cognitive Perspectives</h3>
+  <ol start="8">
+    <li><strong>Fodor, J.A.</strong> (1975). <em>The Language of Thought</em>. Harvard University Press.</li>
+    <li><strong>Lakoff, G. & Johnson, M.</strong> (1980). <em>Metaphors We Live By</em>. University of Chicago Press.</li>
+  </ol>
+
+  <h3>Modern Synthesis</h3>
+  <ol start="10">
+    <li><strong>Baroni, M., et al.</strong> (2014). Don't count, predict! A systematic comparison of context-counting vs. context-predicting semantic vectors. <em>ACL</em>.</li>
+    <li><strong>Coecke, B., Sadrzadeh, M., & Clark, S.</strong> (2010). Mathematical foundations for a compositional distributional model of meaning. <em>Linguistic Analysis</em>.</li>
+  </ol>
+</div>
+
+<div style="margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); color: var(--text-secondary); font-size: 0.7rem;">
+  <p><strong>Document Version:</strong> 2.0</p>
+  <p><strong>Status:</strong> Technical Reference</p>
+  <p><strong>Last Updated:</strong> January 2025</p>
+  <p><strong>License:</strong> CC BY-NC-SA 4.0</p>
+</div>
+
+</body>
+</html>

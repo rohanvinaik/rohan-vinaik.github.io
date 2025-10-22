@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Information Bottleneck Principle | Rohan Vinaik</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --text: #e0e0e0;
+      --text-secondary: #a0a0a0;
+      --accent: #00ff00;
+      --border: #333;
+      --code-bg: #1a1a1a;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'JetBrains Mono', monospace;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 20px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    h1 {
+      color: var(--accent);
+      font-size: 1.5rem;
+      margin-bottom: 8px;
+      letter-spacing: 0.02em;
+    }
+    h2 {
+      color: var(--accent);
+      font-size: 1.1rem;
+      margin-top: 32px;
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    h3 {
+      color: var(--accent);
+      font-size: 0.95rem;
+      margin-top: 24px;
+      margin-bottom: 12px;
+    }
+    h4 {
+      color: var(--text);
+      font-size: 0.85rem;
+      margin-top: 20px;
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+    p { margin-bottom: 16px; font-size: 0.85rem; }
+    a {
+      color: var(--accent);
+      text-decoration: none;
+      border-bottom: 1px dotted var(--accent);
+    }
+    a:hover { border-bottom-style: solid; }
+    .back-link {
+      display: inline-block;
+      margin-bottom: 24px;
+      font-size: 0.85rem;
+    }
+    .paper-meta {
+      color: var(--text-secondary);
+      font-size: 0.75rem;
+      margin-bottom: 24px;
+    }
+    .abstract {
+      background: var(--code-bg);
+      padding: 20px;
+      border-left: 3px solid var(--accent);
+      margin-bottom: 32px;
+      font-size: 0.85rem;
+    }
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 32px;
+    }
+    .tag {
+      background: var(--code-bg);
+      padding: 4px 12px;
+      border: 1px solid var(--border);
+      font-size: 0.7rem;
+      color: var(--accent);
+      text-decoration: none;
+      border-bottom: none;
+    }
+    .tag:hover {
+      background: var(--accent);
+      color: var(--bg);
+      border-color: var(--accent);
+    }
+    .quick-nav {
+      background: var(--code-bg);
+      padding: 16px;
+      margin-bottom: 32px;
+      border: 1px solid var(--border);
+    }
+    .quick-nav h3 {
+      margin-top: 0;
+      font-size: 0.85rem;
+    }
+    .quick-nav ul {
+      list-style: none;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .quick-nav a {
+      font-size: 0.75rem;
+      border-bottom: none;
+      padding: 4px 0;
+      display: block;
+    }
+    .quick-nav a:hover { color: var(--bg); background: var(--accent); padding-left: 8px; }
+    .code-block {
+      background: var(--code-bg);
+      padding: 16px;
+      margin: 16px 0;
+      border-left: 2px solid var(--accent);
+      font-size: 0.8rem;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+    .references {
+      font-size: 0.75rem;
+      margin-top: 32px;
+    }
+    .references ol {
+      padding-left: 20px;
+    }
+    .references li {
+      margin-bottom: 12px;
+      line-height: 1.5;
+    }
+    @media (max-width: 768px) {
+      body { padding: 12px; }
+      h1 { font-size: 1.2rem; }
+      h2 { font-size: 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<a href="../index.html#reference" class="back-link">← Back to Reference</a>
+
+<h1>Information Bottleneck Principle: Optimal Compression and Prediction</h1>
+<div class="paper-meta">January 2025 · Technical Reference</div>
+
+<div class="tags">
+  <a href="../index.html?filter=INFORMATION-THEORY" class="tag">[INFORMATION-THEORY]</a>
+  <a href="../index.html?filter=COMPRESSION" class="tag">[COMPRESSION]</a>
+  <a href="../index.html?filter=MUTUAL-INFORMATION" class="tag">[MUTUAL-INFORMATION]</a>
+  <a href="../index.html?filter=REPRESENTATION-LEARNING" class="tag">[REPRESENTATION-LEARNING]</a>
+  <a href="../index.html?filter=RATE-DISTORTION" class="tag">[RATE-DISTORTION]</a>
+  <a href="../index.html?filter=DEEP-LEARNING" class="tag">[DEEP-LEARNING]</a>
+  <a href="../index.html?filter=GENERALIZATION" class="tag">[GENERALIZATION]</a>
+  <a href="../index.html?filter=NEURAL-NETWORKS" class="tag">[NEURAL-NETWORKS]</a>
+  <a href="../index.html?filter=FEATURE-SELECTION" class="tag">[FEATURE-SELECTION]</a>
+  <a href="../index.html?filter=CLUSTERING" class="tag">[CLUSTERING]</a>
+</div>
+
+<div class="abstract">
+  <strong>Abstract:</strong> The Information Bottleneck (IB) principle provides a mathematical framework for extracting task-relevant information from data while discarding irrelevant details. By balancing compression (simplicity) against prediction accuracy, IB formalizes the fundamental tradeoff in representation learning: preserving what matters while ignoring what doesn't. This framework unifies concepts from rate-distortion theory, statistical learning, and neural information processing, offering insights into both biological intelligence and artificial learning systems.
+</div>
+
+<div class="quick-nav">
+  <h3>Quick Navigation</h3>
+  <ul>
+    <li><a href="#foundational-concepts">Foundational Concepts</a></li>
+    <li><a href="#mathematical-formulation">Mathematical Formulation</a></li>
+    <li><a href="#theoretical-properties">Theoretical Properties</a></li>
+    <li><a href="#computational-methods">Computational Methods</a></li>
+    <li><a href="#connections-learning-theory">Connections to Learning Theory</a></li>
+    <li><a href="#applications">Applications</a></li>
+    <li><a href="#extensions-variants">Extensions and Variants</a></li>
+    <li><a href="#references">References</a></li>
+  </ul>
+</div>
+
+<h2 id="foundational-concepts">1. Foundational Concepts</h2>
+
+<h3>1.1 The Compression-Prediction Tradeoff</h3>
+
+<p>The Information Bottleneck addresses a fundamental tension in representation learning:</p>
+
+<div class="code-block">The Problem:
+
+Given:
+  X: Input random variable (high-dimensional, complex)
+  Y: Target random variable (what we want to predict)
+
+Find:
+  T: Compressed representation of X
+
+Such that:
+  T minimizes information from X (compression)
+  T maximizes information about Y (prediction)</div>
+
+<p><strong>Intuition:</strong> Extract the essence of X that matters for predicting Y, discard everything else.</p>
+
+<div class="code-block">Example (Image Classification):
+
+X: Raw pixel values (millions of dimensions)
+Y: Object category (cat, dog, car, etc.)
+T: Internal representation (e.g., neural network features)
+
+Goal: T should contain enough of X to predict Y accurately,
+      but no more information than necessary</div>
+
+<h3>1.2 Information-Theoretic Framework</h3>
+
+<p><strong>Mutual Information</strong> quantifies shared information:</p>
+
+<div class="code-block">I(X; T) = H(X) - H(X|T)
+        = H(T) - H(T|X)
+        = E[log p(X,T)/(p(X)p(T))]
+
+Interpretation: Reduction in uncertainty about X given T</div>
+
+<p><strong>The IB Objective:</strong> Balance two competing mutual informations:</p>
+
+<div class="code-block">Minimize: I(X; T) - β·I(T; Y)
+
+where β: Tradeoff parameter
+  β → 0: Maximum compression (T independent of X)
+  β → ∞: Maximum accuracy (T captures all of X relevant to Y)</div>
+
+<h3>1.3 Connection to Rate-Distortion Theory</h3>
+
+<p>Classical rate-distortion minimizes:</p>
+
+<div class="code-block">R(D) = min_{p(x̂|x): E[d(x,x̂)]≤D} I(X; X̂)
+
+where:
+  X̂: Reconstruction of X
+  d(·,·): Distortion measure
+  D: Allowed distortion level</div>
+
+<p><strong>IB as Generalized Rate-Distortion:</strong></p>
+
+<div class="code-block">Replace: d(x, x̂) with loss of predictive power
+Distortion: -I(T; Y) instead of E[d(x,x̂)]
+
+Result: IB = Rate-distortion with information-theoretic distortion</div>
+
+<h2 id="mathematical-formulation">2. Mathematical Formulation</h2>
+
+<h3>2.1 Lagrangian Formulation</h3>
+
+<p><strong>Variational Problem:</strong></p>
+
+<div class="code-block">L[p(t|x)] = I(X; T) - β·I(T; Y)
+
+Minimize over all conditional distributions p(t|x)</div>
+
+<p><strong>Equivalent Constrained Form:</strong></p>
+
+<div class="code-block">minimize I(X; T)
+subject to I(T; Y) ≥ I_min
+
+or equivalently:
+
+maximize I(T; Y)
+subject to I(X; T) ≤ R_max</div>
+
+<h3>2.2 Self-Consistent Equations</h3>
+
+<p>The optimal solution satisfies:</p>
+
+<p><strong>Encoder</strong> (Boltzmann distribution):</p>
+
+<div class="code-block">p(t|x) = p(t)/Z(x,β) · exp(β·D_KL[p(y|x) || p(y|t)])
+
+where Z(x,β) = Σ_t p(t) exp(β·D_KL[p(y|x) || p(y|t)])</div>
+
+<p><strong>Decoder</strong> (Bayesian):</p>
+
+<div class="code-block">p(y|t) = Σ_x p(y|x)p(x|t)
+       = Σ_x p(y|x)p(t|x)p(x)/p(t)</div>
+
+<p><strong>Marginal:</strong></p>
+
+<div class="code-block">p(t) = Σ_x p(t|x)p(x)</div>
+
+<p><strong>Iterative Solution:</strong> Alternate updates until convergence</p>
+
+<h3>2.3 Information Plane</h3>
+
+<p>The information plane visualizes the tradeoff:</p>
+
+<div class="code-block">Axes:
+  Horizontal: I(X; T) - Compression cost
+  Vertical: I(T; Y) - Prediction quality</div>
+
+<p><strong>Information Curve:</strong> As β varies, (I(X; T), I(T; Y)) traces a curve</p>
+
+<p><strong>Properties:</strong></p>
+<ul style="margin-left: 20px; font-size: 0.85rem; margin-bottom: 16px;">
+  <li>Concave: Cannot improve both simultaneously beyond curve</li>
+  <li>Monotonic: Larger I(X; T) allows larger I(T; Y)</li>
+  <li>Bounded: I(T; Y) ≤ I(X; Y) (data processing inequality)</li>
+  <li>Optimal: Curve represents Pareto frontier</li>
+</ul>
+
+<div class="code-block">Physical Interpretation:
+
+Any point below curve: Sub-optimal (can compress more without losing accuracy)
+Any point above curve: Impossible (violates data processing inequality)
+Points on curve: Optimal balance for some β</div>
+
+<h2 id="theoretical-properties">3. Theoretical Properties</h2>
+
+<h3>3.1 Data Processing Inequality</h3>
+
+<p><strong>Statement:</strong></p>
+
+<div class="code-block">If X → T → Y forms a Markov chain, then:
+  I(X; Y) ≥ I(T; Y)</div>
+
+<p><strong>Implication for IB:</strong></p>
+
+<div class="code-block">Compression cannot create information:
+  T cannot predict Y better than X does
+
+Best case: I(T; Y) = I(X; Y)
+  → T is a sufficient statistic for Y given X</div>
+
+<h3>3.2 Sufficient Statistics</h3>
+
+<p><strong>Definition:</strong> T is sufficient for Y w.r.t. X if:</p>
+
+<div class="code-block">p(y|x,t) = p(y|t)
+
+Equivalently: Y ⊥ X | T</div>
+
+<p><strong>Minimal Sufficient Statistic:</strong></p>
+
+<div class="code-block">Definition: Smallest T that is sufficient
+IB Connection: As β → ∞, IB solution approaches minimal sufficient statistic
+
+Properties:
+  - Captures all information about Y contained in X
+  - Minimal compression while maintaining perfect prediction</div>
+
+<h3>3.3 Convexity and Uniqueness</h3>
+
+<p><strong>Functional Convexity:</strong></p>
+
+<div class="code-block">The IB Lagrangian L[p(t|x)] is convex in p(t|x)
+
+Implication: Local minima are global minima</div>
+
+<p><strong>Solution Uniqueness:</strong></p>
+
+<div class="code-block">For fixed β: Solution p(t|x) may not be unique
+For information plane point (I_x, I_y): Typically unique
+
+Geometric interpretation:
+  Multiple encoders can achieve same information values
+  But information plane point is well-defined</div>
+
+<h2 id="computational-methods">4. Computational Methods</h2>
+
+<h3>4.1 Blahut-Arimoto Algorithm</h3>
+
+<p><strong>Iterative Alternation:</strong></p>
+
+<div class="code-block">Initialize p(t|x) arbitrarily
+
+Repeat until convergence:
+  1. Compute decoder: p(y|t) = Σ_x p(y|x)p(x|t)
+  2. Update marginal: p(t) = Σ_x p(t|x)p(x)
+  3. Compute encoder: p(t|x) ∝ p(t)·exp(β·D_KL[p(y|x)||p(y|t)])
+  4. Normalize encoder: Σ_t p(t|x) = 1</div>
+
+<p><strong>Convergence:</strong> Monotonically decreases Lagrangian L</p>
+
+<p><strong>Complexity:</strong> O(|X|·|T|·|Y|) per iteration</p>
+
+<h3>4.2 Variational Approximation</h3>
+
+<p><strong>Parametric Encoder:</strong> Replace p(t|x) with q<sub>θ</sub>(t|x)</p>
+
+<p><strong>Objective:</strong></p>
+
+<div class="code-block">L(θ) = I_q(X; T) - β·I_q(T; Y)
+
+where I_q denotes mutual information under q_θ</div>
+
+<p><strong>Gradient Estimation:</strong></p>
+
+<div class="code-block">∇_θ L ≈ E_q[∇_θ log q_θ(t|x)·(log q_θ(t|x) - β·log p(y|t))]
+
+Use: REINFORCE, reparameterization trick, or Gumbel-softmax</div>
+
+<p><strong>Neural Implementation:</strong></p>
+
+<div class="code-block">Encoder network: x → q_θ(t|x)
+Decoder network: t → p_φ(y|t)
+
+Train end-to-end with IB loss</div>
+
+<h3>4.3 Deterministic Information Bottleneck</h3>
+
+<p><strong>Motivation:</strong> Stochastic encoders require sampling during inference</p>
+
+<p><strong>Formulation:</strong> Restrict to deterministic mappings t = f(x)</p>
+
+<p><strong>Objective:</strong></p>
+
+<div class="code-block">minimize H(f(X)) - β·I(f(X); Y)
+
+where H(f(X)): Entropy of compressed representation</div>
+
+<p><strong>Advantage:</strong> Simpler inference (no sampling)<br>
+<strong>Disadvantage:</strong> May achieve suboptimal compression-prediction tradeoff</p>
+
+<h2 id="connections-learning-theory">5. Connections to Learning Theory</h2>
+
+<h3>5.1 Generalization Bounds</h3>
+
+<p>The IB principle provides generalization bounds through compression:</p>
+
+<p><strong>PAC-Bayes Bound:</strong></p>
+
+<div class="code-block">Generalization Error ≤ √(I(W; D)/n) + complexity terms
+
+where:
+  W: Model parameters
+  D: Training data
+  n: Sample size</div>
+
+<p><strong>Interpretation:</strong></p>
+
+<div class="code-block">Lower I(W; D): Better generalization
+Compression (minimizing I(X; T)): Similar effect
+IB provides: Principled way to compress while maintaining accuracy</div>
+
+<h3>5.2 Minimum Description Length</h3>
+
+<p><strong>MDL Principle:</strong> Choose model minimizing:</p>
+
+<div class="code-block">Description length = Code length for model + Code length for data given model
+                   ≈ I(X; T) + (H(Y|T) or equivalent)</div>
+
+<p><strong>IB Connection:</strong></p>
+
+<div class="code-block">I(X; T): Complexity (model description)
+-I(T; Y): Lack of accuracy (data description given model)
+
+IB ≈ MDL with information-theoretic coding</div>
+
+<h3>5.3 Feature Selection</h3>
+
+<p>IB provides principled feature selection:</p>
+
+<p><strong>Problem:</strong> Select subset S ⊆ Features maximizing I(S; Y) while minimizing |S|</p>
+
+<p><strong>IB Approach:</strong></p>
+
+<div class="code-block">Let T select features through gating
+Minimize: I(X; T) - β·I(T; Y)
+
+Naturally encourages:
+  - Sparse T (few active features)
+  - Relevant features (high I(T; Y))</div>
+
+<p><strong>Greedy Algorithm:</strong></p>
+
+<div class="code-block">Start: S = ∅
+Repeat:
+  Add feature f maximizing: I(S ∪ {f}; Y) - α·|S ∪ {f}|
+Until: Improvement below threshold</div>
+
+<h2 id="applications">6. Applications</h2>
+
+<h3>6.1 Clustering</h3>
+
+<p><strong>IB Clustering:</strong> Cluster data points while preserving predictive information</p>
+
+<p><strong>Formulation:</strong></p>
+
+<div class="code-block">X: Individual data points
+T: Cluster assignments
+Y: Labels (or X itself for unsupervised)
+
+Minimize: I(X; T) - β·I(T; Y)</div>
+
+<p><strong>Advantage over K-means:</strong></p>
+
+<div class="code-block">K-means: Hard assignments, Euclidean distance
+IB: Soft assignments, information-theoretic distance</div>
+
+<p><strong>Relation:</strong> IB clustering → K-means as β → ∞ and distributions → deterministic</p>
+
+<h3>6.2 Neural Network Interpretability</h3>
+
+<p><strong>Deep Learning IB Hypothesis:</strong> Networks learn via two phases</p>
+
+<p><strong>Phase 1 - Fitting:</strong></p>
+
+<div class="code-block">Increase I(T; Y): Fit training data
+May also increase I(X; T): Memorize</div>
+
+<p><strong>Phase 2 - Compression:</strong></p>
+
+<div class="code-block">Decrease I(X; T): Compress representation
+Maintain I(T; Y): Preserve accuracy
+
+Result: Better generalization</div>
+
+<p><strong>Empirical Observations:</strong> Some networks show compression dynamics, others don't<br>
+<strong>Debate:</strong> Depends on activation functions, architecture, measurement methods</p>
+
+<h3>6.3 Representation Learning</h3>
+
+<p><strong>Goal:</strong> Learn features T from data X useful for downstream tasks Y</p>
+
+<p><strong>IB Perspective:</strong></p>
+
+<div class="code-block">Good representations:
+  - Low I(X; T): Simple, compressed
+  - High I(T; Y): Informative about task
+
+Achieve by: Minimize IB Lagrangian during training</div>
+
+<p><strong>Connection to Autoencoders:</strong></p>
+
+<div class="code-block">Standard Autoencoder: Minimize reconstruction error
+Variational Autoencoder: Add KL penalty (compression)
+IB Autoencoder: Balance reconstruction against task-relevant compression</div>
+
+<h2 id="extensions-variants">7. Extensions and Variants</h2>
+
+<h3>7.1 Conditional Information Bottleneck</h3>
+
+<p><strong>Setting:</strong> Additional side information S available</p>
+
+<p><strong>Objective:</strong></p>
+
+<div class="code-block">minimize I(X; T|S) - β·I(T; Y|S)
+
+Interpretation: Compress X given S, predict Y given S</div>
+
+<p><strong>Applications:</strong></p>
+<ul style="margin-left: 20px; font-size: 0.85rem; margin-bottom: 16px;">
+  <li>Domain adaptation (S = domain indicator)</li>
+  <li>Multi-task learning (S = task identifier)</li>
+  <li>Controlled generation (S = control variable)</li>
+</ul>
+
+<h3>7.2 Multivariate Information Bottleneck</h3>
+
+<p><strong>Setting:</strong> Multiple input sources X = (X₁, X₂, ..., X<sub>n</sub>)</p>
+
+<p><strong>Objective:</strong></p>
+
+<div class="code-block">minimize Σ_i I(X_i; T) - β·I(T; Y)
+
+Challenge: Redundancy and synergy between inputs</div>
+
+<p><strong>Partial Information Decomposition (PID):</strong> Decompose I(X₁, X₂; Y) into:</p>
+
+<ul style="margin-left: 20px; font-size: 0.85rem; margin-bottom: 16px;">
+  <li>Unique to X₁</li>
+  <li>Unique to X₂</li>
+  <li>Redundant (shared)</li>
+  <li>Synergistic (both needed)</li>
+</ul>
+
+<h3>7.3 Deep Information Bottleneck</h3>
+
+<p><strong>Hierarchical Layers:</strong> X → T₁ → T₂ → ... → T<sub>k</sub> → Y</p>
+
+<p><strong>Layer-wise IB:</strong></p>
+
+<div class="code-block">For layer ℓ:
+  minimize I(T_{ℓ-1}; T_ℓ) - β·I(T_ℓ; Y)</div>
+
+<p><strong>Benefits:</strong></p>
+
+<div class="code-block">- Successive compression through layers
+- Each layer removes irrelevant details
+- Final layer: Maximally compressed, maximally predictive</div>
+
+<p><strong>Training Dynamics:</strong> Information plane trajectories through training</p>
+
+<div class="code-block">Early: I(T; Y) increases (learning)
+Late: I(X; T) decreases (compression) [debated]</div>
+
+<div class="references">
+  <h2 id="references">References</h2>
+
+  <h3 style="color: var(--accent); font-size: 0.85rem; margin-top: 24px; margin-bottom: 12px;">Foundational Papers</h3>
+  <ol>
+    <li><strong>Tishby, N., Pereira, F.C., & Bialek, W.</strong> (1999). The information bottleneck method. <em>Proc. 37th Allerton Conference on Communication, Control and Computing</em>, 368-377.</li>
+    <li><strong>Tishby, N. & Zaslavsky, N.</strong> (2015). Deep learning and the information bottleneck principle. <em>IEEE Information Theory Workshop</em>, 1-5.</li>
+  </ol>
+
+  <h3 style="color: var(--accent); font-size: 0.85rem; margin-top: 24px; margin-bottom: 12px;">Theory</h3>
+  <ol start="3">
+    <li><strong>Shamir, O., Sabato, S., & Tishby, N.</strong> (2010). Learning and generalization with the information bottleneck. <em>Theoretical Computer Science</em>, 411(29-30), 2696-2711.</li>
+    <li><strong>Cover, T. M., & Thomas, J. A.</strong> (2006). <em>Elements of Information Theory</em> (2nd ed.). Wiley.</li>
+  </ol>
+
+  <h3 style="color: var(--accent); font-size: 0.85rem; margin-top: 24px; margin-bottom: 12px;">Applications</h3>
+  <ol start="5">
+    <li><strong>Strouse, D.J. & Schwab, D.J.</strong> (2017). The deterministic information bottleneck. <em>Neural Computation</em>, 29(6), 1611-1630.</li>
+    <li><strong>Alemi, A.A., et al.</strong> (2017). Deep variational information bottleneck. <em>ICLR</em>.</li>
+  </ol>
+
+  <h3 style="color: var(--accent); font-size: 0.85rem; margin-top: 24px; margin-bottom: 12px;">Critiques and Extensions</h3>
+  <ol start="7">
+    <li><strong>Saxe, A.M., et al.</strong> (2019). On the information bottleneck theory of deep learning. <em>ICLR</em>.</li>
+    <li><strong>Goldfeld, Z. & Polyanskiy, Y.</strong> (2020). The information bottleneck problem and its applications in machine learning. <em>IEEE Journal on Selected Areas in Information Theory</em>, 1(1), 19-38.</li>
+  </ol>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Differential Encoding: Genomic Data Compression Through Reference Comparison | Rohan Vinaik</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --text: #e0e0e0;
+      --text-secondary: #a0a0a0;
+      --accent: #00ff00;
+      --border: #333;
+      --code-bg: #1a1a1a;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'JetBrains Mono', monospace;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 20px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    h1 {
+      color: var(--accent);
+      font-size: 1.5rem;
+      margin-bottom: 8px;
+      letter-spacing: 0.02em;
+    }
+    h2 {
+      color: var(--accent);
+      font-size: 1.1rem;
+      margin-top: 32px;
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    h3 {
+      color: var(--accent);
+      font-size: 0.95rem;
+      margin-top: 24px;
+      margin-bottom: 12px;
+    }
+    h4 {
+      color: var(--text);
+      font-size: 0.85rem;
+      margin-top: 20px;
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+    p { margin-bottom: 16px; font-size: 0.85rem; }
+    a {
+      color: var(--accent);
+      text-decoration: none;
+      border-bottom: 1px dotted var(--accent);
+    }
+    a:hover { border-bottom-style: solid; }
+    .back-link {
+      display: inline-block;
+      margin-bottom: 24px;
+      font-size: 0.85rem;
+    }
+    .paper-meta {
+      color: var(--text-secondary);
+      font-size: 0.75rem;
+      margin-bottom: 24px;
+    }
+    .abstract {
+      background: var(--code-bg);
+      padding: 20px;
+      border-left: 3px solid var(--accent);
+      margin-bottom: 32px;
+      font-size: 0.85rem;
+    }
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 32px;
+    }
+    .tag {
+      background: var(--code-bg);
+      padding: 4px 12px;
+      border: 1px solid var(--border);
+      font-size: 0.7rem;
+      color: var(--accent);
+      text-decoration: none;
+      border-bottom: none;
+    }
+    .tag:hover {
+      background: var(--accent);
+      color: var(--bg);
+      border-color: var(--accent);
+    }
+    .quick-nav {
+      background: var(--code-bg);
+      padding: 16px;
+      margin-bottom: 32px;
+      border: 1px solid var(--border);
+    }
+    .quick-nav h3 {
+      margin-top: 0;
+      font-size: 0.85rem;
+    }
+    .quick-nav ul {
+      list-style: none;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .quick-nav a {
+      font-size: 0.75rem;
+      border-bottom: none;
+      padding: 4px 0;
+      display: block;
+    }
+    .quick-nav a:hover { color: var(--bg); background: var(--accent); padding-left: 8px; }
+    .code-block {
+      background: var(--code-bg);
+      padding: 16px;
+      border: 1px solid var(--border);
+      margin: 16px 0;
+      font-size: 0.75rem;
+      overflow-x: auto;
+      white-space: pre;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    ul, ol {
+      margin-left: 20px;
+      margin-bottom: 16px;
+      font-size: 0.85rem;
+    }
+    li {
+      margin-bottom: 8px;
+    }
+    .references {
+      font-size: 0.75rem;
+      margin-top: 32px;
+    }
+    .references ol {
+      padding-left: 20px;
+    }
+    .references li {
+      margin-bottom: 12px;
+      line-height: 1.5;
+    }
+    @media (max-width: 768px) {
+      body { padding: 12px; }
+      h1 { font-size: 1.2rem; }
+      h2 { font-size: 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<a href="../index.html#reference" class="back-link">← Back to Reference</a>
+
+<h1>Differential Encoding: Genomic Data Compression Through Reference Comparison</h1>
+<div class="paper-meta">Version 2.0 · January 2025 · Technical Reference</div>
+
+<div class="tags">
+  <a href="../index.html?filter=GENOMICS" class="tag">[GENOMICS]</a>
+  <a href="../index.html?filter=HYPERDIMENSIONAL-COMPUTING" class="tag">[HYPERDIMENSIONAL-COMPUTING]</a>
+  <a href="../index.html?filter=CRYPTOGRAPHY" class="tag">[CRYPTOGRAPHY]</a>
+  <a href="../index.html?filter=DATA-COMPRESSION" class="tag">[DATA-COMPRESSION]</a>
+  <a href="../index.html?filter=REFERENCE-GENOMES" class="tag">[REFERENCE-GENOMES]</a>
+  <a href="../index.html?filter=PRIVACY-PRESERVING" class="tag">[PRIVACY-PRESERVING]</a>
+  <a href="../index.html?filter=BIOINFORMATICS" class="tag">[BIOINFORMATICS]</a>
+  <a href="../index.html?filter=VARIANT-ENCODING" class="tag">[VARIANT-ENCODING]</a>
+</div>
+
+<div class="abstract">
+  <strong>Abstract:</strong> Differential encoding compresses genomic data by representing experimental genomes as differences from reference genomes rather than storing complete variant information. This approach achieves significant compression ratios (often 95%+) while maintaining data integrity through cryptographic verification. The methodology combines reference-based representation, chunking strategies, and hyperdimensional projection to enable privacy-preserving genomic analysis. This document explores theoretical foundations, encoding schemes, and the mathematical principles underlying difference-based genomic compression.
+</div>
+
+<div class="quick-nav">
+  <h3>Quick Navigation</h3>
+  <ul>
+    <li><a href="#core-principles">1. Core Principles</a></li>
+    <li><a href="#mathematical-foundations">2. Mathematical Foundations</a></li>
+    <li><a href="#encoding-schemes">3. Encoding Schemes</a></li>
+    <li><a href="#chunking-strategies">4. Chunking Strategies</a></li>
+    <li><a href="#reference-selection">5. Reference Selection</a></li>
+    <li><a href="#cryptographic-integrity">6. Cryptographic Integrity</a></li>
+    <li><a href="#hyperdimensional-integration">7. Hyperdimensional Integration</a></li>
+    <li><a href="#references">References</a></li>
+  </ul>
+</div>
+
+<h2 id="core-principles">1. Core Principles</h2>
+
+<h3>1.1 Difference-Based Representation</h3>
+
+<p>Most genomic variation is shared across populations, making absolute storage redundant. Differential encoding exploits this by storing only deviations from a reference sequence.</p>
+
+<h4>Representation</h4>
+<div class="code-block">Traditional: Store all 3 billion bases per genome
+Differential: Store ~3-5 million variants (0.1% difference)
+
+Compression potential: 1000× reduction in raw storage</div>
+
+<h4>Information-Theoretic Perspective</h4>
+<div class="code-block">Entropy of genomic sequence: H(G) ≈ 3×10⁹ bits
+Entropy of differences: H(G|R) ≈ 3×10⁶ bits
+
+Mutual information: I(G; R) ≈ 2.997×10⁹ bits
+  → Most information shared with reference</div>
+
+<h3>1.2 Privacy Through Reference Randomization</h3>
+
+<p>Randomly selecting references per data chunk increases privacy by obscuring absolute genomic positions.</p>
+
+<h4>Security Property</h4>
+<div class="code-block">Without reference identity:
+  Attacker sees only relative differences
+  Cannot reconstruct absolute positions
+  Privacy enhanced through reference ambiguity</div>
+
+<h4>Cryptographic Selection</h4>
+<div class="code-block">reference_seed = HMAC-SHA256(master_seed || chunk_boundaries)
+reference = deterministic_random_choice(pool, seed=reference_seed)
+
+Properties:
+  - Deterministic: Same seed → same reference
+  - Unpredictable: Different chunks → different references
+  - Secure: Requires master seed for reconstruction</div>
+
+<h2 id="mathematical-foundations">2. Mathematical Foundations</h2>
+
+<h3>2.1 Difference Types</h3>
+
+<p>Three fundamental categories capture genomic variation:</p>
+
+<h4>New Mutations (Experimental ∖ Reference)</h4>
+<div class="code-block">N = {v ∈ E | v ∉ R}
+
+Interpretation: Unique variants in experimental genome
+Biological significance: Population-specific or de novo mutations</div>
+
+<h4>Missing Variants (Reference ∖ Experimental)</h4>
+<div class="code-block">M = {v ∈ R | v ∉ E}
+
+Interpretation: Common variants absent in experimental
+Biological significance: Protective alleles, selection signatures</div>
+
+<h4>Genotype Differences (Same position, different dosage)</h4>
+<div class="code-block">G = {v ∈ E ∩ R | genotype_E(v) ≠ genotype_R(v)}
+
+Interpretation: Shared variant, different copy number
+Biological significance: Heterozygous vs. homozygous states</div>
+
+<h3>2.2 Feature Space Construction</h3>
+
+<p>Differential features are encoded in multidimensional feature vectors that capture structural properties of differences.</p>
+
+<h4>Typical Dimensions</h4>
+<div class="code-block">384-dimensional feature vector:
+  - Difference type distribution (10 dims)
+  - Position encoding via sinusoidal (128 dims)
+  - Allele composition frequencies (64 dims)
+  - Genotype distribution (64 dims)
+  - Functional impact scores (64 dims)
+  - Quality metrics (54 dims)</div>
+
+<h4>Position Encoding</h4>
+<p>Position encoding uses sinusoidal functions to capture local and global positional relationships:</p>
+<div class="code-block">PE(pos, 2i) = sin(pos / 10000^(2i/d))
+PE(pos, 2i+1) = cos(pos / 10000^(2i/d))
+
+Captures: Local and global positional relationships
+Benefits: Continuous, smooth representation</div>
+
+<h3>2.3 Hypervector Projection</h3>
+
+<p>Johnson-Lindenstrauss theorem guarantees distance preservation under random projection:</p>
+
+<h4>Random Gaussian Projection</h4>
+<p>Random Gaussian projection transforms feature vectors into hypervectors:</p>
+<div class="code-block">W ∈ ℝ^(384 × d) ~ N(0, 1/√384)
+h = normalize(W^T · f)
+
+where f ∈ ℝ^384: feature vector, h ∈ ℝ^d: hypervector</div>
+
+<h4>Distance Preservation</h4>
+<div class="code-block">With probability > 99%:
+  (1 - ε)||f_i - f_j||² ≤ ||h_i - h_j||² ≤ (1 + ε)||f_i - f_j||²
+
+For ε = 0.1, need d ≥ O(log n / ε²)</div>
+
+<h2 id="encoding-schemes">3. Encoding Schemes</h2>
+
+<h3>3.1 Chunking Phase</h3>
+
+<p>Genome partitioning enables localized differential encoding and parallel processing.</p>
+
+<h4>Strategies</h4>
+
+<p><strong>Fixed-Size Windows:</strong></p>
+<div class="code-block">Partition genome into regular intervals
+Advantages: Uniform chunk sizes, simple implementation
+Use case: Whole-genome analysis</div>
+
+<p><strong>Gene-Based Regions:</strong></p>
+<div class="code-block">Align with functional annotations
+Advantages: Biological interpretability
+Use case: Exome sequencing, functional genomics</div>
+
+<p><strong>Variant Density Adaptive:</strong></p>
+<div class="code-block">Adjust boundaries based on mutation rates
+Advantages: Balanced information per chunk
+Use case: Hotspot analysis, cancer genomes</div>
+
+<h3>3.2 Reference Selection</h3>
+
+<h4>Per-Chunk Randomization</h4>
+<div class="code-block">def select_reference(chunk, reference_pool, master_seed):
+    """
+    Cryptographically select reference for chunk.
+    """
+    chunk_descriptor = f"{chunk.chromosome}:{chunk.start}-{chunk.end}"
+    chunk_seed = hmac_sha256(master_seed, chunk_descriptor)
+
+    seed_int = int.from_bytes(chunk_seed, byteorder='big')
+    reference_index = seed_int % len(reference_pool)
+
+    return reference_pool[reference_index], chunk_seed</div>
+
+<p><strong>Properties:</strong></p>
+<ul>
+  <li>Deterministic given seed</li>
+  <li>Cryptographically unpredictable without seed</li>
+  <li>Uniform distribution across references</li>
+</ul>
+
+<h3>3.3 Difference Computation</h3>
+
+<h4>Set-Theoretic Operations</h4>
+<div class="code-block">def compute_differences(experimental, reference):
+    """
+    Compute variant differences.
+    """
+    E = set(experimental.variants)
+    R = set(reference.variants)
+
+    # Three difference categories
+    new_mutations = E - R
+    missing_variants = R - E
+    genotype_diffs = {v for v in E & R
+                     if v.genotype_exp != v.genotype_ref}
+
+    return Differences(new_mutations, missing_variants, genotype_diffs)</div>
+
+<p><strong>Complexity:</strong> O(n log n) for sorted variant lists</p>
+
+<h3>3.4 Feature Extraction</h3>
+
+<p>Transform raw differences into structured feature representation:</p>
+
+<div class="code-block">def extract_features(differences, chunk_metadata):
+    """
+    Convert differences to feature vector.
+    """
+    f = zeros(384)
+
+    # Difference type distribution
+    f[0:10] = count_by_impact_category(differences)
+
+    # Position encoding
+    positions = [v.position for v in all_variants(differences)]
+    f[10:138] = sinusoidal_encoding(positions, chunk_metadata)
+
+    # Additional features...
+    f[138:384] = extract_composition_and_quality(differences)
+
+    return f</div>
+
+<h2 id="chunking-strategies">4. Chunking Strategies</h2>
+
+<h3>4.1 Sliding Window</h3>
+
+<p><strong>Definition:</strong> Fixed-size overlapping windows across genome</p>
+
+<h4>Parameters</h4>
+<div class="code-block">window_size: Typically 100 Kb - 1 Mb
+overlap: 10-20% of window size</div>
+
+<h4>Trade-offs</h4>
+<ul>
+  <li>Advantages: Simple, uniform coverage</li>
+  <li>Disadvantages: Ignores biological boundaries</li>
+</ul>
+
+<h3>4.2 Gene-Based</h3>
+
+<p><strong>Definition:</strong> Boundaries aligned with gene annotations</p>
+
+<h4>Parameters</h4>
+<div class="code-block">include_regulatory: Promoters, enhancers
+upstream_buffer: 2-5 Kb
+downstream_buffer: 0.5-1 Kb</div>
+
+<h4>Trade-offs</h4>
+<ul>
+  <li>Advantages: Functional interpretation</li>
+  <li>Disadvantages: Variable chunk sizes, requires annotation</li>
+</ul>
+
+<h3>4.3 Adaptive Density</h3>
+
+<p><strong>Definition:</strong> Adjust boundaries based on variant density</p>
+
+<h4>Algorithm</h4>
+<div class="code-block">Target: Balanced variant count per chunk
+Method: Dynamic programming for optimal boundaries
+Constraint: Minimum/maximum chunk size</div>
+
+<h4>Trade-offs</h4>
+<ul>
+  <li>Advantages: Uniform information content</li>
+  <li>Disadvantages: Complex implementation, non-uniform coverage</li>
+</ul>
+
+<h2 id="reference-selection">5. Reference Selection</h2>
+
+<h3>5.1 Reference Pool Criteria</h3>
+
+<h4>Quality Requirements</h4>
+<div class="code-block">Assembly version: Match experimental (e.g., GRCh38)
+Variant quality scores: > 30 (Phred scale)
+Coverage depth: > 30×
+Call rate: > 95%</div>
+
+<h4>Diversity Requirements</h4>
+<div class="code-block">Population representation:
+  Ensures diverse reference pool
+  Reduces systematic bias
+  Improves differential encoding efficiency</div>
+
+<h3>5.2 Cryptographic Selection Algorithm</h3>
+
+<h4>Deterministic Random Selection</h4>
+<div class="code-block">For each chunk C:
+  1. Compute: chunk_seed = HMAC(master_seed, chunk_boundaries)
+  2. Convert: seed_int = int(chunk_seed)
+  3. Select: reference = pool[seed_int % len(pool)]
+
+Security: Requires knowledge of master_seed for reconstruction</div>
+
+<h3>5.3 Reference Integrity Verification</h3>
+
+<h4>Hash-Based Verification</h4>
+<div class="code-block">def compute_reference_hash(reference):
+    """
+    Cryptographic hash of reference genome.
+    """
+    hasher = sha256()
+
+    # Hash genome identifier
+    hasher.update(reference.id.encode())
+    hasher.update(reference.assembly.encode())
+
+    # Hash variants in canonical order
+    for chromosome in sorted(reference.chromosomes):
+        for variant in sorted(reference.variants[chromosome]):
+            hasher.update(variant.canonical_form.encode())
+
+    return hasher.digest()</div>
+
+<h2 id="cryptographic-integrity">6. Cryptographic Integrity</h2>
+
+<h3>6.1 Chunk Identifier Generation</h3>
+
+<h4>HMAC-Based Identification</h4>
+<div class="code-block">def generate_chunk_id(chunk_data, master_seed):
+    """
+    Generate cryptographic chunk identifier.
+    """
+    serialized = serialize_chunk(chunk_data)
+    chunk_id = hmac_sha256(master_seed, serialized)[:16]  # 128 bits
+
+    return chunk_id</div>
+
+<h4>Properties</h4>
+<ul>
+  <li>Unique: Collision probability < 2^(-128)</li>
+  <li>Tamper-evident: Any modification changes ID</li>
+  <li>Unforgeable: Requires master seed</li>
+</ul>
+
+<h3>6.2 Reference Binding</h3>
+
+<h4>Cryptographic Binding to Reference</h4>
+<div class="code-block">def bind_to_reference(chunk_data, reference_data, chunk_seed):
+    """
+    Create cryptographic binding.
+    """
+    combined = serialize_chunk(chunk_data) + serialize_reference(reference_data)
+    binding = hmac_sha256(chunk_seed, combined)
+
+    return binding</div>
+
+<p><strong>Security Guarantee:</strong> Tampering detected with probability 1 - 2^(-256)</p>
+
+<h3>6.3 Verification Protocol</h3>
+
+<div class="code-block">def verify_chunk(encoded_chunk, master_seed):
+    """
+    Verify chunk integrity and authenticity.
+    """
+    # Recompute chunk ID
+    computed_id = generate_chunk_id(encoded_chunk.data, master_seed)
+    if computed_id != encoded_chunk.stored_id:
+        return False
+
+    # Verify reference hash
+    computed_ref_hash = compute_reference_hash(encoded_chunk.reference)
+    if computed_ref_hash != encoded_chunk.stored_ref_hash:
+        return False
+
+    # Verify binding
+    computed_binding = bind_to_reference(
+        encoded_chunk.data, encoded_chunk.reference, encoded_chunk.seed
+    )
+    if computed_binding != encoded_chunk.stored_binding:
+        return False
+
+    return True</div>
+
+<h2 id="hyperdimensional-integration">7. Hyperdimensional Integration</h2>
+
+<h3>7.1 Encoding Architecture</h3>
+
+<h4>Two-Stage Encoding</h4>
+<div class="code-block">Stage 1: Differential Encoding
+  Input: Raw genome (3 GB)
+  Output: Difference features (384-D vectors per chunk)
+  Compression: ~1000×
+
+Stage 2: Hyperdimensional Projection
+  Input: 384-D feature vectors
+  Output: High-D hypervectors (8,192-D typical)
+  Purpose: Geometric privacy, similarity preservation</div>
+
+<h3>7.2 Bundling Strategy</h3>
+
+<h4>Genome-Level Aggregation</h4>
+<div class="code-block">def bundle_genome(chunk_hvs):
+    """
+    Combine chunk hypervectors into genome representation.
+    """
+    # Normalize and sum
+    genome_hv = sum(chunk_hvs)
+    genome_hv = genome_hv / norm(genome_hv)
+
+    return genome_hv</div>
+
+<h4>Properties</h4>
+<ul>
+  <li>Holographic: Each chunk contributes globally</li>
+  <li>Robust: Corruption of subset has minimal impact</li>
+  <li>Queryable: Check similarity to individual chunks or whole genome</li>
+</ul>
+
+<h3>7.3 Query Operations</h3>
+
+<h4>Similarity Queries</h4>
+<div class="code-block">def query_similarity(encoded_genome, query_hv, threshold=0.7):
+    """
+    Find similar genomic regions.
+    """
+    similarities = []
+
+    for chunk in encoded_genome.chunks:
+        sim = cosine_similarity(chunk.hypervector, query_hv)
+        if sim > threshold:
+            similarities.append((chunk, sim))
+
+    return sorted(similarities, key=lambda x: x[1], reverse=True)</div>
+
+<div class="references">
+  <h2 id="references">References</h2>
+  <ol>
+    <li><strong>The 1000 Genomes Project Consortium</strong> (2015). A global reference for human genetic variation. <em>Nature</em>, 526(7571), 68-74.</li>
+    <li><strong>Johnson, W. B., & Lindenstrauss, J.</strong> (1984). Extensions of Lipschitz mappings into a Hilbert space. <em>Contemporary Mathematics</em>, 26, 189-206.</li>
+    <li><strong>Danecek, P., et al.</strong> (2011). The variant call format and VCFtools. <em>Bioinformatics</em>, 27(15), 2156-2158.</li>
+    <li><strong>Kanerva, P.</strong> (2009). Hyperdimensional computing: An introduction. <em>Cognitive Computation</em>, 1(2), 139-159.</li>
+  </ol>
+</div>
+
+</body>
+</html>

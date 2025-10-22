@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sparse Distributed Representations: Theory and Principles | Rohan Vinaik</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --text: #e0e0e0;
+      --text-secondary: #a0a0a0;
+      --accent: #00ff00;
+      --border: #333;
+      --code-bg: #1a1a1a;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'JetBrains Mono', monospace;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 20px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    h1 {
+      color: var(--accent);
+      font-size: 1.5rem;
+      margin-bottom: 8px;
+      letter-spacing: 0.02em;
+    }
+    h2 {
+      color: var(--accent);
+      font-size: 1.1rem;
+      margin-top: 32px;
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    h3 {
+      color: var(--accent);
+      font-size: 0.95rem;
+      margin-top: 24px;
+      margin-bottom: 12px;
+    }
+    h4 {
+      color: var(--text);
+      font-size: 0.85rem;
+      margin-top: 20px;
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+    p { margin-bottom: 16px; font-size: 0.85rem; }
+    a {
+      color: var(--accent);
+      text-decoration: none;
+      border-bottom: 1px dotted var(--accent);
+    }
+    a:hover { border-bottom-style: solid; }
+    .back-link {
+      display: inline-block;
+      margin-bottom: 24px;
+      font-size: 0.85rem;
+    }
+    .paper-meta {
+      color: var(--text-secondary);
+      font-size: 0.75rem;
+      margin-bottom: 24px;
+    }
+    .abstract {
+      background: var(--code-bg);
+      padding: 20px;
+      border-left: 3px solid var(--accent);
+      margin-bottom: 32px;
+      font-size: 0.85rem;
+    }
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 32px;
+    }
+    .tag {
+      background: var(--code-bg);
+      padding: 4px 12px;
+      border: 1px solid var(--border);
+      font-size: 0.7rem;
+      color: var(--accent);
+      text-decoration: none;
+      border-bottom: none;
+    }
+    .tag:hover {
+      background: var(--accent);
+      color: var(--bg);
+      border-color: var(--accent);
+    }
+    .quick-nav {
+      background: var(--code-bg);
+      padding: 16px;
+      margin-bottom: 32px;
+      border: 1px solid var(--border);
+    }
+    .quick-nav h3 {
+      margin-top: 0;
+      font-size: 0.85rem;
+    }
+    .quick-nav ul {
+      list-style: none;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .quick-nav a {
+      font-size: 0.75rem;
+      border-bottom: none;
+      padding: 4px 0;
+      display: block;
+    }
+    .quick-nav a:hover { color: var(--bg); background: var(--accent); padding-left: 8px; }
+    ul, ol {
+      margin-left: 20px;
+      margin-bottom: 16px;
+      font-size: 0.85rem;
+    }
+    li {
+      margin-bottom: 8px;
+    }
+    .code-block {
+      background: var(--code-bg);
+      padding: 16px;
+      border-left: 3px solid var(--accent);
+      margin: 20px 0;
+      font-size: 0.8rem;
+      white-space: pre-wrap;
+      overflow-x: auto;
+    }
+    .references {
+      font-size: 0.75rem;
+      margin-top: 32px;
+    }
+    .references ol {
+      padding-left: 20px;
+    }
+    .references li {
+      margin-bottom: 12px;
+      line-height: 1.5;
+    }
+    @media (max-width: 768px) {
+      body { padding: 12px; }
+      h1 { font-size: 1.2rem; }
+      h2 { font-size: 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<a href="../index.html#reference" class="back-link">← Back to Reference</a>
+
+<h1>Sparse Distributed Representations: Theory and Principles</h1>
+<div class="paper-meta">January 2025 · TECHNICAL REFERENCE</div>
+
+<div class="tags">
+  <a href="../index.html?filter=SPARSE-CODING" class="tag">[SPARSE-CODING]</a>
+  <a href="../index.html?filter=DISTRIBUTED-REPRESENTATION" class="tag">[DISTRIBUTED-REPRESENTATION]</a>
+  <a href="../index.html?filter=NEURAL-CODING" class="tag">[NEURAL-CODING]</a>
+  <a href="../index.html?filter=INFORMATION-THEORY" class="tag">[INFORMATION-THEORY]</a>
+  <a href="../index.html?filter=COMPRESSED-SENSING" class="tag">[COMPRESSED-SENSING]</a>
+  <a href="../index.html?filter=BRAIN-INSPIRED-AI" class="tag">[BRAIN-INSPIRED-AI]</a>
+  <a href="../index.html?filter=ASSOCIATIVE-MEMORY" class="tag">[ASSOCIATIVE-MEMORY]</a>
+  <a href="../index.html?filter=NEUROSCIENCE" class="tag">[NEUROSCIENCE]</a>
+  <a href="../index.html?filter=MACHINE-LEARNING" class="tag">[MACHINE-LEARNING]</a>
+</div>
+
+<div class="abstract">
+  <strong>Abstract:</strong> Sparse distributed representations constitute a fundamental computational principle observed across biological neural systems and increasingly employed in artificial intelligence. This theoretical overview explores how information can be encoded across many units while maintaining sparsity—where only a small fraction remains active at any time. We examine the mathematical foundations spanning information theory, linear algebra, and probability theory; investigate biological implementations in sensory systems, hippocampus, and cortex; and analyze computational properties including superposition, binding, and noise robustness. The framework encompasses connections to compressed sensing, predictive coding, and deep learning, while addressing philosophical implications for mental representation and evolutionary optimization. Key open questions include determining optimal sparsity levels, measuring in vivo neural codes, and scaling applications to neuromorphic hardware and brain-machine interfaces.
+</div>
+
+<div class="quick-nav">
+  <h3>Quick Navigation</h3>
+  <ul>
+    <li><a href="#core-concepts">1. Core Concepts and Definitions</a></li>
+    <li><a href="#mathematical-foundations">2. Mathematical Foundations</a></li>
+    <li><a href="#biological-codes">3. Biological Sparse Codes</a></li>
+    <li><a href="#learning">4. Learning Sparse Representations</a></li>
+    <li><a href="#computational-properties">5. Computational Properties</a></li>
+    <li><a href="#compressed-sensing">6. Compressed Sensing Connection</a></li>
+    <li><a href="#frameworks">7. Connections to Other Frameworks</a></li>
+    <li><a href="#philosophical">8. Philosophical and Theoretical Issues</a></li>
+    <li><a href="#open-questions">9. Open Questions and Future Directions</a></li>
+    <li><a href="#references">10. Key References</a></li>
+  </ul>
+</div>
+
+<h2 id="core-concepts">1. Core Concepts and Definitions</h2>
+
+<h3>1.1 What is Sparsity?</h3>
+
+<h4>Sparsity Definition</h4>
+<p>Sparsity is characterized by the fraction of active units: \(k/n\) where \(k \ll n\). Typical values range from 1-10% activation. In binary representations, this corresponds to vectors in \(\{0,1\}^n\) with Hamming weight \(k\). For real-valued representations, most elements remain near zero with only a few large values.</p>
+
+<h4>Types of Sparsity</h4>
+<ul>
+  <li><strong>Lifetime sparsity:</strong> Within a single representation, few units are active</li>
+  <li><strong>Population sparsity:</strong> Across an ensemble, each unit rarely activates</li>
+  <li><strong>Temporal sparsity:</strong> Over time, individual units fire rarely</li>
+  <li><strong>Spatial sparsity:</strong> Across space, few regions remain active</li>
+</ul>
+
+<h4>Mathematical Formalizations</h4>
+<ul>
+  <li><strong>L0 norm:</strong> \(\|x\|_0 = |\{i : x_i \neq 0\}|\)</li>
+  <li><strong>L1 norm:</strong> \(\|x\|_1 = \sum|x_i|\) (convex relaxation)</li>
+  <li><strong>Hoyer sparseness:</strong> \((\sqrt{n} - \|x\|_1/\|x\|_2) / (\sqrt{n} - 1)\)</li>
+  <li><strong>Gini coefficient:</strong> Measures inequality of activation distribution</li>
+</ul>
+
+<h3>1.2 What is Distribution?</h3>
+
+<h4>Distributed Representation</h4>
+<p>Information spreads across multiple units with no single unit representing a whole concept. This contrasts with localist representations where one unit equals one concept.</p>
+
+<h4>Holographic Property</h4>
+<p>Each unit participates in multiple representations while each concept distributes across multiple units. Damage to a subset of units results in graceful degradation rather than catastrophic failure. This relates to content-addressable memory and associative recall mechanisms.</p>
+
+<h4>Population Coding</h4>
+<p>Ensemble activity represents stimuli with inherent redundancy—multiple units encode the same information. This averaging over the ensemble reduces noise while coarse coding employs overlapping receptive fields.</p>
+
+<h3>1.3 Why Sparse + Distributed?</h3>
+
+<h4>Advantages of Combining</h4>
+
+<p><strong>1. Representational Capacity:</strong> Dense distributed representations support approximately \(2^n\) distinct patterns but face similarity issues. Sparse distributed codes provide \(C(n,k) = n!/(k!(n-k)!)\) patterns. For \(n=1000, k=10\), this yields approximately \(10^{23}\) patterns, all approximately orthogonal.</p>
+
+<p><strong>2. Metabolic Efficiency:</strong> Biological systems face energy costs per spike. Sparse firing reduces total energy consumption while information per spike increases when firing is rare, respecting Landauer's principle regarding minimum energy per bit.</p>
+
+<p><strong>3. Interference Reduction:</strong> Sparse patterns exhibit lower overlap probability, reducing crosstalk in superposition while enabling easier pattern separation and higher storage capacity in associative memories.</p>
+
+<p><strong>4. Biological Plausibility:</strong> Cortical neurons fire sparsely—typically ~1 Hz with maximum ~100 Hz. Only 1-4% of neurons remain active in a cortical region at any given time. The brain consumes approximately 20% of the body's energy, creating evolutionary pressure toward efficiency.</p>
+
+<h2 id="mathematical-foundations">2. Mathematical Foundations</h2>
+
+<h3>2.1 Information Theory</h3>
+
+<h4>Shannon Information</h4>
+<p>Entropy of sparse codes: \(H = -\sum p_i \log p_i\). For sparse codes with \(p_{\text{active}} = k/n\):</p>
+<ul>
+  <li>\(H_{\text{sparse}} \approx k \log(n/k) - k + O(k^2/n)\)</li>
+  <li>Compared to dense: \(H_{\text{dense}} \approx n \log(2) = n\) bits</li>
+</ul>
+<p>Information per active unit is higher in sparse regimes.</p>
+
+<h4>Channel Capacity</h4>
+<p>Sparse channels limit \(k\) active units out of \(n\), with capacity \(C = \log C(n,k)\). Optimality occurs when patterns are maximally separated, involving trade-offs between sparsity, capacity, and noise tolerance.</p>
+
+<h4>Mutual Information</h4>
+<p>\(I(X;Y)\) between input \(X\) and sparse code \(Y\) is maximized when patterns capture statistical structure. Information bottleneck principles enable compression while preserving relevant information.</p>
+
+<h3>2.2 Orthogonality and Similarity</h3>
+
+<h4>Approximate Orthogonality</h4>
+<p>Random sparse patterns are quasi-orthogonal in high dimensions. Expected dot product: \(E[\langle x,y \rangle] \approx k^2/n\) for random sparse vectors. For \(k \ll n\), this yields near-zero overlap, allowing large numbers of distinguishable patterns.</p>
+
+<h4>Similarity Metrics</h4>
+<ul>
+  <li><strong>Hamming distance:</strong> \(d_H(x,y) = \sum |x_i - y_i|\)</li>
+  <li><strong>Cosine similarity:</strong> \(\cos(\theta) = \langle x,y \rangle/(\|x\| \|y\|)\)</li>
+  <li><strong>Overlap:</strong> \(|x \cap y| / |x \cup y|\)</li>
+</ul>
+<p>For sparse representations, these metrics become approximately equivalent.</p>
+
+<h4>Concentration of Measure</h4>
+<p>High-dimensional phenomena ensure most pairs of random vectors remain near-orthogonal. Distances between random points concentrate around the mean, creating a "blessing of dimensionality" for sparse codes.</p>
+
+<h3>2.3 Capacity and Scaling</h3>
+
+<h4>Storage Capacity</h4>
+<p>Hopfield networks: \(C_{\max} \approx 0.14n\) for random dense patterns. Sparse patterns: \(C_{\max} \approx n^2/(2k \log n)\) patterns. For \(k \ll n\), this represents exponential improvement. Modern Hopfield networks (Dense Associative Memory) achieve exponential capacity.</p>
+
+<h4>Scaling Laws</h4>
+<ul>
+  <li>Pattern capacity scales with \(C(n,k)\)</li>
+  <li>Robustness to noise scales with \(\sqrt{n}\)</li>
+  <li>Computational cost: \(O(n)\) for sparse operations vs \(O(n^2)\) for dense</li>
+  <li>Memory footprint: \(O(kN)\) for \(N\) patterns</li>
+</ul>
+
+<h4>Information per Synapse</h4>
+<p>Dense networks: ~0.14 bits per synapse (Hopfield limit). Sparse networks can achieve higher values with structured sparsity. Biological synapses are estimated at ~1-2 bits per synapse, suggesting additional optimization principles.</p>
+
+<h2 id="biological-codes">3. Biological Sparse Codes</h2>
+
+<h3>3.1 Sensory Systems</h3>
+
+<h4>Visual Cortex</h4>
+<p>V1 simple cells exhibit sparse responses to oriented edges. Natural image statistics display kurtotic (heavy-tailed) distributions. The sparse coding hypothesis suggests V1 learns sparse decompositions. Empirical measurements show ~1-5% of V1 neurons active for any given image.</p>
+
+<h4>Efficient Coding Theory</h4>
+<p>Barlow's redundancy reduction principle minimizes redundancy while preserving information, leading to decorrelation and sparsity. This connects to Independent Component Analysis (ICA).</p>
+
+<h4>Receptive Fields</h4>
+<p>Gabor-like filters emerge from sparse coding, localized in both space and frequency, oriented and scale-tuned. Olshausen & Field (1996) demonstrated that sparse coding reproduces V1 properties.</p>
+
+<h4>Other Sensory Modalities</h4>
+<ul>
+  <li>Auditory cortex: Sparse responses to sound features</li>
+  <li>Olfactory system: Sparse combinatorial code (~5-10% ORNs active)</li>
+  <li>Somatosensory: Sparse coding of tactile features</li>
+</ul>
+
+<h3>3.2 Hippocampus and Memory</h3>
+
+<h4>Place Cells</h4>
+<p>These cells fire when animals occupy specific locations (place fields). Sparse firing characterizes them: ~1-2% active in any given location. Population codes represent position through ensemble activity. Rate remapping involves the same cells with different firing rates in different contexts, while global remapping activates different cells in different environments.</p>
+
+<h4>Dentate Gyrus</h4>
+<p>Extremely sparse activation: ~1-2% of granule cells active. Critical for pattern separation, it orthogonalizes similar inputs, essential for episodic memory formation. Lesion studies reveal impaired discrimination of similar contexts.</p>
+
+<h4>Sparse Distributed Memory (Kanerva)</h4>
+<p>This computational model, inspired by the hippocampus, employs a high-dimensional address space with randomly chosen sparse patterns as hard locations. Content-addressable retrieval by similarity implements prototype extraction and generalization.</p>
+
+<h3>3.3 Cortical Representations</h3>
+
+<h4>Sparse Firing</h4>
+<p>Neocortical neurons average ~1 Hz with bursts to ~100 Hz. At any instant, ~1-4% of pyramidal cells are active in a cortical column. Layer-specific patterns exhibit different sparsity levels, varying between states (awake vs sleep, attention vs baseline).</p>
+
+<h4>Computational Advantages</h4>
+<ul>
+  <li>Reduces metabolic load (~75% of cortical energy in action potentials)</li>
+  <li>Increases dynamic range (more headroom for modulation)</li>
+  <li>Facilitates learning (Hebbian: correlate sparse events)</li>
+  <li>Enables multiplexing (time-division of sparse codes)</li>
+</ul>
+
+<h4>Inhibitory Control</h4>
+<p>Winner-take-all circuits, lateral inhibition, and feedforward inhibition maintain homeostatic sparsity levels.</p>
+
+<h2 id="learning">4. Learning Sparse Representations</h2>
+
+<h3>4.1 Sparse Coding Algorithms</h3>
+
+<h4>Objective Function</h4>
+<div class="code-block">minimize ||x - Dα||₂² + λ||α||₁
+
+where:
+  x: Input signal
+  D: Dictionary (basis functions)
+  α: Sparse coefficients
+  λ: Sparsity penalty</div>
+
+<h4>Optimization Methods</h4>
+<ul>
+  <li><strong>Matching Pursuit:</strong> Greedy iterative selection</li>
+  <li><strong>Basis Pursuit:</strong> L1 minimization (convex optimization)</li>
+  <li><strong>LARS/LASSO:</strong> Efficient L1 path algorithms</li>
+  <li><strong>ISTA/FISTA:</strong> Iterative shrinkage-thresholding</li>
+  <li><strong>Coordinate descent:</strong> Cyclically update coefficients</li>
+</ul>
+
+<h4>Dictionary Learning</h4>
+<ul>
+  <li><strong>K-SVD:</strong> Generalization of K-means for sparse coding</li>
+  <li><strong>MOD (Method of Optimal Directions):</strong> Least squares dictionary update</li>
+  <li><strong>Online dictionary learning:</strong> Stochastic gradient updates</li>
+  <li><strong>Beta-VAE:</strong> Neural network approach with disentanglement</li>
+</ul>
+
+<h3>4.2 Neural Network Approaches</h3>
+
+<h4>Autoencoders with Sparsity</h4>
+<p>Add sparsity penalty to hidden layer activations: \(L_{\text{reconstruction}} + \lambda \cdot \Omega_{\text{sparsity}}\). Sparsity measures include L1, KL divergence, and Hoyer sparseness.</p>
+
+<h4>Sparse Autoencoders</h4>
+<p>Hidden layer: \(h = \sigma(Wx + b)\). Sparsity constraint: average activation \(\hat{\rho} \approx \rho\) (target sparsity). KL penalty: \(KL(\rho \| \hat{\rho})\) enforces sparsity.</p>
+
+<h4>Sparse RBMs</h4>
+<p>Restricted Boltzmann Machines with sparsity constraints incorporate sparsity terms in their energy functions. Lee et al. (2008) developed sparse deep belief networks.</p>
+
+<h4>Modern Approaches</h4>
+<ul>
+  <li><strong>k-Sparse Autoencoders:</strong> Hard constraint, keep top-k activations</li>
+  <li><strong>Winner-Take-All (WTA) networks:</strong> Only k% most active units remain</li>
+  <li><strong>Capsule Networks:</strong> Sparse routing between capsules</li>
+  <li><strong>Mixture of Experts:</strong> Sparse gating (only few experts active)</li>
+</ul>
+
+<h3>4.3 Unsupervised and Self-Supervised</h3>
+
+<h4>ICA (Independent Component Analysis)</h4>
+<p>Finds statistically independent components using natural gradient to maximize non-Gaussianity, often producing sparse representations. Applications include blind source separation and image decomposition.</p>
+
+<h4>Non-negative Matrix Factorization (NMF)</h4>
+<p>Factorizes \(X \approx WH\) with \(W, H \geq 0\), often producing sparse factors and parts-based representations. Applications span text mining and computer vision.</p>
+
+<h4>Self-Organizing Maps with Sparsity</h4>
+<p>Topographic organization with sparse activation—only winning neurons and neighbors remain active—learns topology-preserving sparse codes.</p>
+
+<h4>Contrastive Learning</h4>
+<p>Methods like SimCLR, MoCo, and BYOL often learn sparse representations in deeper layers. Disentanglement emerges from invariance constraints.</p>
+
+<h2 id="computational-properties">5. Computational Properties</h2>
+
+<h3>5.1 Superposition and Binding</h3>
+
+<h4>Vector Superposition</h4>
+<p>Sum sparse vectors: \(x_{\text{sum}} = x_1 + x_2 + \ldots + x_n\). Retrieval occurs via pattern completion through associative memory. Capacity is limited by interference (collisions), with cleanup projecting back to valid sparse patterns.</p>
+
+<h4>Binding Operations</h4>
+<ul>
+  <li><strong>Circular convolution:</strong> \(x \otimes y\) (Holographic Reduced Representations)</li>
+  <li><strong>Element-wise product:</strong> \(x \odot y\) (Vector Symbolic Architectures)</li>
+  <li><strong>Permutation-based binding</strong></li>
+</ul>
+<p>Properties include approximate inverses and similarity preservation.</p>
+
+<h4>Compositional Structures</h4>
+<p>Represent complex structures via binding and bundling. Role-filler bindings: \(\text{role} \otimes \text{filler}\). Hierarchical structures employ recursive composition, enabling analogical mapping through structural similarity.</p>
+
+<h3>5.2 Robustness and Noise</h3>
+
+<h4>Noise Tolerance</h4>
+<p>Sparse codes remain robust to noise if separation is sufficient. Error correction leverages statistical redundancy across ensembles. Graceful degradation ensures partial damage doesn't destroy representations. Theoretical bounds relate to minimum distance between codewords.</p>
+
+<h4>Corruption Models</h4>
+<ul>
+  <li><strong>Additive noise:</strong> \(x' = x + \epsilon\) (Gaussian, etc.)</li>
+  <li><strong>Multiplicative noise:</strong> \(x'_i = x_i \cdot (1 + \epsilon_i)\)</li>
+  <li><strong>Dropout:</strong> Randomly zero out elements</li>
+  <li><strong>Quantization:</strong> Reduce precision of values</li>
+</ul>
+
+<h4>Recovery Mechanisms</h4>
+<ul>
+  <li>Associative memory: Complete patterns from partial cues</li>
+  <li>Denoising: Project onto learned manifold</li>
+  <li>Iterative refinement: Hopfield dynamics, attractor convergence</li>
+  <li>Sparse recovery algorithms: Compressed sensing techniques</li>
+</ul>
+
+<h3>5.3 Compositionality and Systematicity</h3>
+
+<h4>Systematic Generalization</h4>
+<p>Novel combinations from known primitives are enabled by sparse codes' flexible recombination. Contrast with dense representations that may entangle features.</p>
+
+<h4>Algebraic Structure</h4>
+<p>Sparse vectors form vector spaces supporting addition (bundling) and binding (structure), facilitating analogy, reasoning, and generalization.</p>
+
+<h4>Cognitive Operations</h4>
+<ul>
+  <li><strong>Analogy:</strong> Structural mapping between sparse representations</li>
+  <li><strong>Generalization:</strong> Overlap in sparse codes indicates similarity</li>
+  <li><strong>Abstraction:</strong> Higher-level sparse codes for categories</li>
+  <li><strong>Reasoning:</strong> Operations on compositional structures</li>
+</ul>
+
+<h2 id="compressed-sensing">6. Compressed Sensing Connection</h2>
+
+<h3>6.1 Foundations</h3>
+
+<h4>Compressed Sensing Theory</h4>
+<p>Recover sparse signals from few measurements. Conditions include RIP (Restricted Isometry Property) and incoherence. Recovery guarantees: \(m = O(k \log(n/k))\) measurements sufficient. Algorithms include L1 minimization, greedy methods, and Bayesian approaches.</p>
+
+<h4>Measurement Matrix</h4>
+<ul>
+  <li><strong>Random Gaussian:</strong> Satisfies RIP with high probability</li>
+  <li><strong>Random Fourier:</strong> Incoherent with sparse time-domain signals</li>
+  <li><strong>Structured random:</strong> Partial Fourier, scrambled Hadamard</li>
+</ul>
+
+<h4>Applications</h4>
+<ul>
+  <li>Medical imaging: MRI with undersampling</li>
+  <li>Sensor networks: Sparse environmental monitoring</li>
+  <li>Signal processing: Wideband spectrum sensing</li>
+  <li>Neuroscience: Recording from sparse neural activity</li>
+</ul>
+
+<h3>6.2 Neural Compressed Sensing</h3>
+
+<h4>Biological Compressed Sensing</h4>
+<p>Hypothesis: Sensory systems implement CS principles. The retina subsamples via ganglion cell spacing. The cochlea performs frequency decomposition (sparse in time-frequency). This enables efficient encoding of natural stimuli (which are sparse in some basis).</p>
+
+<h4>Neural Recording</h4>
+<p>Recording from subsets of neurons (CS perspective) can recover full population activity if sparse. Applications include BMI with limited electrode arrays. Reconstruction employs sparse inference from partial observations.</p>
+
+<h2 id="frameworks">7. Connections to Other Frameworks</h2>
+
+<h3>7.1 Localist vs Distributed Debate</h3>
+
+<h4>Localist (Grandmother Cells)</h4>
+<p>One unit equals one concept. Pros: Simple interpretation, explicit representation. Cons: Poor generalization, catastrophic damage, low capacity.</p>
+
+<h4>Fully Distributed (Dense)</h4>
+<p>All units participate in all representations. Pros: Maximum capacity (\(2^n\) patterns), fault tolerance. Cons: Interference, energy inefficiency, hard to interpret.</p>
+
+<h4>Sparse Distributed (Middle Ground)</h4>
+<p>Best of both worlds—interpretable with active units indicating features. Capacity: Combinatorial, scales well. Robust: Distributed, but low interference due to sparsity.</p>
+
+<h3>7.2 Predictive Coding</h3>
+
+<h4>Sparse Prediction Errors</h4>
+<p>Hypothesis: Brain represents prediction errors sparsely. Efficiency: Most predictions accurate yield few errors. Neural correlate: Error units fire sparsely.</p>
+
+<h4>Hierarchical Sparse Coding</h4>
+<p>Each level employs sparse codes for residual errors. Bottom-up: Sparse errors propagate. Top-down: Predictions reconstruct input. Iterative refinement until convergence (minimal error).</p>
+
+<h3>7.3 Deep Learning</h3>
+
+<h4>Sparsity in Neural Networks</h4>
+<ul>
+  <li><strong>Activation sparsity:</strong> ReLU naturally produces sparse activations</li>
+  <li><strong>Weight sparsity:</strong> Pruning, L1 regularization</li>
+  <li><strong>Network sparsity:</strong> Only subset of network active per input</li>
+</ul>
+
+<h4>Benefits for DNNs</h4>
+<ul>
+  <li>Computational efficiency: Skip zero activations</li>
+  <li>Overfitting reduction: Implicit regularization</li>
+  <li>Interpretability: Sparse activations easier to analyze</li>
+  <li>Specialized neurons: Individual units become selective</li>
+</ul>
+
+<h4>Sparse Transformers</h4>
+<ul>
+  <li>Attention patterns: Sparse attention (attend to subset)</li>
+  <li>Mixture of Experts: Sparse gating (activate few experts)</li>
+  <li>Structured sparsity: Block-wise, hierarchical patterns</li>
+</ul>
+
+<h2 id="philosophical">8. Philosophical and Theoretical Issues</h2>
+
+<h3>8.1 Nature of Mental Representation</h3>
+
+<h4>Symbolic vs Subsymbolic</h4>
+<p>Sparse distributed representations bridge extremes. Symbolic flavor: Individual active units are interpretable. Subsymbolic flavor: Distributed across ensemble. This supports both systematic and statistical processing.</p>
+
+<h4>Binding Problem</h4>
+<p>How are features bound into objects? Sparse codes employ temporal synchrony (active units fire together) or binding through composition (\(\otimes\) operations).</p>
+
+<h3>8.2 Efficiency and Optimality</h3>
+
+<h4>Metabolic Cost</h4>
+<p>Biological optimization minimizes energy per bit transmitted. Sparse firing directly reduces ATP consumption. Information theory suggests sparse codes are near optimal for certain priors.</p>
+
+<h4>Evolutionary Pressure</h4>
+<ul>
+  <li>Energy efficiency: Selection for sparse representations</li>
+  <li>Robustness: Selection for distributed encoding</li>
+  <li>Capacity: Selection for high-dimensional codes</li>
+  <li>Result: Convergence to sparse distributed schemes</li>
+</ul>
+
+<h3>8.3 Universality</h3>
+
+<h4>Across Species</h4>
+<ul>
+  <li>Insects: Mushroom body (olfaction) uses sparse expansion</li>
+  <li>Mammals: Hippocampus, neocortex exhibit sparsity</li>
+  <li>Birds: Song system has sparse temporal codes</li>
+</ul>
+<p>Convergent evolution suggests a fundamental principle.</p>
+
+<h4>Across Modalities</h4>
+<p>Vision, audition, olfaction, touch all use sparse codes. Motor control employs sparse muscle synergies. Cognitive functions encode abstract concepts sparsely, suggesting a domain-general computational principle.</p>
+
+<h2 id="open-questions">9. Open Questions and Future Directions</h2>
+
+<h3>9.1 Theoretical</h3>
+
+<h4>Optimal Sparsity</h4>
+<p>What determines ideal sparsity level \(k/n\)? Trade-offs involve capacity, robustness, metabolic cost, and interference. May vary by brain region, task, and species. Mathematical characterization remains an open problem.</p>
+
+<h4>Universality Class</h4>
+<p>Are there universal properties of sparse codes? Analogous to criticality and renormalization in physics? Phase transitions: Dense → sparse → ultra-sparse regimes? Information-theoretic characterization needed.</p>
+
+<h3>9.2 Empirical</h3>
+
+<h4>Measuring Sparsity in Vivo</h4>
+<p>Techniques: Calcium imaging, multi-electrode arrays, fMRI. Challenges: Sampling bias, observation effects, temporal resolution. Need: Large-scale simultaneous recordings. Goal: Map sparsity across brain regions, conditions, species.</p>
+
+<h4>Causal Manipulations</h4>
+<ul>
+  <li>Optogenetics: Enforce or disrupt sparse patterns</li>
+  <li>Chemogenetics: Modulate overall excitability</li>
+  <li>Predictions: Altering sparsity should affect behavior</li>
+  <li>Test: Necessity and sufficiency of sparse codes</li>
+</ul>
+
+<h3>9.3 Applications</h3>
+
+<h4>Neuromorphic Hardware</h4>
+<p>Exploit sparsity for energy efficiency, speed, and scalability. Event-based processing communicates only spikes. Examples: IBM TrueNorth, Intel Loihi, BrainScaleS. Challenge: Co-design algorithms and hardware.</p>
+
+<h4>Artificial Intelligence</h4>
+<ul>
+  <li>Sparse neural networks: Reduce computation, memory</li>
+  <li>Lottery ticket hypothesis: Sparse subnetworks sufficient</li>
+  <li>Continual learning: Sparse codes reduce interference</li>
+  <li>Interpretability: Analyze sparse activations</li>
+</ul>
+
+<h4>Brain-Machine Interfaces</h4>
+<ul>
+  <li>Decode from sparse population activity</li>
+  <li>Encode to stimulate sparse patterns</li>
+  <li>Advantage: Fewer electrodes needed (compressed sensing)</li>
+  <li>Challenge: Find sparse basis for BMI tasks</li>
+</ul>
+
+<div class="references">
+  <h2 id="references">10. Key References</h2>
+
+  <h3>Foundational</h3>
+  <ol>
+    <li>Kanerva, P. (1988). <em>Sparse Distributed Memory</em>. MIT Press.</li>
+    <li>Barlow, H. B. (1972). Single units and sensation: A neuron doctrine for perceptual psychology? <em>Perception</em>, 1(4), 371-394.</li>
+    <li>Willshaw, D. J., Buneman, O. P., & Longuet-Higgins, H. C. (1969). Non-holographic associative memory. <em>Nature</em>, 222(5197), 960-962.</li>
+  </ol>
+
+  <h3>Sparse Coding</h3>
+  <ol start="4">
+    <li>Olshausen, B. A., & Field, D. J. (1996). Emergence of simple-cell receptive field properties by learning a sparse code for natural images. <em>Nature</em>, 381(6583), 607-609.</li>
+    <li>Elad, M., & Aharon, M. (2006). Image denoising via sparse and redundant representations. <em>IEEE TIP</em>, 15(12), 3736-3745.</li>
+  </ol>
+
+  <h3>Neuroscience</h3>
+  <ol start="6">
+    <li>O'Reilly, R. C., & McClelland, J. L. (1994). Hippocampal conjunctive encoding, storage, and recall. <em>Hippocampus</em>, 4(6), 661-682.</li>
+    <li>Pereira-Leal, J. B., Levy, E. D., & Teichmann, S. A. (2006). The origins and evolution of functional modules. <em>Philosophical Transactions B</em>, 361(1467), 507-517.</li>
+  </ol>
+
+  <h3>Machine Learning</h3>
+  <ol start="8">
+    <li>Lee, H., et al. (2008). Sparse deep belief net model for visual area V2. <em>NIPS</em>.</li>
+    <li>Ranzato, M. A., et al. (2007). Sparse feature learning for deep belief networks. <em>NIPS</em>.</li>
+  </ol>
+
+  <h3>Compressed Sensing</h3>
+  <ol start="10">
+    <li>Donoho, D. L. (2006). Compressed sensing. <em>IEEE TIT</em>, 52(4), 1289-1306.</li>
+    <li>Candès, E. J., & Wakin, M. B. (2008). An introduction to compressive sampling. <em>IEEE SPM</em>, 25(2), 21-30.</li>
+  </ol>
+
+  <h3>Reviews</h3>
+  <ol start="12">
+    <li>Földiák, P., & Young, M. P. (1995). Sparse coding in the primate cortex. <em>The Handbook of Brain Theory and Neural Networks</em>.</li>
+    <li>Olshausen, B. A., & Field, D. J. (2004). Sparse coding of sensory inputs. <em>Current Opinion in Neurobiology</em>, 14(4), 481-487.</li>
+  </ol>
+</div>
+
+</body>
+</html>

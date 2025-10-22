@@ -1,0 +1,1116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Energy Landscapes and Optimization: A Unifying Framework | Rohan Vinaik</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --text: #e0e0e0;
+      --text-secondary: #a0a0a0;
+      --accent: #00ff00;
+      --border: #333;
+      --code-bg: #1a1a1a;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'JetBrains Mono', monospace;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 20px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    h1 {
+      color: var(--accent);
+      font-size: 1.5rem;
+      margin-bottom: 8px;
+      letter-spacing: 0.02em;
+    }
+    h2 {
+      color: var(--accent);
+      font-size: 1.1rem;
+      margin-top: 32px;
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    h3 {
+      color: var(--accent);
+      font-size: 0.95rem;
+      margin-top: 24px;
+      margin-bottom: 12px;
+    }
+    h4 {
+      color: var(--text);
+      font-size: 0.85rem;
+      margin-top: 20px;
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+    p { margin-bottom: 16px; font-size: 0.85rem; }
+    a {
+      color: var(--accent);
+      text-decoration: none;
+      border-bottom: 1px dotted var(--accent);
+    }
+    a:hover { border-bottom-style: solid; }
+    .back-link {
+      display: inline-block;
+      margin-bottom: 24px;
+      font-size: 0.85rem;
+    }
+    .paper-meta {
+      color: var(--text-secondary);
+      font-size: 0.75rem;
+      margin-bottom: 24px;
+    }
+    .abstract {
+      background: var(--code-bg);
+      padding: 20px;
+      border-left: 3px solid var(--accent);
+      margin-bottom: 32px;
+      font-size: 0.85rem;
+    }
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 32px;
+    }
+    .tag {
+      background: var(--code-bg);
+      padding: 4px 12px;
+      border: 1px solid var(--border);
+      font-size: 0.7rem;
+      color: var(--accent);
+      text-decoration: none;
+      border-bottom: none;
+    }
+    .tag:hover {
+      background: var(--accent);
+      color: var(--bg);
+      border-color: var(--accent);
+    }
+    .quick-nav {
+      background: var(--code-bg);
+      padding: 16px;
+      margin-bottom: 32px;
+      border: 1px solid var(--border);
+    }
+    .quick-nav h3 {
+      margin-top: 0;
+      font-size: 0.85rem;
+    }
+    .quick-nav ul {
+      list-style: none;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .quick-nav a {
+      font-size: 0.75rem;
+      border-bottom: none;
+      padding: 4px 0;
+      display: block;
+    }
+    .quick-nav a:hover { color: var(--bg); background: var(--accent); padding-left: 8px; }
+    .code-block {
+      background: var(--code-bg);
+      padding: 16px;
+      border-left: 3px solid var(--border);
+      margin: 16px 0;
+      font-size: 0.8rem;
+      overflow-x: auto;
+    }
+    ul, ol {
+      margin-left: 20px;
+      margin-bottom: 16px;
+    }
+    li {
+      margin-bottom: 8px;
+      font-size: 0.85rem;
+    }
+    strong {
+      color: var(--accent);
+      font-weight: 600;
+    }
+    .references {
+      font-size: 0.75rem;
+      margin-top: 32px;
+    }
+    .references ol {
+      padding-left: 20px;
+    }
+    .references li {
+      margin-bottom: 12px;
+      line-height: 1.5;
+    }
+    @media (max-width: 768px) {
+      body { padding: 12px; }
+      h1 { font-size: 1.2rem; }
+      h2 { font-size: 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<a href="../index.html#reference" class="back-link">← Back to Reference</a>
+
+<h1>Energy Landscapes and Optimization: A Unifying Framework</h1>
+<div class="paper-meta">January 2025 · Technical Reference</div>
+
+<div class="tags">
+  <a href="../index.html?filter=OPTIMIZATION" class="tag">[OPTIMIZATION]</a>
+  <a href="../index.html?filter=ENERGY-LANDSCAPES" class="tag">[ENERGY-LANDSCAPES]</a>
+  <a href="../index.html?filter=STATISTICAL-MECHANICS" class="tag">[STATISTICAL-MECHANICS]</a>
+  <a href="../index.html?filter=MACHINE-LEARNING" class="tag">[MACHINE-LEARNING]</a>
+  <a href="../index.html?filter=GRADIENT-DESCENT" class="tag">[GRADIENT-DESCENT]</a>
+  <a href="../index.html?filter=CONVEX-OPTIMIZATION" class="tag">[CONVEX-OPTIMIZATION]</a>
+  <a href="../index.html?filter=NEURAL-NETWORKS" class="tag">[NEURAL-NETWORKS]</a>
+  <a href="../index.html?filter=MCMC" class="tag">[MCMC]</a>
+  <a href="../index.html?filter=SIMULATED-ANNEALING" class="tag">[SIMULATED-ANNEALING]</a>
+  <a href="../index.html?filter=THERMODYNAMICS" class="tag">[THERMODYNAMICS]</a>
+</div>
+
+<div class="abstract">
+  <strong>Abstract:</strong> Energy landscapes provide a unified view of computation, optimization, and physical dynamics. Systems evolve by minimizing energy functionals, connecting statistical mechanics, optimization theory, and machine learning. A key insight: many computational problems can be framed as navigation through energy landscapes. This framework encompasses molecular systems, spin models, neural network training, and combinatorial optimization, revealing deep connections between seemingly disparate fields.
+</div>
+
+<div class="quick-nav">
+  <h3>Quick Navigation</h3>
+  <ul>
+    <li><a href="#foundational-concepts">1. Foundational Concepts</a></li>
+    <li><a href="#physical-energy">2. Physical Energy Landscapes</a></li>
+    <li><a href="#optimization-landscapes">3. Optimization Landscapes</a></li>
+    <li><a href="#ml-landscapes">4. Machine Learning Landscapes</a></li>
+    <li><a href="#landscape-topology">5. Landscape Topology</a></li>
+    <li><a href="#sampling-methods">6. Sampling Methods</a></li>
+    <li><a href="#multiscale">7. Multiscale Landscapes</a></li>
+    <li><a href="#computational-methods">8. Computational Methods</a></li>
+    <li><a href="#theoretical-frameworks">9. Theoretical Frameworks</a></li>
+    <li><a href="#applications">10. Applications</a></li>
+    <li><a href="#connections">11. Connections and Unifications</a></li>
+    <li><a href="#open-questions">12. Open Questions</a></li>
+    <li><a href="#references">References</a></li>
+  </ul>
+</div>
+
+<h2 id="foundational-concepts">1. Foundational Concepts</h2>
+
+<h3>1.1 Energy Functionals</h3>
+
+<h4>Definition</h4>
+<ul>
+  <li>Energy function: \(E: \Omega \to \mathbb{R}\)</li>
+  <li>Maps system configurations to scalar energy values</li>
+  <li>Generalization of physical energy to abstract spaces</li>
+</ul>
+
+<h4>Types</h4>
+<ul>
+  <li><strong>Physical energy:</strong> Mechanical, electromagnetic, chemical</li>
+  <li><strong>Statistical energy:</strong> \(-\log P(x)\) (negative log probability)</li>
+  <li><strong>Cost functions:</strong> Optimization objectives</li>
+  <li><strong>Loss functions:</strong> Machine learning training objectives</li>
+</ul>
+
+<h4>Properties</h4>
+<ul>
+  <li><strong>Boundedness:</strong> \(E(x) \in [E_{\text{min}}, E_{\text{max}}]\) or \(E(x) \geq 0\)</li>
+  <li><strong>Smoothness:</strong> Differentiability, Lipschitz continuity</li>
+  <li><strong>Convexity:</strong> Single global minimum vs. multiple local minima</li>
+  <li><strong>Symmetries:</strong> Invariances under transformations</li>
+</ul>
+
+<h3>1.2 Gradient Dynamics</h3>
+
+<h4>Basic Evolution</h4>
+<div class="code-block">
+dx/dt = -∇E(x)
+</div>
+
+<h4>Properties</h4>
+<ul>
+  <li>Energy decreases monotonically: \(dE/dt = -\|\nabla E\|^2 \leq 0\)</li>
+  <li>Converges to critical points: \(\nabla E(x^*) = 0\)</li>
+  <li>Lyapunov function: \(E(x(t))\) proves convergence</li>
+</ul>
+
+<h4>Variations</h4>
+<ul>
+  <li><strong>Momentum:</strong> Accelerated gradient descent</li>
+  <li><strong>Stochastic:</strong> Langevin dynamics with thermal noise</li>
+  <li><strong>Constrained:</strong> Projected gradient on manifolds</li>
+  <li><strong>Non-gradient:</strong> Hamiltonian, symplectic dynamics</li>
+</ul>
+
+<h3>1.3 Equilibrium and Stability</h3>
+
+<h4>Fixed Points</h4>
+<ul>
+  <li>Minima: All eigenvalues of Hessian positive (stable)</li>
+  <li>Maxima: All eigenvalues negative (unstable)</li>
+  <li>Saddle points: Mixed eigenvalues (unstable)</li>
+</ul>
+
+<h4>Basin of Attraction</h4>
+<ul>
+  <li>Region \(\Omega_i\) where trajectories converge to minimum \(x_i^*\)</li>
+  <li>Size determines robustness of minimum</li>
+  <li>Boundaries = separatrices</li>
+</ul>
+
+<h4>Stability Analysis</h4>
+<ul>
+  <li>Linear stability: Eigenvalues of Jacobian at fixed point</li>
+  <li>Lyapunov stability: Bounded trajectories</li>
+  <li>Structural stability: Perturbation resistance</li>
+</ul>
+
+<h2 id="physical-energy">2. Physical Energy Landscapes</h2>
+
+<h3>2.1 Molecular Systems</h3>
+
+<h4>Potential Energy Surface (PES)</h4>
+<ul>
+  <li>\(E(R) = E_{\text{bonded}} + E_{\text{nonbonded}} + E_{\text{electrostatic}}\)</li>
+  <li>\(R\) = atomic coordinates (3N dimensions for N atoms)</li>
+  <li>Dimensionality: Very high (proteins: ~10<sup>4</sup> dimensions)</li>
+</ul>
+
+<h4>Features</h4>
+<ul>
+  <li>Global minimum: Native state (protein folding)</li>
+  <li>Local minima: Metastable states, folding intermediates</li>
+  <li>Transition states: Saddle points connecting minima</li>
+  <li>Funnels: Energy decreases toward native state</li>
+</ul>
+
+<h4>Exploration Methods</h4>
+<ul>
+  <li>Molecular dynamics: Newtonian equations + thermostat</li>
+  <li>Monte Carlo: Stochastic sampling, Metropolis criterion</li>
+  <li>Simulated annealing: Temperature-dependent exploration</li>
+  <li>Replica exchange: Parallel tempering</li>
+</ul>
+
+<h3>2.2 Spin Systems</h3>
+
+<h4>Ising Model</h4>
+<div class="code-block">
+H = -∑_{&lt;i,j&gt;} J_ij s_i s_j - ∑_i h_i s_i
+
+where s_i ∈ {-1, +1}
+</div>
+
+<h4>Energy Landscape</h4>
+<ul>
+  <li>2<sup>N</sup> discrete states for N spins</li>
+  <li>Ferromagnetic (J > 0): Aligned spins favored</li>
+  <li>Antiferromagnetic (J < 0): Alternating spins favored</li>
+  <li>Frustrated systems: No perfect ground state</li>
+</ul>
+
+<h4>Phase Transitions</h4>
+<ul>
+  <li>Critical temperature \(T_c\)</li>
+  <li>Below \(T_c\): Ordered phase (spontaneous magnetization)</li>
+  <li>Above \(T_c\): Disordered phase (paramagnetic)</li>
+  <li>Order parameter: \(\langle s \rangle = \sum s_i / N\)</li>
+</ul>
+
+<h3>2.3 Thermodynamic Landscapes</h3>
+
+<h4>Free Energy</h4>
+<div class="code-block">
+F = U - TS  (Helmholtz)
+G = U + PV - TS  (Gibbs)
+</div>
+
+<h4>Partition Function</h4>
+<div class="code-block">
+Z = ∑_states exp(-E_i/kT)
+F = -kT ln Z
+</div>
+
+<h4>Statistical Ensemble</h4>
+<ul>
+  <li>Canonical: Fixed N, V, T</li>
+  <li>Microcanonical: Fixed N, V, E</li>
+  <li>Grand canonical: Fixed μ, V, T</li>
+</ul>
+
+<h4>Equilibrium Distribution</h4>
+<ul>
+  <li>Boltzmann: \(P(E) \propto \exp(-E/kT)\)</li>
+  <li>Low T: States near minimum dominate</li>
+  <li>High T: All states equally accessible</li>
+</ul>
+
+<h2 id="optimization-landscapes">3. Optimization Landscapes</h2>
+
+<h3>3.1 Convex Optimization</h3>
+
+<h4>Definition</h4>
+<p>\(E(\lambda x + (1-\lambda)y) \leq \lambda E(x) + (1-\lambda)E(y)\) for \(\lambda \in [0,1]\)</p>
+
+<h4>Properties</h4>
+<ul>
+  <li>Unique global minimum</li>
+  <li>Any local minimum is global</li>
+  <li>Efficient algorithms (polynomial time)</li>
+  <li>Gradient descent converges globally</li>
+</ul>
+
+<h4>Examples</h4>
+<ul>
+  <li>Linear programming</li>
+  <li>Quadratic programming</li>
+  <li>Convex regression (ridge, lasso)</li>
+  <li>Support vector machines (SVM)</li>
+</ul>
+
+<h4>Algorithms</h4>
+<ul>
+  <li>Gradient descent: O(1/ε) convergence</li>
+  <li>Newton's method: O(log log(1/ε)) for strongly convex</li>
+  <li>Interior point methods</li>
+  <li>Proximal methods</li>
+</ul>
+
+<h3>3.2 Non-Convex Optimization</h3>
+
+<h4>Challenges</h4>
+<ul>
+  <li>Multiple local minima</li>
+  <li>Saddle points (high-dimensional: exponentially many)</li>
+  <li>Gradient descent can get stuck</li>
+  <li>No polynomial-time guarantees (NP-hard in general)</li>
+</ul>
+
+<h4>Landscape Geometry</h4>
+<ul>
+  <li>Rugged: Many local minima</li>
+  <li>Glassy: Hierarchical barriers</li>
+  <li>Funnel-like: Energy decreases toward global minimum</li>
+  <li>Flat regions: Small gradients, slow convergence</li>
+</ul>
+
+<h4>Escape Mechanisms</h4>
+<ul>
+  <li>Stochastic gradient descent: Noise helps escape</li>
+  <li>Momentum: Overcome small barriers</li>
+  <li>Restart strategies: Multiple random initializations</li>
+  <li>Basin-hopping: Jump between minima</li>
+</ul>
+
+<h3>3.3 Combinatorial Optimization</h3>
+
+<h4>Discrete Energy Landscapes</h4>
+<ul>
+  <li>Configuration space: Finite but exponentially large</li>
+  <li>Neighbors: Defined by problem structure (e.g., bit flips, permutations)</li>
+  <li>Energy barriers: Discrete jumps</li>
+</ul>
+
+<h4>Examples</h4>
+<ul>
+  <li>Traveling salesman problem (TSP)</li>
+  <li>Graph coloring</li>
+  <li>Satisfiability (SAT)</li>
+  <li>Knapsack problem</li>
+</ul>
+
+<h4>Search Strategies</h4>
+<ul>
+  <li>Simulated annealing: Metropolis Monte Carlo</li>
+  <li>Genetic algorithms: Population-based search</li>
+  <li>Tabu search: Maintain memory of visited states</li>
+  <li>Branch and bound: Systematic tree search</li>
+</ul>
+
+<h2 id="ml-landscapes">4. Machine Learning Landscapes</h2>
+
+<h3>4.1 Loss Surfaces</h3>
+
+<h4>Neural Network Loss</h4>
+<div class="code-block">
+L(θ) = ∑_i loss(f_θ(x_i), y_i) + λ·R(θ)
+
+where:
+  θ: Parameters (weights, biases)
+  f_θ: Network function
+  R(θ): Regularization
+</div>
+
+<h4>Dimensionality</h4>
+<ul>
+  <li>Modern networks: 10<sup>6</sup>-10<sup>9</sup> parameters</li>
+  <li>Loss surface: Very high-dimensional</li>
+  <li>Visualization: Projections onto 1D/2D subspaces</li>
+</ul>
+
+<h4>Structure</h4>
+<ul>
+  <li>Overparameterized: Many global minima (mode connectivity)</li>
+  <li>Saddle points: Exponentially many in high dimensions</li>
+  <li>Plateau regions: Nearly flat, slow training</li>
+  <li>Sharp vs. flat minima: Generalization implications</li>
+</ul>
+
+<h3>4.2 Training Dynamics</h3>
+
+<h4>Stochastic Gradient Descent</h4>
+<div class="code-block">
+θ_{t+1} = θ_t - η·∇L_batch(θ_t)
+</div>
+
+<h4>Variants</h4>
+<ul>
+  <li>Momentum: Accumulate gradients</li>
+  <li>Adam: Adaptive learning rates</li>
+  <li>RMSprop: Normalize by gradient history</li>
+  <li>AdaGrad: Per-parameter adaptation</li>
+</ul>
+
+<h4>Convergence</h4>
+<ul>
+  <li>Convex: Guaranteed convergence to global minimum</li>
+  <li>Non-convex: Converges to critical points</li>
+  <li>Stochasticity: Enables escape from sharp minima</li>
+  <li>Implicit regularization: SGD biases toward flat minima</li>
+</ul>
+
+<h3>4.3 Energy-Based Models</h3>
+
+<h4>General Framework</h4>
+<div class="code-block">
+P(x) = exp(-E(x)) / Z
+
+where Z = ∫ exp(-E(x)) dx
+</div>
+
+<h4>Examples</h4>
+<ul>
+  <li>Boltzmann machines: Binary variables, pairwise interactions</li>
+  <li>Restricted Boltzmann machines (RBM): Bipartite structure</li>
+  <li>Hopfield networks: Associative memory</li>
+  <li>Contrastive divergence: Training via MCMC</li>
+</ul>
+
+<h4>Training</h4>
+<ul>
+  <li>Maximum likelihood: \(\partial \ln P/\partial \theta = \langle \partial E/\partial \theta \rangle_{\text{data}} - \langle \partial E/\partial \theta \rangle_{\text{model}}\)</li>
+  <li>Positive phase: Data statistics</li>
+  <li>Negative phase: Model statistics (MCMC sampling)</li>
+  <li>Contrastive divergence: Approximate negative phase</li>
+</ul>
+
+<h2 id="landscape-topology">5. Landscape Topology</h2>
+
+<h3>5.1 Morse Theory</h3>
+
+<h4>Critical Points</h4>
+<ul>
+  <li>Index = number of negative eigenvalues of Hessian</li>
+  <li>Index 0: Minima</li>
+  <li>Index k: k-saddles</li>
+  <li>Index n: Maxima (in n dimensions)</li>
+</ul>
+
+<h4>Morse-Smale Complex</h4>
+<ul>
+  <li>Partition space by basins of attraction</li>
+  <li>Stable/unstable manifolds</li>
+  <li>Connections between critical points</li>
+</ul>
+
+<h4>Persistence</h4>
+<ul>
+  <li>Lifetime of topological features</li>
+  <li>Filtration: Sublevel sets \(E \leq \epsilon\)</li>
+  <li>Persistence diagram: Birth-death pairs of features</li>
+</ul>
+
+<h3>5.2 Energy Barriers</h3>
+
+<h4>Transition State Theory</h4>
+<div class="code-block">
+Rate ∝ exp(-ΔE‡/kT)
+
+where ΔE‡ = E_saddle - E_minimum
+</div>
+
+<h4>Arrhenius Law</h4>
+<ul>
+  <li>Temperature dependence of rates</li>
+  <li>Activation energy from slope of ln(k) vs. 1/T</li>
+</ul>
+
+<h4>Kramers Rate</h4>
+<ul>
+  <li>Escape over barrier in viscous medium</li>
+  <li>Depends on barrier height and curvature</li>
+  <li>Prefactor from attempt frequency</li>
+</ul>
+
+<h3>5.3 Dimensionality Effects</h3>
+
+<h4>Concentration of Measure</h4>
+<ul>
+  <li>High dimensions: Volume concentrates in thin shell</li>
+  <li>Most of mass far from origin</li>
+  <li>Implications for sampling, optimization</li>
+</ul>
+
+<h4>Curse of Dimensionality</h4>
+<ul>
+  <li>Exponential growth of space</li>
+  <li>Distances become uniform</li>
+  <li>Nearest neighbors are far</li>
+</ul>
+
+<h4>Blessing of Dimensionality</h4>
+<ul>
+  <li>Many directions to move</li>
+  <li>Saddle points more common than minima</li>
+  <li>Easier to escape local minima (many escape directions)</li>
+</ul>
+
+<h2 id="sampling-methods">6. Sampling Methods</h2>
+
+<h3>6.1 Markov Chain Monte Carlo (MCMC)</h3>
+
+<h4>Metropolis-Hastings</h4>
+<div class="code-block">
+1. Propose x' ~ q(x'|x)
+2. Accept with probability α = min(1, P(x')/P(x))
+3. If accepted: x ← x', else: stay at x
+</div>
+
+<h4>Properties</h4>
+<ul>
+  <li>Detailed balance: \(P(x)T(x \to x') = P(x')T(x' \to x)\)</li>
+  <li>Ergodicity: All states reachable</li>
+  <li>Stationary distribution: \(P_\infty(x) = P(x)\)</li>
+</ul>
+
+<h4>Variants</h4>
+<ul>
+  <li>Gibbs sampling: Update one variable at a time</li>
+  <li>Hamiltonian Monte Carlo: Use momentum for proposals</li>
+  <li>Parallel tempering: Multiple temperatures, swap configurations</li>
+</ul>
+
+<h3>6.2 Langevin Dynamics</h3>
+
+<h4>Stochastic Differential Equation</h4>
+<div class="code-block">
+dx/dt = -∇E(x) + √(2kT)·ξ(t)
+</div>
+
+<h4>Properties</h4>
+<ul>
+  <li>Combines gradient descent with diffusion</li>
+  <li>Equilibrium: Boltzmann distribution</li>
+  <li>Overdamped limit: Brownian motion on energy landscape</li>
+</ul>
+
+<h4>Discretization</h4>
+<ul>
+  <li>Euler-Maruyama: \(x_{t+1} = x_t - \epsilon \cdot \nabla E + \sqrt{2\epsilon} \cdot \zeta\)</li>
+  <li>Stability: Step size ε must be small enough</li>
+</ul>
+
+<h3>6.3 Annealing Schedules</h3>
+
+<h4>Simulated Annealing</h4>
+<ul>
+  <li>Start at high T: Explore broadly</li>
+  <li>Gradually decrease T: Focus on low-energy regions</li>
+  <li>End at low T: Settle into minimum</li>
+</ul>
+
+<h4>Schedule Design</h4>
+<ul>
+  <li>Exponential: \(T(t) = T_0 \cdot \alpha^t\)</li>
+  <li>Logarithmic: \(T(t) = T_0 / \log(t)\)</li>
+  <li>Adaptive: Adjust based on acceptance rate</li>
+</ul>
+
+<h4>Convergence</h4>
+<ul>
+  <li>Slow enough: Guaranteed to find global minimum</li>
+  <li>Too fast: Gets stuck in local minimum</li>
+  <li>Tradeoff: Computation time vs. solution quality</li>
+</ul>
+
+<h2 id="multiscale">7. Multiscale Landscapes</h2>
+
+<h3>7.1 Hierarchical Structure</h3>
+
+<h4>Coarse-Graining</h4>
+<ul>
+  <li>Average over fast degrees of freedom</li>
+  <li>Effective energy at larger scale</li>
+  <li>Renormalization group ideas</li>
+</ul>
+
+<h4>Example: Protein Folding</h4>
+<ul>
+  <li>Atomic: Bond vibrations, rotations</li>
+  <li>Residue: Secondary structure formation</li>
+  <li>Domain: Tertiary structure assembly</li>
+  <li>Complex: Quaternary structure</li>
+</ul>
+
+<h4>Timescale Separation</h4>
+<ul>
+  <li>Fast: Local relaxation</li>
+  <li>Intermediate: Domain rearrangements</li>
+  <li>Slow: Global conformational changes</li>
+</ul>
+
+<h3>7.2 Energy Funnels</h3>
+
+<h4>Funnel Paradigm</h4>
+<ul>
+  <li>Energy decreases toward native state</li>
+  <li>Entropy also decreases (fewer configurations)</li>
+  <li>Free energy \(F = E - TS\) balances both</li>
+</ul>
+
+<h4>Navigation</h4>
+<ul>
+  <li>Initial: Random coil, high energy, high entropy</li>
+  <li>Intermediate: Compact states, medium energy, medium entropy</li>
+  <li>Final: Native state, low energy, low entropy</li>
+</ul>
+
+<h4>Frustration</h4>
+<ul>
+  <li>Minimal: Smooth funnel, fast folding</li>
+  <li>High: Rugged landscape, kinetic traps</li>
+</ul>
+
+<h3>7.3 Roughness and Frustration</h3>
+
+<h4>Ruggedness</h4>
+<ul>
+  <li>Amplitude: Energy scale of fluctuations</li>
+  <li>Correlation length: Size of "bumps"</li>
+  <li>Fractal dimension: Self-similarity across scales</li>
+</ul>
+
+<h4>Frustration</h4>
+<ul>
+  <li>Competing interactions prevent global satisfaction</li>
+  <li>Spin glasses: Cannot satisfy all pairwise interactions</li>
+  <li>Proteins: Non-native contacts slow folding</li>
+</ul>
+
+<h4>Measures</h4>
+<ul>
+  <li>Energy variance at fixed overlap</li>
+  <li>Correlation function: \(C(r) = \langle E(x)E(x+r) \rangle\)</li>
+  <li>Roughness exponent: Power-law decay</li>
+</ul>
+
+<h2 id="computational-methods">8. Computational Methods</h2>
+
+<h3>8.1 Energy Minimization</h3>
+
+<h4>Local Methods</h4>
+<ul>
+  <li>Steepest descent: Follow negative gradient</li>
+  <li>Conjugate gradient: Improved directions</li>
+  <li>Newton's method: Use second derivatives (Hessian)</li>
+  <li>Quasi-Newton: Approximate Hessian (BFGS, L-BFGS)</li>
+</ul>
+
+<h4>Global Methods</h4>
+<ul>
+  <li>Simulated annealing: Stochastic search with cooling</li>
+  <li>Genetic algorithms: Evolutionary search</li>
+  <li>Basin-hopping: Combine local minimization with jumps</li>
+  <li>Swarm optimization: Population-based exploration</li>
+</ul>
+
+<h3>8.2 Transition Path Sampling</h3>
+
+<h4>Goal</h4>
+<p>Find pathways between states</p>
+
+<h4>Methods</h4>
+<ul>
+  <li>Minimum energy path (MEP): Steepest descent path</li>
+  <li>Transition path sampling: Generate reactive trajectories</li>
+  <li>String method: Evolve chain of images along path</li>
+  <li>Nudged elastic band (NEB): Constrained optimization</li>
+</ul>
+
+<h4>Observables</h4>
+<ul>
+  <li>Transition state: Highest energy along MEP</li>
+  <li>Committor: Probability to reach product before reactant</li>
+  <li>Reaction coordinate: Progress variable along path</li>
+</ul>
+
+<h3>8.3 Free Energy Calculation</h3>
+
+<h4>Methods</h4>
+<ul>
+  <li>Thermodynamic integration: \(\int \langle \partial E/\partial \lambda \rangle_\lambda d\lambda\)</li>
+  <li>Free energy perturbation: \(\langle \exp(-\Delta E/kT) \rangle\)</li>
+  <li>Umbrella sampling: Bias to sample rare regions</li>
+  <li>Metadynamics: Add Gaussians to fill free energy wells</li>
+</ul>
+
+<h4>Collective Variables</h4>
+<ul>
+  <li>Dimensionality reduction of configuration space</li>
+  <li>Examples: Distance, angle, RMSD, contact number</li>
+  <li>Free energy as function of collective variables</li>
+</ul>
+
+<h2 id="theoretical-frameworks">9. Theoretical Frameworks</h2>
+
+<h3>9.1 Statistical Mechanics</h3>
+
+<h4>Ensemble Theory</h4>
+<ul>
+  <li>Microcanonical: E fixed, entropy \(S = k \ln \Omega\)</li>
+  <li>Canonical: T fixed, free energy \(F = -kT \ln Z\)</li>
+  <li>Grand canonical: μ fixed, grand potential \(\Omega = -kT \ln \Xi\)</li>
+</ul>
+
+<h4>Partition Function</h4>
+<div class="code-block">
+Z(T) = ∑_i exp(-E_i/kT)
+
+Thermodynamic quantities:
+  F = -kT ln Z
+  <E> = -∂ln Z/∂β
+  C_v = ∂<E>/∂T
+</div>
+
+<h4>Phase Transitions</h4>
+<ul>
+  <li>First order: Discontinuous order parameter</li>
+  <li>Second order: Continuous, diverging correlation length</li>
+  <li>Critical exponents: Universal scaling laws</li>
+</ul>
+
+<h3>9.2 Information Theory</h3>
+
+<h4>Maximum Entropy</h4>
+<ul>
+  <li>Subject to constraints, choose \(P(x)\) maximizing \(H = -\sum P(x) \ln P(x)\)</li>
+  <li>Result: Exponential family distributions</li>
+  <li>Lagrange multipliers = thermodynamic variables</li>
+</ul>
+
+<h4>Minimum Kullback-Leibler</h4>
+<ul>
+  <li>Find \(q(x)\) minimizing \(D_{KL}(q\|p)\)</li>
+  <li>Equivalent to maximum likelihood</li>
+  <li>Connection to variational free energy</li>
+</ul>
+
+<h4>Fisher Information</h4>
+<ul>
+  <li>Curvature of log-likelihood</li>
+  <li>Cramér-Rao bound on estimation</li>
+  <li>Riemannian metric on parameter space</li>
+</ul>
+
+<h3>9.3 Dynamical Systems</h3>
+
+<h4>Gradient Flows</h4>
+<ul>
+  <li>\(dx/dt = -\nabla E(x)\)</li>
+  <li>Lyapunov function: \(E(x(t))\) decreases</li>
+  <li>Convergence to equilibria</li>
+</ul>
+
+<h4>Hamiltonian Dynamics</h4>
+<ul>
+  <li>Conservative: Energy preserved</li>
+  <li>Symplectic structure: Phase space geometry</li>
+  <li>Chaos: Sensitive dependence on initial conditions</li>
+</ul>
+
+<h4>Stochastic Dynamics</h4>
+<ul>
+  <li>Fokker-Planck equation: Evolution of probability density</li>
+  <li>Master equation: Discrete state space</li>
+  <li>Fluctuation-dissipation: Balance noise and friction</li>
+</ul>
+
+<h2 id="applications">10. Applications</h2>
+
+<h3>10.1 Physics</h3>
+
+<h4>Protein Folding</h4>
+<ul>
+  <li>Energy landscape theory</li>
+  <li>Funnel hypothesis</li>
+  <li>Folding kinetics from landscape topology</li>
+</ul>
+
+<h4>Glasses</h4>
+<ul>
+  <li>Supercooled liquids</li>
+  <li>Jamming transition</li>
+  <li>Aging and non-ergodicity</li>
+</ul>
+
+<h4>Magnetism</h4>
+<ul>
+  <li>Spin models (Ising, Heisenberg)</li>
+  <li>Domain walls and defects</li>
+  <li>Hysteresis loops</li>
+</ul>
+
+<h3>10.2 Chemistry</h3>
+
+<h4>Chemical Reactions</h4>
+<ul>
+  <li>Reaction coordinate</li>
+  <li>Transition state theory</li>
+  <li>Catalysis as landscape modification</li>
+</ul>
+
+<h4>Molecular Recognition</h4>
+<ul>
+  <li>Binding free energy landscapes</li>
+  <li>Induced fit vs. conformational selection</li>
+  <li>Allostery</li>
+</ul>
+
+<h4>Self-Assembly</h4>
+<ul>
+  <li>Nucleation and growth</li>
+  <li>Pathways to ordered structures</li>
+  <li>Kinetic vs. thermodynamic control</li>
+</ul>
+
+<h3>10.3 Computer Science</h3>
+
+<h4>Optimization</h4>
+<ul>
+  <li>Linear/nonlinear programming</li>
+  <li>Integer programming</li>
+  <li>Constraint satisfaction</li>
+</ul>
+
+<h4>Machine Learning</h4>
+<ul>
+  <li>Training neural networks</li>
+  <li>Hyperparameter optimization</li>
+  <li>Architecture search</li>
+</ul>
+
+<h4>Algorithms</h4>
+<ul>
+  <li>Simulated annealing</li>
+  <li>Genetic algorithms</li>
+  <li>Swarm intelligence</li>
+</ul>
+
+<h3>10.4 Biology</h3>
+
+<h4>Gene Regulatory Networks</h4>
+<ul>
+  <li>Attractor states = cell types</li>
+  <li>Waddington landscape</li>
+  <li>Reprogramming as barrier crossing</li>
+</ul>
+
+<h4>Evolution</h4>
+<ul>
+  <li>Fitness landscapes</li>
+  <li>Adaptive walks</li>
+  <li>Epistasis and ruggedness</li>
+</ul>
+
+<h4>Ecosystems</h4>
+<ul>
+  <li>Stability and resilience</li>
+  <li>Multiple stable states</li>
+  <li>Regime shifts</li>
+</ul>
+
+<h2 id="connections">11. Connections and Unifications</h2>
+
+<h3>11.1 Energy and Information</h3>
+
+<h4>Landauer's Principle</h4>
+<ul>
+  <li>Erasing information costs energy: \(E \geq kT \ln 2\) per bit</li>
+  <li>Information processing is physical</li>
+</ul>
+
+<h4>Maxwell's Demon</h4>
+<ul>
+  <li>Apparent violation of second law</li>
+  <li>Resolution: Demon must erase memory, costing energy</li>
+</ul>
+
+<h4>Thermodynamic Computing</h4>
+<ul>
+  <li>Reversible computation: Zero dissipation</li>
+  <li>Irreversible: Limited by Landauer bound</li>
+</ul>
+
+<h3>11.2 Optimization and Physics</h3>
+
+<h4>Analogies</h4>
+<ul>
+  <li>Cost function ↔ Energy</li>
+  <li>Parameters ↔ Coordinates</li>
+  <li>Optimization ↔ Relaxation</li>
+  <li>Gradient descent ↔ Gradient flow</li>
+</ul>
+
+<h4>Differences</h4>
+<ul>
+  <li>Optimization: Designer chooses objective</li>
+  <li>Physics: Objective given by fundamental laws</li>
+</ul>
+
+<h3>11.3 Learning and Evolution</h3>
+
+<h4>Shared Structure</h4>
+<ul>
+  <li>Fitness landscape ↔ Error landscape</li>
+  <li>Natural selection ↔ Gradient descent</li>
+  <li>Mutation ↔ Stochastic perturbation</li>
+  <li>Recombination ↔ Momentum/crossover</li>
+</ul>
+
+<h4>Differences</h4>
+<ul>
+  <li>Evolution: Population-based, no gradient information</li>
+  <li>Learning: Individual-based, gradient guidance</li>
+</ul>
+
+<h2 id="open-questions">12. Open Questions</h2>
+
+<h3>12.1 Theoretical</h3>
+
+<h4>Landscape Universality</h4>
+<ul>
+  <li>Do different systems share universal landscape features?</li>
+  <li>Applicability of statistical mechanics to non-equilibrium systems</li>
+  <li>Role of frustration in determining landscape structure</li>
+</ul>
+
+<h4>High-Dimensional Geometry</h4>
+<ul>
+  <li>Behavior of optimization in very high dimensions</li>
+  <li>Prevalence of saddle points vs. local minima</li>
+  <li>Effective dimensionality of learning</li>
+</ul>
+
+<h4>Complexity Measures</h4>
+<ul>
+  <li>Quantifying landscape ruggedness</li>
+  <li>Predicting optimization difficulty from landscape features</li>
+  <li>Connection between landscape topology and computational complexity</li>
+</ul>
+
+<h3>12.2 Computational</h3>
+
+<h4>Sampling</h4>
+<ul>
+  <li>Efficient sampling from complex, multimodal distributions</li>
+  <li>Overcoming metastability and rare events</li>
+  <li>Adaptive importance sampling</li>
+</ul>
+
+<h4>Optimization</h4>
+<ul>
+  <li>Escaping saddle points in high dimensions</li>
+  <li>Provable convergence for non-convex problems</li>
+  <li>Online/adaptive optimization</li>
+</ul>
+
+<h4>Representation</h4>
+<ul>
+  <li>Dimensionality reduction preserving landscape features</li>
+  <li>Coarse-graining strategies</li>
+  <li>Multi-resolution representations</li>
+</ul>
+
+<h3>12.3 Applied</h3>
+
+<h4>Design</h4>
+<ul>
+  <li>Engineering energy landscapes with desired properties</li>
+  <li>Inverse design: Landscape → structure</li>
+  <li>Controlling self-assembly and folding</li>
+</ul>
+
+<h4>Prediction</h4>
+<ul>
+  <li>Forecasting which minima are accessible</li>
+  <li>Estimating transition rates</li>
+  <li>Identifying bottlenecks and shortcuts</li>
+</ul>
+
+<h4>Control</h4>
+<ul>
+  <li>Active landscape manipulation</li>
+  <li>Time-dependent protocols</li>
+  <li>Feedback-based optimization</li>
+</ul>
+
+<div class="references">
+  <h2 id="references">References</h2>
+
+  <h3>Books</h3>
+  <ol>
+    <li>Wales, D.J. (2003). <em>Energy Landscapes</em>. Cambridge University Press.</li>
+    <li>Landau, L.D. & Lifshitz, E.M. (1980). <em>Statistical Physics</em>. Butterworth-Heinemann.</li>
+    <li>Boyd, S. & Vandenberghe, L. (2004). <em>Convex Optimization</em>. Cambridge University Press.</li>
+    <li>Goodfellow, I., Bengio, Y., & Courville, A. (2016). <em>Deep Learning</em>. MIT Press.</li>
+  </ol>
+
+  <h3>Foundational Papers</h3>
+  <ol start="5">
+    <li>Frauenfelder, H., et al. (1991). The energy landscapes and motions of proteins. <em>Science</em>, 254(5038), 1598-1603.</li>
+    <li>Stillinger, F.H. (1995). A topographic view of supercooled liquids and glass formation. <em>Science</em>, 267(5206), 1935-1939.</li>
+    <li>Kauffman, S.A. & Levin, S. (1987). Towards a general theory of adaptive walks on rugged landscapes. <em>J. Theor. Biol.</em>, 128(1), 11-45.</li>
+  </ol>
+
+  <h3>Optimization</h3>
+  <ol start="8">
+    <li>Kirkpatrick, S., Gelatt, C.D., & Vecchi, M.P. (1983). Optimization by simulated annealing. <em>Science</em>, 220(4598), 671-680.</li>
+    <li>Dauphin, Y.N., et al. (2014). Identifying and attacking the saddle point problem in high-dimensional non-convex optimization. <em>NIPS</em>.</li>
+  </ol>
+
+  <h3>Machine Learning</h3>
+  <ol start="10">
+    <li>Choromanska, A., et al. (2015). The loss surfaces of multilayer networks. <em>AISTATS</em>.</li>
+    <li>Li, H., et al. (2018). Visualizing the loss landscape of neural nets. <em>NeurIPS</em>.</li>
+  </ol>
+
+  <h3>Statistical Mechanics</h3>
+  <ol start="12">
+    <li>Chandler, D. (1987). <em>Introduction to Modern Statistical Mechanics</em>. Oxford University Press.</li>
+    <li>Frenkel, D. & Smit, B. (2002). <em>Understanding Molecular Simulation</em>. Academic Press.</li>
+  </ol>
+</div>
+
+</body>
+</html>

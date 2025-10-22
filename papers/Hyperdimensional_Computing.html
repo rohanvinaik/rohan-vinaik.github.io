@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hyperdimensional Computing: High-Dimensional Vector Representations | Rohan Vinaik</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --text: #e0e0e0;
+      --text-secondary: #a0a0a0;
+      --accent: #00ff00;
+      --border: #333;
+      --code-bg: #1a1a1a;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'JetBrains Mono', monospace;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 20px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    h1 {
+      color: var(--accent);
+      font-size: 1.5rem;
+      margin-bottom: 8px;
+      letter-spacing: 0.02em;
+    }
+    h2 {
+      color: var(--accent);
+      font-size: 1.1rem;
+      margin-top: 32px;
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    h3 {
+      color: var(--accent);
+      font-size: 0.95rem;
+      margin-top: 24px;
+      margin-bottom: 12px;
+    }
+    h4 {
+      color: var(--text);
+      font-size: 0.85rem;
+      margin-top: 20px;
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+    p { margin-bottom: 16px; font-size: 0.85rem; }
+    a {
+      color: var(--accent);
+      text-decoration: none;
+      border-bottom: 1px dotted var(--accent);
+    }
+    a:hover { border-bottom-style: solid; }
+    .back-link {
+      display: inline-block;
+      margin-bottom: 24px;
+      font-size: 0.85rem;
+    }
+    .paper-meta {
+      color: var(--text-secondary);
+      font-size: 0.75rem;
+      margin-bottom: 24px;
+    }
+    .abstract {
+      background: var(--code-bg);
+      padding: 20px;
+      border-left: 3px solid var(--accent);
+      margin-bottom: 32px;
+      font-size: 0.85rem;
+    }
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 32px;
+    }
+    .tag {
+      background: var(--code-bg);
+      padding: 4px 12px;
+      border: 1px solid var(--border);
+      font-size: 0.7rem;
+      color: var(--accent);
+      text-decoration: none;
+      border-bottom: none;
+    }
+    .tag:hover {
+      background: var(--accent);
+      color: var(--bg);
+      border-color: var(--accent);
+    }
+    .quick-nav {
+      background: var(--code-bg);
+      padding: 16px;
+      margin-bottom: 32px;
+      border: 1px solid var(--border);
+    }
+    .quick-nav h3 {
+      margin-top: 0;
+      font-size: 0.85rem;
+    }
+    .quick-nav ul {
+      list-style: none;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .quick-nav a {
+      font-size: 0.75rem;
+      border-bottom: none;
+      padding: 4px 0;
+      display: block;
+    }
+    .quick-nav a:hover { color: var(--bg); background: var(--accent); padding-left: 8px; }
+    .code-block {
+      background: var(--code-bg);
+      padding: 16px;
+      border-left: 2px solid var(--accent);
+      margin: 20px 0;
+      font-size: 0.75rem;
+      overflow-x: auto;
+      white-space: pre;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    ul {
+      margin-bottom: 16px;
+      padding-left: 24px;
+      font-size: 0.85rem;
+    }
+    li {
+      margin-bottom: 8px;
+    }
+    strong {
+      color: var(--accent);
+      font-weight: 600;
+    }
+    .references {
+      font-size: 0.75rem;
+      margin-top: 32px;
+    }
+    .references ol {
+      padding-left: 20px;
+    }
+    .references li {
+      margin-bottom: 12px;
+      line-height: 1.5;
+    }
+    @media (max-width: 768px) {
+      body { padding: 12px; }
+      h1 { font-size: 1.2rem; }
+      h2 { font-size: 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<a href="../index.html#reference" class="back-link">← Back to Reference</a>
+
+<h1>Hyperdimensional Computing: High-Dimensional Vector Representations</h1>
+<div class="paper-meta">January 2025 · Technical Reference · Version 2.0</div>
+
+<div class="tags">
+  <a href="../index.html?filter=HYPERDIMENSIONAL-COMPUTING" class="tag">[HYPERDIMENSIONAL-COMPUTING]</a>
+  <a href="../index.html?filter=VECTOR-SYMBOLIC" class="tag">[VECTOR-SYMBOLIC]</a>
+  <a href="../index.html?filter=DISTRIBUTED-REPRESENTATIONS" class="tag">[DISTRIBUTED-REPRESENTATIONS]</a>
+  <a href="../index.html?filter=COMPOSITIONAL-ALGEBRA" class="tag">[COMPOSITIONAL-ALGEBRA]</a>
+  <a href="../index.html?filter=SEMANTIC-ENCODING" class="tag">[SEMANTIC-ENCODING]</a>
+  <a href="../index.html?filter=COGNITIVE-ARCHITECTURES" class="tag">[COGNITIVE-ARCHITECTURES]</a>
+  <a href="../index.html?filter=PATTERN-RECOGNITION" class="tag">[PATTERN-RECOGNITION]</a>
+  <a href="../index.html?filter=NEUROMORPHIC" class="tag">[NEUROMORPHIC]</a>
+</div>
+
+<div class="abstract">
+  <strong>Abstract:</strong> Hyperdimensional Computing (HDC), also known as Vector Symbolic Architectures (VSA), represents a brain-inspired computational paradigm encoding information in extremely high-dimensional vector spaces (typically 1,000-10,000+ dimensions). The framework enables robust, efficient computation through algebraic operations: binding (contextual association), bundling (superposition), and permutation (sequential encoding). HDC provides theoretical foundations for distributed representations, compositional semantics, and similarity-based reasoning with applications across pattern recognition, cognitive architectures, and neuromorphic systems.
+</div>
+
+<div class="quick-nav">
+  <h3>Quick Navigation</h3>
+  <ul>
+    <li><a href="#core-principles">1. Core Principles</a></li>
+    <li><a href="#mathematical-foundations">2. Mathematical Foundations</a></li>
+    <li><a href="#fundamental-operations">3. Fundamental Operations</a></li>
+    <li><a href="#encoding-schemes">4. Encoding Schemes</a></li>
+    <li><a href="#information-theoretic">5. Information-Theoretic Properties</a></li>
+    <li><a href="#theoretical-connections">6. Theoretical Connections</a></li>
+    <li><a href="#references">References</a></li>
+  </ul>
+</div>
+
+<h2 id="core-principles">1. Core Principles</h2>
+
+<h3>1.1 Distributed Holographic Representation</h3>
+
+<p>Information is encoded across all dimensions of a hypervector, with no single dimension bearing disproportionate responsibility for any information piece. This holographic property ensures that partial information remains accessible even when portions of the representation are corrupted or lost.</p>
+
+<h4>Formal Property:</h4>
+<div class="code-block">For hypervector h ∈ {-1,+1}^d:
+  Each dimension contributes equally to information content
+  Damage to subset does not destroy representation</div>
+
+<p><strong>Implications:</strong></p>
+<ul>
+  <li><strong>Robustness:</strong> Graceful degradation under noise or partial loss</li>
+  <li><strong>Redundancy:</strong> Information distributed uniformly prevents single points of failure</li>
+  <li><strong>Parallelism:</strong> Operations on dimensions can execute simultaneously</li>
+</ul>
+
+<h3>1.2 Quasi-Orthogonality in High Dimensions</h3>
+
+<p><strong>Johnson-Lindenstrauss Theorem:</strong> Random projection from n-dimensional space to k-dimensional space preserves pairwise distances with high probability when k = O(log n / ε²).</p>
+
+<h4>Application to HDC:</h4>
+<div class="code-block">Random hypervectors A, B ∈ {-1,+1}^d:
+  E[cos(A,B)] = 0
+  Var[cos(A,B)] = 1/d
+
+At d = 10,000:
+  Random vectors have similarity ≈ 0.00 ± 0.01</div>
+
+<p>This quasi-orthogonality allows representing millions of distinct concepts with negligible interference when dimensionality is sufficiently high (typically d ≥ 1,000).</p>
+
+<h3>1.3 Compositional Semantics</h3>
+
+<p>Meaning emerges from relationships and composition rather than isolated representations. Algebraic operations (bind, bundle, permute) preserve semantic relationships through the geometric structure of the high-dimensional space.</p>
+
+<h4>Example Structure:</h4>
+<div class="code-block"># Individual components
+variant_A = random_hypervector(d)
+position_1 = random_hypervector(d)
+
+# Meaning emerges through binding
+variant_at_position = bind(variant_A, position_1)
+
+# Further composition
+genome = bundle([
+    bind(variant_A, position_1),
+    bind(variant_B, position_2),
+    ...
+])</div>
+
+<h2 id="mathematical-foundations">2. Mathematical Foundations</h2>
+
+<h3>2.1 Vector Space Structure</h3>
+
+<h4>State Space:</h4>
+<div class="code-block">Ω_HD = {-1, +1}^d  (binary/bipolar)
+    or ℝ^d         (real-valued)
+    or ℂ^d         (complex)</div>
+
+<p>Standard choice is binary/bipolar for hardware efficiency and deterministic behavior. Hypervectors are typically normalized to unit length (||h|| = 1).</p>
+
+<h3>2.2 Dimensionality Requirements</h3>
+
+<h4>Theoretical Minimum:</h4>
+<div class="code-block">For N distinct items, collision probability P:
+  d_min ≥ log₂(N) / (1 - P)
+
+Example: N = 1M items, P < 0.01%
+  d_min ≥ 20 dimensions</div>
+
+<h4>Practical Requirements:</h4>
+<ul>
+  <li>Simple classification: 1,000-2,000 dimensions</li>
+  <li>Text/NLP: 5,000-10,000 dimensions</li>
+  <li>Complex multi-modal: 10,000-50,000 dimensions</li>
+</ul>
+
+<p><strong>Rule of Thumb:</strong> d ≥ 10 × log₂(N) for robust performance.</p>
+
+<h3>2.3 Information Capacity</h3>
+
+<p><strong>Holevo's Bound</strong> (from quantum information theory):</p>
+<div class="code-block">Classical approximation for HDC:
+  Capacity ≈ d × H(p)
+  where H(p) = binary entropy of dimension distribution</div>
+
+<h4>Practical Implications:</h4>
+<div class="code-block">d = 10,000 dimensions
+Effective capacity ≈ 4,000 bits (with typical sparsity)
+Compression possible: 4×10⁹ bases → 10,000 dimensions</div>
+
+<h3>2.4 Distance Metrics</h3>
+
+<h4>Cosine Similarity (primary metric):</h4>
+<div class="code-block">sim(A, B) = (A · B) / (||A|| × ||B||)
+
+For normalized hypervectors:
+  sim(A, B) = A · B
+
+Range: [-1, 1]
+  +1: Identical
+   0: Orthogonal (unrelated)
+  -1: Anti-correlated</div>
+
+<h4>Hamming Distance (binary):</h4>
+<div class="code-block">d_H(A, B) = Σᵢ |Aᵢ - Bᵢ|
+
+For bipolar {-1,+1}:
+  d_H(A, B) = d × (1 - sim(A,B)) / 2</div>
+
+<h4>Euclidean Distance (real-valued):</h4>
+<div class="code-block">d_E(A, B) = ||A - B||₂
+
+Relationship to cosine:
+  d_E² = 2(1 - sim(A,B))  for unit vectors</div>
+
+<h2 id="fundamental-operations">3. Fundamental Operations</h2>
+
+<h3>3.1 Binding (⊙): Contextual Association</h3>
+
+<p><strong>Purpose:</strong> Create composite representations associating multiple concepts.</p>
+
+<h4>Methods:</h4>
+<div class="code-block"># Circular convolution
+bind_conv(A, B) = ifft(fft(A) * fft(B))
+
+# Element-wise multiplication (bipolar)
+bind_mult(A, B) = A * B  # element-wise
+
+# Permutation-based (non-commutative)
+bind_perm(A, B) = A * permute(B)</div>
+
+<p><strong>Key Properties:</strong></p>
+<ol>
+  <li><strong>Approximate Invertibility:</strong> unbind(A ⊙ B, B) ≈ A</li>
+  <li><strong>Similarity Preservation:</strong> If sim(A₁, A₂) = s, then sim(A₁ ⊙ C, A₂ ⊙ C) ≈ s</li>
+  <li><strong>Commutativity</strong> (for multiplication): A ⊙ B = B ⊙ A</li>
+</ol>
+
+<h3>3.2 Bundling (⊕): Superposition</h3>
+
+<p><strong>Purpose:</strong> Aggregate multiple items into single representation preserving properties of all constituents.</p>
+
+<h4>Definition:</h4>
+<div class="code-block">bundle(h₁, h₂, ..., hₙ) = normalize(Σᵢ hᵢ)
+
+Binarization: sign(Σᵢ hᵢ)</div>
+
+<p><strong>Key Properties:</strong></p>
+<ol>
+  <li><strong>Similarity to Constituents:</strong> For bundle B = ⊕{A₁, ..., Aₙ}, sim(B, Aᵢ) ≈ 1/√n</li>
+  <li><strong>Commutativity:</strong> Order-independent aggregation</li>
+  <li><strong>Associativity:</strong> (A ⊕ B) ⊕ C = A ⊕ (B ⊕ C)</li>
+</ol>
+
+<h3>3.3 Permutation (π): Sequential Encoding</h3>
+
+<p><strong>Purpose:</strong> Encode positional or sequential information.</p>
+
+<h4>Definition:</h4>
+<div class="code-block">permute(h, k) = circular_shift(h, k)
+
+Properties:
+  π⁻¹(π(A)) = A  (exact invertibility)
+  sim(A, B) = sim(π(A), π(B))  (similarity preservation)
+  π(A) ⊙ B ≠ A ⊙ π(B)  (non-commutativity encodes order)</div>
+
+<p><strong>Applications:</strong></p>
+<ul>
+  <li>Position encoding: position[i] = π^i(base_position)</li>
+  <li>Sequential patterns: ordered pairs, temporal sequences</li>
+  <li>Linkage structures: spatial relationships</li>
+</ul>
+
+<h2 id="encoding-schemes">4. Encoding Schemes</h2>
+
+<h3>4.1 Random Encoding</h3>
+
+<p><strong>Use Case:</strong> Atomic concepts with no inherent structure (categorical data).</p>
+
+<h4>Method:</h4>
+<div class="code-block">Generate deterministic random hypervector:
+  rng = RandomState(seed=hash(item_id))
+  h = rng.choice([-1, 1], size=d)</div>
+
+<p><strong>Properties:</strong></p>
+<ul>
+  <li>Deterministic: Same input → same output</li>
+  <li>Orthogonal: Different items have ~0 similarity</li>
+  <li>No semantic structure: Only distinctness encoded</li>
+</ul>
+
+<h3>4.2 Semantic Encoding</h3>
+
+<p><strong>Use Case:</strong> Items with inherent relationships (numerical values, hierarchies).</p>
+
+<h4>Method:</h4>
+<div class="code-block">For value v in range [min, max]:
+  α = (v - min) / (max - min)
+  h_v = normalize((1-α) × h_min + α × h_max)</div>
+
+<p><strong>Properties:</strong></p>
+<ul>
+  <li><strong>Similarity Preservation:</strong> Similar values → high similarity</li>
+  <li><strong>Continuity:</strong> Smooth transitions between values</li>
+  <li><strong>Interpolation:</strong> Values between encoded points well-represented</li>
+</ul>
+
+<h3>4.3 Compositional Encoding</h3>
+
+<p><strong>Use Case:</strong> Structured objects with multiple attributes.</p>
+
+<h4>Method:</h4>
+<div class="code-block">For object with attributes {attr₁: val₁, attr₂: val₂, ...}:
+
+1. Encode each attribute:
+   key_hv = random_encode(attr_name)
+   value_hv = encode_value(attr_value)
+
+2. Bind key-value pairs:
+   component = bind(key_hv, value_hv)
+
+3. Bundle all components:
+   object_hv = bundle([component₁, component₂, ...])</div>
+
+<h4>Query Operations:</h4>
+<div class="code-block"># Retrieve attribute value
+query = bind(object_hv, inverse_bind(key_hv))
+# Compare to known values to find match</div>
+
+<h2 id="information-theoretic">5. Information-Theoretic Properties</h2>
+
+<h3>5.1 Compression</h3>
+
+<h4>Compression Ratio:</h4>
+<div class="code-block">CR = Size_original / Size_HD
+
+Example:
+  Original: 4×10⁹ bases × 2 bits/base = 1 GB
+  HD: 10,000 dims × 1 bit/dim = 1.25 KB
+  CR = 800,000×</div>
+
+<h4>Information Preservation:</h4>
+<div class="code-block">Mutual Information: I(X; H) / H(X)
+Measured by similarity preservation
+Quality depends on encoding scheme and dimensionality</div>
+
+<h3>5.2 Privacy Properties</h3>
+
+<h4>Information-Theoretic Security:</h4>
+<div class="code-block">Number of possible originals mapping to hypervector:
+  |G| / |H| = 2^(original_bits) / 2^(hd_bits)
+
+Without projection matrix: Exponentially large search space</div>
+
+<p><strong>Geometric Privacy:</strong></p>
+<ul>
+  <li>High-dimensional projections obscure original structure</li>
+  <li>Random projections provide mathematical privacy guarantees</li>
+  <li>Similarity queries possible without reconstruction</li>
+</ul>
+
+<h3>5.3 Error Tolerance</h3>
+
+<h4>Bit Error Rate Resilience:</h4>
+<div class="code-block">For BER = p (fraction corrupted bits):
+  Expected similarity: sim_corrupted ≈ (1 - 2p)
+
+Graceful degradation:
+  p = 0.10 → sim ≈ 0.80
+  p = 0.30 → sim ≈ 0.40</div>
+
+<p>Unlike symbolic systems (catastrophic failure at single bit flip), HDC maintains partial correctness under corruption, making it suitable for noisy or analog hardware.</p>
+
+<h2 id="theoretical-connections">6. Theoretical Connections</h2>
+
+<h3>6.1 Sparse Distributed Representations</h3>
+
+<p>HDC implements sparse distributed codes in high dimensions:</p>
+<ul>
+  <li>Information spread across many dimensions (distributed)</li>
+  <li>Only subset of dimensions strongly activated (sparse)</li>
+  <li>Combines benefits of both paradigms</li>
+</ul>
+
+<h3>6.2 Compressed Sensing</h3>
+
+<p>Connection to compressed sensing theory:</p>
+<ul>
+  <li>Random projections preserve distances (RIP property)</li>
+  <li>Can recover sparse signals from few measurements</li>
+  <li>HDC as practical implementation of CS principles</li>
+</ul>
+
+<h3>6.3 Reservoir Computing</h3>
+
+<p>HDC as fixed random projection reservoir:</p>
+<ul>
+  <li>High-dimensional expansion of inputs</li>
+  <li>Rich dynamics through composition</li>
+  <li>Only output weights trained</li>
+</ul>
+
+<h3>6.4 Cognitive Architectures</h3>
+
+<p>Implements key cognitive properties:</p>
+<ul>
+  <li><strong>Compositionality:</strong> Build complex from simple</li>
+  <li><strong>Systematicity:</strong> Similar structures have similar representations</li>
+  <li><strong>Productivity:</strong> Infinite expressions from finite primitives</li>
+  <li><strong>Robustness:</strong> Graceful degradation</li>
+</ul>
+
+<div class="references">
+  <h2 id="references">References</h2>
+  <ol>
+    <li><strong>Kanerva, P.</strong> (2009). Hyperdimensional Computing: An Introduction. <em>Cognitive Computation</em>, 1(2), 139-159.</li>
+    <li><strong>Plate, T. A.</strong> (2003). <em>Holographic Reduced Representations</em>. CSLI Publications.</li>
+    <li><strong>Johnson, W. B., & Lindenstrauss, J.</strong> (1984). Extensions of Lipschitz mappings into a Hilbert space. <em>Contemporary Mathematics</em>, 26, 189-206.</li>
+    <li><strong>Rachkovskij, D. A., & Kussul, E. M.</strong> (2001). Binding and normalization of binary sparse distributed representations. <em>Neural Computation</em>, 13(11), 2627-2650.</li>
+    <li><strong>Gayler, R. W.</strong> (2003). Vector Symbolic Architectures answer Jackendoff's challenges for cognitive neuroscience. <em>ICCS/ASCS</em>, 133-138.</li>
+    <li><strong>Frady, E. P., et al.</strong> (2021). Computing on functions using randomized vector representations. <em>arXiv preprint</em>.</li>
+  </ol>
+</div>
+
+</body>
+</html>

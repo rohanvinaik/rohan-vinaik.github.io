@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zero-Knowledge Proofs: Cryptographic Verification Without Revelation | Rohan Vinaik</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --text: #e0e0e0;
+      --text-secondary: #a0a0a0;
+      --accent: #00ff00;
+      --border: #333;
+      --code-bg: #1a1a1a;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'JetBrains Mono', monospace;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 20px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    h1 {
+      color: var(--accent);
+      font-size: 1.5rem;
+      margin-bottom: 8px;
+      letter-spacing: 0.02em;
+    }
+    h2 {
+      color: var(--accent);
+      font-size: 1.1rem;
+      margin-top: 32px;
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    h3 {
+      color: var(--accent);
+      font-size: 0.95rem;
+      margin-top: 24px;
+      margin-bottom: 12px;
+    }
+    h4 {
+      color: var(--text);
+      font-size: 0.85rem;
+      margin-top: 20px;
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+    p { margin-bottom: 16px; font-size: 0.85rem; }
+    a {
+      color: var(--accent);
+      text-decoration: none;
+      border-bottom: 1px dotted var(--accent);
+    }
+    a:hover { border-bottom-style: solid; }
+    .back-link {
+      display: inline-block;
+      margin-bottom: 24px;
+      font-size: 0.85rem;
+    }
+    .paper-meta {
+      color: var(--text-secondary);
+      font-size: 0.75rem;
+      margin-bottom: 24px;
+    }
+    .abstract {
+      background: var(--code-bg);
+      padding: 20px;
+      border-left: 3px solid var(--accent);
+      margin-bottom: 32px;
+      font-size: 0.85rem;
+    }
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 32px;
+    }
+    .tag {
+      background: var(--code-bg);
+      padding: 4px 12px;
+      border: 1px solid var(--border);
+      font-size: 0.7rem;
+      color: var(--accent);
+      text-decoration: none;
+      border-bottom: none;
+    }
+    .tag:hover {
+      background: var(--accent);
+      color: var(--bg);
+      border-color: var(--accent);
+    }
+    .quick-nav {
+      background: var(--code-bg);
+      padding: 16px;
+      margin-bottom: 32px;
+      border: 1px solid var(--border);
+    }
+    .quick-nav h3 {
+      margin-top: 0;
+      font-size: 0.85rem;
+    }
+    .quick-nav ul {
+      list-style: none;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .quick-nav a {
+      font-size: 0.75rem;
+      border-bottom: none;
+      padding: 4px 0;
+      display: block;
+    }
+    .quick-nav a:hover { color: var(--bg); background: var(--accent); padding-left: 8px; }
+    pre {
+      background: var(--code-bg);
+      padding: 16px;
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      overflow-x: auto;
+      font-size: 0.75rem;
+      margin: 16px 0;
+      line-height: 1.4;
+    }
+    code {
+      font-family: 'JetBrains Mono', monospace;
+      background: var(--code-bg);
+      padding: 2px 6px;
+      border: 1px solid var(--border);
+      font-size: 0.8em;
+    }
+    pre code {
+      border: none;
+      padding: 0;
+    }
+    ul, ol {
+      margin-left: 24px;
+      margin-bottom: 16px;
+    }
+    li {
+      margin-bottom: 8px;
+      font-size: 0.85rem;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      font-size: 0.75rem;
+    }
+    th, td {
+      border: 1px solid var(--border);
+      padding: 12px;
+      text-align: left;
+    }
+    th {
+      background: var(--code-bg);
+      color: var(--accent);
+      font-weight: 600;
+    }
+    .references {
+      font-size: 0.75rem;
+      margin-top: 32px;
+    }
+    .references ol {
+      padding-left: 20px;
+    }
+    .references li {
+      margin-bottom: 12px;
+      line-height: 1.5;
+    }
+    @media (max-width: 768px) {
+      body { padding: 12px; }
+      h1 { font-size: 1.2rem; }
+      h2 { font-size: 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<a href="../index.html#reference" class="back-link">← Back to Reference</a>
+
+<h1>Zero-Knowledge Proofs: Cryptographic Verification Without Revelation</h1>
+<div class="paper-meta">January 2025 · TECHNICAL REFERENCE</div>
+
+<div class="tags">
+  <a href="../index.html?filter=ZERO-KNOWLEDGE" class="tag">[ZERO-KNOWLEDGE]</a>
+  <a href="../index.html?filter=CRYPTOGRAPHY" class="tag">[CRYPTOGRAPHY]</a>
+  <a href="../index.html?filter=ZK-SNARKS" class="tag">[ZK-SNARKS]</a>
+  <a href="../index.html?filter=VERIFICATION" class="tag">[VERIFICATION]</a>
+  <a href="../index.html?filter=PRIVACY-PRESERVING" class="tag">[PRIVACY-PRESERVING]</a>
+  <a href="../index.html?filter=PROOF-SYSTEMS" class="tag">[PROOF-SYSTEMS]</a>
+  <a href="../index.html?filter=GROTH16" class="tag">[GROTH16]</a>
+  <a href="../index.html?filter=PLONK" class="tag">[PLONK]</a>
+  <a href="../index.html?filter=HALO2" class="tag">[HALO2]</a>
+  <a href="../index.html?filter=CIRCUIT-DESIGN" class="tag">[CIRCUIT-DESIGN]</a>
+</div>
+
+<div class="abstract">
+  <strong>Abstract:</strong> Zero-knowledge proofs (ZKPs) enable one party (the prover) to convince another party (the verifier) that a statement is true without revealing any information beyond the validity of the statement itself. This cryptographic primitive satisfies three fundamental properties: completeness (valid statements prove successfully), soundness (invalid statements cannot be proven), and zero-knowledge (proofs reveal nothing beyond truth). This document covers theoretical foundations, proof systems (Groth16, PLONK, Halo2), circuit design principles, and applications in privacy-preserving systems.
+</div>
+
+<div class="quick-nav">
+  <h3>Quick Navigation</h3>
+  <ul>
+    <li><a href="#core-principles">1. Core Principles</a></li>
+    <li><a href="#mathematical-foundations">2. Mathematical Foundations</a></li>
+    <li><a href="#proof-systems">3. Proof Systems</a></li>
+    <li><a href="#circuit-design">4. Circuit Design</a></li>
+    <li><a href="#theoretical-considerations">5. Theoretical Considerations</a></li>
+    <li><a href="#references">References</a></li>
+  </ul>
+</div>
+
+<h2 id="core-principles">1. Core Principles</h2>
+
+<h3>1.1 The Three Properties</h3>
+
+<h4>Completeness</h4>
+<p><strong>Definition:</strong> If the statement is true and both parties follow the protocol, the verifier will accept.</p>
+
+<pre><code>P(Verifier accepts | Statement TRUE ∧ Honest parties) = 1</code></pre>
+
+<p>Valid proofs always verify successfully (no false negatives).</p>
+
+<h4>Soundness</h4>
+<p><strong>Definition:</strong> If the statement is false, no cheating prover can convince the verifier except with negligible probability.</p>
+
+<pre><code>P(Verifier accepts | Statement FALSE) ≤ ε
+where ε ≈ 2^(-λ) for security parameter λ</code></pre>
+
+<p>Invalid proofs are rejected with overwhelming probability.</p>
+
+<h4>Zero-Knowledge</h4>
+<p><strong>Definition:</strong> The proof reveals nothing beyond the truth of the statement.</p>
+
+<pre><code>∃ simulator S such that for any verifier:
+  View(Prover ↔ Verifier) ≈_c S(statement)</code></pre>
+
+<p>where ≈<sub>c</sub> denotes computational indistinguishability.</p>
+
+<h3>1.2 zk-SNARKs</h3>
+
+<p><strong>Definition:</strong> Zero-Knowledge Succinct Non-Interactive Arguments of Knowledge</p>
+
+<p><strong>Properties:</strong></p>
+<ul>
+  <li><strong>Zero-Knowledge:</strong> Reveals no private information</li>
+  <li><strong>Succinct:</strong> Proof size is small (typically &lt; 10 KB)</li>
+  <li><strong>Non-Interactive:</strong> Single message from prover to verifier</li>
+  <li><strong>Argument:</strong> Computationally sound</li>
+  <li><strong>of Knowledge:</strong> Prover must "know" a witness</li>
+</ul>
+
+<h2 id="mathematical-foundations">2. Mathematical Foundations</h2>
+
+<h3>2.1 Arithmetic Circuits</h3>
+
+<p><strong>Definition:</strong> A circuit over finite field 𝔽 computing function via addition and multiplication gates.</p>
+
+<p><strong>Example Structure:</strong></p>
+<pre><code>Circuit: Property verification
+
+Gates:
+  1. x₁ = hash(witness)
+  2. x₂ = hash(public_input)
+  3. x₃ = verification(x₁, x₂)
+  4. x₄ = (x₃ == 1)
+
+Public inputs: property_commitment
+Private inputs: witness_data
+Output: Proof of property satisfaction</code></pre>
+
+<p><strong>Circuit Size:</strong> Number of gates/constraints affects proving time and proof size.</p>
+
+<h3>2.2 R1CS (Rank-1 Constraint System)</h3>
+
+<p><strong>Definition:</strong> Express arithmetic circuits as systems of quadratic equations.</p>
+
+<p><strong>Form:</strong></p>
+<pre><code>For witness vector w:
+  (A·w) ∘ (B·w) = (C·w)
+
+where A, B, C are constraint matrices</code></pre>
+
+<p><strong>Example:</strong></p>
+<pre><code>Statement: I know x such that x² + x = 6
+
+Witness: w = [1, x, x²]
+
+Constraints:
+  1. x·x = x² (squaring)
+  2. (x + x²)·1 = 6 (sum equals 6)</code></pre>
+
+<p><strong>Conversion Path:</strong> Circuit → R1CS → Proof System</p>
+
+<h3>2.3 Polynomial Commitment Schemes</h3>
+
+<p><strong>Purpose:</strong> Commit to polynomial without revealing it, prove evaluations.</p>
+
+<h4>KZG Commitment</h4>
+<pre><code>For polynomial f(x) = Σᵢ aᵢxⁱ:
+  Commitment: C = Σᵢ aᵢ[xⁱ]₁  (elliptic curve point)
+
+Properties:
+  - Hiding: C reveals no info about f
+  - Binding: Cannot change f after commitment
+  - Evaluation: Can prove f(z) = y for any z</code></pre>
+
+<h4>IPA (Inner Product Argument)</h4>
+<pre><code>Prove inner product ⟨a, b⟩ = c
+Recursive proof with logarithmic size
+Used by transparent proof systems (Halo2)</code></pre>
+
+<h2 id="proof-systems">3. Proof Systems</h2>
+
+<h3>3.1 Groth16</h3>
+
+<p><strong>Architecture:</strong></p>
+<pre><code>Curve: BLS12-381 (pairing-friendly)
+Proof: Three elliptic curve points
+Verification: Three pairing checks</code></pre>
+
+<p><strong>Characteristics:</strong></p>
+<ul>
+  <li>✅ Smallest proofs (~200 bytes)</li>
+  <li>✅ Fastest verification (~5 ms)</li>
+  <li>✅ Battle-tested (Zcash, Filecoin)</li>
+  <li>❌ Requires trusted setup per circuit</li>
+  <li>❌ Circuit-specific setup</li>
+</ul>
+
+<p><strong>Trusted Setup:</strong></p>
+<pre><code>Phase 1 (Powers of Tau):
+  Generate: [τ⁰]₁, [τ¹]₁, [τ²]₁, ..., [τⁿ]₁
+  Destroy: τ (toxic waste)
+  Security: Need only 1 honest participant
+
+Phase 2 (Circuit-Specific):
+  Generate evaluation points for circuit
+  Output: Proving key, verification key</code></pre>
+
+<p><strong>When to Use:</strong></p>
+<ul>
+  <li>Blockchain deployment (gas-critical)</li>
+  <li>Fixed circuits (no updates)</li>
+  <li>Maximum performance required</li>
+  <li>Trust assumptions acceptable</li>
+</ul>
+
+<h3>3.2 PLONK</h3>
+
+<p><strong>Architecture:</strong></p>
+<pre><code>Commitment: KZG polynomial commitments
+Proof: Multiple curve points + evaluations
+Gates: Configurable (addition, multiplication, custom)</code></pre>
+
+<p><strong>Characteristics:</strong></p>
+<ul>
+  <li>✅ Universal setup (one ceremony for all circuits)</li>
+  <li>✅ Flexible (circuit updates without new ceremony)</li>
+  <li>✅ Good balance (size and speed)</li>
+  <li>⚡ Proof size: ~1 KB</li>
+  <li>⚡ Verification: ~15 ms</li>
+</ul>
+
+<p><strong>Universal Setup:</strong></p>
+<pre><code>SRS (Structured Reference String):
+  Generate once: [τ⁰]₁, [τ¹]₁, ..., [τⁿ]₁
+  Reusable: All circuits up to size n
+  Security: Need only 1 honest participant ever</code></pre>
+
+<p><strong>When to Use:</strong></p>
+<ul>
+  <li>Multiple circuits (shared setup)</li>
+  <li>Frequent circuit updates</li>
+  <li>Moderate performance acceptable</li>
+  <li>Want ceremony flexibility</li>
+</ul>
+
+<h3>3.3 Halo2</h3>
+
+<p><strong>Architecture:</strong></p>
+<pre><code>Curve: Pasta cycles (Pallas/Vesta)
+Commitment: IPA (Inner Product Argument)
+Proof: Recursive IPA proofs
+Setup: Transparent (hash-based)</code></pre>
+
+<p><strong>Characteristics:</strong></p>
+<ul>
+  <li>✅ No trusted setup (fully trustless)</li>
+  <li>✅ Recursive proof composition</li>
+  <li>✅ Future-proof (no ceremony liability)</li>
+  <li>⚡ Proof size: ~5 KB</li>
+  <li>⚡ Verification: ~20 ms</li>
+</ul>
+
+<p><strong>Transparent Setup:</strong></p>
+<pre><code>Setup Requirements: NONE
+Security: Discrete log hardness only
+Verifiability: Anyone can verify correctness</code></pre>
+
+<p><strong>When to Use:</strong></p>
+<ul>
+  <li>Maximum security (no trust)</li>
+  <li>Healthcare/regulatory applications</li>
+  <li>Long-term deployment</li>
+  <li>Recursive proofs needed</li>
+</ul>
+
+<h2 id="circuit-design">4. Circuit Design</h2>
+
+<h3>4.1 Design Patterns</h3>
+
+<h4>Pattern 1: Merkle Tree Verification</h4>
+<pre><code>Verify leaf ∈ tree given:
+  - Leaf value
+  - Root commitment
+  - Merkle path (sibling hashes)
+  - Path indices (left/right)
+
+Constraints: O(depth × hash_cost)</code></pre>
+
+<h4>Pattern 2: Range Proof</h4>
+<pre><code>Prove value ∈ [min, max]:
+  - Decompose value into bits
+  - Check each bit is 0 or 1
+  - Reconstruct value from bits
+  - Compare to bounds
+
+Constraints: O(log₂(range))</code></pre>
+
+<h4>Pattern 3: Set Membership</h4>
+<pre><code>Prove element ∈ set:
+  - Compare element to each set member
+  - OR over all comparisons
+  - Alternatively: Merkle tree membership
+
+Constraints: O(set_size)</code></pre>
+
+<h3>4.2 Optimization Techniques</h3>
+
+<p><strong>Minimizing Constraints:</strong></p>
+<ul>
+  <li>Reuse intermediate computations</li>
+  <li>Batch verification operations</li>
+  <li>Use custom gates (PLONK)</li>
+  <li>Lookup tables (plookup)</li>
+</ul>
+
+<p><strong>Balancing Trade-offs:</strong></p>
+<pre><code>More constraints → Slower proving, larger proof
+Fewer constraints → May require more complex verification
+Circuit structure → Affects both proving and verification time</code></pre>
+
+<h2 id="theoretical-considerations">5. Theoretical Considerations</h2>
+
+<h3>5.1 Security Assumptions</h3>
+
+<p><strong>Groth16/PLONK:</strong> Rely on trusted setup</p>
+<pre><code>Risk: If all ceremony participants collude, can forge proofs
+Mitigation: Large multi-party ceremonies (100+ participants)</code></pre>
+
+<p><strong>Halo2:</strong> No trusted setup</p>
+<pre><code>Risk: Discrete log problem breaks
+Advantage: No ceremony compromise risk</code></pre>
+
+<h3>5.2 Proof Composition</h3>
+
+<p><strong>Sequential Composition:</strong></p>
+<ul>
+  <li>Prove multiple statements independently</li>
+  <li>Combine proofs</li>
+  <li>Total size: Sum of individual proofs</li>
+</ul>
+
+<p><strong>Recursive Composition:</strong></p>
+<ul>
+  <li>Prove "I have a valid proof"</li>
+  <li>Chain proofs together</li>
+  <li>Enables: Incremental verification, proof aggregation</li>
+</ul>
+
+<h3>5.3 Trade-offs</h3>
+
+<p><strong>Backend Comparison:</strong></p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Property</th>
+      <th>Groth16</th>
+      <th>PLONK</th>
+      <th>Halo2</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Proof Size</td>
+      <td>Smallest</td>
+      <td>Medium</td>
+      <td>Larger</td>
+    </tr>
+    <tr>
+      <td>Verification</td>
+      <td>Fastest</td>
+      <td>Fast</td>
+      <td>Slower</td>
+    </tr>
+    <tr>
+      <td>Setup</td>
+      <td>Per-circuit</td>
+      <td>Universal</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <td>Trust</td>
+      <td>Required</td>
+      <td>Required</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <td>Flexibility</td>
+      <td>Low</td>
+      <td>High</td>
+      <td>High</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>Selection Criteria:</strong></p>
+<ul>
+  <li>No trust allowed → Halo2</li>
+  <li>Minimum size/speed → Groth16</li>
+  <li>Circuit updates → PLONK or Halo2</li>
+  <li>Blockchain deployment → Groth16 (gas costs)</li>
+</ul>
+
+<div class="references">
+  <h2 id="references">References</h2>
+  <ol>
+    <li><strong>Groth, J.</strong> (2016). On the Size of Pairing-based Non-interactive Arguments. <em>EUROCRYPT</em>.</li>
+    <li><strong>Gabizon, A., Williamson, Z. J., & Ciobotaru, O.</strong> (2019). PLONK: Permutations over Lagrange-bases for Oecumenical Noninteractive arguments of Knowledge. <em>ePrint 2019/953</em>.</li>
+    <li><strong>Bowe, S., Grigg, J., & Hopwood, D.</strong> (2020). Recursive Proof Composition without a Trusted Setup. <em>ePrint 2019/1021</em>.</li>
+    <li><strong>Goldwasser, S., Micali, S., & Rackoff, C.</strong> (1989). The knowledge complexity of interactive proof systems. <em>SIAM Journal on Computing</em>, 18(1), 186-208.</li>
+    <li><strong>Ben-Sasson, E., et al.</strong> (2014). Succinct non-interactive zero knowledge for a von Neumann architecture. <em>USENIX Security</em>.</li>
+  </ol>
+</div>
+
+</body>
+</html>

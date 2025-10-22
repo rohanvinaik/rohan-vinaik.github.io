@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Privacy-Preserving Computation: Cryptographic Methods for Secure Data Analysis | Rohan Vinaik</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --text: #e0e0e0;
+      --text-secondary: #a0a0a0;
+      --accent: #00ff00;
+      --border: #333;
+      --code-bg: #1a1a1a;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'JetBrains Mono', monospace;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 20px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    h1 {
+      color: var(--accent);
+      font-size: 1.5rem;
+      margin-bottom: 8px;
+      letter-spacing: 0.02em;
+    }
+    h2 {
+      color: var(--accent);
+      font-size: 1.1rem;
+      margin-top: 32px;
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    h3 {
+      color: var(--accent);
+      font-size: 0.95rem;
+      margin-top: 24px;
+      margin-bottom: 12px;
+    }
+    h4 {
+      color: var(--text);
+      font-size: 0.85rem;
+      margin-top: 20px;
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+    p { margin-bottom: 16px; font-size: 0.85rem; }
+    ul, ol {
+      margin-bottom: 16px;
+      margin-left: 24px;
+      font-size: 0.85rem;
+    }
+    li { margin-bottom: 8px; }
+    a {
+      color: var(--accent);
+      text-decoration: none;
+      border-bottom: 1px dotted var(--accent);
+    }
+    a:hover { border-bottom-style: solid; }
+    .back-link {
+      display: inline-block;
+      margin-bottom: 24px;
+      font-size: 0.85rem;
+    }
+    .paper-meta {
+      color: var(--text-secondary);
+      font-size: 0.75rem;
+      margin-bottom: 24px;
+    }
+    .abstract {
+      background: var(--code-bg);
+      padding: 20px;
+      border-left: 3px solid var(--accent);
+      margin-bottom: 32px;
+      font-size: 0.85rem;
+    }
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 32px;
+    }
+    .tag {
+      background: var(--code-bg);
+      padding: 4px 12px;
+      border: 1px solid var(--border);
+      font-size: 0.7rem;
+      color: var(--accent);
+      text-decoration: none;
+      border-bottom: none;
+    }
+    .tag:hover {
+      background: var(--accent);
+      color: var(--bg);
+      border-color: var(--accent);
+    }
+    .quick-nav {
+      background: var(--code-bg);
+      padding: 16px;
+      margin-bottom: 32px;
+      border: 1px solid var(--border);
+    }
+    .quick-nav h3 {
+      margin-top: 0;
+      font-size: 0.85rem;
+    }
+    .quick-nav ul {
+      list-style: none;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 8px;
+      margin-top: 12px;
+      margin-left: 0;
+    }
+    .quick-nav a {
+      font-size: 0.75rem;
+      border-bottom: none;
+      padding: 4px 0;
+      display: block;
+    }
+    .quick-nav a:hover { color: var(--bg); background: var(--accent); padding-left: 8px; }
+    .code-block {
+      background: var(--code-bg);
+      padding: 16px;
+      border: 1px solid var(--border);
+      margin: 16px 0;
+      font-size: 0.75rem;
+      overflow-x: auto;
+      white-space: pre;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .references {
+      font-size: 0.75rem;
+      margin-top: 32px;
+    }
+    .references ol {
+      padding-left: 20px;
+    }
+    .references li {
+      margin-bottom: 12px;
+      line-height: 1.5;
+    }
+    @media (max-width: 768px) {
+      body { padding: 12px; }
+      h1 { font-size: 1.2rem; }
+      h2 { font-size: 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<a href="../index.html#reference" class="back-link">← Back to Reference</a>
+
+<h1>Privacy-Preserving Computation: Cryptographic Methods for Secure Data Analysis</h1>
+<div class="paper-meta">January 2025 · Technical Reference · Version 2.0</div>
+
+<div class="tags">
+  <a href="../index.html?filter=CRYPTOGRAPHY" class="tag">[CRYPTOGRAPHY]</a>
+  <a href="../index.html?filter=HOMOMORPHIC-ENCRYPTION" class="tag">[HOMOMORPHIC-ENCRYPTION]</a>
+  <a href="../index.html?filter=SECURE-MULTI-PARTY-COMPUTATION" class="tag">[SECURE-MULTI-PARTY-COMPUTATION]</a>
+  <a href="../index.html?filter=DIFFERENTIAL-PRIVACY" class="tag">[DIFFERENTIAL-PRIVACY]</a>
+  <a href="../index.html?filter=ZERO-KNOWLEDGE-PROOFS" class="tag">[ZERO-KNOWLEDGE-PROOFS]</a>
+  <a href="../index.html?filter=TRUSTED-EXECUTION" class="tag">[TRUSTED-EXECUTION]</a>
+  <a href="../index.html?filter=PRIVACY" class="tag">[PRIVACY]</a>
+  <a href="../index.html?filter=FEDERATED-LEARNING" class="tag">[FEDERATED-LEARNING]</a>
+  <a href="../index.html?filter=SECURE-COMPUTATION" class="tag">[SECURE-COMPUTATION]</a>
+  <a href="../index.html?filter=PROTOCOL-DESIGN" class="tag">[PROTOCOL-DESIGN]</a>
+</div>
+
+<div class="abstract">
+  <strong>Abstract:</strong> Privacy-preserving computation enables collaborative data analysis while maintaining confidentiality guarantees through cryptographic protocols. This framework integrates core methodologies—homomorphic encryption, secure multi-party computation, zero-knowledge proofs, differential privacy, and trusted execution environments—to achieve practical privacy-utility trade-offs. The document covers theoretical foundations, protocol design patterns, and integration strategies across distributed machine learning, secure database queries, and privacy-sensitive applications.
+</div>
+
+<div class="quick-nav">
+  <h3>Quick Navigation</h3>
+  <ul>
+    <li><a href="#core-principles">1. Core Principles</a></li>
+    <li><a href="#cryptographic-building-blocks">2. Cryptographic Building Blocks</a></li>
+    <li><a href="#privacy-frameworks">3. Privacy Frameworks</a></li>
+    <li><a href="#protocol-design-patterns">4. Protocol Design Patterns</a></li>
+    <li><a href="#integration-strategies">5. Integration Strategies</a></li>
+    <li><a href="#references">References</a></li>
+  </ul>
+</div>
+
+<h2 id="core-principles">1. Core Principles</h2>
+
+<h3>1.1 Privacy Definitions</h3>
+
+<h4>Computational Privacy</h4>
+<p>Security against polynomial-time adversaries. The adversary advantage is defined as:</p>
+<div class="code-block">Adversary advantage: Adv[A] = |Pr[A wins] - 1/2|
+Secure if: Adv[A] ≤ negl(λ) for security parameter λ</div>
+
+<h4>Information-Theoretic Privacy</h4>
+<p>Security against unbounded adversaries using Shannon entropy:</p>
+<div class="code-block">Shannon Entropy: H(X|Y) = H(X)
+Perfect privacy: Observing Y reveals no information about X</div>
+
+<h4>Differential Privacy</h4>
+<p>Statistical guarantee on individual contributions:</p>
+<div class="code-block">ε-Differential Privacy:
+  Pr[M(D) ∈ S] ≤ e^ε · Pr[M(D') ∈ S]
+  where D, D' differ by one individual</div>
+
+<h3>1.2 Threat Models</h3>
+
+<h4>Honest-but-Curious (Semi-Honest)</h4>
+<ul>
+  <li>Adversary follows protocol correctly</li>
+  <li>Attempts to learn from observed messages</li>
+  <li>Defense: Cryptographic protocols revealing nothing beyond output</li>
+</ul>
+
+<h4>Malicious</h4>
+<ul>
+  <li>Adversary may deviate arbitrarily</li>
+  <li>May send incorrect messages or abort selectively</li>
+  <li>Defense: Zero-knowledge proofs, verifiable computation</li>
+</ul>
+
+<h4>Covert</h4>
+<ul>
+  <li>Rational adversary avoiding detection</li>
+  <li>Won't cheat if likely caught</li>
+  <li>Defense: Efficient detection mechanisms, penalties</li>
+</ul>
+
+<h3>1.3 Security Goals</h3>
+
+<h4>Confidentiality</h4>
+<p>Data remains private:</p>
+<div class="code-block">∀ adversary A, ∀ input x:
+  Pr[A learns x from protocol] ≤ negl(λ)</div>
+
+<h4>Integrity</h4>
+<p>Results are correct:</p>
+<div class="code-block">∀ adversary A, ∀ computation f:
+  Pr[A causes incorrect output ≠ f(inputs)] ≤ negl(λ)</div>
+
+<h4>Verifiability</h4>
+<p>Outputs can be verified:</p>
+<div class="code-block">∀ computation f, ∃ efficient verifier V:
+  V(input, output, proof) → accept/reject</div>
+
+<h2 id="cryptographic-building-blocks">2. Cryptographic Building Blocks</h2>
+
+<h3>2.1 Commitment Schemes</h3>
+
+<p><strong>Purpose:</strong> Commit to value without revealing, later open commitment.</p>
+
+<h4>Pedersen Commitment</h4>
+<div class="code-block">Setup: Group G of prime order q, generators g, h
+Commit(m, r): C = g^m · h^r
+Open: Reveal (m, r), verify C = g^m · h^r
+
+Properties:
+  - Perfectly hiding (information-theoretic)
+  - Computationally binding (discrete log assumption)</div>
+
+<h4>Hash-Based Commitment</h4>
+<div class="code-block">Commit(m): C = H(m || r) for random r
+Open: Reveal (m, r), verify C = H(m || r)
+
+Properties:
+  - Computationally hiding (hash preimage resistance)
+  - Perfectly binding (no collisions)</div>
+
+<h3>2.2 Oblivious Transfer</h3>
+
+<p><strong>Purpose:</strong> Sender has messages (m₀, m₁); receiver learns m_b without sender learning b.</p>
+
+<h4>1-out-of-2 OT Protocol</h4>
+<div class="code-block">1. Receiver: Generate key pair (pk_b, sk_b), send pk_b
+2. Sender: Encrypt c₀ = Enc(pk₀, m₀), c₁ = Enc(pk₁, m₁)
+3. Receiver: Decrypt m_b = Dec(sk_b, c_b)
+
+Security:
+  - Receiver learns m_b only
+  - Sender learns nothing about b</div>
+
+<h4>OT Extension</h4>
+<ul>
+  <li>Base OTs: O(λ) expensive public-key operations</li>
+  <li>Extended OTs: O(n) cheap symmetric operations</li>
+  <li>Amortizes cost over many OTs</li>
+</ul>
+
+<h3>2.3 Secret Sharing</h3>
+
+<h4>Shamir Secret Sharing</h4>
+<div class="code-block">Setup: Secret s, threshold t, n parties
+
+Share Generation:
+  1. Random polynomial f(x) = s + a₁x + ... + a_{t-1}x^{t-1}
+  2. Share i: sᵢ = f(i)
+
+Reconstruction (any t shares):
+  s = Σᵢ sᵢ · λᵢ  (Lagrange interpolation)
+
+Properties:
+  - t-1 shares reveal no information
+  - t shares uniquely determine s</div>
+
+<h4>Additive Secret Sharing</h4>
+<div class="code-block">Share: s = s₁ + s₂ + ... + sₙ (mod q)
+Reconstruct: s = Σᵢ sᵢ (mod q)
+
+Properties:
+  - Simple, efficient
+  - Requires all shares (threshold = n)
+  - Supports homomorphic operations</div>
+
+<h3>2.4 Garbled Circuits</h3>
+
+<p><strong>Purpose:</strong> Evaluate boolean circuit without revealing inputs.</p>
+
+<h4>Construction</h4>
+<div class="code-block">For each wire w: Two labels (w₀, w₁) for bit values
+For each gate: Encrypt all input-output combinations
+Evaluation: Given input labels, decrypt output label
+
+Optimization: Point-and-permute (no trial decryption)</div>
+
+<h2 id="privacy-frameworks">3. Privacy Frameworks</h2>
+
+<h3>3.1 Homomorphic Encryption</h3>
+
+<p><strong>Capability:</strong> Compute on encrypted data without decryption.</p>
+
+<h4>Types</h4>
+<ul>
+  <li><strong>Partially Homomorphic:</strong> One operation (+ or ×)</li>
+  <li><strong>Somewhat Homomorphic:</strong> Limited depth operations</li>
+  <li><strong>Fully Homomorphic:</strong> Arbitrary operations with bootstrapping</li>
+</ul>
+
+<h4>CKKS Scheme (Approximate arithmetic)</h4>
+<div class="code-block">Operations on encrypted real numbers:
+  - Addition: Enc(a) + Enc(b) = Enc(a + b)
+  - Multiplication: Enc(a) × Enc(b) = Enc(a × b)
+  - Scalar: c × Enc(a) = Enc(c × a)
+
+Trade-offs:
+  - Ciphertext expansion: 100-1000× plaintext size
+  - Computation overhead: 1000-10000× slower
+  - Noise accumulation requires bootstrapping</div>
+
+<h4>Applications</h4>
+<ul>
+  <li>Secure aggregation (federated learning)</li>
+  <li>Private machine learning inference</li>
+  <li>Encrypted database queries</li>
+</ul>
+
+<h3>3.2 Secure Multi-Party Computation</h3>
+
+<p><strong>Goal:</strong> Multiple parties jointly compute function on private inputs.</p>
+
+<h4>GMW Protocol (Boolean circuits)</h4>
+<div class="code-block">1. Secret Sharing: Each party shares inputs
+2. Circuit Evaluation:
+   - XOR gates: Free (local computation)
+   - AND gates: Require oblivious transfer
+3. Output Reconstruction: Parties reveal output shares</div>
+
+<h4>Performance</h4>
+<ul>
+  <li>Computation: O(n) in circuit size</li>
+  <li>Communication: Main bottleneck (network rounds)</li>
+  <li>Optimization: Preprocessing offline phase</li>
+</ul>
+
+<h3>3.3 Zero-Knowledge Proofs</h3>
+
+<p><strong>Purpose:</strong> Prove statement truth without revealing why it's true.</p>
+
+<h4>Properties</h4>
+<ul>
+  <li><strong>Completeness:</strong> Valid proofs always verify</li>
+  <li><strong>Soundness:</strong> Invalid proofs rarely verify</li>
+  <li><strong>Zero-Knowledge:</strong> Proof reveals nothing beyond validity</li>
+</ul>
+
+<h4>zk-SNARKs (Succinct non-interactive proofs)</h4>
+<div class="code-block">Proof size: Constant (< 1 KB)
+Verification: Fast (milliseconds)
+Application: Property verification without data revelation</div>
+
+<h3>3.4 Differential Privacy</h3>
+
+<h4>Mechanisms</h4>
+<div class="code-block">Laplace Mechanism:
+  Output = f(D) + Lap(Δf/ε)
+  where Δf = sensitivity, ε = privacy budget
+
+Gaussian Mechanism:
+  Output = f(D) + N(0, σ²)
+  where σ ∝ Δf/ε for (ε, δ)-DP</div>
+
+<h4>Composition</h4>
+<div class="code-block">Sequential: k queries, each ε-DP → Total (kε)-DP
+Advanced: ε√(2k log(1/δ))-DP (sub-linear growth)</div>
+
+<h4>Applications</h4>
+<ul>
+  <li>Statistical queries on sensitive data</li>
+  <li>Private data release</li>
+  <li>Federated analytics</li>
+</ul>
+
+<h3>3.5 Trusted Execution Environments</h3>
+
+<h4>Intel SGX</h4>
+<ul>
+  <li>Hardware-isolated memory enclaves</li>
+  <li>Remote attestation proves code execution</li>
+  <li>Sealing: Encrypt data tied to enclave</li>
+</ul>
+
+<h4>Properties</h4>
+<ul>
+  <li>Near-native performance (1-3% overhead)</li>
+  <li>Memory limit: Typically 128 MB</li>
+  <li>Side-channel vulnerabilities (Spectre, etc.)</li>
+</ul>
+
+<h4>Use Cases</h4>
+<ul>
+  <li>Confidential computation in cloud</li>
+  <li>Secure key management</li>
+  <li>Private data processing</li>
+</ul>
+
+<h2 id="protocol-design-patterns">4. Protocol Design Patterns</h2>
+
+<h3>4.1 Layered Security</h3>
+
+<p><strong>Pattern:</strong> Combine techniques for defense-in-depth.</p>
+
+<div class="code-block">Layer 1: Encryption at rest
+Layer 2: Homomorphic computation / MPC
+Layer 3: Secure communication channels
+Layer 4: Zero-knowledge verification
+Layer 5: Differential privacy noise</div>
+
+<h4>Benefits</h4>
+<ul>
+  <li>Multiple independent protection mechanisms</li>
+  <li>Failure of one layer doesn't compromise entire system</li>
+  <li>Flexibility to adjust security levels</li>
+</ul>
+
+<h3>4.2 Selective Protection</h3>
+
+<p><strong>Pattern:</strong> Apply heavyweight cryptography only where necessary.</p>
+
+<h4>Decision Framework</h4>
+<div class="code-block">1. Data sensitivity level?
+   - HIGH → Full MPC or FHE
+   - MEDIUM → TEE with verification
+   - LOW → Simple encryption
+
+2. Computation complexity?
+   - HIGH → TEE for performance
+   - LOW → HE or MPC acceptable
+
+3. Verification needed?
+   - YES → Add ZK proofs
+   - NO → Skip verification overhead</div>
+
+<h3>4.3 Privacy Budgeting</h3>
+
+<p><strong>Pattern:</strong> Track cumulative privacy loss across queries.</p>
+
+<div class="code-block">class PrivacyAccountant:
+    def __init__(self, total_epsilon):
+        self.total_epsilon = total_epsilon
+        self.spent_epsilon = 0
+
+    def can_query(self, query_epsilon):
+        return self.spent_epsilon + query_epsilon <= self.total_epsilon
+
+    def execute_query(self, query, query_epsilon):
+        if not self.can_query(query_epsilon):
+            raise PrivacyBudgetExceeded()
+        result = add_noise(query(), query_epsilon)
+        self.spent_epsilon += query_epsilon
+        return result</div>
+
+<h3>4.4 Hybrid Approaches</h3>
+
+<p><strong>Pattern:</strong> Combine complementary techniques.</p>
+
+<h4>Examples</h4>
+<ul>
+  <li>MPC + Differential Privacy: Secure computation with statistical guarantees</li>
+  <li>HE + ZK: Encrypted computation with correctness proofs</li>
+  <li>TEE + Attestation: Hardware security with remote verification</li>
+</ul>
+
+<h2 id="integration-strategies">5. Integration Strategies</h2>
+
+<h3>5.1 Federated Learning</h3>
+
+<p><strong>Problem:</strong> Train ML models on distributed private data.</p>
+
+<h4>Solution Architecture</h4>
+<div class="code-block">1. Local Training: Clients compute gradients locally
+2. Privacy Layer: Add differential privacy noise
+3. Secure Aggregation: Homomorphic encryption or MPC
+4. Global Update: Server updates model without seeing individual gradients</div>
+
+<h4>Benefits</h4>
+<ul>
+  <li>Data never leaves client devices</li>
+  <li>Privacy preserved at individual and aggregate levels</li>
+  <li>Scalable to many participants</li>
+</ul>
+
+<h3>5.2 Private Data Analysis</h3>
+
+<p><strong>Problem:</strong> Query sensitive databases without revealing data.</p>
+
+<h4>Techniques</h4>
+<div class="code-block">1. Private Information Retrieval (PIR):
+   - Query database without revealing query
+   - Computational or information-theoretic PIR
+
+2. Secure Querying:
+   - Encrypt database with searchable encryption
+   - Execute queries on encrypted data
+
+3. Synthetic Data:
+   - Generate differentially private synthetic dataset
+   - Release for unrestricted analysis</div>
+
+<h3>5.3 Secure Outsourcing</h3>
+
+<p><strong>Problem:</strong> Perform computation on untrusted servers.</p>
+
+<h4>Approaches</h4>
+<div class="code-block">1. Homomorphic Encryption:
+   - Encrypt data before sending
+   - Server computes on encrypted data
+   - Client decrypts results
+
+2. Verifiable Computation:
+   - Server provides proof of correct execution
+   - Client verifies proof efficiently
+
+3. TEE-Based:
+   - Use hardware enclaves on server
+   - Attestation proves correct execution</div>
+
+<div class="references">
+  <h2 id="references">References</h2>
+  <ol>
+    <li><strong>Gentry, C.</strong> (2009). Fully homomorphic encryption using ideal lattices. <em>STOC</em>.</li>
+    <li><strong>Goldreich, O., Micali, S., & Wigderson, A.</strong> (1987). How to play any mental game. <em>STOC</em>.</li>
+    <li><strong>Dwork, C.</strong> (2006). Differential privacy. <em>ICALP</em>.</li>
+    <li><strong>Costan, V., & Devadas, S.</strong> (2016). Intel SGX explained. <em>IACR Cryptology ePrint Archive</em>.</li>
+    <li><strong>Groth, J.</strong> (2016). On the size of pairing-based non-interactive arguments. <em>EUROCRYPT</em>.</li>
+    <li><strong>Bonawitz, K., et al.</strong> (2017). Practical secure aggregation for privacy-preserving machine learning. <em>CCS</em>.</li>
+  </ol>
+</div>
+
+</body>
+</html>
