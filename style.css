@@ -34,11 +34,18 @@ body {
   background: var(--bg-primary);
   color: var(--text-primary);
   line-height: 1.4;
-  overflow: hidden;
-  height: 100vh;
+  overflow-y: auto; /* Allow scrolling by default for paper pages */
+  overflow-x: hidden;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
   position: relative;
+}
+
+/* Terminal mode for main page (with .terminal-header) */
+body:has(.terminal-header) {
+  overflow: hidden;
+  height: 100vh;
 }
 
 /* ============================================
@@ -1896,21 +1903,28 @@ h1.section-title {
 
 /* Scrollbar styling for webkit browsers */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--bg-primary);
+  background: rgba(0, 0, 0, 0.3);
+  border-left: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--border-color);
-  border: 1px solid var(--bg-primary);
+  background: rgba(0, 255, 0, 0.3);
+  border: 1px solid rgba(0, 255, 0, 0.5);
+  border-radius: 2px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--text-secondary);
+  background: rgba(0, 255, 0, 0.5);
+  border-color: var(--accent);
+}
+
+::-webkit-scrollbar-thumb:active {
+  background: var(--accent);
 }
 
 /* ============================================

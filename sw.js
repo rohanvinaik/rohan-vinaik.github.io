@@ -3,7 +3,7 @@
  * Provides caching and offline functionality
  */
 
-const CACHE_NAME = 'rohan-portfolio-v2.1.0'; // Added sharing, bookmarks, structured data
+const CACHE_NAME = 'rohan-portfolio-v2.1.1'; // Fixed scrollbar visibility
 
 // Critical assets to cache on install
 const STATIC_ASSETS = [
