@@ -3,7 +3,7 @@
  * Provides caching and offline functionality
  */
 
-const CACHE_NAME = 'rohan-portfolio-v2.0.0'; // Major update with power user features
+const CACHE_NAME = 'rohan-portfolio-v2.1.0'; // Added sharing, bookmarks, structured data
 
 // Critical assets to cache on install
 const STATIC_ASSETS = [
@@ -25,6 +25,8 @@ const STATIC_ASSETS = [
   '/command-palette.js',
   '/breadcrumb.js',
   '/citations.js',
+  '/web-share.js',
+  '/reading-progress.js',
   '/scroll-progress.js',
   '/assets/logo.svg'
 ];
