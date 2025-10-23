@@ -130,23 +130,37 @@
   function drawMatrix() {
     if (!matrix.enabled || !matrix.ctx || !matrix.isVisible) return;
 
-    // Semi-transparent black for fade effect
-    matrix.ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+    // Semi-transparent black for fade effect (increased opacity for more visible trails)
+    matrix.ctx.fillStyle = 'rgba(0, 0, 0, 0.08)';
     matrix.ctx.fillRect(0, 0, matrix.canvas.width, matrix.canvas.height);
 
     // Get current accent color from CSS
     const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
 
-    // Draw characters
-    matrix.ctx.fillStyle = accentColor;
-    matrix.ctx.font = '15px monospace';
+    // Draw characters with subtle glow effect
+    matrix.ctx.font = '16px monospace';
+    matrix.ctx.shadowBlur = 8;
+    matrix.ctx.shadowColor = accentColor;
 
     matrix.drops.forEach((y, i) => {
       // Random character
       const char = matrix.chars[Math.floor(Math.random() * matrix.chars.length)];
 
-      // Draw character
+      // Draw brighter leading character
+      matrix.ctx.fillStyle = accentColor;
       matrix.ctx.fillText(char, i * 20, y * 20);
+
+      // Draw dimmer trailing characters for depth
+      if (y > 1) {
+        matrix.ctx.shadowBlur = 2;
+        matrix.ctx.fillStyle = `rgba(0, 255, 0, 0.5)`;
+        matrix.ctx.fillText(
+          matrix.chars[Math.floor(Math.random() * matrix.chars.length)],
+          i * 20,
+          (y - 1) * 20
+        );
+        matrix.ctx.shadowBlur = 8; // Reset shadow blur
+      }
 
       // Reset drop to top randomly
       if (y * 20 > matrix.canvas.height && Math.random() > 0.975) {
