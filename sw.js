@@ -3,7 +3,7 @@
  * Provides caching and offline functionality
  */
 
-const CACHE_NAME = 'rohan-portfolio-v2.1.3'; // Fixed dog.js fifth leg artifacts
+const CACHE_NAME = 'rohan-portfolio-v2.1.4'; // Auto-hide themed scrollbar
 
 // Critical assets to cache on install
 const STATIC_ASSETS = [
@@ -29,6 +29,7 @@ const STATIC_ASSETS = [
   '/web-share.js',
   '/reading-progress.js',
   '/scroll-progress.js',
+  '/scrollbar-autohide.js',
   '/assets/logo.svg'
 ];
 

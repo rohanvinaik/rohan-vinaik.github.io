@@ -1901,30 +1901,52 @@ h1.section-title {
   color: var(--bg-primary);
 }
 
-/* Scrollbar styling for webkit browsers */
+/* Scrollbar styling - auto-hide, themed, thin */
+* {
+  scrollbar-width: thin; /* Firefox: thin scrollbar */
+  scrollbar-color: transparent transparent; /* Firefox: hidden by default */
+}
+
+*:hover {
+  scrollbar-color: var(--accent) transparent; /* Firefox: show on hover */
+}
+
+/* Webkit scrollbar */
 ::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.3);
-  border-left: 1px solid rgba(255, 255, 255, 0.05);
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(0, 255, 0, 0.3);
-  border: 1px solid rgba(0, 255, 0, 0.5);
-  border-radius: 2px;
+  background: transparent;
+  border-radius: 3px;
+  transition: background 0.3s ease, opacity 0.3s ease;
+}
+
+/* Show scrollbar on hover or when actively scrolling */
+:hover::-webkit-scrollbar-thumb,
+.is-scrolling ::-webkit-scrollbar-thumb {
+  background: var(--accent);
+  opacity: 0.4;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 255, 0, 0.5);
-  border-color: var(--accent);
+  background: var(--accent);
+  opacity: 0.7;
 }
 
 ::-webkit-scrollbar-thumb:active {
   background: var(--accent);
+  opacity: 1;
+}
+
+/* Firefox: Show scrollbar while scrolling */
+.is-scrolling * {
+  scrollbar-color: var(--accent) transparent;
 }
 
 /* ============================================
