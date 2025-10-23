@@ -1123,8 +1123,8 @@
   // ============================================
   let settings = {
     volume: 80,
-    accent: 'green',
-    background: 'gray',
+    accent: 'cyan', // Default to cyan (blue/teal) to match HTML
+    background: 'black',
     language: 'standard'
   };
 

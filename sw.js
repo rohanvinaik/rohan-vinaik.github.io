@@ -3,7 +3,7 @@
  * Provides caching and offline functionality
  */
 
-const CACHE_NAME = 'rohan-portfolio-v2.1.1'; // Fixed scrollbar visibility
+const CACHE_NAME = 'rohan-portfolio-v2.1.2'; // Added theme sync for papers
 
 // Critical assets to cache on install
 const STATIC_ASSETS = [
@@ -13,6 +13,7 @@ const STATIC_ASSETS = [
   '/research-graph.css',
   '/error-handler.js',
   '/terminal.js',
+  '/theme-sync.js',
   '/skill-project-map.js',
   '/filter-system.js',
   '/loading-indicator.js',
