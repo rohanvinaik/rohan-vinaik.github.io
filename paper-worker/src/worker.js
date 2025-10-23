@@ -4,7 +4,8 @@
  * Stores in KV, serves via API to website
  */
 
-import { addToArchive, getPapersByTag, getArchiveStats } from './archive.js';
+import { addToArchive, getPapersByTag, getArchiveStats, searchArchive } from './archive.js';
+import { rankPapersWithRelevance, getSimplifiedTitle } from './relevance-scorer.js';
 
 export default {
   // Scheduled cron job - runs daily at 9 AM UTC
@@ -42,6 +43,10 @@ export default {
       return handleGetArchiveStats(request, env, corsHeaders);
     }
 
+    if (url.pathname === '/api/archive/search') {
+      return handleSearchArchive(request, env, corsHeaders);
+    }
+
     if (url.pathname === '/api/refresh') {
       try {
         // Actually await the fetch to catch any errors
@@ -69,6 +74,43 @@ export default {
     return new Response('Not Found', { status: 404, headers: corsHeaders });
   }
 };
+
+/**
+ * Apply golden paper retention logic
+ * Golden papers stay in feed for minimum 3 days or until 3+ golden papers exist
+ */
+function applyGoldenPaperRetention(papers) {
+  const now = new Date();
+  const threeDaysAgo = new Date(now.getTime() - (3 * 24 * 60 * 60 * 1000));
+
+  // Separate golden and non-golden papers
+  const goldenPapers = papers.filter(p => p.isGolden);
+  const nonGoldenPapers = papers.filter(p => !p.isGolden);
+
+  // Filter golden papers by retention rules
+  const retainedGoldenPapers = goldenPapers.filter(p => {
+    const paperDate = new Date(p.published || p.first_seen || now);
+
+    // Keep if less than 3 days old
+    if (paperDate >= threeDaysAgo) {
+      return true;
+    }
+
+    // Keep if we have fewer than 3 golden papers total
+    if (goldenPapers.length <= 3) {
+      return true;
+    }
+
+    // Otherwise, remove older golden papers
+    return false;
+  });
+
+  console.log(`Golden papers: ${goldenPapers.length} total, ${retainedGoldenPapers.length} retained`);
+
+  // Merge retained golden papers with all non-golden papers
+  // Golden papers stay at the top due to their high scores
+  return [...retainedGoldenPapers, ...nonGoldenPapers];
+}
 
 /**
  * Main paper fetching and storage logic
@@ -260,8 +302,8 @@ async function fetchAndStorePapers(env) {
     }
   }
 
-  // Rank by relevance and quality
-  const rankedPapers = rankPapers(enrichedPapers);
+  // Rank by relevance with new multi-category scoring
+  const rankedPapers = rankPapersWithRelevance(enrichedPapers);
   console.log(`After ranking: ${rankedPapers.length}, top score: ${rankedPapers[0]?.score || 'N/A'}`);
 
   // Add to archive (all papers, not just top 30)
@@ -284,14 +326,18 @@ async function fetchAndStorePapers(env) {
       // Deduplicate combined list
       allCombinedPapers = deduplicatePapers(allCombinedPapers);
 
-      // Re-rank combined list
-      allCombinedPapers = rankPapers(allCombinedPapers);
+      // Re-rank combined list with new scoring
+      allCombinedPapers = rankPapersWithRelevance(allCombinedPapers);
 
       console.log(`Combined with existing: ${allCombinedPapers.length} total papers`);
     }
 
+    // Apply golden paper retention logic
+    const papersWithRetention = applyGoldenPaperRetention(allCombinedPapers);
+    console.log(`After retention logic: ${papersWithRetention.length} papers`);
+
     // Store top 30 for display
-    const topPapers = allCombinedPapers.slice(0, 30);
+    const topPapers = papersWithRetention.slice(0, 30);
     await env.PAPERS_KV.put('latest_papers', JSON.stringify({
       papers: topPapers,
       updated: new Date().toISOString(),
@@ -1233,6 +1279,41 @@ async function handleGetArchiveStats(request, env, corsHeaders) {
     }
 
     return new Response(JSON.stringify(stats), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+  } catch (error) {
+    return new Response(JSON.stringify({
+      error: error.message
+    }), {
+      status: 500,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+  }
+}
+
+/**
+ * Handle GET /api/archive/search requests
+ * Search archived papers by title, tags, categories, and relevance
+ */
+async function handleSearchArchive(request, env, corsHeaders) {
+  const url = new URL(request.url);
+  const query = url.searchParams.get('q') || '';
+  const category = url.searchParams.get('category');
+  const tag = url.searchParams.get('tag');
+  const minRelevance = url.searchParams.get('minRelevance');
+  const onlyGolden = url.searchParams.get('golden') === 'true';
+  const limit = parseInt(url.searchParams.get('limit') || '50');
+
+  try {
+    const results = await searchArchive(env, query, {
+      category,
+      tag,
+      minRelevance: minRelevance ? parseFloat(minRelevance) : null,
+      onlyGolden,
+      limit
+    });
+
+    return new Response(JSON.stringify(results), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
     });
   } catch (error) {

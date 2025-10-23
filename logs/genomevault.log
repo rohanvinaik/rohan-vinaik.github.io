@@ -1,0 +1,112 @@
+2025-10-19 19:50:54,468 | INFO     | genomevault.logging  | Logging configured: level=INFO,file_logging=True
+2025-10-19 19:50:54,501 | WARNING  | genomevault.crypto.threshold_service | BLS signatures not available, using simulation mode
+2025-10-19 19:51:02,975 | INFO     | genomevault.logging  | Logging configured: level=INFO,file_logging=True
+2025-10-19 19:51:02,999 | WARNING  | genomevault.crypto.threshold_service | BLS signatures not available, using simulation mode
+2025-10-19 19:51:23,662 | INFO     | genomevault.logging  | Logging configured: level=INFO,file_logging=True
+2025-10-19 19:51:23,688 | WARNING  | genomevault.crypto.threshold_service | BLS signatures not available, using simulation mode
+2025-10-19 19:51:26,361 | WARNING  | genomevault.differential_encoding.chunking | Chunking exceeded 100k iterations, stopping
+2025-10-19 19:51:26,971 | INFO     | genomevault.differential_encoding.chunking | Chunked chr1: 100001 chunks, 45 variants
+2025-10-19 19:51:28,523 | WARNING  | genomevault.differential_encoding.chunking | Chunking exceeded 100k iterations, stopping
+2025-10-19 19:51:29,126 | INFO     | genomevault.differential_encoding.chunking | Chunked chr10: 100001 chunks, 45 variants
+2025-10-19 19:51:30,747 | WARNING  | genomevault.differential_encoding.chunking | Chunking exceeded 100k iterations, stopping
+2025-10-19 19:51:31,343 | INFO     | genomevault.differential_encoding.chunking | Chunked chr11: 100001 chunks, 45 variants
+2025-10-19 19:51:32,928 | WARNING  | genomevault.differential_encoding.chunking | Chunking exceeded 100k iterations, stopping
+2025-10-19 19:51:33,519 | INFO     | genomevault.differential_encoding.chunking | Chunked chr12: 100001 chunks, 45 variants
+2025-10-19 19:51:35,108 | WARNING  | genomevault.differential_encoding.chunking | Chunking exceeded 100k iterations, stopping
+2025-10-19 19:51:35,708 | INFO     | genomevault.differential_encoding.chunking | Chunked chr13: 100001 chunks, 45 variants
+2025-10-19 19:51:37,189 | WARNING  | genomevault.differential_encoding.chunking | Chunking exceeded 100k iterations, stopping
+2025-10-19 19:51:37,798 | INFO     | genomevault.differential_encoding.chunking | Chunked chr14: 100001 chunks, 45 variants
+2025-10-19 19:51:39,408 | WARNING  | genomevault.differential_encoding.chunking | Chunking exceeded 100k iterations, stopping
+2025-10-19 19:51:40,002 | INFO     | genomevault.differential_encoding.chunking | Chunked chr15: 100001 chunks, 45 variants
+2025-10-19 19:51:41,600 | WARNING  | genomevault.differential_encoding.chunking | Chunking exceeded 100k iterations, stopping
+2025-10-19 19:51:42,192 | INFO     | genomevault.differential_encoding.chunking | Chunked chr16: 100001 chunks, 45 variants
+2025-10-19 19:51:43,653 | WARNING  | genomevault.differential_encoding.chunking | Chunking exceeded 100k iterations, stopping
+2025-10-19 19:51:44,278 | INFO     | genomevault.differential_encoding.chunking | Chunked chr17: 100001 chunks, 45 variants
+2025-10-19 19:51:45,897 | WARNING  | genomevault.differential_encoding.chunking | Chunking exceeded 100k iterations, stopping
+2025-10-19 19:51:46,489 | INFO     | genomevault.differential_encoding.chunking | Chunked chr18: 100001 chunks, 45 variants
+2025-10-19 19:51:47,957 | WARNING  | genomevault.differential_encoding.chunking | Chunking exceeded 100k iterations, stopping
+2025-10-19 19:51:48,570 | INFO     | genomevault.differential_encoding.chunking | Chunked chr19: 100001 chunks, 45 variants
+2025-10-19 19:51:50,031 | WARNING  | genomevault.differential_encoding.chunking | Chunking exceeded 100k iterations, stopping
+2025-10-19 19:51:50,649 | INFO     | genomevault.differential_encoding.chunking | Chunked chr2: 100001 chunks, 45 variants
+2025-10-19 19:51:52,307 | WARNING  | genomevault.differential_encoding.chunking | Chunking exceeded 100k iterations, stopping
+2025-10-19 19:51:52,892 | INFO     | genomevault.differential_encoding.chunking | Chunked chr20: 100001 chunks, 45 variants
+2025-10-19 19:51:54,342 | WARNING  | genomevault.differential_encoding.chunking | Chunking exceeded 100k iterations, stopping
+2025-10-19 19:51:54,949 | INFO     | genomevault.differential_encoding.chunking | Chunked chr21: 100001 chunks, 45 variants
+2025-10-19 19:51:56,397 | WARNING  | genomevault.differential_encoding.chunking | Chunking exceeded 100k iterations, stopping
+2025-10-19 19:51:57,006 | INFO     | genomevault.differential_encoding.chunking | Chunked chr22: 100001 chunks, 45 variants
+2025-10-19 19:51:58,716 | WARNING  | genomevault.differential_encoding.chunking | Chunking exceeded 100k iterations, stopping
+2025-10-19 19:51:59,310 | INFO     | genomevault.differential_encoding.chunking | Chunked chr3: 100001 chunks, 45 variants
+2025-10-19 19:52:00,773 | WARNING  | genomevault.differential_encoding.chunking | Chunking exceeded 100k iterations, stopping
+2025-10-19 19:52:01,381 | INFO     | genomevault.differential_encoding.chunking | Chunked chr4: 100001 chunks, 45 variants
+2025-10-19 19:52:02,955 | WARNING  | genomevault.differential_encoding.chunking | Chunking exceeded 100k iterations, stopping
+2025-10-19 19:52:03,562 | INFO     | genomevault.differential_encoding.chunking | Chunked chr5: 100001 chunks, 45 variants
+2025-10-19 19:52:05,018 | WARNING  | genomevault.differential_encoding.chunking | Chunking exceeded 100k iterations, stopping
+2025-10-19 19:52:05,631 | INFO     | genomevault.differential_encoding.chunking | Chunked chr6: 100001 chunks, 45 variants
+2025-10-19 19:52:07,168 | WARNING  | genomevault.differential_encoding.chunking | Chunking exceeded 100k iterations, stopping
+2025-10-19 19:52:07,783 | INFO     | genomevault.differential_encoding.chunking | Chunked chr7: 100001 chunks, 45 variants
+2025-10-19 19:52:09,562 | WARNING  | genomevault.differential_encoding.chunking | Chunking exceeded 100k iterations, stopping
+2025-10-19 19:52:10,151 | INFO     | genomevault.differential_encoding.chunking | Chunked chr8: 100001 chunks, 45 variants
+2025-10-19 19:52:11,605 | WARNING  | genomevault.differential_encoding.chunking | Chunking exceeded 100k iterations, stopping
+2025-10-19 19:52:12,216 | INFO     | genomevault.differential_encoding.chunking | Chunked chr9: 100001 chunks, 45 variants
+2025-10-19 19:52:12,216 | INFO     | genomevault.differential_encoding.chunking | Genome chunking complete: 2200022 total chunks across 22 chromosomes using sliding_window strategy
+2025-10-19 19:52:13,663 | WARNING  | genomevault.differential_encoding.chunking | Chunking exceeded 100k iterations, stopping
+2025-10-19 19:52:14,266 | INFO     | genomevault.differential_encoding.chunking | Chunked chr1: 100001 chunks, 45 variants
+2025-10-19 19:52:15,722 | WARNING  | genomevault.differential_encoding.chunking | Chunking exceeded 100k iterations, stopping
+2025-10-19 19:52:16,328 | INFO     | genomevault.differential_encoding.chunking | Chunked chr10: 100001 chunks, 45 variants
+2025-10-19 19:52:17,777 | WARNING  | genomevault.differential_encoding.chunking | Chunking exceeded 100k iterations, stopping
+2025-10-19 19:52:18,380 | INFO     | genomevault.differential_encoding.chunking | Chunked chr11: 100001 chunks, 45 variants
+2025-10-19 19:52:20,237 | WARNING  | genomevault.differential_encoding.chunking | Chunking exceeded 100k iterations, stopping
+2025-10-19 19:52:20,828 | INFO     | genomevault.differential_encoding.chunking | Chunked chr12: 100001 chunks, 45 variants
+2025-10-19 19:52:22,276 | WARNING  | genomevault.differential_encoding.chunking | Chunking exceeded 100k iterations, stopping
+2025-10-19 19:52:22,877 | INFO     | genomevault.differential_encoding.chunking | Chunked chr13: 100001 chunks, 45 variants
+2025-10-19 19:52:24,334 | WARNING  | genomevault.differential_encoding.chunking | Chunking exceeded 100k iterations, stopping
+2025-10-19 19:52:24,939 | INFO     | genomevault.differential_encoding.chunking | Chunked chr14: 100001 chunks, 45 variants
+2025-10-19 19:52:26,391 | WARNING  | genomevault.differential_encoding.chunking | Chunking exceeded 100k iterations, stopping
+2025-10-19 19:52:26,996 | INFO     | genomevault.differential_encoding.chunking | Chunked chr15: 100001 chunks, 45 variants
+2025-10-19 19:52:28,466 | WARNING  | genomevault.differential_encoding.chunking | Chunking exceeded 100k iterations, stopping
+2025-10-19 19:52:29,077 | INFO     | genomevault.differential_encoding.chunking | Chunked chr16: 100001 chunks, 45 variants
+2025-10-19 19:52:30,528 | WARNING  | genomevault.differential_encoding.chunking | Chunking exceeded 100k iterations, stopping
+2025-10-19 19:52:31,140 | INFO     | genomevault.differential_encoding.chunking | Chunked chr17: 100001 chunks, 45 variants
+2025-10-19 19:52:33,077 | WARNING  | genomevault.differential_encoding.chunking | Chunking exceeded 100k iterations, stopping
+2025-10-19 19:52:33,665 | INFO     | genomevault.differential_encoding.chunking | Chunked chr18: 100001 chunks, 45 variants
+2025-10-19 19:52:35,114 | WARNING  | genomevault.differential_encoding.chunking | Chunking exceeded 100k iterations, stopping
+2025-10-19 19:52:35,722 | INFO     | genomevault.differential_encoding.chunking | Chunked chr19: 100001 chunks, 45 variants
+2025-10-19 19:52:37,167 | WARNING  | genomevault.differential_encoding.chunking | Chunking exceeded 100k iterations, stopping
+2025-10-19 19:52:37,792 | INFO     | genomevault.logging  | Logging configured: level=INFO,file_logging=True
+2025-10-19 19:52:37,815 | WARNING  | genomevault.crypto.threshold_service | BLS signatures not available, using simulation mode
+2025-10-19 19:52:37,860 | INFO     | genomevault.differential_encoding.chunking | Chunked chr2: 100001 chunks, 45 variants
+2025-10-19 19:52:39,043 | INFO     | genomevault.differential_encoding.performance | Numba JIT compilation available - using optimized functions
+2025-10-19 19:52:39,371 | WARNING  | genomevault.differential_encoding.chunking | Chunking exceeded 100k iterations, stopping
+2025-10-19 19:52:39,979 | INFO     | genomevault.differential_encoding.chunking | Chunked chr20: 100001 chunks, 45 variants
+2025-10-19 19:52:41,429 | WARNING  | genomevault.differential_encoding.chunking | Chunking exceeded 100k iterations, stopping
+2025-10-19 19:52:42,038 | INFO     | genomevault.differential_encoding.chunking | Chunked chr21: 100001 chunks, 45 variants
+2025-10-19 19:52:43,475 | WARNING  | genomevault.differential_encoding.chunking | Chunking exceeded 100k iterations, stopping
+2025-10-19 19:52:44,088 | INFO     | genomevault.differential_encoding.chunking | Chunked chr22: 100001 chunks, 45 variants
+2025-10-19 19:52:45,527 | WARNING  | genomevault.differential_encoding.chunking | Chunking exceeded 100k iterations, stopping
+2025-10-19 19:52:46,132 | INFO     | genomevault.differential_encoding.chunking | Chunked chr3: 100001 chunks, 45 variants
+2025-10-19 19:52:47,581 | WARNING  | genomevault.differential_encoding.chunking | Chunking exceeded 100k iterations, stopping
+2025-10-19 19:52:48,181 | INFO     | genomevault.differential_encoding.chunking | Chunked chr4: 100001 chunks, 45 variants
+2025-10-19 19:52:49,632 | WARNING  | genomevault.differential_encoding.chunking | Chunking exceeded 100k iterations, stopping
+2025-10-19 19:52:50,244 | INFO     | genomevault.differential_encoding.chunking | Chunked chr5: 100001 chunks, 45 variants
+2025-10-19 19:52:52,377 | INFO     | genomevault.logging  | Logging configured: level=INFO,file_logging=True
+2025-10-19 19:52:52,403 | WARNING  | genomevault.crypto.threshold_service | BLS signatures not available, using simulation mode
+2025-10-19 19:52:52,439 | WARNING  | genomevault.differential_encoding.chunking | Chunking exceeded 100k iterations, stopping
+2025-10-19 19:52:53,127 | INFO     | genomevault.differential_encoding.chunking | Chunked chr6: 100001 chunks, 45 variants
+2025-10-19 19:52:54,598 | WARNING  | genomevault.differential_encoding.chunking | Chunking exceeded 100k iterations, stopping
+2025-10-19 19:52:55,201 | INFO     | genomevault.differential_encoding.chunking | Chunked chr7: 100001 chunks, 45 variants
+2025-10-19 19:52:56,647 | WARNING  | genomevault.differential_encoding.chunking | Chunking exceeded 100k iterations, stopping
+2025-10-19 19:52:57,253 | INFO     | genomevault.differential_encoding.chunking | Chunked chr8: 100001 chunks, 45 variants
+2025-10-19 19:52:58,720 | WARNING  | genomevault.differential_encoding.chunking | Chunking exceeded 100k iterations, stopping
+2025-10-19 19:52:59,337 | INFO     | genomevault.differential_encoding.chunking | Chunked chr9: 100001 chunks, 45 variants
+2025-10-19 19:52:59,337 | INFO     | genomevault.differential_encoding.chunking | Genome chunking complete: 2200022 total chunks across 22 chromosomes using sliding_window strategy
+2025-10-19 19:53:00,924 | WARNING  | genomevault.differential_encoding.chunking | Chunking exceeded 100k iterations, stopping
+2025-10-19 19:53:01,537 | INFO     | genomevault.differential_encoding.chunking | Chunked chr1: 100001 chunks, 45 variants
+2025-10-19 19:53:03,056 | WARNING  | genomevault.differential_encoding.chunking | Chunking exceeded 100k iterations, stopping
+2025-10-19 19:53:03,665 | INFO     | genomevault.differential_encoding.chunking | Chunked chr10: 100001 chunks, 45 variants
+2025-10-19 19:53:05,116 | WARNING  | genomevault.differential_encoding.chunking | Chunking exceeded 100k iterations, stopping
+2025-10-19 19:53:05,730 | INFO     | genomevault.differential_encoding.chunking | Chunked chr11: 100001 chunks, 45 variants
+2025-10-19 19:53:07,175 | WARNING  | genomevault.differential_encoding.chunking | Chunking exceeded 100k iterations, stopping
+2025-10-19 19:53:07,781 | INFO     | genomevault.differential_encoding.chunking | Chunked chr12: 100001 chunks, 45 variants
+2025-10-19 19:53:09,244 | WARNING  | genomevault.differential_encoding.chunking | Chunking exceeded 100k iterations, stopping
+2025-10-19 19:53:09,855 | INFO     | genomevault.differential_encoding.chunking | Chunked chr13: 100001 chunks, 45 variants
+2025-10-19 19:53:11,318 | WARNING  | genomevault.differential_encoding.chunking | Chunking exceeded 100k iterations, stopping

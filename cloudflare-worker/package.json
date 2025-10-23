@@ -1,0 +1,27 @@
+{
+  "name": "paper-feed-worker",
+  "version": "1.0.0",
+  "description": "Cloudflare Worker for automated research paper aggregation",
+  "main": "worker.js",
+  "scripts": {
+    "deploy": "wrangler deploy",
+    "dev": "wrangler dev",
+    "tail": "wrangler tail",
+    "kv:list": "wrangler kv:key list --binding=PAPERS_KV",
+    "kv:get": "wrangler kv:key get --binding=PAPERS_KV latest_papers",
+    "kv:delete": "wrangler kv:key delete --binding=PAPERS_KV latest_papers"
+  },
+  "keywords": [
+    "cloudflare",
+    "worker",
+    "arxiv",
+    "biorxiv",
+    "research",
+    "papers"
+  ],
+  "author": "Rohan Vinaik",
+  "license": "MIT",
+  "devDependencies": {
+    "wrangler": "^3.0.0"
+  }
+}
