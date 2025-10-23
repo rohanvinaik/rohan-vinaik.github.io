@@ -122,6 +122,9 @@
         <a href="#tools" class="nav-item" data-section="tools">
           <span class="nav-icon">▸</span> <span data-translate="nav-tools">tools</span>
         </a>
+        <a href="#paper-feed" class="nav-item" data-section="paper-feed">
+          <span class="nav-icon">▸</span> paper_feed
+        </a>
       </nav>
 
       <!-- External Links -->
@@ -1119,6 +1122,81 @@
             </div>
           </section>
 
+          <!-- Paper Feed Section -->
+          <section class="content-section" id="section-paper-feed">
+            <div class="term-output">
+              <div class="term-line">> loading paper_feed.txt...</div>
+              <div class="term-line">> connecting to arXiv API...</div>
+              <div class="term-line">> connecting to bioRxiv API...</div>
+              <div class="term-line">> done.</div>
+            </div>
+
+            <h2 class="section-title">RESEARCH PAPER FEED</h2>
+
+            <div class="info-box" style="margin-bottom: 24px; background: var(--code-bg); padding: 16px; border: 1px solid var(--border);">
+              <p style="font-size: 0.8rem; line-height: 1.6; margin-bottom: 8px;">
+                Automatically curated papers from <strong>arXiv</strong>, <strong>bioRxiv</strong>, and <strong>PubMed</strong> based on my research interests.
+                Updated daily with relevance scoring.
+              </p>
+              <div style="display: flex; gap: 16px; flex-wrap: wrap; margin-top: 12px;">
+                <div style="font-size: 0.75rem;">
+                  <span style="color: var(--text-secondary);">LAST UPDATED:</span>
+                  <span id="last-updated" style="color: var(--accent); margin-left: 8px;">--</span>
+                </div>
+                <div style="font-size: 0.75rem;">
+                  <span style="color: var(--text-secondary);">TOTAL PAPERS:</span>
+                  <span id="total-papers" style="color: var(--accent); margin-left: 8px;">--</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Filter Controls -->
+            <div class="filter-controls" style="margin-bottom: 24px; display: flex; flex-wrap: wrap; gap: 16px; align-items: center;">
+              <div style="flex: 1; min-width: 200px;">
+                <label style="color: var(--accent); font-size: 0.75rem; display: block; margin-bottom: 8px;">FILTER BY TOPIC</label>
+                <select id="topic-filter" style="width: 100%; background: var(--code-bg); color: var(--text); border: 1px solid var(--border); padding: 8px 12px; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem;">
+                  <option value="all">All Topics</option>
+                  <option value="hdc">Hyperdimensional Computing</option>
+                  <option value="genomics">Genomics & Privacy</option>
+                  <option value="ai-security">AI Security & Verification</option>
+                  <option value="tda">Topological Data Analysis</option>
+                  <option value="theory">Theoretical Foundations</option>
+                  <option value="bio-computing">Biological Computing</option>
+                </select>
+              </div>
+
+              <div style="min-width: 150px;">
+                <label style="color: var(--accent); font-size: 0.75rem; display: block; margin-bottom: 8px;">SHOW</label>
+                <select id="count-select" style="width: 100%; background: var(--code-bg); color: var(--text); border: 1px solid var(--border); padding: 8px 12px; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem;">
+                  <option value="5">5 papers</option>
+                  <option value="10">10 papers</option>
+                  <option value="15">15 papers</option>
+                  <option value="20">20 papers</option>
+                </select>
+              </div>
+
+              <div style="align-self: flex-end;">
+                <button id="refresh-papers" style="background: var(--accent); color: var(--bg); border: none; padding: 10px 20px; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; cursor: pointer; font-weight: 700; letter-spacing: 0.05em;">
+                  🔄 REFRESH NOW
+                </button>
+              </div>
+            </div>
+
+            <!-- Papers Display -->
+            <div id="papers-container" class="items-list">
+              <div class="loading-state" style="text-align: center; padding: 40px; color: var(--text-secondary); font-size: 0.85rem;">
+                <div style="margin-bottom: 12px;">⏳ Loading papers...</div>
+                <div style="font-size: 0.75rem;">Fetching latest research from APIs</div>
+              </div>
+            </div>
+
+            <!-- Status Message -->
+            <div id="feed-status" style="margin-top: 16px; padding: 12px; background: var(--code-bg); border: 1px solid var(--border); font-size: 0.75rem; display: none;">
+              <span id="status-message"></span>
+            </div>
+
+          </section>
+
         </div>
       </div>
     </main>
@@ -1275,5 +1353,6 @@
   <script src="terminal-bar.js"></script>
   <script src="graph-data.js"></script>
   <script src="research-graph.js"></script>
+  <script src="paper-feed.js"></script>
 </body>
 </html>
