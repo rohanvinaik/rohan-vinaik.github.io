@@ -2370,7 +2370,7 @@ h1.section-title {
    SPRITE DOG
    ============================================ */
 
-.ascii-dog {
+.sprite-dog {
   position: fixed;
   bottom: 40px;
   left: 50%;
@@ -2392,7 +2392,7 @@ h1.section-title {
   transition: transform 0.2s ease;
 }
 
-.ascii-dog:hover .dog-sprite {
+.sprite-dog:hover .dog-sprite {
   transform: scale(1.1);
 }
 

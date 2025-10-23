@@ -3,7 +3,7 @@
  * Provides caching and offline functionality
  */
 
-const CACHE_NAME = 'rohan-portfolio-v2.1.4'; // Auto-hide themed scrollbar
+const CACHE_NAME = 'rohan-portfolio-v2.1.5'; // Renamed ASCII to Sprite, removed duplicate terminal bar
 
 // Critical assets to cache on install
 const STATIC_ASSETS = [

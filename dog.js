@@ -2739,7 +2739,7 @@
   // EXPORT FUNCTIONS
   // ===========================================
 
-  window.ASCIIDog = {
+  window.SpriteDog = {
     enable: enableDog,
     disable: disableDog,
     isEnabled: () => dog.enabled
@@ -2752,7 +2752,7 @@
   window.addEventListener('DOMContentLoaded', () => {
     const settings = JSON.parse(localStorage.getItem('dashboard-settings') || '{}');
 
-    const shouldEnable = settings.asciiDog !== false;
+    const shouldEnable = settings.spriteDog !== false;
     if (shouldEnable) {
       enableDog();
     }
@@ -2767,7 +2767,7 @@
           disableDog();
         }
 
-        settings.asciiDog = e.target.checked;
+        settings.spriteDog = e.target.checked;
         localStorage.setItem('dashboard-settings', JSON.stringify(settings));
       });
     }

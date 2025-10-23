@@ -63,27 +63,18 @@
   // UPDATE BREADCRUMB
   // ============================================
   function updateBreadcrumb() {
-    if (!breadcrumbEl) return;
+    // Update terminal-header's #current-path instead of breadcrumb bar
+    const currentPathEl = document.getElementById('current-path');
+    if (!currentPathEl) return;
 
-    const pathEl = breadcrumbEl.querySelector('.breadcrumb-path');
-    const sectionPath = config.sections[currentSection] || '';
-    const fullPath = sectionPath
-      ? `${config.homeDir}/${sectionPath}${currentSubPath ? '/' + currentSubPath : ''}`
-      : config.homeDir;
+    const sectionPath = config.sections[currentSection] || 'home';
+    const fullPath = currentSubPath ? `${sectionPath}/${currentSubPath}` : sectionPath;
 
-    pathEl.textContent = fullPath;
-
-    // Animate cursor
-    animateCursor();
+    currentPathEl.textContent = fullPath;
   }
 
   function animateCursor() {
-    const cursor = breadcrumbEl.querySelector('.breadcrumb-cursor');
-    if (cursor) {
-      cursor.classList.remove('blink');
-      void cursor.offsetWidth; // Force reflow
-      cursor.classList.add('blink');
-    }
+    // No longer needed - terminal-header doesn't have animated cursor
   }
 
   // ============================================
@@ -164,11 +155,12 @@
   // INITIALIZATION
   // ============================================
   function init() {
-    createBreadcrumb();
+    // Breadcrumb visual bar disabled - terminal-header already shows path
+    // createBreadcrumb();
     setupObservers();
     detectCurrentSection();
 
-    console.log('[Breadcrumb] System initialized');
+    console.log('[Breadcrumb] System initialized (visual bar disabled)');
   }
 
   // Auto-initialize
