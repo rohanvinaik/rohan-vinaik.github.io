@@ -320,14 +320,14 @@
     const footer = document.createElement('div');
     footer.className = 'perf-footer';
     footer.innerHTML = `
-      <span class="perf-label">load_time:</span>
-      <span class="perf-value" id="perf-load">--</span>
+      <span class="perf-label" title="Page Load Time">load_time:</span>
+      <span class="perf-value" id="perf-load" title="Total page load duration">--</span>
       <span class="perf-separator">|</span>
-      <span class="perf-label">lcp:</span>
-      <span class="perf-value" id="perf-lcp">--</span>
+      <span class="perf-label" title="Largest Contentful Paint - main content render time">lcp:</span>
+      <span class="perf-value" id="perf-lcp" title="How fast main content appears (Good: <2.5s, Needs Improvement: <4s, Poor: >4s)">--</span>
       <span class="perf-separator">|</span>
-      <span class="perf-label">cls:</span>
-      <span class="perf-value" id="perf-cls">--</span>
+      <span class="perf-label" title="Cumulative Layout Shift - visual stability">cls:</span>
+      <span class="perf-value" id="perf-cls" title="Visual stability score (Good: <0.1, Needs Improvement: <0.25, Poor: >0.25)">--</span>
     `;
 
     document.body.appendChild(footer);
@@ -341,18 +341,28 @@
     const lcpEl = document.getElementById('perf-lcp');
     const clsEl = document.getElementById('perf-cls');
 
-    if (loadEl && metrics.navigationTiming.loadTime) {
-      loadEl.textContent = `${(metrics.navigationTiming.loadTime / 1000).toFixed(2)}s`;
+    // Helper to get CSS class from rating string
+    const getRatingClass = (rating) => {
+      if (rating.includes('Good')) return 'perf-good';
+      if (rating.includes('Needs Improvement')) return 'perf-needs-improvement';
+      if (rating.includes('Poor')) return 'perf-poor';
+      return '';
+    };
+
+    // Use pageLoad from navigationTiming
+    if (loadEl && metrics.navigationTiming.pageLoad) {
+      loadEl.textContent = `${(metrics.navigationTiming.pageLoad / 1000).toFixed(2)}s`;
+      loadEl.className = 'perf-value perf-good'; // Page load is just informational
     }
 
     if (lcpEl && metrics.lcp) {
       lcpEl.textContent = `${(metrics.lcp / 1000).toFixed(2)}s`;
-      lcpEl.className = `perf-value perf-${getRating('lcp', metrics.lcp)}`;
+      lcpEl.className = `perf-value ${getRatingClass(getRating('lcp', metrics.lcp))}`;
     }
 
     if (clsEl && metrics.cls !== null) {
       clsEl.textContent = metrics.cls.toFixed(3);
-      clsEl.className = `perf-value perf-${getRating('cls', metrics.cls)}`;
+      clsEl.className = `perf-value ${getRatingClass(getRating('cls', metrics.cls))}`;
     }
   }
 
@@ -450,14 +460,17 @@ perfFooterStyles.textContent = `
 
 .perf-value.perf-good {
   color: #00ff00;
+  font-weight: 700;
 }
 
-.perf-value.perf-needsImprovement {
+.perf-value.perf-needs-improvement {
   color: #ffaa00;
+  font-weight: 700;
 }
 
 .perf-value.perf-poor {
   color: #ff4444;
+  font-weight: 700;
 }
 
 .perf-separator {
