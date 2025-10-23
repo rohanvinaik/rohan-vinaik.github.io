@@ -3,7 +3,7 @@
  * Provides caching and offline functionality
  */
 
-const CACHE_NAME = 'rohan-portfolio-v1.1.0'; // Bumped for search feature
+const CACHE_NAME = 'rohan-portfolio-v2.0.0'; // Major update with power user features
 
 // Critical assets to cache on install
 const STATIC_ASSETS = [
@@ -22,6 +22,9 @@ const STATIC_ASSETS = [
   '/mobile-touch.js',
   '/site-stats.js',
   '/search.js',
+  '/command-palette.js',
+  '/breadcrumb.js',
+  '/citations.js',
   '/scroll-progress.js',
   '/assets/logo.svg'
 ];
