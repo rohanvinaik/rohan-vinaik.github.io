@@ -319,9 +319,26 @@
         padding: 3px 8px;
       }
     }
+
+    /* Reading Progress Indicator */
+    .reading-progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 0%;
+      height: 3px;
+      background: linear-gradient(90deg, #00ff00, #00ff00);
+      z-index: 9999;
+      transition: width 0.1s ease-out;
+      box-shadow: 0 0 10px #00ff00;
+    }
   </style>
 </head>
 <body>
+
+  <!-- Reading Progress Indicator -->
+  <div class="reading-progress" id="reading-progress"></div>
+
   <div class="container">
     <a href="../index.html#papers" class="back-link">Back to Papers</a>
 
@@ -1074,6 +1091,38 @@
         }
       });
     });
+
+
+    // Reading Progress Indicator
+    (function() {
+      const progressBar = document.getElementById('reading-progress');
+      if (!progressBar) return;
+
+      function updateScrollProgress() {
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        const scrollHeight = document.documentElement.scrollHeight;
+        const clientHeight = document.documentElement.clientHeight;
+        const maxScroll = scrollHeight - clientHeight;
+        const scrollPercentage = maxScroll > 0 ? (scrollTop / maxScroll) * 100 : 0;
+        progressBar.style.width = scrollPercentage + '%';
+      }
+
+      let ticking = false;
+      function throttledUpdate() {
+        if (!ticking) {
+          window.requestAnimationFrame(function() {
+            updateScrollProgress();
+            ticking = false;
+          });
+          ticking = true;
+        }
+      }
+
+      window.addEventListener('scroll', throttledUpdate, { passive: true });
+      window.addEventListener('resize', throttledUpdate, { passive: true });
+      window.addEventListener('load', updateScrollProgress);
+      updateScrollProgress();
+    })();
   </script>
 </body>
 </html>
