@@ -20,6 +20,7 @@ const STATIC_ASSETS = [
   '/keyboard-shortcuts.js',
   '/performance-monitor.js',
   '/mobile-touch.js',
+  '/site-stats.js',
   '/scroll-progress.js',
   '/assets/logo.svg'
 ];
