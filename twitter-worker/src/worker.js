@@ -74,12 +74,19 @@ async function fetchTwitterPapers(env) {
 
   let twitterPapers = [];
 
-  try {
-    twitterPapers = await fetchFromTwitterAccounts(env.TWITTER_BEARER_TOKEN, threeMonthsAgo);
-    console.log(`Fetched ${twitterPapers.length} papers from Twitter`);
-  } catch (error) {
-    console.error('Error fetching from Twitter:', error);
-    return 0;
+  // Note: Twitter API free tier only allows 50 user lookups/month
+  // This isn't enough for 25+ accounts, so Twitter fetching is disabled
+  // Relying on RSS feeds instead (no API limits)
+  if (env.TWITTER_BEARER_TOKEN && false) {  // Disabled - free tier too limited
+    try {
+      twitterPapers = await fetchFromTwitterAccounts(env.TWITTER_BEARER_TOKEN, threeMonthsAgo);
+      console.log(`Fetched ${twitterPapers.length} papers from Twitter`);
+    } catch (error) {
+      console.error('Error fetching from Twitter:', error);
+      // Continue to Substack - don't return 0
+    }
+  } else {
+    console.log('Twitter API disabled (free tier limits) - using RSS feeds only');
   }
 
   // Fetch from Substack feeds (theory-focused)
