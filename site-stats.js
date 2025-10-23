@@ -35,17 +35,24 @@
     }
 
     checkIfOwner() {
+      // Check for URL parameter to reset counter
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('resetcounter') === 'true') {
+        localStorage.setItem(this.storageKey, '0');
+        console.log('[SiteStats] Counter manually reset to 0');
+      }
+
       // Check for owner flag in localStorage
       if (localStorage.getItem(this.ownerFlagKey) === 'true') {
+        console.log('[SiteStats] Owner mode active (from localStorage)');
         return true;
       }
 
       // Check for URL parameter ?owner=true (secret, not advertised)
-      const urlParams = new URLSearchParams(window.location.search);
       if (urlParams.get('owner') === 'true') {
         // Set flag in localStorage so owner doesn't need URL param every time
         localStorage.setItem(this.ownerFlagKey, 'true');
-        console.log('[SiteStats] Owner mode activated');
+        console.log('[SiteStats] Owner mode activated via URL parameter');
         return true;
       }
 
