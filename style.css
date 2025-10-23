@@ -1507,10 +1507,7 @@ h1.section-title {
    ============================================ */
 
 .terminal-bar {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
+  position: relative;
   background: rgba(0, 0, 0, 0.95);
   border-top: 1px solid var(--accent);
   max-height: 0;
@@ -1521,7 +1518,7 @@ h1.section-title {
   flex-direction: column;
   flex-shrink: 0;
   width: 100%;
-  z-index: 9999; /* Above performance footer */
+  z-index: 100;
 }
 
 .terminal-bar.visible {
@@ -1648,16 +1645,6 @@ h1.section-title {
 .terminal-input::selection {
   background: var(--accent);
   color: var(--bg-primary);
-}
-
-/* Terminal expansion: add padding to body when terminal is visible */
-body {
-  padding-bottom: 40px; /* Default: space for performance footer */
-  transition: padding-bottom 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-body.terminal-visible {
-  padding-bottom: 160px; /* Space for terminal (120px) + performance footer (40px) */
 }
 
 /* Terminal output formatting */
