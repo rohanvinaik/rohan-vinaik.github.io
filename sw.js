@@ -3,7 +3,7 @@
  * Provides caching and offline functionality
  */
 
-const CACHE_NAME = 'rohan-portfolio-v2.1.6'; // Reordered navigation tabs
+const CACHE_NAME = 'rohan-portfolio-v2.1.7'; // Fixed dog fifth leg with clean base rebuild
 
 // Critical assets to cache on install
 const STATIC_ASSETS = [

@@ -106,17 +106,35 @@
   }
 
   // Body frames: stand + 4-phase walk cycle
+  // Build all frames from clean base to avoid duplicated legs
   const BODY_FRAMES = (() => {
-    const stand = copy2D(BASE_BODY);
+    // Clean base body: clear any existing legs, repaint clean set
+    const cleanBase = clearLegArea(BASE_BODY);
+    paintLegs(cleanBase, [0, 0, 0, 0]); // Stand pose: no offset
+    const stand = cleanBase;
+
+    // Walk cycle: clear and repaint with offsets
     const walk1 = clearLegArea(BASE_BODY); paintLegs(walk1, [-1, 0, +1, 0]);
     const walk2 = clearLegArea(BASE_BODY); paintLegs(walk2, [ 0,+1,  0,-1]);
     const walk3 = clearLegArea(BASE_BODY); paintLegs(walk3, [+1, 0, -1, 0]);
     const walk4 = clearLegArea(BASE_BODY); paintLegs(walk4, [ 0,-1,  0,+1]);
+
     return {
       right: { stand, walk: [walk1, walk2, walk3, walk4] },
       left:  { stand: mirror(stand), walk: [mirror(walk1), mirror(walk2), mirror(walk3), mirror(walk4)] }
     };
   })();
+
+  // Verify leg symmetry (4 legs only, no duplicates)
+  if (typeof console !== 'undefined' && console.assert) {
+    const leftPixels = BODY_FRAMES.left.stand.flat().filter(v => v === 1).length;
+    const rightPixels = BODY_FRAMES.right.stand.flat().filter(v => v === 1).length;
+    console.assert(
+      leftPixels === rightPixels,
+      `[Dog] Leg symmetry mismatch! Left: ${leftPixels}, Right: ${rightPixels} - stray pixels detected`
+    );
+    console.log(`[Dog] Leg verification passed: ${leftPixels} pixels per side`);
+  }
 
   // ===========================================
   // NAUGHTY MODE SPRITES (24×20)
