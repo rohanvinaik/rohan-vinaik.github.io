@@ -673,6 +673,7 @@
     // Show terminal by default if state.isVisible is true
     if (state.isVisible) {
       terminalBar.classList.add('visible');
+      document.body.classList.add('terminal-visible');
       // Auto-focus input when terminal is visible on load
       setTimeout(() => {
         terminalInput.focus();
@@ -788,12 +789,14 @@
 
     if (state.isVisible) {
       terminalBar.classList.add('visible');
+      document.body.classList.add('terminal-visible');
       const terminalInput = document.getElementById('terminal-input');
       if (terminalInput) {
         setTimeout(() => terminalInput.focus(), 100);
       }
     } else {
       terminalBar.classList.remove('visible');
+      document.body.classList.remove('terminal-visible');
     }
   }
 
