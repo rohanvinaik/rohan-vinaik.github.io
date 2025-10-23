@@ -33,10 +33,27 @@ export default {
     }
 
     if (url.pathname === '/api/refresh') {
-      ctx.waitUntil(fetchAndStorePapers(env));
-      return new Response(JSON.stringify({ status: 'refreshing', timestamp: new Date().toISOString() }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-      });
+      try {
+        // Actually await the fetch to catch any errors
+        const count = await fetchAndStorePapers(env);
+        return new Response(JSON.stringify({
+          status: 'success',
+          timestamp: new Date().toISOString(),
+          papersStored: count
+        }), {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+      } catch (error) {
+        console.error('Error in refresh:', error);
+        return new Response(JSON.stringify({
+          status: 'error',
+          message: error.message,
+          timestamp: new Date().toISOString()
+        }), {
+          status: 500,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+      }
     }
 
     return new Response('Not Found', { status: 404, headers: corsHeaders });
@@ -68,6 +85,7 @@ async function fetchAndStorePapers(env) {
   for (const topic of topics) {
     try {
       const papers = await fetchArxiv(topic.query, topic.category, 3);
+      console.log(`Fetched ${papers.length} papers for topic: ${topic.query}`);
       allPapers.push(...papers);
       // Small delay to avoid rate limiting
       await new Promise(resolve => setTimeout(resolve, 200));
@@ -84,11 +102,15 @@ async function fetchAndStorePapers(env) {
     console.error('Error fetching bioRxiv:', error);
   }
 
+  console.log(`Total papers fetched: ${allPapers.length}`);
+
   // Deduplicate by title
   const uniquePapers = deduplicatePapers(allPapers);
+  console.log(`After deduplication: ${uniquePapers.length}`);
 
   // Rank by relevance
   const rankedPapers = rankPapers(uniquePapers);
+  console.log(`After ranking: ${rankedPapers.length}, top score: ${rankedPapers[0]?.score || 'N/A'}`);
 
   // Store in KV
   await env.PAPERS_KV.put('latest_papers', JSON.stringify({
@@ -99,7 +121,7 @@ async function fetchAndStorePapers(env) {
     expirationTtl: 86400 * 7 // 7 days
   });
 
-  console.log(`Stored ${rankedPapers.length} papers`);
+  console.log(`Stored ${rankedPapers.slice(0, 30).length} papers in KV`);
   return rankedPapers.length;
 }
 
@@ -107,22 +129,28 @@ async function fetchAndStorePapers(env) {
  * Fetch papers from arXiv API
  */
 async function fetchArxiv(query, category, maxResults = 5) {
-  const url = `http://export.arxiv.org/api/query?search_query=all:${encodeURIComponent(query)}&sortBy=submittedDate&sortOrder=descending&max_results=${maxResults}`;
+  const url = `https://export.arxiv.org/api/query?search_query=all:${encodeURIComponent(query)}&sortBy=submittedDate&sortOrder=descending&max_results=${maxResults}`;
 
   const response = await fetch(url);
   const xmlText = await response.text();
 
+  console.log(`arXiv response status: ${response.status}, length: ${xmlText.length} chars`);
+  if (xmlText.length < 500) {
+    console.log(`arXiv response preview: ${xmlText.slice(0, 200)}`);
+  }
+
   // Simple XML parsing (arXiv returns Atom feed)
   const entries = xmlText.match(/<entry>([\s\S]*?)<\/entry>/g) || [];
+  console.log(`arXiv found ${entries.length} entries in XML`);
 
-  return entries.map(entry => {
-    const title = entry.match(/<title>(.*?)<\/title>/)?.[1]?.trim() || '';
-    const summary = entry.match(/<summary>(.*?)<\/summary>/)?.[1]?.trim() || '';
+  const parsed = entries.map(entry => {
+    const title = entry.match(/<title>([\s\S]*?)<\/title>/)?.[1]?.trim() || '';
+    const summary = entry.match(/<summary>([\s\S]*?)<\/summary>/)?.[1]?.trim() || '';
     const published = entry.match(/<published>(.*?)<\/published>/)?.[1] || '';
     const id = entry.match(/<id>(.*?)<\/id>/)?.[1] || '';
     const authors = [...entry.matchAll(/<author>[\s\S]*?<name>(.*?)<\/name>/g)].map(m => m[1]);
 
-    return {
+    const paper = {
       title: cleanText(title),
       abstract: cleanText(summary),
       authors,
@@ -132,7 +160,13 @@ async function fetchArxiv(query, category, maxResults = 5) {
       source: 'arxiv',
       topics: [category]
     };
+
+    console.log(`Parsed paper - title: ${paper.title ? 'YES' : 'NO'}, abstract: ${paper.abstract ? 'YES' : 'NO'}`);
+    return paper;
   }).filter(p => p.title && p.abstract);
+
+  console.log(`After filter: ${parsed.length} papers`);
+  return parsed;
 }
 
 /**

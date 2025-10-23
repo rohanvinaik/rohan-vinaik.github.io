@@ -5,9 +5,9 @@
 
 class PaperFeed {
   constructor() {
-    // IMPORTANT: Replace with your actual Cloudflare Worker URL
-    this.apiEndpoint = 'https://YOUR-WORKER-NAME.YOUR-SUBDOMAIN.workers.dev/api/papers';
-    this.refreshEndpoint = 'https://YOUR-WORKER-NAME.YOUR-SUBDOMAIN.workers.dev/api/refresh';
+    // Cloudflare Worker endpoint for paper discovery
+    this.apiEndpoint = 'https://paper-discovery-worker.rohan-vinaik.workers.dev/api/papers';
+    this.refreshEndpoint = 'https://paper-discovery-worker.rohan-vinaik.workers.dev/api/refresh';
 
     this.initialized = false;
     this.currentFilter = 'all';
