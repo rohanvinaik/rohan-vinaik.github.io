@@ -31,6 +31,7 @@
   const zero = (w,h) => Array.from({length:h},()=>Array(w).fill(0));
   const lerp = (a, b, t) => a + (b - a) * t;
   const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
+  const mirrorX = (x) => BODY_W - 1 - x; // Unified horizontal mirroring
 
   // Easing functions
   const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3);
@@ -256,7 +257,7 @@
 
   // Mouth overlays
   function mouthMask(kind, facing='right') {
-    const dx = facing === 'right' ? MOUTH_ANCHOR.x : BODY_W - 1 - MOUTH_ANCHOR.x - 2;
+    const dx = facing === 'right' ? MOUTH_ANCHOR.x : mirrorX(MOUTH_ANCHOR.x);
     const dy = MOUTH_ANCHOR.y;
     const pts = [];
     if (kind === 'half') {
@@ -305,17 +306,8 @@
 
     // Tail layer
     const tp = tailPixels(tailPose, side);
-    const minx = Math.max(0, Math.min(...tp.map(p=>p.x)) - 1);
-    const maxx = Math.min(BODY_W-1, Math.max(...tp.map(p=>p.x)) + 1);
-    const miny = Math.max(0, Math.min(...tp.map(p=>p.y)) - 1);
-    const maxy = Math.min(BODY_H-1, Math.max(...tp.map(p=>p.y)) + 1);
-
-    const clearPts = [];
-    for (let yy=miny; yy<=maxy; yy++)
-      for (let xx=minx; xx<=maxx; xx++)
-        clearPts.push({x:xx,y:yy});
-
-    blitErase(frame, clearPts);
+    // Tail: only erase exact pixels we'll repaint (no bounding box)
+    blitErase(frame, tp);
     blitWhite(frame, tp);
 
     // Eyes layer
@@ -1033,7 +1025,7 @@
       const oy = Math.floor((VIEW_H - BODY_H) / 2);
       const anchorX = dog.facingRight
         ? MOUTH_ANCHOR.x
-        : (BODY_W - 1 - MOUTH_ANCHOR.x - 2); // same mirror as mouthMask
+        : mirrorX(MOUTH_ANCHOR.x); // unified mirror calculation
       const x = rect.left + (ox + anchorX) * SCALE;
       const y = rect.top  + (oy + MOUTH_ANCHOR.y) * SCALE;
       return { x, y };
@@ -1382,7 +1374,7 @@
     const oy = Math.floor((VIEW_H - BODY_H) / 2) + offsetY;
 
     // Draw smear frames first (ghost images behind main dog)
-    if (dog.smearActive && dog.smearFrames.length > 0) {
+    if (dog.smearActive && dog.smearFrames.length > 0 && dog.bodyPose !== 'walk') {
       const currentX = dog.x;
       dog.smearFrames.forEach(smear => {
         ctx.save();
