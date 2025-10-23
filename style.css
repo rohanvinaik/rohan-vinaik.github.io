@@ -2414,6 +2414,7 @@ h1.section-title {
   cursor: pointer;
   transition: left 0.3s ease-out, bottom 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   user-select: none;
+  pointer-events: none; /* Let clicks pass through container */
 }
 
 /* Adjust dog position when terminal is visible */
@@ -2427,6 +2428,7 @@ body.terminal-visible .sprite-dog {
   filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.8));
   user-select: none;
   transition: transform 0.2s ease;
+  pointer-events: auto; /* Re-enable clicks on dog itself */
 }
 
 .sprite-dog:hover .dog-sprite {
@@ -2455,6 +2457,7 @@ body.terminal-visible .sprite-dog {
   white-space: nowrap;
   font-family: 'JetBrains Mono', monospace;
   display: none;
+  pointer-events: auto; /* Re-enable clicks on speech bubble */
 }
 
 .dog-speech.show {

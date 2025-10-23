@@ -3,7 +3,7 @@
  * Provides caching and offline functionality
  */
 
-const CACHE_NAME = 'rohan-portfolio-v2.2.5'; // Dog stands directly on terminal bar top edge
+const CACHE_NAME = 'rohan-portfolio-v2.2.6'; // Fixed terminal input blocked by dog sprite
 
 // Critical assets to cache on install
 const STATIC_ASSETS = [
