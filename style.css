@@ -10,9 +10,9 @@
 }
 
 :root {
-  --bg-primary: #0a0a0a;
-  --bg-secondary: #111111;
-  --bg-tertiary: #1a1a1a;
+  --bg-primary: #1a1a1a;
+  --bg-secondary: #222222;
+  --bg-tertiary: #2a2a2a;
   --text-primary: #e0e0e0;
   --text-secondary: #808080;
   --border-color: rgba(255, 255, 255, 0.1);
@@ -68,7 +68,7 @@ body {
   justify-content: space-between;
   align-items: center;
   padding: calc(var(--grid-unit) * 1) calc(var(--grid-unit) * 2);
-  background: rgba(10, 10, 10, 0.90); /* Semi-transparent to show matrix */
+  background: rgba(26, 26, 26, 0.90); /* Semi-transparent to show matrix */
   backdrop-filter: blur(8px);
   border-bottom: 1px solid var(--border-color);
   font-size: 0.8rem;
@@ -144,7 +144,7 @@ body {
 .control-panel {
   flex: 0 0 320px;
   width: 320px;
-  background: rgba(10, 10, 10, 0.85); /* Semi-transparent to show matrix */
+  background: rgba(26, 26, 26, 0.85); /* Semi-transparent to show matrix */
   backdrop-filter: blur(8px); /* Add subtle blur for depth */
   border-right: 1px solid var(--border-color);
   display: flex;
@@ -342,7 +342,7 @@ body {
 
 .output-area {
   flex: 1;
-  background: rgba(10, 10, 10, 0.85); /* Semi-transparent to show matrix */
+  background: rgba(26, 26, 26, 0.85); /* Semi-transparent to show matrix */
   backdrop-filter: blur(8px); /* Add subtle blur for depth */
   display: flex;
   flex-direction: column;
@@ -360,7 +360,7 @@ body {
 
 .output-header {
   padding: calc(var(--grid-unit) * 1);
-  background: rgba(17, 17, 17, 0.90); /* Slightly more opaque for contrast */
+  background: rgba(34, 34, 34, 0.90); /* Slightly more opaque for contrast */
   backdrop-filter: blur(4px);
   border-bottom: 1px solid var(--border-color);
   font-size: 0.7rem;
@@ -2432,8 +2432,9 @@ h1.section-title {
   width: 100%;
   height: 100%;
   z-index: -1;
-  opacity: 0.3; /* Increased opacity for better visibility through semi-transparent backgrounds */
+  opacity: 0.5; /* Increased for better visibility through semi-transparent backgrounds */
   pointer-events: none;
+  display: block; /* Force display even when user hasn't enabled in settings */
 }
 
 /* ============================================
