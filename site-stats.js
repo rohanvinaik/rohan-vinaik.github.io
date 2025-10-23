@@ -194,12 +194,101 @@
   }
 
   // ============================================
+  // FPS COUNTER (Hidden by Default)
+  // ============================================
+  class FPSCounter {
+    constructor() {
+      this.fps = 0;
+      this.frames = 0;
+      this.lastTime = performance.now();
+      this.element = null;
+      this.animationFrame = null;
+      this.visible = false;
+      this.create();
+      this.update();
+    }
+
+    create() {
+      this.element = document.createElement('div');
+      this.element.className = 'fps-counter';
+      this.element.innerHTML = `
+        <div class="fps-value">FPS: <span class="fps-number">--</span></div>
+        <div class="fps-hint">Shift+F to toggle</div>
+      `;
+      document.body.appendChild(this.element);
+      console.log('[SiteStats] FPS counter created (hidden)');
+    }
+
+    update() {
+      this.frames++;
+      const currentTime = performance.now();
+      const elapsed = currentTime - this.lastTime;
+
+      if (elapsed >= 1000) {
+        this.fps = Math.round((this.frames * 1000) / elapsed);
+
+        const fpsNumber = this.element.querySelector('.fps-number');
+        if (fpsNumber) {
+          fpsNumber.textContent = this.fps;
+
+          // Color code based on performance
+          if (this.fps >= 60) {
+            fpsNumber.style.color = '#00ff00'; // Green - excellent
+          } else if (this.fps >= 45) {
+            fpsNumber.style.color = '#ffff00'; // Yellow - good
+          } else if (this.fps >= 30) {
+            fpsNumber.style.color = '#ff9900'; // Orange - acceptable
+          } else {
+            fpsNumber.style.color = '#ff0000'; // Red - poor
+          }
+        }
+
+        this.frames = 0;
+        this.lastTime = currentTime;
+      }
+
+      this.animationFrame = requestAnimationFrame(() => this.update());
+    }
+
+    toggle() {
+      this.visible = !this.visible;
+      this.element.style.display = this.visible ? 'block' : 'none';
+      console.log(`[SiteStats] FPS counter ${this.visible ? 'shown' : 'hidden'}`);
+
+      if (this.visible) {
+        Toast?.info('FPS counter enabled (Shift+F to hide)', 3000);
+      }
+    }
+
+    show() {
+      this.visible = true;
+      this.element.style.display = 'block';
+    }
+
+    hide() {
+      this.visible = false;
+      this.element.style.display = 'none';
+    }
+
+    destroy() {
+      if (this.animationFrame) {
+        cancelAnimationFrame(this.animationFrame);
+        this.animationFrame = null;
+      }
+      if (this.element && this.element.parentNode) {
+        this.element.parentNode.removeChild(this.element);
+      }
+    }
+  }
+
+  // ============================================
   // INITIALIZE ALL FEATURES
   // ============================================
   window.SiteStats = {
     visitorCounter: null,
     readingTimeEstimator: null,
     sessionTimer: null,
+    fpsCounter: null,
 
     init() {
       // Initialize visitor counter
@@ -211,12 +300,36 @@
       // Initialize session timer
       this.sessionTimer = new SessionTimer();
 
-      console.log('[SiteStats] All features initialized');
+      // Initialize FPS counter (hidden by default)
+      this.fpsCounter = new FPSCounter();
+
+      // Add keyboard shortcut for FPS counter (Shift+F)
+      this.initKeyboardShortcuts();
+
+      console.log('[SiteStats] All features initialized (Shift+F for FPS counter)');
+    },
+
+    initKeyboardShortcuts() {
+      document.addEventListener('keydown', (e) => {
+        // Shift+F to toggle FPS counter
+        if (e.shiftKey && e.key.toLowerCase() === 'f' && !e.ctrlKey && !e.metaKey && !e.altKey) {
+          // Don't trigger when typing in inputs
+          if (e.target.matches('input, textarea')) return;
+
+          e.preventDefault();
+          if (this.fpsCounter) {
+            this.fpsCounter.toggle();
+          }
+        }
+      });
     },
 
     destroy() {
       if (this.sessionTimer) {
         this.sessionTimer.destroy();
+      }
+      if (this.fpsCounter) {
+        this.fpsCounter.destroy();
       }
     }
   };
@@ -328,6 +441,70 @@ siteStatsStyles.textContent = `
 
 .digit.updated {
   animation: digitPop 0.3s ease;
+}
+
+/* FPS Counter (Hidden by Default) */
+.fps-counter {
+  position: fixed;
+  top: 40px;
+  right: 12px;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--accent, #00ff00);
+  padding: 8px 12px;
+  font-family: 'JetBrains Mono', monospace;
+  z-index: 9999;
+  display: none;
+  border-radius: 2px;
+  box-shadow: 0 2px 8px rgba(0, 255, 0, 0.2);
+  min-width: 100px;
+}
+
+.fps-value {
+  font-size: 0.75rem;
+  color: var(--text-secondary, #808080);
+  margin-bottom: 4px;
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.fps-number {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #00ff00;
+  transition: color 0.3s ease;
+  min-width: 24px;
+  text-align: right;
+}
+
+.fps-hint {
+  font-size: 0.55rem;
+  color: var(--text-secondary, #808080);
+  opacity: 0.6;
+  margin-top: 2px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 4px;
+}
+
+@media (max-width: 768px) {
+  .fps-counter {
+    top: 35px;
+    right: 8px;
+    padding: 6px 10px;
+  }
+
+  .fps-value {
+    font-size: 0.7rem;
+  }
+
+  .fps-number {
+    font-size: 0.85rem;
+  }
+
+  .fps-hint {
+    font-size: 0.5rem;
+  }
 }
 `;
 
