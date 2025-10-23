@@ -3,7 +3,7 @@
  * Provides caching and offline functionality
  */
 
-const CACHE_NAME = 'rohan-portfolio-v2.1.2'; // Added theme sync for papers
+const CACHE_NAME = 'rohan-portfolio-v2.1.3'; // Fixed dog.js fifth leg artifacts
 
 // Critical assets to cache on install
 const STATIC_ASSETS = [
