@@ -179,15 +179,32 @@ async function fetchTwitterAndSubstackPapers(env) {
 }
 
 /**
- * Fetch papers from newsletters and Substack feeds
+ * Fetch articles from AI/ML newsletters, blogs, and academic sources
  */
 async function fetchFromNewsletters(dateAfter = null) {
   const newsletterFeeds = [
+    // AI Safety & Alignment newsletters
     'https://aisafetyfrontier.substack.com/feed',
     'https://import.ai/feed',  // Import AI by Jack Clark
+    'https://jack-clark.net/feed/',  // Jack Clark
+
+    // ML Research newsletters & blogs
     'https://thegradient.pub/rss/',  // The Gradient
     'https://newsletter.sebastianraschka.com/feed',  // Sebastian Raschka
-    'https://jack-clark.net/feed/',  // Jack Clark
+    'https://ruder.io/rss/index.rss',  // Sebastian Ruder - NLP
+    'https://lilianweng.github.io/feed.xml',  // Lil'Log - OpenAI
+    'https://karpathy.github.io/feed.xml',  // Andrej Karpathy
+
+    // Technical ML blogs
+    'https://ai.googleblog.com/feeds/posts/default',  // Google AI Blog
+    'https://www.microsoft.com/en-us/research/feed/',  // Microsoft Research
+    'https://blog.research.google/feeds/posts/default',  // Google Research
+    'https://aws.amazon.com/blogs/machine-learning/feed/',  // AWS ML Blog
+    'https://machinelearningmastery.com/feed/',  // ML Mastery
+
+    // Academic aggregators
+    'https://www.fast.ai/posts/index.xml',  // Fast.ai
+    'https://mlcontests.com/rss/',  // ML Contests (competitions/challenges)
   ];
 
   const allPapers = [];
@@ -697,10 +714,11 @@ function rankPapers(papers) {
 }
 
 /**
- * Fetch papers from research lab blogs and publication pages
+ * Fetch articles from research labs, institutes, and organizations
  */
 async function fetchFromResearchLabs(dateAfter = null) {
   const labFeeds = [
+    // AI Research Labs
     {
       name: 'DeepMind',
       url: 'https://www.deepmind.com/blog/rss.xml',
@@ -717,9 +735,48 @@ async function fetchFromResearchLabs(dateAfter = null) {
       topics: ['ai-safety', 'interpretability']
     },
     {
+      name: 'Meta AI Research',
+      url: 'https://ai.meta.com/blog/rss/',
+      topics: ['ml-theory', 'ai-research']
+    },
+
+    // Research Institutes
+    {
       name: 'Allen Institute',
       url: 'https://alleninstitute.org/feed/',
       topics: ['neuroscience', 'bio-computing']
+    },
+    {
+      name: 'Santa Fe Institute',
+      url: 'https://www.santafe.edu/news/feed',
+      topics: ['complex-systems', 'emergence']
+    },
+    {
+      name: 'MIT CSAIL',
+      url: 'https://www.csail.mit.edu/news/rss.xml',
+      topics: ['ai-research', 'ml-theory']
+    },
+    {
+      name: 'Berkeley AI Research',
+      url: 'https://bair.berkeley.edu/blog/feed.xml',
+      topics: ['ai-research', 'robotics']
+    },
+    {
+      name: 'Stanford HAI',
+      url: 'https://hai.stanford.edu/news/rss.xml',
+      topics: ['ai-research', 'ai-policy']
+    },
+
+    // Specialized Centers
+    {
+      name: 'Center for Human-Compatible AI',
+      url: 'https://humancompatible.ai/news/rss/',
+      topics: ['ai-safety', 'ai-alignment']
+    },
+    {
+      name: 'Future of Humanity Institute',
+      url: 'https://www.fhi.ox.ac.uk/feed/',
+      topics: ['ai-safety', 'existential-risk']
     },
   ];
 

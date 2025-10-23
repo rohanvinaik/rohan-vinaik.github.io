@@ -535,10 +535,11 @@ async function fetchPsyArxiv(dateAfter = null) {
 }
 
 /**
- * Fetch papers from high-impact journal RSS feeds
+ * Fetch papers and articles from journals, academic news, and blogs
  */
 async function fetchJournalFeeds(dateAfter = null) {
   const journals = [
+    // High-impact journals
     {
       name: 'Nature Neuroscience',
       url: 'https://www.nature.com/neuro.rss',
@@ -568,6 +569,38 @@ async function fetchJournalFeeds(dateAfter = null) {
       name: 'Physical Review E',
       url: 'https://journals.aps.org/pre/recent',
       topics: ['stat-mech', 'complex-systems', 'dynamics']
+    },
+
+    // Academic news and articles
+    {
+      name: 'Science News',
+      url: 'https://www.sciencenews.org/feed',
+      topics: ['general-science', 'research-news']
+    },
+    {
+      name: 'Nature News',
+      url: 'https://www.nature.com/nature.rss',
+      topics: ['general-science', 'research-news']
+    },
+    {
+      name: 'Science Magazine News',
+      url: 'https://www.science.org/rss/news_current.xml',
+      topics: ['general-science', 'research-news']
+    },
+    {
+      name: 'PNAS Front Matter',
+      url: 'https://www.pnas.org/rss/front.xml',
+      topics: ['general-science']
+    },
+    {
+      name: 'Cell Press Articles',
+      url: 'https://www.cell.com/cell/current.rss',
+      topics: ['bio-computing', 'neuroscience']
+    },
+    {
+      name: 'Neuron Journal',
+      url: 'https://www.cell.com/neuron/current.rss',
+      topics: ['neuroscience', 'neural-theory']
     }
   ];
 

@@ -593,13 +593,21 @@ function rankPapers(papers) {
 }
 
 /**
- * Fetch papers from theory-focused Substack feeds
+ * Fetch papers and articles from theory-focused academic sources
  */
 async function fetchFromSubstack(dateAfter = null) {
   const substackFeeds = [
+    // Theory blogs & Substacks
     'https://boundedregret.ghost.io/rss/',  // Ben Recht - ML theory
     'https://www.argmin.net/feed.xml',      // Ben Recht's blog
     'https://moultano.wordpress.com/feed/', // Ryan Moulton - theoretical ML
+    'https://www.lesswrong.com/feed.xml',   // LessWrong - rationality/AI alignment
+    'https://www.alignmentforum.org/feed.xml', // AI Alignment Forum
+    'https://distill.pub/rss.xml',          // Distill - ML research articles
+    'https://fa.bianp.net/blog/feed.xml',   // Francis Bach - optimization theory
+    'https://lilianweng.github.io/feed.xml', // Lilian Weng - OpenAI (duplicate from worker 2, but OK)
+    'https://colah.github.io/rss.xml',      // Chris Olah - neural networks/interpretability
+    'https://inference-review.com/feed',     // Inference Review - interdisciplinary science
   ];
 
   const allPapers = [];
