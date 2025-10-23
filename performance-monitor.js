@@ -314,10 +314,56 @@
   }
 
   // ============================================
+  // FOOTER DISPLAY
+  // ============================================
+  function createFooterDisplay() {
+    const footer = document.createElement('div');
+    footer.className = 'perf-footer';
+    footer.innerHTML = `
+      <span class="perf-label">load_time:</span>
+      <span class="perf-value" id="perf-load">--</span>
+      <span class="perf-separator">|</span>
+      <span class="perf-label">lcp:</span>
+      <span class="perf-value" id="perf-lcp">--</span>
+      <span class="perf-separator">|</span>
+      <span class="perf-label">cls:</span>
+      <span class="perf-value" id="perf-cls">--</span>
+    `;
+
+    document.body.appendChild(footer);
+    console.log('[Performance] Footer display created');
+
+    return footer;
+  }
+
+  function updateFooterDisplay() {
+    const loadEl = document.getElementById('perf-load');
+    const lcpEl = document.getElementById('perf-lcp');
+    const clsEl = document.getElementById('perf-cls');
+
+    if (loadEl && metrics.navigationTiming.loadTime) {
+      loadEl.textContent = `${(metrics.navigationTiming.loadTime / 1000).toFixed(2)}s`;
+    }
+
+    if (lcpEl && metrics.lcp) {
+      lcpEl.textContent = `${(metrics.lcp / 1000).toFixed(2)}s`;
+      lcpEl.className = `perf-value perf-${getRating('lcp', metrics.lcp)}`;
+    }
+
+    if (clsEl && metrics.cls !== null) {
+      clsEl.textContent = metrics.cls.toFixed(3);
+      clsEl.className = `perf-value perf-${getRating('cls', metrics.cls)}`;
+    }
+  }
+
+  // ============================================
   // INITIALIZATION
   // ============================================
   function init() {
     console.log('[Performance] Monitoring initialized');
+
+    // Create footer display
+    createFooterDisplay();
 
     // Observe Core Web Vitals
     observeLCP();
@@ -332,10 +378,16 @@
         measureNavigationTiming();
         measureResourceTiming();
 
-        // Generate report after 3 seconds (allow time for metrics to settle)
-        setTimeout(generateReport, 3000);
+        // Update footer after measurements
+        setTimeout(() => {
+          updateFooterDisplay();
+          generateReport();
+        }, 3000);
       }, 0);
     });
+
+    // Update footer periodically
+    setInterval(updateFooterDisplay, 5000);
 
     // Generate final report before unload
     window.addEventListener('beforeunload', () => {
@@ -362,3 +414,62 @@
   }
 
 })();
+
+// ============================================
+// FOOTER STYLES
+// ============================================
+const perfFooterStyles = document.createElement('style');
+perfFooterStyles.textContent = `
+/* Performance Footer */
+.perf-footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.9);
+  backdrop-filter: blur(8px);
+  border-top: 1px solid var(--border, #333);
+  padding: 6px 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  z-index: 9998;
+  user-select: none;
+}
+
+.perf-label {
+  color: var(--text-secondary, #808080);
+}
+
+.perf-value {
+  color: var(--text, #e0e0e0);
+  font-weight: 600;
+}
+
+.perf-value.perf-good {
+  color: #00ff00;
+}
+
+.perf-value.perf-needsImprovement {
+  color: #ffaa00;
+}
+
+.perf-value.perf-poor {
+  color: #ff4444;
+}
+
+.perf-separator {
+  color: var(--border, #333);
+}
+
+/* Hide on mobile to avoid clutter */
+@media (max-width: 768px) {
+  .perf-footer {
+    display: none;
+  }
+}
+`;
+
+document.head.appendChild(perfFooterStyles);
