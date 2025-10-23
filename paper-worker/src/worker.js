@@ -144,11 +144,15 @@ async function fetchAndStorePapers(env) {
   const uniquePapers = deduplicatePapers(allPapers);
   console.log(`After deduplication: ${uniquePapers.length}`);
 
+  // Filter out recently shown papers (past 24 hours)
+  const filteredPapers = await filterRecentlyShown(env, uniquePapers);
+  console.log(`After filtering recently shown: ${filteredPapers.length} (removed ${uniquePapers.length - filteredPapers.length})`);
+
   // Enrich with quality signals (if Semantic Scholar API key available)
-  let enrichedPapers = uniquePapers;
+  let enrichedPapers = filteredPapers;
   if (env.SEMANTIC_SCHOLAR_API_KEY) {
     try {
-      enrichedPapers = await enrichWithSemanticScholar(uniquePapers, env.SEMANTIC_SCHOLAR_API_KEY);
+      enrichedPapers = await enrichWithSemanticScholar(filteredPapers, env.SEMANTIC_SCHOLAR_API_KEY);
       console.log('Papers enriched with citation data');
     } catch (error) {
       console.error('Failed to enrich with Semantic Scholar:', error);
@@ -168,15 +172,24 @@ async function fetchAndStorePapers(env) {
   }
 
   // Store in KV (top 30 for display)
+  const topPapers = rankedPapers.slice(0, 30);
   await env.PAPERS_KV.put('latest_papers', JSON.stringify({
-    papers: rankedPapers.slice(0, 30),
+    papers: topPapers,
     updated: new Date().toISOString(),
     count: rankedPapers.length
   }), {
     expirationTtl: 86400 * 7 // 7 days
   });
 
-  console.log(`Stored ${rankedPapers.slice(0, 30).length} papers in KV`);
+  // Track shown papers to avoid repeats in next 24 hours
+  await env.PAPERS_KV.put('recently_shown_papers', JSON.stringify({
+    papers: topPapers.map(p => ({ url: p.url, title: p.title })),
+    updated: new Date().toISOString()
+  }), {
+    expirationTtl: 86400 // 24 hours
+  });
+
+  console.log(`Stored ${topPapers.length} papers in KV and tracked as recently shown`);
   return rankedPapers.length;
 }
 
@@ -359,6 +372,34 @@ function cleanText(text) {
     .replace(/&#39;/g, "'")
     .replace(/\s+/g, ' ')
     .trim();
+}
+
+/**
+ * Filter out papers that were shown in the past 24 hours
+ */
+async function filterRecentlyShown(env, papers) {
+  try {
+    // Get recently shown papers (stored with 24h expiration)
+    const recentlyShownData = await env.PAPERS_KV.get('recently_shown_papers', 'json');
+
+    if (!recentlyShownData || !recentlyShownData.papers) {
+      return papers; // No history, show all papers
+    }
+
+    const shownUrls = new Set(recentlyShownData.papers.map(p => p.url));
+    const shownTitles = new Set(recentlyShownData.papers.map(p => p.title.toLowerCase().slice(0, 50)));
+
+    // Filter out papers we've shown recently
+    const filtered = papers.filter(paper => {
+      const titleKey = paper.title.toLowerCase().slice(0, 50);
+      return !shownUrls.has(paper.url) && !shownTitles.has(titleKey);
+    });
+
+    return filtered;
+  } catch (error) {
+    console.error('Error filtering recently shown papers:', error);
+    return papers; // On error, return all papers
+  }
 }
 
 /**
@@ -557,14 +598,7 @@ function rankPapers(papers) {
       }
     }
 
-    // 2. Recency bonus (papers from last 3 months)
-    const daysSince = (Date.now() - new Date(paper.published)) / (1000 * 60 * 60 * 24);
-    if (daysSince < 7) score += 5;
-    else if (daysSince < 30) score += 4;
-    else if (daysSince < 60) score += 2;
-    else if (daysSince < 90) score += 1;
-
-    // 3. Quality scoring (citations, authors, venue, etc.)
+    // 2. Quality scoring (citations, authors, venue, etc.)
     const qualityScore = calculateQualityScore(paper);
     score += qualityScore;
 
