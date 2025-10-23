@@ -3,7 +3,7 @@
  * Provides caching and offline functionality
  */
 
-const CACHE_NAME = 'rohan-portfolio-v1.0.2'; // Bumped to force cache refresh
+const CACHE_NAME = 'rohan-portfolio-v1.0.3'; // Bumped to force cache refresh
 
 // Critical assets to cache on install
 const STATIC_ASSETS = [

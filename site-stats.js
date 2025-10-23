@@ -11,14 +11,54 @@
   // ============================================
   class VisitorCounter {
     constructor() {
-      this.storageKey = 'rohan-site-visits';
+      this.storageKey = 'rohan-site-visits-v2'; // Changed to reset counter
+      this.ownerIPKey = 'rohan-site-owner-ip';
       this.init();
     }
 
-    init() {
+    async init() {
+      // Check if this is the owner
+      const isOwner = await this.checkIfOwner();
+
+      if (isOwner) {
+        console.log('[SiteStats] Owner detected - visit not counted');
+      }
+
       const visits = this.getVisits();
-      this.incrementVisits();
-      this.display(visits + 1); // Display the new count
+
+      // Only increment if not owner
+      if (!isOwner) {
+        this.incrementVisits();
+      }
+
+      this.display(isOwner ? visits : visits + 1); // Display the new count
+    }
+
+    async checkIfOwner() {
+      try {
+        // Get stored owner IP (set on first page load)
+        let ownerIP = localStorage.getItem(this.ownerIPKey);
+
+        // If no owner IP stored, store current IP as owner
+        if (!ownerIP) {
+          const response = await fetch('https://api.ipify.org?format=json');
+          const data = await response.json();
+          ownerIP = data.ip;
+          localStorage.setItem(this.ownerIPKey, ownerIP);
+          console.log(`[SiteStats] Owner IP stored: ${ownerIP}`);
+          return true; // First visitor is the owner
+        }
+
+        // Check if current IP matches owner IP
+        const response = await fetch('https://api.ipify.org?format=json');
+        const data = await response.json();
+        const currentIP = data.ip;
+
+        return currentIP === ownerIP;
+      } catch (error) {
+        console.warn('[SiteStats] Failed to check IP:', error);
+        return false; // Count visit if IP check fails
+      }
     }
 
     getVisits() {
