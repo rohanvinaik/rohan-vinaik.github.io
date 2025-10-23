@@ -16,7 +16,10 @@
     columns: 0,
     drops: [],
     animationFrame: null,
-    intervalId: null
+    intervalId: null,
+    isVisible: true,
+    isTabActive: true,
+    currentFPS: 20 // Normal FPS
   };
 
   // ============================================
@@ -91,11 +94,41 @@
   // ANIMATION
   // ============================================
   function startAnimation() {
-    matrix.intervalId = setInterval(drawMatrix, 50);
+    updateAnimationSpeed();
+  }
+
+  function updateAnimationSpeed() {
+    // Clear existing interval
+    if (matrix.intervalId) {
+      clearInterval(matrix.intervalId);
+      matrix.intervalId = null;
+    }
+
+    // Don't start if not enabled
+    if (!matrix.enabled) return;
+
+    // Pause completely if not visible
+    if (!matrix.isVisible) {
+      console.log('[Matrix] Paused - not visible');
+      return;
+    }
+
+    // Determine FPS based on tab visibility
+    let fps = 20; // Normal FPS
+    let interval = 50; // 50ms = 20 FPS
+
+    if (!matrix.isTabActive) {
+      fps = 5; // Reduced FPS when tab is backgrounded
+      interval = 200; // 200ms = 5 FPS
+      console.log('[Matrix] Reduced FPS - tab in background');
+    }
+
+    matrix.currentFPS = fps;
+    matrix.intervalId = setInterval(drawMatrix, interval);
   }
 
   function drawMatrix() {
-    if (!matrix.enabled || !matrix.ctx) return;
+    if (!matrix.enabled || !matrix.ctx || !matrix.isVisible) return;
 
     // Semi-transparent black for fade effect
     matrix.ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
@@ -172,5 +205,68 @@
   window.addEventListener('accentChanged', () => {
     // Matrix will automatically pick up the new color on next draw
   });
+
+  // ============================================
+  // VISIBILITY OPTIMIZATIONS
+  // ============================================
+
+  // Intersection Observer to detect when canvas is visible
+  function setupVisibilityObserver() {
+    if (!('IntersectionObserver' in window)) {
+      console.log('[Matrix] IntersectionObserver not supported, skipping visibility optimization');
+      return;
+    }
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        const wasVisible = matrix.isVisible;
+        matrix.isVisible = entry.isIntersecting;
+
+        // Only update animation if visibility changed
+        if (wasVisible !== matrix.isVisible) {
+          console.log(`[Matrix] Visibility changed: ${matrix.isVisible}`);
+          updateAnimationSpeed();
+        }
+      });
+    }, {
+      threshold: 0.1 // Consider visible if at least 10% is in viewport
+    });
+
+    if (matrix.canvas) {
+      observer.observe(matrix.canvas);
+    }
+  }
+
+  // Page Visibility API to detect tab backgrounding
+  function setupTabVisibilityHandler() {
+    if (typeof document.hidden === 'undefined') {
+      console.log('[Matrix] Page Visibility API not supported, skipping tab backgrounding optimization');
+      return;
+    }
+
+    document.addEventListener('visibilitychange', () => {
+      const wasActive = matrix.isTabActive;
+      matrix.isTabActive = !document.hidden;
+
+      // Only update animation if tab visibility changed
+      if (wasActive !== matrix.isTabActive) {
+        console.log(`[Matrix] Tab visibility changed: ${matrix.isTabActive ? 'active' : 'backgrounded'}`);
+        updateAnimationSpeed();
+      }
+    });
+  }
+
+  // Initialize visibility optimizations when matrix is first enabled
+  let visibilitySetup = false;
+  const originalEnableMatrix = enableMatrix;
+  enableMatrix = function() {
+    originalEnableMatrix();
+
+    if (!visibilitySetup) {
+      setupVisibilityObserver();
+      setupTabVisibilityHandler();
+      visibilitySetup = true;
+    }
+  };
 
 })();

@@ -11,11 +11,15 @@ const STATIC_ASSETS = [
   '/index.html',
   '/style.css',
   '/research-graph.css',
+  '/error-handler.js',
   '/terminal.js',
   '/skill-project-map.js',
   '/filter-system.js',
   '/loading-indicator.js',
+  '/image-lazy-load.js',
   '/keyboard-shortcuts.js',
+  '/performance-monitor.js',
+  '/mobile-touch.js',
   '/scroll-progress.js',
   '/assets/logo.svg'
 ];

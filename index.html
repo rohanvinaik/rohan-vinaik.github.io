@@ -1451,6 +1451,9 @@
   </div>
 
   <!-- Scripts -->
+  <!-- Error handling - load first to catch all errors -->
+  <script src="error-handler.js"></script>
+
   <!-- Critical - load immediately for core functionality -->
   <script src="terminal.js"></script>
   <script src="skill-project-map.js"></script>
@@ -1458,7 +1461,10 @@
 
   <!-- Performance & UX enhancements -->
   <script src="loading-indicator.js"></script>
+  <script src="image-lazy-load.js" defer></script>
   <script src="keyboard-shortcuts.js" defer></script>
+  <script src="performance-monitor.js" defer></script>
+  <script src="mobile-touch.js" defer></script>
 
   <!-- Non-critical - defer to improve initial load time -->
   <script src="achievements.js" defer></script>
