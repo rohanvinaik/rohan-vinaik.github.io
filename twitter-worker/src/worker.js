@@ -7,7 +7,7 @@
 import { addToArchive } from '../../paper-worker/src/archive.js';
 
 export default {
-  // Scheduled cron job - runs daily at 9:30 AM UTC (30 min after main worker)
+  // Scheduled cron job - runs weekly on Mondays at 9:30 AM UTC
   async scheduled(event, env, ctx) {
     console.log('Twitter worker cron trigger: fetching papers from Twitter...');
     ctx.waitUntil(fetchTwitterPapers(env));
@@ -231,8 +231,8 @@ async function fetchFromTwitterAccounts(bearerToken, dateAfter = null) {
       // Calculate start time for date filtering
       const startTime = dateAfter ? dateAfter.toISOString() : null;
 
-      // Fetch recent tweets
-      let tweetsUrl = `https://api.twitter.com/2/users/${userId}/tweets?max_results=20&tweet.fields=created_at,entities`;
+      // Fetch recent tweets (max_results=10 to stay under API quota)
+      let tweetsUrl = `https://api.twitter.com/2/users/${userId}/tweets?max_results=10&tweet.fields=created_at,entities`;
       if (startTime) {
         tweetsUrl += `&start_time=${startTime}`;
       }
