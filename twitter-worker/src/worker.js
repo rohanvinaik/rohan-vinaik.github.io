@@ -615,6 +615,13 @@ async function fetchFromSubstack(dateAfter = null) {
     'https://lilianweng.github.io/feed.xml', // Lilian Weng - OpenAI (duplicate from worker 2, but OK)
     'https://colah.github.io/rss.xml',      // Chris Olah - neural networks/interpretability
     'https://inference-review.com/feed',     // Inference Review - interdisciplinary science
+
+    // Additional researcher blogs (alternative to Twitter)
+    'https://www.beren.io/feed.xml',        // Beren Millidge - AI, neuroscience, ML theory
+    'https://garymarcus.substack.com/feed', // Gary Marcus - AI safety, AGI skepticism
+    'https://kording.substack.com/feed',    // Konrad Kording - neuroscience, ML, causal inference
+    'https://www.neelnanda.io/?format=rss', // Neel Nanda - interpretability, AI safety
+    'https://sfiscience.substack.com/feed', // Santa Fe Institute - complex systems
   ];
 
   const allPapers = [];

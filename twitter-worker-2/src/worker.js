@@ -209,6 +209,9 @@ async function fetchFromNewsletters(dateAfter = null) {
     // Academic aggregators
     'https://www.fast.ai/posts/index.xml',  // Fast.ai
     'https://mlcontests.com/rss/',  // ML Contests (competitions/challenges)
+
+    // Geometric Deep Learning blog
+    'https://towardsdatascience.com/tagged/geometric-deep-learning/feed',  // GDL articles on TDS
   ];
 
   const allPapers = [];
@@ -781,6 +784,28 @@ async function fetchFromResearchLabs(dateAfter = null) {
       name: 'Future of Humanity Institute',
       url: 'https://www.fhi.ox.ac.uk/feed/',
       topics: ['ai-safety', 'existential-risk']
+    },
+
+    // Additional Research Centers (alternative to Twitter)
+    {
+      name: 'Arc Institute',
+      url: 'https://arcinstitute.org/news/rss',
+      topics: ['bio-computing', 'genomics', 'neuroscience']
+    },
+    {
+      name: 'Quanta Magazine',
+      url: 'https://www.quantamagazine.org/feed/',
+      topics: ['physics', 'mathematics', 'biology', 'computer-science']
+    },
+    {
+      name: 'Redwood Center Theoretical Neuroscience',
+      url: 'https://redwood.berkeley.edu/feed/',
+      topics: ['neuroscience', 'sparse-coding', 'neural-theory']
+    },
+    {
+      name: 'Wyss Institute',
+      url: 'https://wyss.harvard.edu/feed/',
+      topics: ['synthetic-biology', 'bioengineering', 'dna-computing']
     },
   ];
 
