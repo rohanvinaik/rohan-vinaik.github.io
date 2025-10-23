@@ -35,6 +35,18 @@
   <!-- Canonical URL -->
   <link rel="canonical" href="https://rohanv.me/">
 
+  <!-- Resource Hints for Performance -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="dns-prefetch" href="https://api.arxiv.org">
+  <link rel="dns-prefetch" href="https://export.arxiv.org">
+
+  <!-- Preload Critical Resources -->
+  <link rel="preload" href="style.css" as="style">
+  <link rel="preload" href="terminal.js" as="script">
+  <link rel="preload" href="skill-project-map.js" as="script">
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" as="style">
+
   <!-- Schema.org Structured Data for SEO -->
   <script type="application/ld+json">
   {
@@ -1439,19 +1451,63 @@
   </div>
 
   <!-- Scripts -->
+  <!-- Critical - load immediately for core functionality -->
   <script src="terminal.js"></script>
-  <script src="achievements.js"></script>
-  <script src="dog.js"></script>
-  <script src="physics.js"></script>
-  <script src="matrix.js"></script>
-  <script src="easter-eggs.js"></script>
-  <script src="meta-detection.js"></script>
   <script src="skill-project-map.js"></script>
   <script src="filter-system.js"></script>
-  <script src="terminal-bar.js"></script>
-  <script src="graph-data.js"></script>
-  <script src="research-graph.js"></script>
-  <script src="paper-feed.js"></script>
-  <script src="scroll-progress.js"></script>
+
+  <!-- Performance & UX enhancements -->
+  <script src="loading-indicator.js"></script>
+  <script src="keyboard-shortcuts.js" defer></script>
+
+  <!-- Non-critical - defer to improve initial load time -->
+  <script src="achievements.js" defer></script>
+  <script src="dog.js" defer></script>
+  <script src="physics.js" defer></script>
+  <script src="matrix.js" defer></script>
+  <script src="easter-eggs.js" defer></script>
+  <script src="meta-detection.js" defer></script>
+  <script src="terminal-bar.js" defer></script>
+  <script src="paper-feed.js" defer></script>
+  <script src="scroll-progress.js" defer></script>
+
+  <!-- Heavy visualizations - lazy load only when section is accessed -->
+  <script>
+    // Lazy load research graph when user navigates to that section
+    let graphLoaded = false;
+    function loadResearchGraph() {
+      if (graphLoaded) return;
+
+      const script1 = document.createElement('script');
+      script1.src = 'graph-data.js';
+      const script2 = document.createElement('script');
+      script2.src = 'research-graph.js';
+
+      document.body.appendChild(script1);
+      script1.onload = () => document.body.appendChild(script2);
+
+      graphLoaded = true;
+      console.log('Research graph scripts loaded on demand');
+    }
+
+    // Load when research graph section is clicked
+    document.addEventListener('DOMContentLoaded', () => {
+      const graphNav = document.querySelector('[data-section="research-graph"]');
+      if (graphNav) {
+        graphNav.addEventListener('click', loadResearchGraph, { once: true });
+      }
+    });
+  </script>
+
+  <!-- Service Worker for Offline Support -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+          .then(reg => console.log('✓ Service Worker registered:', reg.scope))
+          .catch(err => console.log('Service Worker registration failed:', err));
+      });
+    }
+  </script>
 </body>
 </html>
