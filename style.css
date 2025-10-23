@@ -1650,6 +1650,16 @@ h1.section-title {
   color: var(--bg-primary);
 }
 
+/* Terminal expansion: add padding to body when terminal is visible */
+body {
+  padding-bottom: 40px; /* Default: space for performance footer */
+  transition: padding-bottom 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+body.terminal-visible {
+  padding-bottom: 160px; /* Space for terminal (120px) + performance footer (40px) */
+}
+
 /* Terminal output formatting */
 .terminal-output .success {
   color: var(--accent);

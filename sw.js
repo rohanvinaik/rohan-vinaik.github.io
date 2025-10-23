@@ -3,7 +3,7 @@
  * Provides caching and offline functionality
  */
 
-const CACHE_NAME = 'rohan-portfolio-v2.2.0'; // Fixed performance metrics display and visibility
+const CACHE_NAME = 'rohan-portfolio-v2.2.1'; // Fixed terminal bar covering page elements
 
 // Critical assets to cache on install
 const STATIC_ASSETS = [
