@@ -656,6 +656,20 @@
       return;
     }
 
+    // Create blinking cursor indicator
+    const cursorIndicator = document.createElement('span');
+    cursorIndicator.className = 'terminal-cursor-indicator';
+    cursorIndicator.textContent = '_';
+    terminalInput.parentElement.appendChild(cursorIndicator);
+
+    // Show/hide cursor based on focus
+    terminalInput.addEventListener('focus', () => {
+      cursorIndicator.style.display = 'inline-block';
+    });
+    terminalInput.addEventListener('blur', () => {
+      cursorIndicator.style.display = 'none';
+    });
+
     // Show terminal by default if state.isVisible is true
     if (state.isVisible) {
       terminalBar.classList.add('visible');
