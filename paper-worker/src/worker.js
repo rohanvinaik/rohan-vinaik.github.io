@@ -4,6 +4,8 @@
  * Stores in KV, serves via API to website
  */
 
+import { addToArchive, getPapersByTag, getArchiveStats } from './archive.js';
+
 export default {
   // Scheduled cron job - runs daily at 9 AM UTC
   async scheduled(event, env, ctx) {
@@ -30,6 +32,14 @@ export default {
     // API Routes
     if (url.pathname === '/api/papers') {
       return handleGetPapers(request, env, corsHeaders);
+    }
+
+    if (url.pathname === '/api/archive') {
+      return handleGetArchive(request, env, corsHeaders);
+    }
+
+    if (url.pathname === '/api/archive/stats') {
+      return handleGetArchiveStats(request, env, corsHeaders);
     }
 
     if (url.pathname === '/api/refresh') {
@@ -112,7 +122,15 @@ async function fetchAndStorePapers(env) {
   const rankedPapers = rankPapers(uniquePapers);
   console.log(`After ranking: ${rankedPapers.length}, top score: ${rankedPapers[0]?.score || 'N/A'}`);
 
-  // Store in KV
+  // Add to archive (all papers, not just top 30)
+  try {
+    const archiveResult = await addToArchive(env, rankedPapers);
+    console.log(`Archive: ${archiveResult.added} new papers, ${archiveResult.total} total`);
+  } catch (error) {
+    console.error('Failed to update archive:', error);
+  }
+
+  // Store in KV (top 30 for display)
   await env.PAPERS_KV.put('latest_papers', JSON.stringify({
     papers: rankedPapers.slice(0, 30),
     updated: new Date().toISOString(),
@@ -329,6 +347,82 @@ async function handleGetPapers(request, env, corsHeaders) {
       updated: stored.updated,
       total: papers.length
     }), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+  } catch (error) {
+    return new Response(JSON.stringify({
+      error: error.message
+    }), {
+      status: 500,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+  }
+}
+
+/**
+ * Handle GET /api/archive requests
+ */
+async function handleGetArchive(request, env, corsHeaders) {
+  const url = new URL(request.url);
+  const tag = url.searchParams.get('tag');
+  const limit = parseInt(url.searchParams.get('limit') || '100');
+
+  try {
+    const archive = await env.PAPERS_KV.get('papers_archive', 'json');
+
+    if (!archive) {
+      return new Response(JSON.stringify({
+        papers: [],
+        total: 0,
+        message: 'Archive is empty'
+      }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    let papers = archive.papers;
+
+    // Filter by tag if specified
+    if (tag) {
+      papers = papers.filter(p =>
+        p.tags.some(t => t.toLowerCase() === tag.toLowerCase())
+      );
+    }
+
+    return new Response(JSON.stringify({
+      papers: papers.slice(0, limit),
+      total: archive.total_count,
+      filtered: papers.length,
+      updated: archive.updated
+    }), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+  } catch (error) {
+    return new Response(JSON.stringify({
+      error: error.message
+    }), {
+      status: 500,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+  }
+}
+
+/**
+ * Handle GET /api/archive/stats requests
+ */
+async function handleGetArchiveStats(request, env, corsHeaders) {
+  try {
+    const stats = await getArchiveStats(env);
+
+    if (!stats) {
+      return new Response(JSON.stringify({
+        message: 'No archive data available'
+      }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    return new Response(JSON.stringify(stats), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
     });
   } catch (error) {
