@@ -113,10 +113,14 @@ async function fetchAndStorePapers(env) {
 
   const allPapers = [];
 
+  // Calculate date 3 months ago for filtering
+  const threeMonthsAgo = new Date();
+  threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
+
   // Fetch from arXiv
   for (const topic of topics) {
     try {
-      const papers = await fetchArxiv(topic.query, topic.category, 3);
+      const papers = await fetchArxiv(topic.query, topic.category, 5, threeMonthsAgo);
       console.log(`Fetched ${papers.length} papers for topic: ${topic.query}`);
       allPapers.push(...papers);
       // Small delay to avoid rate limiting
@@ -128,7 +132,7 @@ async function fetchAndStorePapers(env) {
 
   // Fetch from bioRxiv
   try {
-    const biorxivPapers = await fetchBioRxiv();
+    const biorxivPapers = await fetchBioRxiv(threeMonthsAgo);
     allPapers.push(...biorxivPapers);
   } catch (error) {
     console.error('Error fetching bioRxiv:', error);
@@ -140,8 +144,19 @@ async function fetchAndStorePapers(env) {
   const uniquePapers = deduplicatePapers(allPapers);
   console.log(`After deduplication: ${uniquePapers.length}`);
 
-  // Rank by relevance
-  const rankedPapers = rankPapers(uniquePapers);
+  // Enrich with quality signals (if Semantic Scholar API key available)
+  let enrichedPapers = uniquePapers;
+  if (env.SEMANTIC_SCHOLAR_API_KEY) {
+    try {
+      enrichedPapers = await enrichWithSemanticScholar(uniquePapers, env.SEMANTIC_SCHOLAR_API_KEY);
+      console.log('Papers enriched with citation data');
+    } catch (error) {
+      console.error('Failed to enrich with Semantic Scholar:', error);
+    }
+  }
+
+  // Rank by relevance and quality
+  const rankedPapers = rankPapers(enrichedPapers);
   console.log(`After ranking: ${rankedPapers.length}, top score: ${rankedPapers[0]?.score || 'N/A'}`);
 
   // Add to archive (all papers, not just top 30)
@@ -166,10 +181,18 @@ async function fetchAndStorePapers(env) {
 }
 
 /**
- * Fetch papers from arXiv API
+ * Fetch papers from arXiv API with date filtering
  */
-async function fetchArxiv(query, category, maxResults = 5) {
-  const url = `https://export.arxiv.org/api/query?search_query=all:${encodeURIComponent(query)}&sortBy=submittedDate&sortOrder=descending&max_results=${maxResults}`;
+async function fetchArxiv(query, category, maxResults = 5, dateAfter = null) {
+  // Format date for arXiv query (YYYYMMDD0000)
+  let searchQuery = `all:${encodeURIComponent(query)}`;
+  
+  if (dateAfter) {
+    const dateStr = dateAfter.toISOString().split('T')[0].replace(/-/g, '');
+    searchQuery += ` AND submittedDate:[${dateStr}0000 TO 99991231235959]`;
+  }
+
+  const url = `https://export.arxiv.org/api/query?search_query=${searchQuery}&sortBy=submittedDate&sortOrder=descending&max_results=${maxResults}`;
 
   const response = await fetch(url);
   const xmlText = await response.text();
@@ -188,7 +211,11 @@ async function fetchArxiv(query, category, maxResults = 5) {
     const summary = entry.match(/<summary>([\s\S]*?)<\/summary>/)?.[1]?.trim() || '';
     const published = entry.match(/<published>(.*?)<\/published>/)?.[1] || '';
     const id = entry.match(/<id>(.*?)<\/id>/)?.[1] || '';
-    const authors = [...entry.matchAll(/<author>[\s\S]*?<name>(.*?)<\/name>/g)].map(m => m[1]);
+    const authors = [...entry.matchAll(/<author>[\s\S]*?<name>(.*?)<\/name>/g)].map(m => m[1].trim());
+    
+    // Extract arXiv categories for quality signals
+    const categories = [...entry.matchAll(/<category\s+term="([^"]+)"/g)].map(m => m[1]);
+    const primaryCategory = entry.match(/<arxiv:primary_category[^>]+term="([^"]+)"/)?.[1] || categories[0] || '';
 
     const paper = {
       title: cleanText(title),
@@ -198,7 +225,9 @@ async function fetchArxiv(query, category, maxResults = 5) {
       url: id,
       pdf_url: id.replace('abs', 'pdf'),
       source: 'arxiv',
-      topics: [category]
+      topics: [category],
+      categories,
+      primaryCategory
     };
 
     console.log(`Parsed paper - title: ${paper.title ? 'YES' : 'NO'}, abstract: ${paper.abstract ? 'YES' : 'NO'}`);
@@ -210,10 +239,10 @@ async function fetchArxiv(query, category, maxResults = 5) {
 }
 
 /**
- * Fetch papers from bioRxiv RSS
+ * Fetch papers from bioRxiv RSS with date filtering
  */
-async function fetchBioRxiv() {
-  const subjects = ['bioinformatics', 'genomics', 'systems-biology'];
+async function fetchBioRxiv(dateAfter = null) {
+  const subjects = ['bioinformatics', 'genomics', 'systems-biology', 'synthetic-biology'];
   const papers = [];
 
   for (const subject of subjects) {
@@ -224,22 +253,32 @@ async function fetchBioRxiv() {
 
       const items = xmlText.match(/<item>([\s\S]*?)<\/item>/g) || [];
 
-      items.slice(0, 3).forEach(item => {
+      items.forEach(item => {
         const title = item.match(/<title>(.*?)<\/title>/)?.[1] || '';
         const description = item.match(/<description>(.*?)<\/description>/)?.[1] || '';
         const link = item.match(/<link>(.*?)<\/link>/)?.[1] || '';
         const pubDate = item.match(/<pubDate>(.*?)<\/pubDate>/)?.[1] || '';
+        
+        // Parse publication date
+        const paperDate = pubDate ? new Date(pubDate) : new Date();
+        
+        // Filter by date if specified
+        if (dateAfter && paperDate < dateAfter) {
+          return; // Skip old papers
+        }
 
         if (title && description && link) {
           papers.push({
             title: cleanText(title),
             abstract: cleanText(description),
             authors: [],
-            published: pubDate || new Date().toISOString(),
+            published: paperDate.toISOString(),
             url: link,
             pdf_url: link + '.pdf',
             source: 'biorxiv',
-            topics: ['genomics', 'bio-computing']
+            topics: ['genomics', 'bio-computing'],
+            categories: [subject],
+            primaryCategory: subject
           });
         }
       });
@@ -252,6 +291,59 @@ async function fetchBioRxiv() {
   }
 
   return papers;
+}
+
+/**
+ * Enrich papers with citation data from Semantic Scholar (optional)
+ */
+async function enrichWithSemanticScholar(papers, apiKey) {
+  const enrichedPapers = [];
+  
+  for (const paper of papers) {
+    try {
+      // Search by title
+      const searchUrl = `https://api.semanticscholar.org/graph/v1/paper/search?query=${encodeURIComponent(paper.title)}&fields=title,citationCount,influentialCitationCount,authors,year,venue`;
+      
+      const response = await fetch(searchUrl, {
+        headers: apiKey ? { 'x-api-key': apiKey } : {}
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        if (data.data && data.data.length > 0) {
+          const match = data.data[0];
+          enrichedPapers.push({
+            ...paper,
+            citationCount: match.citationCount || 0,
+            influentialCitationCount: match.influentialCitationCount || 0,
+            venue: match.venue || '',
+            semanticScholarData: match
+          });
+          
+          // Rate limiting: 100 requests/5 minutes with API key, 1/second without
+          await new Promise(resolve => setTimeout(resolve, apiKey ? 100 : 1000));
+          continue;
+        }
+      }
+      
+      // If no match found, keep original paper
+      enrichedPapers.push({
+        ...paper,
+        citationCount: 0,
+        influentialCitationCount: 0
+      });
+      
+    } catch (error) {
+      console.error(`Error enriching paper "${paper.title}":`, error);
+      enrichedPapers.push({
+        ...paper,
+        citationCount: 0,
+        influentialCitationCount: 0
+      });
+    }
+  }
+  
+  return enrichedPapers;
 }
 
 /**
@@ -283,7 +375,82 @@ function deduplicatePapers(papers) {
 }
 
 /**
- * Rank papers by relevance to research interests
+ * Calculate quality score based on available metadata
+ */
+function calculateQualityScore(paper) {
+  let qualityScore = 0;
+  
+  // 1. Citation-based quality (if available from Semantic Scholar)
+  if (paper.citationCount !== undefined) {
+    // Log scale for citations (diminishing returns)
+    qualityScore += Math.min(Math.log10(paper.citationCount + 1) * 2, 8);
+    
+    // Influential citations are worth more
+    if (paper.influentialCitationCount !== undefined) {
+      qualityScore += Math.min(Math.log10(paper.influentialCitationCount + 1) * 3, 6);
+    }
+  }
+  
+  // 2. Author count (collaboration indicator - sweet spot is 3-8 authors)
+  const authorCount = paper.authors?.length || 0;
+  if (authorCount >= 3 && authorCount <= 8) {
+    qualityScore += 3; // Well-collaborated research
+  } else if (authorCount > 8 && authorCount <= 15) {
+    qualityScore += 2; // Large collaboration
+  } else if (authorCount > 1) {
+    qualityScore += 1; // At least collaborative
+  }
+  
+  // 3. Abstract quality indicators
+  const abstractLength = paper.abstract?.length || 0;
+  if (abstractLength > 800 && abstractLength < 3000) {
+    qualityScore += 2; // Detailed but not excessive
+  } else if (abstractLength > 400) {
+    qualityScore += 1;
+  }
+  
+  // 4. High-quality arXiv categories (boost for specific relevant categories)
+  const prestigiousCategories = {
+    'cs.LG': 2,      // Machine Learning
+    'cs.AI': 2,      // Artificial Intelligence
+    'cs.CR': 3,      // Cryptography (relevant for your genomic privacy work)
+    'q-bio.QM': 2,   // Quantitative Methods
+    'q-bio.MN': 2,   // Molecular Networks
+    'stat.ML': 2,    // Machine Learning (stats)
+    'cs.ET': 3,      // Emerging Technologies (neuromorphic)
+    'cs.DC': 1,      // Distributed Computing
+    'math.AT': 2,    // Algebraic Topology (TDA)
+    'cs.NE': 2       // Neural and Evolutionary Computing
+  };
+  
+  if (paper.primaryCategory && prestigiousCategories[paper.primaryCategory]) {
+    qualityScore += prestigiousCategories[paper.primaryCategory];
+  }
+  
+  // 5. Venue prestige (if available from Semantic Scholar)
+  const topVenues = [
+    'Nature', 'Science', 'Cell', 'PNAS',
+    'NeurIPS', 'ICML', 'ICLR', 'CVPR', 'AAAI',
+    'Nature Communications', 'Nature Methods',
+    'PLoS Computational Biology', 'Bioinformatics',
+    'CRYPTO', 'EUROCRYPT', 'IEEE S&P'
+  ];
+  
+  if (paper.venue) {
+    const venueLower = paper.venue.toLowerCase();
+    for (const topVenue of topVenues) {
+      if (venueLower.includes(topVenue.toLowerCase())) {
+        qualityScore += 5;
+        break;
+      }
+    }
+  }
+  
+  return qualityScore;
+}
+
+/**
+ * Rank papers by relevance to research interests + quality
  */
 function rankPapers(papers) {
   const keywords = {
@@ -383,20 +550,25 @@ function rankPapers(papers) {
     let score = 0;
     const text = (paper.title + ' ' + paper.abstract).toLowerCase();
 
-    // Keyword scoring
+    // 1. Keyword relevance scoring (primary factor)
     for (const [keyword, weight] of Object.entries(keywords)) {
       if (text.includes(keyword.toLowerCase())) {
         score += weight;
       }
     }
 
-    // Recency bonus
+    // 2. Recency bonus (papers from last 3 months)
     const daysSince = (Date.now() - new Date(paper.published)) / (1000 * 60 * 60 * 24);
     if (daysSince < 7) score += 5;
-    else if (daysSince < 30) score += 3;
+    else if (daysSince < 30) score += 4;
+    else if (daysSince < 60) score += 2;
     else if (daysSince < 90) score += 1;
 
-    return { ...paper, score };
+    // 3. Quality scoring (citations, authors, venue, etc.)
+    const qualityScore = calculateQualityScore(paper);
+    score += qualityScore;
+
+    return { ...paper, score, qualityScore };
   }).sort((a, b) => b.score - a.score);
 }
 
