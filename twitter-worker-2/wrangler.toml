@@ -1,0 +1,16 @@
+name = "twitter-paper-worker-2"
+main = "src/worker.js"
+compatibility_date = "2024-01-01"
+
+# KV Namespace binding (same as other workers)
+[[kv_namespaces]]
+binding = "PAPERS_KV"
+id = "e471e03e4cfe4d3c9cd914856e133a2a"
+
+# Cron trigger - runs daily at 10:00 AM UTC (30 min after first twitter worker)
+[triggers]
+crons = ["0 10 * * *"]
+
+# CORS headers for your website
+[vars]
+ALLOWED_ORIGIN = "https://rohanv.me"
