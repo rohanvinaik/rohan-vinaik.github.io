@@ -31,7 +31,6 @@
   const zero = (w,h) => Array.from({length:h},()=>Array(w).fill(0));
   const lerp = (a, b, t) => a + (b - a) * t;
   const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
-  const mirrorX = (x) => BODY_W - 1 - x; // Unified horizontal mirroring
 
   // Easing functions
   const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3);
@@ -73,13 +72,13 @@
     [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
     [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
     [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0],
-    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0],
-    [0,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0],
-    [0,0,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0],
+    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0],
+    [1,1,1,0,0,0,1,1,0,0,0,1,1,0,0,0,1,1,0,0,0,1,0,0],
+    [1,1,1,0,0,0,1,1,0,0,0,1,1,0,0,0,1,1,0,0,0,1,1,1],
+    [1,1,1,0,0,0,1,1,0,0,0,1,1,0,0,0,1,1,0,0,0,1,1,1],
+    [1,1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0]
   ];
 
   // Frame factory
@@ -106,35 +105,17 @@
   }
 
   // Body frames: stand + 4-phase walk cycle
-  // Build all frames from clean base to avoid duplicated legs
   const BODY_FRAMES = (() => {
-    // Clean base body: clear any existing legs, repaint clean set
-    const cleanBase = clearLegArea(BASE_BODY);
-    paintLegs(cleanBase, [0, 0, 0, 0]); // Stand pose: no offset
-    const stand = cleanBase;
-
-    // Walk cycle: clear and repaint with offsets
+    const stand = copy2D(BASE_BODY);
     const walk1 = clearLegArea(BASE_BODY); paintLegs(walk1, [-1, 0, +1, 0]);
     const walk2 = clearLegArea(BASE_BODY); paintLegs(walk2, [ 0,+1,  0,-1]);
     const walk3 = clearLegArea(BASE_BODY); paintLegs(walk3, [+1, 0, -1, 0]);
     const walk4 = clearLegArea(BASE_BODY); paintLegs(walk4, [ 0,-1,  0,+1]);
-
     return {
       right: { stand, walk: [walk1, walk2, walk3, walk4] },
       left:  { stand: mirror(stand), walk: [mirror(walk1), mirror(walk2), mirror(walk3), mirror(walk4)] }
     };
   })();
-
-  // Verify leg symmetry (4 legs only, no duplicates)
-  if (typeof console !== 'undefined' && console.assert) {
-    const leftPixels = BODY_FRAMES.left.stand.flat().filter(v => v === 1).length;
-    const rightPixels = BODY_FRAMES.right.stand.flat().filter(v => v === 1).length;
-    console.assert(
-      leftPixels === rightPixels,
-      `[Dog] Leg symmetry mismatch! Left: ${leftPixels}, Right: ${rightPixels} - stray pixels detected`
-    );
-    console.log(`[Dog] Leg verification passed: ${leftPixels} pixels per side`);
-  }
 
   // ===========================================
   // NAUGHTY MODE SPRITES (24×20)
@@ -275,7 +256,7 @@
 
   // Mouth overlays
   function mouthMask(kind, facing='right') {
-    const dx = facing === 'right' ? MOUTH_ANCHOR.x : mirrorX(MOUTH_ANCHOR.x);
+    const dx = facing === 'right' ? MOUTH_ANCHOR.x : BODY_W - 1 - MOUTH_ANCHOR.x - 2;
     const dy = MOUTH_ANCHOR.y;
     const pts = [];
     if (kind === 'half') {
@@ -324,8 +305,17 @@
 
     // Tail layer
     const tp = tailPixels(tailPose, side);
-    // Tail: only erase exact pixels we'll repaint (no bounding box)
-    blitErase(frame, tp);
+    const minx = Math.max(0, Math.min(...tp.map(p=>p.x)) - 1);
+    const maxx = Math.min(BODY_W-1, Math.max(...tp.map(p=>p.x)) + 1);
+    const miny = Math.max(0, Math.min(...tp.map(p=>p.y)) - 1);
+    const maxy = Math.min(BODY_H-1, Math.max(...tp.map(p=>p.y)) + 1);
+
+    const clearPts = [];
+    for (let yy=miny; yy<=maxy; yy++)
+      for (let xx=minx; xx<=maxx; xx++)
+        clearPts.push({x:xx,y:yy});
+
+    blitErase(frame, clearPts);
     blitWhite(frame, tp);
 
     // Eyes layer
@@ -1043,7 +1033,7 @@
       const oy = Math.floor((VIEW_H - BODY_H) / 2);
       const anchorX = dog.facingRight
         ? MOUTH_ANCHOR.x
-        : mirrorX(MOUTH_ANCHOR.x); // unified mirror calculation
+        : (BODY_W - 1 - MOUTH_ANCHOR.x - 2); // same mirror as mouthMask
       const x = rect.left + (ox + anchorX) * SCALE;
       const y = rect.top  + (oy + MOUTH_ANCHOR.y) * SCALE;
       return { x, y };
@@ -1392,7 +1382,7 @@
     const oy = Math.floor((VIEW_H - BODY_H) / 2) + offsetY;
 
     // Draw smear frames first (ghost images behind main dog)
-    if (dog.smearActive && dog.smearFrames.length > 0 && dog.bodyPose === 'walk') {
+    if (dog.smearActive && dog.smearFrames.length > 0) {
       const currentX = dog.x;
       dog.smearFrames.forEach(smear => {
         ctx.save();
@@ -2757,7 +2747,7 @@
   // EXPORT FUNCTIONS
   // ===========================================
 
-  window.SpriteDog = {
+  window.ASCIIDog = {
     enable: enableDog,
     disable: disableDog,
     isEnabled: () => dog.enabled
@@ -2770,7 +2760,7 @@
   window.addEventListener('DOMContentLoaded', () => {
     const settings = JSON.parse(localStorage.getItem('dashboard-settings') || '{}');
 
-    const shouldEnable = settings.spriteDog !== false;
+    const shouldEnable = settings.asciiDog !== false;
     if (shouldEnable) {
       enableDog();
     }
@@ -2785,7 +2775,7 @@
           disableDog();
         }
 
-        settings.spriteDog = e.target.checked;
+        settings.asciiDog = e.target.checked;
         localStorage.setItem('dashboard-settings', JSON.stringify(settings));
       });
     }
