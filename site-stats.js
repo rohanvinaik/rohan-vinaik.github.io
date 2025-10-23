@@ -35,14 +35,15 @@
       const counter = document.createElement('div');
       counter.className = 'visitor-counter';
       counter.innerHTML = `
-        <span class="counter-label">SITE_VISITS:</span>
+        <span class="counter-label">visits:</span>
         <span class="counter-digits">${this.formatNumber(count)}</span>
       `;
 
-      // Add to status section
-      const statusSection = document.querySelector('.status-section');
-      if (statusSection) {
-        statusSection.appendChild(counter);
+      // Add after links section (more subtle placement)
+      const linksSection = document.querySelector('.links-section');
+      if (linksSection) {
+        // Insert after the links section
+        linksSection.parentNode.insertBefore(counter, linksSection.nextSibling);
         console.log(`[SiteStats] Visitor counter initialized: ${count} visits`);
       }
     }
@@ -348,47 +349,55 @@
 // ============================================
 const siteStatsStyles = document.createElement('style');
 siteStatsStyles.textContent = `
-/* Visitor Counter */
+/* Visitor Counter (Subtle styling under Links section) */
 .visitor-counter {
   margin-top: calc(var(--grid-unit, 6px) * 2);
-  padding-top: calc(var(--grid-unit, 6px) * 1.5);
-  border-top: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
-  font-size: 0.65rem;
+  padding: calc(var(--grid-unit, 6px) * 1.5) calc(var(--grid-unit, 6px) * 2);
+  border-top: 1px solid var(--border-color, rgba(255, 255, 255, 0.05));
+  font-size: 0.6rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: calc(var(--grid-unit, 6px));
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+}
+
+.visitor-counter:hover {
+  opacity: 1;
 }
 
 .counter-label {
   color: var(--text-secondary, #808080);
-  letter-spacing: 0.05em;
+  letter-spacing: 0.03em;
+  font-size: 0.6rem;
 }
 
 .counter-digits {
   display: flex;
-  gap: 2px;
+  gap: 1px;
   font-family: 'JetBrains Mono', 'Courier New', monospace;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .digit {
   display: inline-block;
-  background: rgba(0, 255, 0, 0.05);
-  border: 1px solid rgba(0, 255, 0, 0.3);
-  padding: 2px 4px;
+  background: rgba(0, 255, 0, 0.02);
+  border: 1px solid rgba(0, 255, 0, 0.15);
+  padding: 1px 3px;
   color: var(--accent, #00ff00);
-  min-width: 10px;
+  opacity: 0.7;
+  min-width: 8px;
   text-align: center;
-  font-size: 0.7rem;
+  font-size: 0.6rem;
   line-height: 1;
   transition: all 0.2s ease;
 }
 
 .digit:hover {
-  background: rgba(0, 255, 0, 0.1);
-  border-color: rgba(0, 255, 0, 0.5);
-  box-shadow: 0 0 4px rgba(0, 255, 0, 0.3);
+  background: rgba(0, 255, 0, 0.05);
+  border-color: rgba(0, 255, 0, 0.3);
+  opacity: 1;
 }
 
 /* Reading Time Indicator */

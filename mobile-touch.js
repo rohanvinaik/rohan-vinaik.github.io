@@ -295,7 +295,7 @@ touchStyles.textContent = `
 .touch-ripple {
   position: absolute;
   border-radius: 50%;
-  background: ${config.rippleColor};
+  background: rgba(0, 255, 0, 0.3);
   transform: scale(0);
   animation: ripple 0.3s ease-out;
   pointer-events: none;
