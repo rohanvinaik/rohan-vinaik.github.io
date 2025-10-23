@@ -22,7 +22,8 @@
         { name: 'type', weight: 0.8 }
       ]
     },
-    maxResults: 20
+    maxResults: 20,
+    archiveApiEndpoint: 'https://paper-discovery-worker.rohan-vinaik.workers.dev/api/archive/search'
   };
 
   // ============================================
@@ -169,7 +170,7 @@
   // ============================================
   // SEARCH LOGIC
   // ============================================
-  function handleSearch(e) {
+  async function handleSearch(e) {
     const query = e.target.value.trim();
 
     if (!query) {
@@ -177,37 +178,132 @@
       return;
     }
 
-    const results = fuse.search(query, { limit: config.maxResults });
+    // Show loading state
+    resultsContainer.innerHTML = '<div class="search-empty">Searching...</div>';
 
-    if (results.length === 0) {
-      resultsContainer.innerHTML = '<div class="search-empty">No results found</div>';
-      return;
+    try {
+      // Search local index
+      const localResults = fuse.search(query, { limit: config.maxResults });
+
+      // Search archive in parallel
+      const archiveResults = await searchArchive(query);
+
+      // Combine and render results
+      if (localResults.length === 0 && (!archiveResults || archiveResults.papers.length === 0)) {
+        resultsContainer.innerHTML = '<div class="search-empty">No results found</div>';
+        return;
+      }
+
+      selectedIndex = 0;
+      renderResults(localResults, archiveResults);
+    } catch (error) {
+      console.error('[Search] Error during search:', error);
+      resultsContainer.innerHTML = '<div class="search-empty">Search error. Please try again.</div>';
     }
-
-    selectedIndex = 0;
-    renderResults(results);
   }
 
-  function renderResults(results) {
-    resultsContainer.innerHTML = results.map((result, index) => {
-      const item = result.item;
-      const typeIcon = getTypeIcon(item.type);
-      const tags = item.tags.slice(0, 3).map(tag =>
-        `<span class="result-tag">${tag}</span>`
-      ).join('');
+  async function searchArchive(query) {
+    try {
+      const url = `${config.archiveApiEndpoint}?q=${encodeURIComponent(query)}&limit=50`;
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: { 'Accept': 'application/json' }
+      });
 
-      return `
-        <div class="search-result ${index === selectedIndex ? 'selected' : ''}" data-index="${index}" data-link="${item.link}">
-          <div class="result-icon">${typeIcon}</div>
-          <div class="result-content">
-            <div class="result-title">${highlightMatch(item.title, searchInput.value)}</div>
-            <div class="result-description">${truncate(item.description, 100)}</div>
-            ${tags ? `<div class="result-tags">${tags}</div>` : ''}
+      if (!response.ok) {
+        console.warn('[Search] Archive search failed:', response.status);
+        return null;
+      }
+
+      const data = await response.json();
+      console.log('[Search] Archive results:', data);
+      return data;
+    } catch (error) {
+      console.error('[Search] Archive search error:', error);
+      return null;
+    }
+  }
+
+  function renderResults(localResults, archiveResults) {
+    let html = '';
+    let resultIndex = 0;
+
+    // Render local results (current papers, projects, etc.)
+    if (localResults && localResults.length > 0) {
+      html += '<div class="search-section"><div class="search-section-header">CURRENT SITE</div>';
+
+      localResults.forEach((result) => {
+        const item = result.item;
+        const typeIcon = getTypeIcon(item.type);
+        const tags = item.tags.slice(0, 3).map(tag =>
+          `<span class="result-tag">${tag}</span>`
+        ).join('');
+
+        html += `
+          <div class="search-result ${resultIndex === selectedIndex ? 'selected' : ''}" data-index="${resultIndex}" data-link="${item.link}">
+            <div class="result-icon">${typeIcon}</div>
+            <div class="result-content">
+              <div class="result-title">${highlightMatch(item.title, searchInput.value)}</div>
+              <div class="result-description">${truncate(item.description, 100)}</div>
+              ${tags ? `<div class="result-tags">${tags}</div>` : ''}
+            </div>
+            <div class="result-type">${item.type}</div>
           </div>
-          <div class="result-type">${item.type}</div>
-        </div>
-      `;
-    }).join('');
+        `;
+        resultIndex++;
+      });
+
+      html += '</div>';
+    }
+
+    // Render archived papers grouped by category
+    if (archiveResults && archiveResults.grouped) {
+      const grouped = archiveResults.grouped;
+
+      // Golden papers section
+      if (grouped.golden && grouped.golden.length > 0) {
+        html += '<div class="search-section golden-section">';
+        html += '<div class="search-section-header">⭐ GOLDEN PAPERS (TOP 5%)</div>';
+
+        grouped.golden.forEach((paper) => {
+          html += renderArchivePaper(paper, resultIndex);
+          resultIndex++;
+        });
+
+        html += '</div>';
+      }
+
+      // Category sections
+      const categories = [
+        { id: 'BIOLOGY', name: 'Biology', icon: '🧬' },
+        { id: 'PHYSICAL_ARCHITECTURE', name: 'Physical Data Architecture', icon: '🔷' },
+        { id: 'AI_ML', name: 'AI/ML/Learning Networks', icon: '🤖' },
+        { id: 'PRIVACY', name: 'Privacy & Private Computing', icon: '🔒' },
+        { id: 'MATH', name: 'Mathematics', icon: '📐' },
+        { id: 'OTHER', name: 'Other Research', icon: '📚' }
+      ];
+
+      categories.forEach(category => {
+        const papers = grouped.byCategory[category.id];
+        if (papers && papers.length > 0) {
+          html += `<div class="search-section category-section">`;
+          html += `<div class="search-section-header">${category.icon} ${category.name.toUpperCase()}</div>`;
+
+          papers.forEach((paper) => {
+            html += renderArchivePaper(paper, resultIndex);
+            resultIndex++;
+          });
+
+          html += '</div>';
+        }
+      });
+    }
+
+    if (html === '') {
+      html = '<div class="search-empty">No results found</div>';
+    }
+
+    resultsContainer.innerHTML = html;
 
     // Add click handlers
     resultsContainer.querySelectorAll('.search-result').forEach(result => {
@@ -216,6 +312,46 @@
         navigateToResult(link);
       });
     });
+  }
+
+  function renderArchivePaper(paper, index) {
+    const query = searchInput.value;
+    const goldenBadge = paper.is_golden ? '<span class="golden-badge">⭐</span>' : '';
+    const multiplierBadge = paper.multiplier && paper.multiplier > 1
+      ? `<span class="multiplier-badge">${paper.multiplier}x COMBO</span>`
+      : '';
+
+    const tags = (paper.tags || []).slice(0, 3).map(tag =>
+      `<span class="result-tag">${tag}</span>`
+    ).join('');
+
+    const relevanceInfo = paper.relevance_score
+      ? `<span class="relevance-score">Score: ${Math.round(paper.relevance_score)}</span>`
+      : '';
+
+    const source = paper.source ? paper.source.toUpperCase() : 'ARCHIVE';
+    const dateStr = paper.published ? new Date(paper.published).toLocaleDateString() : '';
+
+    return `
+      <div class="search-result archive-result ${index === selectedIndex ? 'selected' : ''}" data-index="${index}" data-link="${paper.url}">
+        <div class="result-icon">📄</div>
+        <div class="result-content">
+          <div class="result-title">
+            ${highlightMatch(paper.title, query)}
+            ${goldenBadge}
+            ${multiplierBadge}
+          </div>
+          <div class="result-description">
+            ${truncate(paper.abstract || paper.abstract_preview || '', 120)}
+          </div>
+          <div class="result-meta">
+            [${source}] ${dateStr ? `· ${dateStr}` : ''} ${relevanceInfo ? `· ${relevanceInfo}` : ''}
+          </div>
+          ${tags ? `<div class="result-tags">${tags}</div>` : ''}
+        </div>
+        <div class="result-type">archive</div>
+      </div>
+    `;
   }
 
   function getTypeIcon(type) {
@@ -533,6 +669,37 @@ searchStyles.textContent = `
   padding: 8px;
 }
 
+/* Search Sections */
+.search-section {
+  margin-bottom: 20px;
+}
+
+.search-section-header {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--accent, #00ff00);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 8px 12px;
+  background: rgba(0, 255, 0, 0.05);
+  border-left: 3px solid var(--accent, #00ff00);
+  margin-bottom: 8px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  backdrop-filter: blur(8px);
+}
+
+.golden-section .search-section-header {
+  color: #FFD700;
+  border-left-color: #FFD700;
+  background: rgba(255, 215, 0, 0.08);
+}
+
+.category-section .search-section-header {
+  border-left-color: rgba(0, 255, 0, 0.5);
+}
+
 .search-result {
   display: flex;
   align-items: flex-start;
@@ -604,6 +771,52 @@ searchStyles.textContent = `
   letter-spacing: 0.05em;
   flex-shrink: 0;
   align-self: center;
+}
+
+/* Archive Paper Metadata */
+.result-meta {
+  color: var(--text-secondary, #808080);
+  font-size: 0.65rem;
+  margin-top: 6px;
+  margin-bottom: 6px;
+}
+
+.golden-badge {
+  display: inline-block;
+  margin-left: 8px;
+  font-size: 0.9rem;
+  animation: starTwinkle 2s ease-in-out infinite;
+}
+
+@keyframes starTwinkle {
+  0%, 100% { opacity: 0.7; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.1); }
+}
+
+.multiplier-badge {
+  display: inline-block;
+  background: #FFD700;
+  color: #000;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 0.65rem;
+  font-weight: bold;
+  margin-left: 8px;
+}
+
+.relevance-score {
+  color: var(--accent, #00ff00);
+  font-weight: 600;
+}
+
+.archive-result {
+  border-left: 2px solid rgba(0, 255, 0, 0.3);
+  padding-left: 10px;
+}
+
+.golden-section .archive-result {
+  border-left-color: rgba(255, 215, 0, 0.5);
+  background: rgba(255, 215, 0, 0.02);
 }
 
 .search-empty {
