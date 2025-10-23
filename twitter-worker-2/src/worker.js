@@ -79,13 +79,22 @@ async function fetchTwitterAndSubstackPapers(env) {
     }
   }
 
-  // Fetch from Substack RSS
+  // Fetch from Substack & Newsletter RSS
   try {
-    const substackPapers = await fetchFromSubstack(threeMonthsAgo);
-    console.log(`Fetched ${substackPapers.length} papers from Substack`);
-    allPapers.push(...substackPapers);
+    const newsletterPapers = await fetchFromNewsletters(threeMonthsAgo);
+    console.log(`Fetched ${newsletterPapers.length} papers from newsletters`);
+    allPapers.push(...newsletterPapers);
   } catch (error) {
-    console.error('Error fetching from Substack:', error);
+    console.error('Error fetching from newsletters:', error);
+  }
+
+  // Fetch from research lab blogs
+  try {
+    const labPapers = await fetchFromResearchLabs(threeMonthsAgo);
+    console.log(`Fetched ${labPapers.length} papers from research labs`);
+    allPapers.push(...labPapers);
+  } catch (error) {
+    console.error('Error fetching from research labs:', error);
   }
 
   if (allPapers.length === 0) {
@@ -170,16 +179,20 @@ async function fetchTwitterAndSubstackPapers(env) {
 }
 
 /**
- * Fetch papers from Substack RSS feed
+ * Fetch papers from newsletters and Substack feeds
  */
-async function fetchFromSubstack(dateAfter = null) {
-  const substackFeeds = [
-    'https://aisafetyfrontier.substack.com/feed'
+async function fetchFromNewsletters(dateAfter = null) {
+  const newsletterFeeds = [
+    'https://aisafetyfrontier.substack.com/feed',
+    'https://import.ai/feed',  // Import AI by Jack Clark
+    'https://thegradient.pub/rss/',  // The Gradient
+    'https://newsletter.sebastianraschka.com/feed',  // Sebastian Raschka
+    'https://jack-clark.net/feed/',  // Jack Clark
   ];
 
   const allPapers = [];
 
-  for (const feedUrl of substackFeeds) {
+  for (const feedUrl of newsletterFeeds) {
     try {
       const response = await fetch(feedUrl);
       const xmlText = await response.text();
@@ -267,6 +280,7 @@ async function fetchFromTwitterAccounts(bearerToken, dateAfter = null) {
     'softmaxresearch',
     'biologyaidaily',
     'quantamagazine',
+    'AK_ML',
 
     // Geometric Deep Learning & Molecular ML
     'brianltrippe',
@@ -277,23 +291,42 @@ async function fetchFromTwitterAccounts(bearerToken, dateAfter = null) {
     'mweber_pu',
     'ninamiolane',
     'geometric_intel',
+    'mmbronstein',
+    'joanbruna',
+    '_xbresson',
+
+    // Molecular/DNA Computing & Synthetic Biology
+    'erikwinfree',
+    'GeorgChurch',
 
     // AI Safety & Interpretability
     'jesse_hoogland',
     'timaeusresearch',
     'leafs_s',
     'zittrain',
+    'anthropicai',
+    'CollinBurns19',
+    'neelnanda_io',
+    'AnnaMTurner',
 
     // Quantum & Advanced Computing
     'googlequantumai',
     'thinkymachines',
+    'IBM_Quantum',
+    'AWSQuantum',
+    'rigetti',
 
-    // Research Labs
+    // Research Labs & Institutions
     'arcinstitute',
     'mit_csail',
+    'GoogleAI',
+    'DeepMind',
+    'OpenAI',
 
-    // Additional thought leaders
+    // ML Research & Papers
     'fatihdin4en',
+    '_akhaliq',
+    'rasbt',
   ];
 
   const allPapers = [];
@@ -661,4 +694,88 @@ function rankPapers(papers) {
 
     return { ...paper, score, qualityScore };
   }).sort((a, b) => b.score - a.score);
+}
+
+/**
+ * Fetch papers from research lab blogs and publication pages
+ */
+async function fetchFromResearchLabs(dateAfter = null) {
+  const labFeeds = [
+    {
+      name: 'DeepMind',
+      url: 'https://www.deepmind.com/blog/rss.xml',
+      topics: ['ml-theory', 'ai-safety']
+    },
+    {
+      name: 'OpenAI',
+      url: 'https://openai.com/blog/rss/',
+      topics: ['ml-theory', 'ai-safety']
+    },
+    {
+      name: 'Anthropic',
+      url: 'https://www.anthropic.com/news/rss.xml',
+      topics: ['ai-safety', 'interpretability']
+    },
+    {
+      name: 'Allen Institute',
+      url: 'https://alleninstitute.org/feed/',
+      topics: ['neuroscience', 'bio-computing']
+    },
+  ];
+
+  const allPapers = [];
+
+  for (const lab of labFeeds) {
+    try {
+      const response = await fetch(lab.url);
+      const xmlText = await response.text();
+
+      const items = xmlText.match(/<item>([\s\S]*?)<\/item>/g) || 
+                   xmlText.match(/<entry>([\s\S]*?)<\/entry>/g) || [];
+
+      for (const item of items) {
+        const title = item.match(/<title><!\[CDATA\[(.*?)\]\]><\/title>/)?.[1] ||
+                     item.match(/<title>(.*?)<\/title>/)?.[1] || '';
+        const description = item.match(/<description><!\[CDATA\[(.*?)\]\]><\/description>/)?.[1] ||
+                          item.match(/<description>(.*?)<\/description>/)?.[1] ||
+                          item.match(/<summary>(.*?)<\/summary>/)?.[1] || '';
+        const link = item.match(/<link>(.*?)<\/link>/)?.[1] ||
+                    item.match(/<link[^>]+href="([^"]+)"/)?.[1] || '';
+        const pubDate = item.match(/<pubDate>(.*?)<\/pubDate>/)?.[1] ||
+                       item.match(/<published>(.*?)<\/published>/)?.[1] || '';
+
+        const paperDate = pubDate ? new Date(pubDate) : new Date();
+
+        if (dateAfter && paperDate < dateAfter) {
+          continue;
+        }
+
+        // Extract paper links from description
+        const paperLinks = extractPaperLinksFromText(description + ' ' + title);
+
+        if (paperLinks.length > 0) {
+          for (const paperUrl of paperLinks) {
+            try {
+              const paper = await fetchPaperFromUrl(paperUrl);
+              if (paper) {
+                paper.source = lab.name.toLowerCase().replace(/\s+/g, '-');
+                paper.blogPost = link;
+                paper.blogTitle = cleanText(title);
+                paper.topics = lab.topics;
+                allPapers.push(paper);
+              }
+            } catch (error) {
+              console.error(`Error fetching paper from ${paperUrl}:`, error);
+            }
+          }
+        }
+      }
+
+      await new Promise(resolve => setTimeout(resolve, 500));
+    } catch (error) {
+      console.error(`Error fetching ${lab.name}:`, error);
+    }
+  }
+
+  return allPapers;
 }

@@ -205,6 +205,38 @@ async function fetchAndStorePapers(env) {
     console.error('Error fetching bioRxiv:', error);
   }
 
+  // Fetch from medRxiv (medical sciences)
+  try {
+    const medrxivPapers = await fetchMedRxiv(threeMonthsAgo);
+    allPapers.push(...medrxivPapers);
+  } catch (error) {
+    console.error('Error fetching medRxiv:', error);
+  }
+
+  // Fetch from chemRxiv (chemistry)
+  try {
+    const chemrxivPapers = await fetchChemRxiv(threeMonthsAgo);
+    allPapers.push(...chemrxivPapers);
+  } catch (error) {
+    console.error('Error fetching chemRxiv:', error);
+  }
+
+  // Fetch from PsyArXiv (psychology/cognitive science)
+  try {
+    const psyarxivPapers = await fetchPsyArxiv(threeMonthsAgo);
+    allPapers.push(...psyarxivPapers);
+  } catch (error) {
+    console.error('Error fetching PsyArXiv:', error);
+  }
+
+  // Fetch from high-impact journal RSS feeds
+  try {
+    const journalPapers = await fetchJournalFeeds(threeMonthsAgo);
+    allPapers.push(...journalPapers);
+  } catch (error) {
+    console.error('Error fetching journal feeds:', error);
+  }
+
   // Note: Twitter papers are now fetched by a separate worker to avoid subrequest limits
 
   console.log(`Total papers fetched: ${allPapers.length}`);
@@ -240,26 +272,55 @@ async function fetchAndStorePapers(env) {
     console.error('Failed to update archive:', error);
   }
 
-  // Store in KV (top 30 for display)
-  const topPapers = rankedPapers.slice(0, 30);
-  await env.PAPERS_KV.put('latest_papers', JSON.stringify({
-    papers: topPapers,
-    updated: new Date().toISOString(),
-    count: rankedPapers.length
-  }), {
-    expirationTtl: 86400 * 7 // 7 days
-  });
+  // Merge with existing papers in KV (to preserve Twitter papers from weekly runs)
+  try {
+    const existing = await env.PAPERS_KV.get('latest_papers', 'json');
+    let allCombinedPapers = rankedPapers;
 
-  // Track shown papers to avoid repeats in next 24 hours
-  await env.PAPERS_KV.put('recently_shown_papers', JSON.stringify({
-    papers: topPapers.map(p => ({ url: p.url, title: p.title })),
-    updated: new Date().toISOString()
-  }), {
-    expirationTtl: 86400 // 24 hours
-  });
+    if (existing && existing.papers) {
+      // Combine new papers with existing papers
+      allCombinedPapers = [...rankedPapers, ...existing.papers];
 
-  console.log(`Stored ${topPapers.length} papers in KV and tracked as recently shown`);
-  return rankedPapers.length;
+      // Deduplicate combined list
+      allCombinedPapers = deduplicatePapers(allCombinedPapers);
+
+      // Re-rank combined list
+      allCombinedPapers = rankPapers(allCombinedPapers);
+
+      console.log(`Combined with existing: ${allCombinedPapers.length} total papers`);
+    }
+
+    // Store top 30 for display
+    const topPapers = allCombinedPapers.slice(0, 30);
+    await env.PAPERS_KV.put('latest_papers', JSON.stringify({
+      papers: topPapers,
+      updated: new Date().toISOString(),
+      count: allCombinedPapers.length
+    }), {
+      expirationTtl: 86400 * 7 // 7 days
+    });
+
+    // Update recently shown papers (merge with existing)
+    const recentlyShown = await env.PAPERS_KV.get('recently_shown_papers', 'json');
+    const newShownPapers = [...topPapers.map(p => ({ url: p.url, title: p.title }))];
+
+    if (recentlyShown && recentlyShown.papers) {
+      newShownPapers.push(...recentlyShown.papers);
+    }
+
+    await env.PAPERS_KV.put('recently_shown_papers', JSON.stringify({
+      papers: newShownPapers.slice(0, 100), // Keep last 100
+      updated: new Date().toISOString()
+    }), {
+      expirationTtl: 86400 // 24 hours
+    });
+
+    console.log(`Stored ${topPapers.length} papers in KV (including ${rankedPapers.length} new from this run)`);
+    return rankedPapers.length;
+  } catch (error) {
+    console.error('Error storing papers:', error);
+    throw error;
+  }
 }
 
 /**
@@ -318,6 +379,252 @@ async function fetchArxiv(query, category, maxResults = 5, dateAfter = null) {
 
   console.log(`After filter: ${parsed.length} papers`);
   return parsed;
+}
+
+/**
+ * Fetch papers from medRxiv RSS with date filtering
+ */
+async function fetchMedRxiv(dateAfter = null) {
+  const subjects = ['bioinformatics', 'health-informatics', 'medical-education'];
+  const papers = [];
+
+  for (const subject of subjects) {
+    try {
+      const url = `https://connect.medrxiv.org/medrxiv_xml.php?subject=${subject}`;
+      const response = await fetch(url);
+      const xmlText = await response.text();
+
+      const items = xmlText.match(/<item>([\s\S]*?)<\/item>/g) || [];
+
+      items.forEach(item => {
+        const title = item.match(/<title>(.*?)<\/title>/)?.[1] || '';
+        const description = item.match(/<description>(.*?)<\/description>/)?.[1] || '';
+        const link = item.match(/<link>(.*?)<\/link>/)?.[1] || '';
+        const pubDate = item.match(/<pubDate>(.*?)<\/pubDate>/)?.[1] || '';
+        
+        const paperDate = pubDate ? new Date(pubDate) : new Date();
+        
+        if (dateAfter && paperDate < dateAfter) {
+          return;
+        }
+
+        if (title && description && link) {
+          papers.push({
+            title: cleanText(title),
+            abstract: cleanText(description),
+            authors: [],
+            published: paperDate.toISOString(),
+            url: link,
+            pdf_url: link + '.pdf',
+            source: 'medrxiv',
+            topics: ['bio-computing', 'genomics'],
+            categories: [subject],
+            primaryCategory: subject
+          });
+        }
+      });
+
+      await new Promise(resolve => setTimeout(resolve, 200));
+    } catch (error) {
+      console.error(`Error fetching medRxiv ${subject}:`, error);
+    }
+  }
+
+  return papers;
+}
+
+/**
+ * Fetch papers from chemRxiv via OSF API
+ */
+async function fetchChemRxiv(dateAfter = null) {
+  const papers = [];
+  
+  try {
+    // ChemRxiv uses OSF infrastructure
+    const url = 'https://api.osf.io/v2/preprints/?filter[provider]=chemrxiv&page[size]=50';
+    const response = await fetch(url);
+    const data = await response.json();
+
+    if (data.data) {
+      for (const item of data.data) {
+        const dateCreated = new Date(item.attributes.date_created);
+        
+        if (dateAfter && dateCreated < dateAfter) {
+          continue;
+        }
+
+        // Only include if keywords match molecular/computational chemistry
+        const title = item.attributes.title || '';
+        const abstract = item.attributes.description || '';
+        const text = (title + ' ' + abstract).toLowerCase();
+        
+        const relevantKeywords = ['computational', 'molecular', 'simulation', 'quantum', 'dynamics', 'protein', 'folding', 'dna', 'reaction'];
+        const isRelevant = relevantKeywords.some(kw => text.includes(kw));
+        
+        if (isRelevant) {
+          papers.push({
+            title: cleanText(title),
+            abstract: cleanText(abstract),
+            authors: [],
+            published: dateCreated.toISOString(),
+            url: item.links.html,
+            pdf_url: item.links.download || item.links.html,
+            source: 'chemrxiv',
+            topics: ['bio-computing', 'molecular-computing'],
+            categories: ['chemistry'],
+            primaryCategory: 'chemistry'
+          });
+        }
+      }
+    }
+  } catch (error) {
+    console.error('Error fetching chemRxiv:', error);
+  }
+
+  return papers;
+}
+
+/**
+ * Fetch papers from PsyArXiv via OSF API
+ */
+async function fetchPsyArxiv(dateAfter = null) {
+  const papers = [];
+  
+  try {
+    const url = 'https://api.osf.io/v2/preprints/?filter[provider]=psyarxiv&page[size]=50';
+    const response = await fetch(url);
+    const data = await response.json();
+
+    if (data.data) {
+      for (const item of data.data) {
+        const dateCreated = new Date(item.attributes.date_created);
+        
+        if (dateAfter && dateCreated < dateAfter) {
+          continue;
+        }
+
+        const title = item.attributes.title || '';
+        const abstract = item.attributes.description || '';
+        const text = (title + ' ' + abstract).toLowerCase();
+        
+        // Filter for cognitive science, consciousness, predictive processing topics
+        const relevantKeywords = ['consciousness', 'integrated information', 'predictive', 'bayesian', 'neural', 'cognitive', 'perception', 'attention', 'free energy'];
+        const isRelevant = relevantKeywords.some(kw => text.includes(kw));
+        
+        if (isRelevant) {
+          papers.push({
+            title: cleanText(title),
+            abstract: cleanText(abstract),
+            authors: [],
+            published: dateCreated.toISOString(),
+            url: item.links.html,
+            pdf_url: item.links.download || item.links.html,
+            source: 'psyarxiv',
+            topics: ['consciousness', 'coec', 'neural-theory'],
+            categories: ['psychology'],
+            primaryCategory: 'psychology'
+          });
+        }
+      }
+    }
+  } catch (error) {
+    console.error('Error fetching PsyArXiv:', error);
+  }
+
+  return papers;
+}
+
+/**
+ * Fetch papers from high-impact journal RSS feeds
+ */
+async function fetchJournalFeeds(dateAfter = null) {
+  const journals = [
+    {
+      name: 'Nature Neuroscience',
+      url: 'https://www.nature.com/neuro.rss',
+      topics: ['neural-theory', 'neuroscience']
+    },
+    {
+      name: 'Nature Machine Intelligence',
+      url: 'https://www.nature.com/natmachintell.rss',
+      topics: ['ml-theory', 'neuromorphic']
+    },
+    {
+      name: 'Nature Physics',
+      url: 'https://www.nature.com/nphys.rss',
+      topics: ['stat-mech', 'complex-systems']
+    },
+    {
+      name: 'PLOS Computational Biology',
+      url: 'https://journals.plos.org/ploscompbiol/feed/atom',
+      topics: ['bio-computing', 'neural-theory']
+    },
+    {
+      name: 'eLife',
+      url: 'https://elifesciences.org/rss/recent.xml',
+      topics: ['bio-computing', 'neuroscience']
+    },
+    {
+      name: 'Physical Review E',
+      url: 'https://journals.aps.org/pre/recent',
+      topics: ['stat-mech', 'complex-systems', 'dynamics']
+    }
+  ];
+
+  const papers = [];
+
+  for (const journal of journals) {
+    try {
+      const response = await fetch(journal.url);
+      const xmlText = await response.text();
+
+      // Parse both RSS and Atom formats
+      const items = xmlText.match(/<item>([\s\S]*?)<\/item>/g) || 
+                   xmlText.match(/<entry>([\s\S]*?)<\/entry>/g) || [];
+
+      for (const item of items) {
+        // Try RSS format first
+        let title = item.match(/<title>(.*?)<\/title>/)?.[1] || 
+                   item.match(/<title><!\[CDATA\[(.*?)\]\]><\/title>/)?.[1] || '';
+        let description = item.match(/<description>(.*?)<\/description>/)?.[1] ||
+                         item.match(/<description><!\[CDATA\[(.*?)\]\]><\/description>/)?.[1] ||
+                         item.match(/<summary>(.*?)<\/summary>/)?.[1] || '';
+        let link = item.match(/<link>(.*?)<\/link>/)?.[1] ||
+                  item.match(/<link[^>]+href="([^"]+)"/)?.[1] || '';
+        let pubDate = item.match(/<pubDate>(.*?)<\/pubDate>/)?.[1] ||
+                     item.match(/<published>(.*?)<\/published>/)?.[1] ||
+                     item.match(/<updated>(.*?)<\/updated>/)?.[1] || '';
+
+        if (!title || !link) continue;
+
+        const paperDate = pubDate ? new Date(pubDate) : new Date();
+        
+        if (dateAfter && paperDate < dateAfter) {
+          continue;
+        }
+
+        papers.push({
+          title: cleanText(title),
+          abstract: cleanText(description),
+          authors: [],
+          published: paperDate.toISOString(),
+          url: link,
+          pdf_url: link,
+          source: journal.name.toLowerCase().replace(/\s+/g, '-'),
+          topics: journal.topics,
+          categories: [journal.name],
+          primaryCategory: journal.name,
+          venue: journal.name
+        });
+      }
+
+      await new Promise(resolve => setTimeout(resolve, 300));
+    } catch (error) {
+      console.error(`Error fetching ${journal.name}:`, error);
+    }
+  }
+
+  return papers;
 }
 
 /**

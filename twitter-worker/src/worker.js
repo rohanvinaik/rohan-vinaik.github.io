@@ -82,6 +82,15 @@ async function fetchTwitterPapers(env) {
     return 0;
   }
 
+  // Fetch from Substack feeds (theory-focused)
+  try {
+    const substackPapers = await fetchFromSubstack(threeMonthsAgo);
+    console.log(`Fetched ${substackPapers.length} papers from Substack`);
+    twitterPapers.push(...substackPapers);
+  } catch (error) {
+    console.error('Error fetching from Substack:', error);
+  }
+
   if (twitterPapers.length === 0) {
     console.log('No Twitter papers found');
     return 0;
@@ -185,20 +194,34 @@ async function fetchFromTwitterAccounts(bearerToken, dateAfter = null) {
     // Hyperdimensional Computing & Neuromorphic
     'janrabaey',
     'BrunoOlshausen',
+    'frisman_thomas',
+    '_tnash',
 
-    // Complex Systems
+    // Complex Systems & Santa Fe Institute
     'SFIscience',
     'CT_Bergstrom',
     'PessoaBrain',
+    'davidkrakauer',
+    'simon_dedeo',
 
     // Neuroscience Theory
     'KordingLab',
     'neuromusic',
+    'SueYeonChung',
+    'lucklab',
 
-    // Information Theory & ML
+    // Topological Data Analysis
+    'KathrynHess10',
+    'appliedtopology',
+
+    // Information Theory & ML Theory
     'ylecun',
     'poolio',
     'GaryMarcus',
+    'ben_recht',
+
+    // Statistical Mechanics & Physics
+    'sfiscience',
   ];
 
   const allPapers = [];
@@ -567,4 +590,93 @@ function rankPapers(papers) {
 
     return { ...paper, score, qualityScore };
   }).sort((a, b) => b.score - a.score);
+}
+
+/**
+ * Fetch papers from theory-focused Substack feeds
+ */
+async function fetchFromSubstack(dateAfter = null) {
+  const substackFeeds = [
+    'https://boundedregret.ghost.io/rss/',  // Ben Recht - ML theory
+    'https://www.argmin.net/feed.xml',      // Ben Recht's blog
+    'https://moultano.wordpress.com/feed/', // Ryan Moulton - theoretical ML
+  ];
+
+  const allPapers = [];
+
+  for (const feedUrl of substackFeeds) {
+    try {
+      const response = await fetch(feedUrl);
+      const xmlText = await response.text();
+
+      // Parse RSS items
+      const items = xmlText.match(/<item>([\s\S]*?)<\/item>/g) || [];
+
+      for (const item of items) {
+        const title = item.match(/<title><!\[CDATA\[(.*?)\]\]><\/title>/)?.[1] ||
+                     item.match(/<title>(.*?)<\/title>/)?.[1] || '';
+        const description = item.match(/<description><!\[CDATA\[(.*?)\]\]><\/description>/)?.[1] ||
+                          item.match(/<description>(.*?)<\/description>/)?.[1] || '';
+        const link = item.match(/<link>(.*?)<\/link>/)?.[1] || '';
+        const pubDate = item.match(/<pubDate>(.*?)<\/pubDate>/)?.[1] || '';
+
+        // Parse publication date
+        const paperDate = pubDate ? new Date(pubDate) : new Date();
+
+        // Filter by date if specified
+        if (dateAfter && paperDate < dateAfter) {
+          continue;
+        }
+
+        // Extract paper links from description/content
+        const paperLinks = extractPaperLinksFromText(description);
+
+        if (paperLinks.length > 0) {
+          // Fetch metadata for each paper link
+          for (const paperUrl of paperLinks) {
+            try {
+              const paper = await fetchPaperFromUrl(paperUrl);
+              if (paper) {
+                paper.source = 'substack';
+                paper.substackPost = link;
+                paper.substackTitle = cleanText(title);
+                allPapers.push(paper);
+              }
+            } catch (error) {
+              console.error(`Error fetching paper from ${paperUrl}:`, error);
+            }
+          }
+        }
+      }
+
+      await new Promise(resolve => setTimeout(resolve, 500));
+    } catch (error) {
+      console.error(`Error fetching Substack feed ${feedUrl}:`, error);
+    }
+  }
+
+  return allPapers;
+}
+
+/**
+ * Extract paper URLs from text content
+ */
+function extractPaperLinksFromText(text) {
+  const urls = [];
+  const paperPatterns = [
+    /https?:\/\/arxiv\.org\/abs\/[\d.]+/gi,
+    /https?:\/\/arxiv\.org\/pdf\/[\d.]+/gi,
+    /https?:\/\/biorxiv\.org\/content\/[\w.\/]+/gi,
+    /https?:\/\/doi\.org\/[\w.\/()-]+/gi,
+    /https?:\/\/semanticscholar\.org\/paper\/[\w-]+/gi,
+  ];
+
+  for (const pattern of paperPatterns) {
+    const matches = text.matchAll(pattern);
+    for (const match of matches) {
+      urls.push(match[0]);
+    }
+  }
+
+  return [...new Set(urls)];
 }
