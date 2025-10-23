@@ -2404,7 +2404,7 @@ h1.section-title {
 
 .sprite-dog {
   position: fixed;
-  bottom: 40px;
+  bottom: 0;
   left: 50%;
   transform: translateX(-50%);
   z-index: 10000; /* Above terminal bar (z-index: 100) and perf footer (z-index: 9998) */
@@ -2418,7 +2418,7 @@ h1.section-title {
 
 /* Adjust dog position when terminal is visible */
 body.terminal-visible .sprite-dog {
-  bottom: 160px; /* Performance footer (40px) + Terminal bar (120px) */
+  bottom: 120px; /* Standing on top of 120px terminal bar */
 }
 
 .dog-sprite {
