@@ -77,16 +77,38 @@ async function fetchAndStorePapers(env) {
   console.log('Starting paper fetch...');
 
   const topics = [
+    // Core HDC/VSA research
     { query: 'hyperdimensional computing', category: 'hdc' },
     { query: 'vector symbolic architecture', category: 'hdc' },
-    { query: 'genomic privacy', category: 'genomics' },
+    { query: 'high-dimensional vector representations', category: 'hdc' },
+    { query: 'holographic reduced representations', category: 'hdc' },
+    
+    // Constraint-oriented computation and emergence
+    { query: 'constraint satisfaction emergence', category: 'coec' },
+    { query: 'emergent computation biological', category: 'coec' },
+    { query: 'free energy principle computation', category: 'coec' },
+    { query: 'active inference systems', category: 'coec' },
+    
+    // Privacy-preserving genomics
+    { query: 'genomic privacy homomorphic', category: 'genomics' },
     { query: 'zero knowledge proof genomics', category: 'genomics' },
-    { query: 'topological data analysis cells', category: 'tda' },
-    { query: 'constraint satisfaction biology', category: 'theory' },
-    { query: 'AI model verification', category: 'ai-security' },
-    { query: 'behavioral fingerprinting neural networks', category: 'ai-security' },
-    { query: 'iPSC differentiation computational', category: 'bio-computing' },
-    { query: 'distributed computing privacy', category: 'theory' },
+    { query: 'private information retrieval biology', category: 'genomics' },
+    
+    // Biological computing
+    { query: 'molecular computing protein folding', category: 'bio-computing' },
+    { query: 'DNA computing strand displacement', category: 'bio-computing' },
+    { query: 'synthetic biology computation', category: 'bio-computing' },
+    { query: 'cellular computation', category: 'bio-computing' },
+    
+    // Neuromorphic and brain-inspired computing
+    { query: 'neuromorphic computing architecture', category: 'neuromorphic' },
+    { query: 'spiking neural networks hardware', category: 'neuromorphic' },
+    { query: 'memristor computing', category: 'neuromorphic' },
+    
+    // Topological methods
+    { query: 'persistent homology biological', category: 'tda' },
+    { query: 'topological data analysis morphogenesis', category: 'tda' },
+    { query: 'mapper algorithm biology', category: 'tda' },
   ];
 
   const allPapers = [];
@@ -265,32 +287,96 @@ function deduplicatePapers(papers) {
  */
 function rankPapers(papers) {
   const keywords = {
-    'hyperdimensional': 3,
-    'vector symbolic': 3,
-    'HDC': 3,
-    'VSA': 3,
-    'genomic privacy': 4,
-    'zero knowledge': 3,
-    'ZK-SNARK': 3,
-    'topological data analysis': 3,
-    'TDA': 2,
-    'persistent homology': 2,
-    'constraint satisfaction': 2,
-    'constraint-oriented': 3,
+    // Core HDC/VSA concepts (highest priority)
+    'hyperdimensional computing': 5,
+    'vector symbolic': 5,
+    'HDC': 4,
+    'VSA': 4,
+    'holographic reduced': 4,
+    'high-dimensional vector': 4,
+    'distributed representation': 3,
+    'sparse distributed': 3,
+    
+    // COEC Framework concepts
+    'constraint-oriented': 5,
+    'constraint satisfaction': 4,
+    'emergent computation': 5,
+    'free energy principle': 5,
+    'active inference': 5,
+    'variational free energy': 4,
+    'predictive processing': 4,
+    'entropy minimization': 3,
+    'information bottleneck': 4,
+    'self-organization': 3,
+    
+    // Privacy and cryptography
+    'genomic privacy': 5,
+    'zero knowledge': 4,
+    'ZK-SNARK': 4,
+    'ZK-STARK': 4,
+    'homomorphic encryption': 4,
+    'private information retrieval': 5,
+    'PIR': 3,
+    'differential privacy': 3,
+    'secure multi-party': 3,
+    'federated learning': 3,
+    'cryptographic protocol': 3,
+    
+    // Biological computing
+    'molecular computing': 5,
+    'DNA computing': 4,
+    'protein folding': 4,
+    'strand displacement': 4,
+    'synthetic biology': 4,
+    'cellular computation': 4,
+    'molecular dynamics': 3,
+    'reaction-diffusion': 3,
+    'biochemical network': 3,
+    'gene regulatory': 3,
+    'iPSC': 3,
+    'stem cell differentiation': 3,
+    
+    // Neuromorphic and brain-inspired
+    'neuromorphic': 5,
+    'spiking neural': 4,
+    'memristor': 4,
+    'analog computing': 3,
+    'in-memory computing': 3,
+    'brain-inspired': 4,
+    
+    // Topological and geometric methods
+    'topological data analysis': 5,
+    'persistent homology': 5,
+    'TDA': 3,
+    'mapper algorithm': 4,
+    'sheaf cohomology': 4,
+    'simplicial complex': 3,
+    'morse theory': 3,
+    
+    // Information theory
+    'mutual information': 3,
+    'information geometry': 3,
+    'rate distortion': 3,
+    'channel capacity': 2,
+    
+    // AI safety and verification
     'behavioral fingerprinting': 4,
     'model verification': 3,
     'proof of training': 4,
-    'differential privacy': 2,
-    'federated learning': 2,
-    'iPSC': 3,
-    'stem cell': 2,
-    'cell differentiation': 2,
+    'neural network watermarking': 3,
+    'adversarial robustness': 2,
+    
+    // Genomics and bioinformatics (lower priority, too broad)
     'GWAS': 2,
     'variant calling': 2,
+    'whole genome': 2,
     'bioinformatics': 1,
     'computational biology': 1,
+    
+    // Systems and distributed computing
     'distributed computing': 2,
-    'cryptographic protocol': 2
+    'parallel algorithm': 2,
+    'consensus protocol': 2
   };
 
   return papers.map(paper => {
