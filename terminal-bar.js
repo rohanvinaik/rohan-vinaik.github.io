@@ -673,6 +673,10 @@
     // Show terminal by default if state.isVisible is true
     if (state.isVisible) {
       terminalBar.classList.add('visible');
+      // Auto-focus input when terminal is visible on load
+      setTimeout(() => {
+        terminalInput.focus();
+      }, 100);
     }
 
     // Show welcome message

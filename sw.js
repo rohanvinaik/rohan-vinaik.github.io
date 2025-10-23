@@ -3,7 +3,7 @@
  * Provides caching and offline functionality
  */
 
-const CACHE_NAME = 'rohan-portfolio-v2.1.8'; // Fixed terminal cursor visibility and blinking
+const CACHE_NAME = 'rohan-portfolio-v2.1.9'; // Auto-focus terminal input on load
 
 // Critical assets to cache on install
 const STATIC_ASSETS = [
