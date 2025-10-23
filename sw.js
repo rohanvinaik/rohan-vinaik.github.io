@@ -3,7 +3,7 @@
  * Provides caching and offline functionality
  */
 
-const CACHE_NAME = 'rohan-portfolio-v2.1.5'; // Renamed ASCII to Sprite, removed duplicate terminal bar
+const CACHE_NAME = 'rohan-portfolio-v2.1.6'; // Reordered navigation tabs
 
 // Critical assets to cache on install
 const STATIC_ASSETS = [
