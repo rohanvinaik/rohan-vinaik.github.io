@@ -99,21 +99,28 @@ Current subject tags used for classification:
 3. Duplicates are avoided (by URL)
 4. Timestamps updated (first_seen, last_seen)
 
-### Manual Export
+### Automatic Export (Recommended)
 
-When you want to update the GitHub files:
+**GitHub Action runs daily at 9:30 AM UTC** and automatically:
+- Downloads latest archive from worker
+- Generates JSON file (papers-archive.json)
+- Generates Markdown file (PAPERS-ARCHIVE.md)
+- Commits and pushes changes if archive updated
+
+**No manual intervention needed!** Just check GitHub to see the latest archive.
+
+**Manual trigger:** GitHub repo → Actions tab → "Update Paper Archive" → Run workflow
+
+### Manual Export (Optional)
+
+If you want to update immediately without waiting for the scheduled run:
 
 ```bash
 ./scripts/export-archive.sh
+git add papers-archive.json PAPERS-ARCHIVE.md
+git commit -m "Update paper archive"
+git push
 ```
-
-This will:
-- Download latest archive from worker
-- Generate JSON file (papers-archive.json)
-- Generate Markdown file (PAPERS-ARCHIVE.md)
-- Show statistics
-
-Then commit and push to make them visible on GitHub.
 
 ## Use Cases
 
