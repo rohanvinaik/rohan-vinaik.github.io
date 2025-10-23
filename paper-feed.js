@@ -229,14 +229,31 @@ class PaperFeed {
                           paper.score >= 10 ? '★★ ' :
                           paper.score >= 5 ? '★ ' : '';
 
+    // Add golden-paper class for top 5% papers
+    const goldenClass = paper.isGolden ? 'golden-paper' : '';
+
+    // Show category badges if available
+    const categoryBadges = paper.tags && paper.tags.length > 0
+      ? `<div class="paper-categories" style="margin-bottom: 8px;">
+          ${paper.tags.map(tag => `<span class="tag" style="background: var(--code-bg); padding: 3px 8px; border: 1px solid var(--accent); font-size: 0.65rem; color: var(--accent); margin-right: 6px; display: inline-block; margin-bottom: 4px;">${this.escapeHtml(tag)}</span>`).join('')}
+         </div>`
+      : '';
+
+    // Show multiplier if paper spans multiple categories
+    const multiplierBadge = paper.multiplier && paper.multiplier > 1
+      ? `<span style="background: #FFD700; color: #000; padding: 2px 6px; border-radius: 3px; font-size: 0.65rem; font-weight: bold; margin-left: 8px;">${paper.multiplier}x COMBO</span>`
+      : '';
+
     return `
-      <div class="list-item" style="margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid var(--border);">
+      <div class="list-item ${goldenClass}" style="margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid var(--border);">
         <div class="list-title" style="font-size: 0.9rem; margin-bottom: 8px; line-height: 1.4;">
           ${scoreIndicator}${this.escapeHtml(paper.title)}
+          ${multiplierBadge}
         </div>
         <div class="list-meta" style="font-size: 0.7rem; color: var(--text-secondary); margin-bottom: 8px;">
           [${paper.source.toUpperCase()}] · ${dateStr} · ${this.escapeHtml(authorStr)}
         </div>
+        ${categoryBadges}
         <div class="list-desc" style="font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 12px; line-height: 1.6;">
           ${this.escapeHtml(paper.abstract)}
         </div>
@@ -244,7 +261,8 @@ class PaperFeed {
         <div class="list-actions" style="font-size: 0.75rem; margin-top: 8px;">
           <a href="${this.escapeHtml(paper.url)}" target="_blank" rel="noopener noreferrer" style="color: var(--accent); text-decoration: none; border-bottom: 1px dotted var(--accent);">> read paper</a>
           ${paper.pdf_url ? `<span style="color: var(--text-secondary); margin: 0 8px;">|</span><a href="${this.escapeHtml(paper.pdf_url)}" target="_blank" rel="noopener noreferrer" style="color: var(--accent); text-decoration: none; border-bottom: 1px dotted var(--accent);">> pdf</a>` : ''}
-          ${paper.score ? `<span style="color: var(--text-secondary); margin: 0 8px;">|</span><span style="color: var(--text-secondary);">relevance: ${paper.score}</span>` : ''}
+          ${paper.score ? `<span style="color: var(--text-secondary); margin: 0 8px;">|</span><span style="color: var(--text-secondary);">relevance: ${Math.round(paper.score)}</span>` : ''}
+          ${paper.categoryCount ? `<span style="color: var(--text-secondary); margin: 0 8px;">|</span><span style="color: var(--text-secondary);">${paper.categoryCount} categories</span>` : ''}
         </div>
       </div>
     `;
