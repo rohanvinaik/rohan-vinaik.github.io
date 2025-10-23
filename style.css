@@ -68,7 +68,8 @@ body {
   justify-content: space-between;
   align-items: center;
   padding: calc(var(--grid-unit) * 1) calc(var(--grid-unit) * 2);
-  background: var(--bg-primary);
+  background: rgba(10, 10, 10, 0.90); /* Semi-transparent to show matrix */
+  backdrop-filter: blur(8px);
   border-bottom: 1px solid var(--border-color);
   font-size: 0.8rem;
   height: 32px;
@@ -143,7 +144,8 @@ body {
 .control-panel {
   flex: 0 0 320px;
   width: 320px;
-  background: var(--bg-primary);
+  background: rgba(10, 10, 10, 0.85); /* Semi-transparent to show matrix */
+  backdrop-filter: blur(8px); /* Add subtle blur for depth */
   border-right: 1px solid var(--border-color);
   display: flex;
   flex-direction: column;
@@ -340,7 +342,8 @@ body {
 
 .output-area {
   flex: 1;
-  background: var(--bg-primary);
+  background: rgba(10, 10, 10, 0.85); /* Semi-transparent to show matrix */
+  backdrop-filter: blur(8px); /* Add subtle blur for depth */
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -357,7 +360,8 @@ body {
 
 .output-header {
   padding: calc(var(--grid-unit) * 1);
-  background: var(--bg-secondary);
+  background: rgba(17, 17, 17, 0.90); /* Slightly more opaque for contrast */
+  backdrop-filter: blur(4px);
   border-bottom: 1px solid var(--border-color);
   font-size: 0.7rem;
   font-weight: 700;
@@ -2428,7 +2432,7 @@ h1.section-title {
   width: 100%;
   height: 100%;
   z-index: -1;
-  opacity: 0.2;
+  opacity: 0.3; /* Increased opacity for better visibility through semi-transparent backgrounds */
   pointer-events: none;
 }
 
