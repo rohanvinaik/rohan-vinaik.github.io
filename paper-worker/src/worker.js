@@ -82,12 +82,16 @@ async function fetchAndStorePapers(env) {
     { query: 'vector symbolic architecture', category: 'hdc' },
     { query: 'high-dimensional vector representations', category: 'hdc' },
     { query: 'holographic reduced representations', category: 'hdc' },
+    { query: 'sparse distributed representations', category: 'hdc' },
     
     // Constraint-oriented computation and emergence
     { query: 'constraint satisfaction emergence', category: 'coec' },
     { query: 'emergent computation biological', category: 'coec' },
     { query: 'free energy principle computation', category: 'coec' },
     { query: 'active inference systems', category: 'coec' },
+    { query: 'variational free energy', category: 'coec' },
+    { query: 'predictive coding neural', category: 'coec' },
+    { query: 'bayesian brain hypothesis', category: 'coec' },
     
     // Privacy-preserving genomics
     { query: 'genomic privacy homomorphic', category: 'genomics' },
@@ -104,11 +108,74 @@ async function fetchAndStorePapers(env) {
     { query: 'neuromorphic computing architecture', category: 'neuromorphic' },
     { query: 'spiking neural networks hardware', category: 'neuromorphic' },
     { query: 'memristor computing', category: 'neuromorphic' },
+    { query: 'neuromorphic engineering', category: 'neuromorphic' },
+    { query: 'brain-inspired computing', category: 'neuromorphic' },
     
     // Topological methods
     { query: 'persistent homology biological', category: 'tda' },
     { query: 'topological data analysis morphogenesis', category: 'tda' },
     { query: 'mapper algorithm biology', category: 'tda' },
+    
+    // Information Theory & Compression
+    { query: 'information bottleneck neural', category: 'info-theory' },
+    { query: 'rate distortion theory', category: 'info-theory' },
+    { query: 'mutual information estimation', category: 'info-theory' },
+    { query: 'information geometry learning', category: 'info-theory' },
+    { query: 'entropy minimization systems', category: 'info-theory' },
+    { query: 'minimum description length', category: 'info-theory' },
+    
+    // Complex Systems & Criticality
+    { query: 'self-organized criticality', category: 'complex-systems' },
+    { query: 'critical phase transitions neural', category: 'complex-systems' },
+    { query: 'emergence complex systems', category: 'complex-systems' },
+    { query: 'avalanche dynamics neural', category: 'complex-systems' },
+    { query: 'scale-free networks brain', category: 'complex-systems' },
+    { query: 'power law biological', category: 'complex-systems' },
+    
+    // Statistical Mechanics & Physics
+    { query: 'statistical mechanics neural networks', category: 'stat-mech' },
+    { query: 'ising model neural computation', category: 'stat-mech' },
+    { query: 'mean field theory learning', category: 'stat-mech' },
+    { query: 'replica theory neural', category: 'stat-mech' },
+    { query: 'spin glass neural networks', category: 'stat-mech' },
+    
+    // Sparse Coding & Representation Learning
+    { query: 'sparse coding visual cortex', category: 'sparse-coding' },
+    { query: 'dictionary learning biological', category: 'sparse-coding' },
+    { query: 'efficient coding hypothesis', category: 'sparse-coding' },
+    { query: 'compressed sensing neural', category: 'sparse-coding' },
+    
+    // Neural Computation Theory
+    { query: 'neural computation theory', category: 'neural-theory' },
+    { query: 'computational neuroscience models', category: 'neural-theory' },
+    { query: 'population coding neural', category: 'neural-theory' },
+    { query: 'neural manifolds dynamics', category: 'neural-theory' },
+    { query: 'attractor networks brain', category: 'neural-theory' },
+    
+    // Nonlinear Dynamics & Chaos
+    { query: 'nonlinear dynamics neural', category: 'dynamics' },
+    { query: 'chaos synchronization networks', category: 'dynamics' },
+    { query: 'bifurcation neural systems', category: 'dynamics' },
+    { query: 'dynamical systems computational', category: 'dynamics' },
+    
+    // Machine Learning Theory
+    { query: 'representation learning theory', category: 'ml-theory' },
+    { query: 'neural tangent kernel', category: 'ml-theory' },
+    { query: 'implicit bias gradient descent', category: 'ml-theory' },
+    { query: 'generalization neural networks', category: 'ml-theory' },
+    { query: 'lottery ticket hypothesis', category: 'ml-theory' },
+    
+    // Artificial Life & Self-Organization
+    { query: 'artificial life systems', category: 'alife' },
+    { query: 'autopoiesis self-organization', category: 'alife' },
+    { query: 'morphogenesis computational', category: 'alife' },
+    { query: 'evolutionary computation emergence', category: 'alife' },
+    
+    // Consciousness & Integrated Information
+    { query: 'integrated information theory', category: 'consciousness' },
+    { query: 'phi consciousness measure', category: 'consciousness' },
+    { query: 'neural correlates consciousness', category: 'consciousness' },
+    { query: 'global workspace theory', category: 'consciousness' },
   ];
 
   const allPapers = [];
@@ -137,6 +204,8 @@ async function fetchAndStorePapers(env) {
   } catch (error) {
     console.error('Error fetching bioRxiv:', error);
   }
+
+  // Note: Twitter papers are now fetched by a separate worker to avoid subrequest limits
 
   console.log(`Total papers fetched: ${allPapers.length}`);
 
@@ -306,6 +375,8 @@ async function fetchBioRxiv(dateAfter = null) {
   return papers;
 }
 
+// Twitter fetching functions removed - now handled by separate twitter-worker
+
 /**
  * Enrich papers with citation data from Semantic Scholar (optional)
  */
@@ -454,14 +525,28 @@ function calculateQualityScore(paper) {
   const prestigiousCategories = {
     'cs.LG': 2,      // Machine Learning
     'cs.AI': 2,      // Artificial Intelligence
-    'cs.CR': 3,      // Cryptography (relevant for your genomic privacy work)
+    'cs.CR': 3,      // Cryptography (relevant for genomic privacy work)
+    'cs.NE': 3,      // Neural and Evolutionary Computing (HDC, neuromorphic)
+    'cs.ET': 3,      // Emerging Technologies (neuromorphic)
+    'cs.IT': 3,      // Information Theory
+    'q-bio.NC': 3,   // Neurons and Cognition
     'q-bio.QM': 2,   // Quantitative Methods
     'q-bio.MN': 2,   // Molecular Networks
     'stat.ML': 2,    // Machine Learning (stats)
-    'cs.ET': 3,      // Emerging Technologies (neuromorphic)
     'cs.DC': 1,      // Distributed Computing
     'math.AT': 2,    // Algebraic Topology (TDA)
-    'cs.NE': 2       // Neural and Evolutionary Computing
+    'cond-mat.stat-mech': 3,  // Statistical Mechanics
+    'cond-mat.dis-nn': 2,     // Disordered Systems and Neural Networks
+    'nlin.CD': 2,    // Chaotic Dynamics
+    'nlin.AO': 2,    // Adaptation and Self-Organizing Systems
+    'nlin.PS': 2,    // Pattern Formation and Solitons
+    'physics.bio-ph': 2,      // Biological Physics
+    'physics.comp-ph': 1,     // Computational Physics
+    'math.DS': 2,    // Dynamical Systems
+    'math.PR': 1,    // Probability
+    'math.ST': 1,    // Statistics Theory
+    'q-bio.TO': 2,   // Tissues and Organs
+    'q-bio.CB': 2    // Cell Behavior
   };
   
   if (paper.primaryCategory && prestigiousCategories[paper.primaryCategory]) {
@@ -470,10 +555,34 @@ function calculateQualityScore(paper) {
   
   // 5. Venue prestige (if available from Semantic Scholar)
   const topVenues = [
+    // Top-tier general science
     'Nature', 'Science', 'Cell', 'PNAS',
-    'NeurIPS', 'ICML', 'ICLR', 'CVPR', 'AAAI',
-    'Nature Communications', 'Nature Methods',
+    
+    // Neuroscience & Cognitive Science
+    'Nature Neuroscience', 'Neuron', 'Neural Computation',
+    'Trends in Cognitive Sciences', 'Current Biology',
+    
+    // Computing & AI conferences
+    'NeurIPS', 'ICML', 'ICLR', 'CVPR', 'AAAI', 'AISTATS',
+    'COSYNE', 'CCN',
+    
+    // Journals
+    'Nature Communications', 'Nature Methods', 'Nature Physics',
     'PLoS Computational Biology', 'Bioinformatics',
+    'Neural Networks', 'IEEE Transactions on Neural Networks',
+    'Neuromorphic Computing and Engineering',
+    'Cognitive Computation', 'Artificial Life',
+    
+    // Physics & Information Theory
+    'IEEE Transactions on Information Theory',
+    'Physical Review E', 'Physical Review Letters',
+    'Entropy', 'Science Advances',
+    
+    // Interdisciplinary
+    'Philosophical Transactions of the Royal Society',
+    'Complexity', 'Chaos',
+    
+    // Cryptography
     'CRYPTO', 'EUROCRYPT', 'IEEE S&P'
   ];
   
@@ -513,6 +622,8 @@ function rankPapers(papers) {
     'active inference': 5,
     'variational free energy': 4,
     'predictive processing': 4,
+    'predictive coding': 4,
+    'bayesian brain': 4,
     'entropy minimization': 3,
     'information bottleneck': 4,
     'self-organization': 3,
@@ -551,6 +662,7 @@ function rankPapers(papers) {
     'analog computing': 3,
     'in-memory computing': 3,
     'brain-inspired': 4,
+    'neuromorphic engineering': 4,
     
     // Topological and geometric methods
     'topological data analysis': 5,
@@ -566,6 +678,72 @@ function rankPapers(papers) {
     'information geometry': 3,
     'rate distortion': 3,
     'channel capacity': 2,
+    'minimum description length': 3,
+    'kolmogorov complexity': 3,
+    
+    // Complex Systems & Criticality
+    'self-organized criticality': 5,
+    'critical phase transition': 4,
+    'criticality': 3,
+    'avalanche dynamics': 4,
+    'power law': 3,
+    'scale-free network': 3,
+    'complex systems': 3,
+    'emergence': 4,
+    
+    // Statistical Mechanics
+    'statistical mechanics': 3,
+    'ising model': 3,
+    'mean field theory': 3,
+    'replica theory': 3,
+    'spin glass': 3,
+    'partition function': 2,
+    
+    // Sparse Coding
+    'sparse coding': 4,
+    'dictionary learning': 3,
+    'efficient coding': 4,
+    'compressed sensing': 3,
+    'sparse representation': 3,
+    
+    // Neural Computation Theory
+    'neural computation': 4,
+    'computational neuroscience': 3,
+    'population coding': 3,
+    'neural manifold': 4,
+    'attractor network': 4,
+    'reservoir computing': 3,
+    
+    // Nonlinear Dynamics
+    'nonlinear dynamics': 3,
+    'chaos theory': 3,
+    'synchronization': 3,
+    'bifurcation': 3,
+    'dynamical systems': 3,
+    'lyapunov exponent': 2,
+    
+    // Machine Learning Theory
+    'representation learning': 3,
+    'neural tangent kernel': 4,
+    'implicit bias': 3,
+    'double descent': 3,
+    'lottery ticket': 3,
+    'feature learning': 2,
+    
+    // Artificial Life
+    'artificial life': 4,
+    'autopoiesis': 4,
+    'morphogenesis': 4,
+    'evolutionary computation': 3,
+    'open-ended evolution': 4,
+    
+    // Consciousness & IIT
+    'integrated information theory': 5,
+    'IIT': 3,
+    'phi measure': 4,
+    'neural correlates consciousness': 4,
+    'global workspace': 4,
+    'qualia': 3,
     
     // AI safety and verification
     'behavioral fingerprinting': 4,
