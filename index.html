@@ -564,7 +564,7 @@
 
               <div class="list-item">
                 <div class="list-title">GenomeVault: Privacy-Preserving Genomic Analytics with PIR, ZK-SNARKs, and HDC</div>
-                <div class="list-meta">[2025]</div>
+                <div class="list-meta">[2025 · FRAMEWORK PAPER]</div>
                 <div class="list-tags" style="display: none;">
                   <span class="tag">GENOMICS</span>
                   <span class="tag">CRYPTOGRAPHY</span>
@@ -572,13 +572,96 @@
                   <span class="tag">ZERO-KNOWLEDGE</span>
                 </div>
                 <div class="list-actions">
-                  <a href="papers/GenomeVault_Paper.html" target="_blank">> read</a>
-                  <span class="separator">|</span>
-                  <a href="papers/AppendixA_Hypervector_Security.pdf" target="_blank">appendix_a</a>
-                  <span class="separator">|</span>
-                  <a href="papers/AppendixB_ZK_Proofs.pdf" target="_blank">appendix_b</a>
-                  <span class="separator">|</span>
-                  <a href="papers/AppendixC_Cost_Analysis.pdf" target="_blank">appendix_c</a>
+                  <a href="papers/GenomeVault_Paper.html" target="_blank">> main paper</a>
+                </div>
+              </div>
+
+              <!-- GenomeVault Technical Documentation -->
+              <div class="list-item" style="margin-left: 20px; border-left: 2px solid var(--accent); padding-left: 16px;">
+                <div class="list-title" style="font-size: 0.85rem;">Complete Privacy Stack Analysis</div>
+                <div class="list-meta">[OCT 2025 · TECHNICAL ANALYSIS]</div>
+                <div class="list-desc" style="font-size: 0.75rem; margin-top: 8px; color: var(--text-secondary);">
+                  Comprehensive architectural, mathematical, and security analysis of the four-layer privacy-preserving genomic computing architecture. Covers SHA-256² framework, multi-run consensus, hypervector security, and threat modeling.
+                </div>
+                <div class="list-actions">
+                  <a href="papers/GenomeVault_Privacy_Stack.html" target="_blank">> read analysis</a>
+                </div>
+              </div>
+
+              <div class="list-item" style="margin-left: 20px; border-left: 2px solid var(--accent); padding-left: 16px;">
+                <div class="list-title" style="font-size: 0.85rem;">Probabilistic Alignment Implementation Guide</div>
+                <div class="list-meta">[OCT 2025 · IMPLEMENTATION]</div>
+                <div class="list-desc" style="font-size: 0.75rem; margin-top: 8px; color: var(--text-secondary);">
+                  Complete implementation guide for the multi-reference probabilistic alignment system. Includes pipeline steps, configuration, performance optimization, and mathematical proofs.
+                </div>
+                <div class="list-actions">
+                  <a href="papers/GenomeVault_Alignment.html" target="_blank">> implementation guide</a>
+                </div>
+              </div>
+
+              <div class="list-item" style="margin-left: 20px; border-left: 2px solid var(--accent); padding-left: 16px;">
+                <div class="list-title" style="font-size: 0.85rem;">Multi-Run Consensus: Tunable Accuracy</div>
+                <div class="list-meta">[OCT 2025 · TECHNICAL]</div>
+                <div class="list-desc" style="font-size: 0.75rem; margin-top: 8px; color: var(--text-secondary);">
+                  Analysis of majority voting consensus across independent runs to achieve 95-99.9% accuracy. Demonstrates how strategic uncertainty for privacy becomes a tunable engineering parameter.
+                </div>
+                <div class="list-actions">
+                  <a href="papers/GenomeVault_Consensus.html" target="_blank">> consensus analysis</a>
+                </div>
+              </div>
+
+              <div class="list-item" style="margin-left: 20px; border-left: 2px solid var(--accent); padding-left: 16px;">
+                <div class="list-title" style="font-size: 0.85rem;">Security Architecture & Threat Model</div>
+                <div class="list-meta">[OCT 2025 · SECURITY]</div>
+                <div class="list-desc" style="font-size: 0.75rem; margin-top: 8px; color: var(--text-secondary);">
+                  Comprehensive threat model, defense mechanisms, and economic analysis of attacks. Covers information-theoretic security, post-quantum resistance, and forward secrecy guarantees.
+                </div>
+                <div class="list-actions">
+                  <a href="papers/GenomeVault_Security.html" target="_blank">> security analysis</a>
+                </div>
+              </div>
+
+              <div class="list-item" style="margin-left: 20px; border-left: 2px solid var(--accent); padding-left: 16px;">
+                <div class="list-title" style="font-size: 0.85rem;">SHA-256² Dual-Barrier Security</div>
+                <div class="list-meta">[OCT 2025 · CRYPTOGRAPHY]</div>
+                <div class="list-desc" style="font-size: 0.75rem; margin-top: 8px; color: var(--text-secondary);">
+                  Mathematical analysis of dual-barrier independence: file encryption (2^256) × alignment randomization (2^260) = 2^516 total security. Demonstrates why both barriers must be broken simultaneously.
+                </div>
+                <div class="list-actions">
+                  <a href="papers/GenomeVault_SHA256_Squared.html" target="_blank">> cryptographic framework</a>
+                </div>
+              </div>
+
+              <div class="list-item" style="margin-left: 20px; border-left: 2px solid var(--accent); padding-left: 16px;">
+                <div class="list-title" style="font-size: 0.85rem;">Hypervector Security Model</div>
+                <div class="list-meta">[AUG 2025 · INFORMATION-THEORETIC]</div>
+                <div class="list-desc" style="font-size: 0.75rem; margin-top: 8px; color: var(--text-secondary);">
+                  Analysis of information-theoretic security properties in high-dimensional vector representations. Covers irreversibility, noise tolerance, and 2^800,000 possible interpretations.
+                </div>
+                <div class="list-actions">
+                  <a href="papers/GenomeVault_Hypervector_Security.html" target="_blank">> HDC security</a>
+                </div>
+              </div>
+
+              <div class="list-item" style="margin-left: 20px; border-left: 2px solid var(--accent); padding-left: 16px;">
+                <div class="list-title" style="font-size: 0.85rem;">Zero-Knowledge Proofs: Production Guide</div>
+                <div class="list-meta">[AUG 2025 · ZK-SNARKS]</div>
+                <div class="list-desc" style="font-size: 0.75rem; margin-top: 8px; color: var(--text-secondary);">
+                  Production implementation guide for Groth16 ZK-SNARKs in genomic queries. Circuit design, trusted setup, proof generation, and verification protocols.
+                </div>
+                <div class="list-actions">
+                  <a href="papers/GenomeVault_ZK_Guide.html" target="_blank">> ZK implementation</a>
+                </div>
+              </div>
+
+              <div class="list-item" style="margin-left: 20px; border-left: 2px solid var(--accent); padding-left: 16px;">
+                <div class="list-title" style="font-size: 0.85rem;">Market Economics & Tokenomics</div>
+                <div class="list-meta">[OCT 2025 · ECONOMICS]</div>
+                <div class="list-desc" style="font-size: 0.75rem; margin-top: 8px; color: var(--text-secondary);">
+                  Economic analysis of genomic data marketplace, token design, incentive mechanisms, and market equilibrium. Covers data provider rewards, query pricing, and ecosystem sustainability.
+                </div>
+                <div class="list-actions">
+                  <a href="papers/GenomeVault_Economics.html" target="_blank">> economic analysis</a>
                 </div>
               </div>
 
