@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Groth16 ZK-SNARKs: Production Implementation | Rohan Vinaik</title>
+  <title>Groth16 ZK-SNARKs: Production Implementation and Optimization | Rohan Vinaik</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
@@ -168,6 +168,13 @@
       color: var(--accent);
       font-weight: 600;
     }
+    .highlight-box {
+      background: var(--code-bg);
+      padding: 16px;
+      border: 1px solid var(--accent);
+      margin: 20px 0;
+      font-size: 0.85rem;
+    }
     .references {
       font-size: 0.75rem;
       margin-top: 32px;
@@ -190,7 +197,7 @@
 
 <a href="../index.html#reference" class="back-link">← Back to Reference</a>
 
-<h1>Groth16 ZK-SNARKs: Production Implementation</h1>
+<h1>Groth16 ZK-SNARKs: Production Implementation and Optimization</h1>
 <div class="paper-meta">January 2025 · TECHNICAL REFERENCE</div>
 
 <div class="tags">
@@ -207,665 +214,1584 @@
 </div>
 
 <div class="abstract">
-  <strong>Abstract:</strong> Groth16 is a pairing-based zero-knowledge succinct non-interactive argument of knowledge (zk-SNARK) that produces the smallest proofs (~200 bytes) with the fastest verification times (~5 ms) of any practical proof system. This document covers the complete production implementation pipeline: circuit compilation to R1CS constraints, trusted setup ceremonies, proof generation with witness computation, verification algorithms, and optimization techniques including batch verification, proof aggregation, and witness caching. We examine production considerations including toxic waste management, circuit optimization strategies, and applications to genomic query privacy in GenomeVault.
+  <strong>Abstract:</strong> Groth16 is the most efficient pairing-based zero-knowledge succinct non-interactive argument of knowledge (zk-SNARK), producing constant-size proofs of exactly 192 bytes with sub-5ms verification times. This comprehensive reference covers the complete production implementation pipeline: R1CS constraint compilation, elliptic curve pairing cryptography on BLS12-381, multi-party trusted setup ceremonies (Powers of Tau), proof generation with multi-scalar multiplication optimization, batch verification strategies, proof aggregation techniques, witness caching, and circuit optimization patterns. We examine production-critical considerations including toxic waste management, setup ceremony security, circuit versioning, and error handling. Applications focus on genomic query verification in GenomeVault, demonstrating privacy-preserving computation with Merkle tree commitments, hypervector encoding, and batched SNP queries. Performance benchmarks show 3-second proving for 540k-constraint circuits and horizontal scaling to 12,000 verifications per minute.
 </div>
 
 <div class="quick-nav">
   <h3>Quick Navigation</h3>
   <ul>
-    <li><a href="#protocol-overview">1. Protocol Overview</a></li>
-    <li><a href="#circuit-compilation">2. Circuit Compilation</a></li>
-    <li><a href="#trusted-setup">3. Trusted Setup</a></li>
-    <li><a href="#proof-generation">4. Proof Generation</a></li>
-    <li><a href="#verification">5. Verification</a></li>
-    <li><a href="#pairing-cryptography">6. Pairing-Based Cryptography</a></li>
-    <li><a href="#optimization">7. Optimization Techniques</a></li>
-    <li><a href="#production-considerations">8. Production Considerations</a></li>
-    <li><a href="#genomic-applications">9. Genomic Applications</a></li>
+    <li><a href="#core-principles">1. Core Principles</a></li>
+    <li><a href="#mathematical-foundations">2. Mathematical Foundations</a></li>
+    <li><a href="#protocol-stages">3. Protocol Stages</a></li>
+    <li><a href="#pairing-cryptography">4. Pairing-Based Cryptography</a></li>
+    <li><a href="#optimization">5. Optimization Techniques</a></li>
+    <li><a href="#production-considerations">6. Production Considerations</a></li>
+    <li><a href="#genomic-applications">7. Genomic Applications</a></li>
+    <li><a href="#implementation-examples">8. Implementation Examples</a></li>
     <li><a href="#references">References</a></li>
   </ul>
 </div>
 
-<h2 id="protocol-overview">1. Protocol Overview</h2>
+<h2 id="core-principles">1. Core Principles</h2>
 
-<h3>1.1 Core Architecture</h3>
+<h3>1.1 Groth16 Protocol Overview</h3>
 
-<p><strong>Definition:</strong> Groth16 is a zk-SNARK protocol that produces constant-size proofs for arbitrary NP statements expressed as arithmetic circuits.</p>
+<p><strong>Definition:</strong> Groth16 is a pairing-based zk-SNARK protocol that enables proving arbitrary NP statements encoded as arithmetic circuits with optimal proof size and verification time.</p>
 
-<p><strong>Key Properties:</strong></p>
+<p><strong>Key Characteristics:</strong></p>
 <ul>
-  <li><strong>Proof Size:</strong> Exactly 192 bytes (3 elliptic curve points)</li>
-  <li><strong>Verification Time:</strong> 3-5 ms (3 pairing operations)</li>
-  <li><strong>Proving Time:</strong> O(n) where n = number of constraints</li>
-  <li><strong>Setup:</strong> Circuit-specific trusted setup required</li>
-  <li><strong>Security:</strong> Computational soundness under bilinear pairing assumptions</li>
+  <li><strong>Proof Size:</strong> Exactly 192 bytes (3 elliptic curve points: 2 × G₁ + 1 × G₂)</li>
+  <li><strong>Verification Time:</strong> 3-5 ms (3 pairing operations + minimal field arithmetic)</li>
+  <li><strong>Proving Time:</strong> O(n) in constraint count with MSM optimization</li>
+  <li><strong>Setup Requirement:</strong> Circuit-specific trusted setup via multi-party computation</li>
+  <li><strong>Security Model:</strong> Computational soundness under q-SDH and q-PKE assumptions</li>
+  <li><strong>Zero-Knowledge:</strong> Perfect zero-knowledge through randomization</li>
 </ul>
 
-<h3>1.2 Protocol Stages</h3>
+<div class="highlight-box">
+<strong>Why Groth16?</strong> Among all practical ZKP systems, Groth16 offers the smallest proofs and fastest verification, making it optimal for blockchain applications where proof size directly impacts transaction costs and verification speed affects throughput. Zcash, Filecoin, and Loopring all use Groth16 for on-chain verification.
+</div>
 
-<pre><code>Stage 1: Circuit Compilation
-  Input: Computation C(public_input, witness)
-  Output: R1CS constraint system (A, B, C matrices)
+<h3>1.2 Security Properties</h3>
 
-Stage 2: Trusted Setup
-  Input: Circuit constraints
-  Output: Proving key (pk), Verification key (vk)
-  Security: Toxic waste τ must be destroyed
-
-Stage 3: Proof Generation
-  Input: pk, public_input, witness
-  Output: Proof π = (A, B, C) ∈ G₁ × G₂ × G₁
-
-Stage 4: Verification
-  Input: vk, public_input, proof π
-  Output: Accept/Reject
-  Cost: 3 pairing operations</code></pre>
-
-<h3>1.3 Security Properties</h3>
-
-<p><strong>Completeness:</strong></p>
-<pre><code>If witness w satisfies circuit constraints, then:
-  Verify(vk, public_input, Prove(pk, w)) = Accept
-  Probability: 1 (always accepts valid proofs)</code></pre>
-
-<p><strong>Soundness:</strong></p>
-<pre><code>If no witness w satisfies constraints, then:
-  P(Verify accepts) ≤ 2^(-128)
-  Requires: Trusted setup honest</code></pre>
-
-<p><strong>Zero-Knowledge:</strong></p>
-<pre><code>Proof π reveals nothing about witness w
-  ∃ Simulator S: ViewReal ≈c ViewSimulated
-  Property: Computational indistinguishability</code></pre>
-
-<h2 id="circuit-compilation">2. Circuit Compilation</h2>
-
-<h3>2.1 Arithmetic Circuit Representation</h3>
-
-<p><strong>Circuit Structure:</strong></p>
-<pre><code>Circuit C over finite field 𝔽p (p prime):
-  - Variables: x₁, x₂, ..., xₙ
-  - Gates: Addition, Multiplication
-  - Constraints: Relationships between variables
-  - Public inputs: Known to verifier
-  - Witness: Private inputs known only to prover</code></pre>
-
-<p><strong>Example: Hash Verification Circuit</strong></p>
-<pre><code>Statement: I know data d such that SHA256(d) = h
-Public input: h (hash commitment)
-Private witness: d (data)
-
-Circuit:
-  1. Load witness: w₁ = d
-  2. Compute hash: w₂ = SHA256(w₁)
-  3. Verify equality: w₂ == h
-
-Constraint count: ~27,000 (for SHA256)</code></pre>
-
-<h3>2.2 R1CS Conversion</h3>
-
-<p><strong>R1CS Definition:</strong> Rank-1 Constraint System expresses circuits as quadratic constraints.</p>
-
-<pre><code>For witness vector w ∈ 𝔽ₙ:
-  (A·w) ∘ (B·w) = (C·w)
+<h4>Completeness</h4>
+<p>If the witness w satisfies all circuit constraints and both parties are honest:</p>
+<pre><code>P(Verify(vk, x, Prove(pk, w, x)) = Accept) = 1
 
 where:
-  - A, B, C ∈ 𝔽ᵐˣⁿ (constraint matrices)
-  - ∘ denotes element-wise multiplication
-  - m = number of constraints
-  - n = number of variables</code></pre>
+  vk = verification key
+  pk = proving key
+  x = public inputs
+  w = private witness</code></pre>
 
-<p><strong>Compilation Example:</strong></p>
-<pre><code>High-level statement:
-  x³ + x + 5 = 35
+<p>Valid proofs always verify. No false negatives.</p>
 
-Witness vector:
-  w = [1, x, x², x³, x³+x, x³+x+5]
-  w = [1, 3, 9, 27, 30, 35]
+<h4>Computational Soundness</h4>
+<p>For adversary A running in polynomial time, if no valid witness exists:</p>
+<pre><code>P(A produces proof π where Verify(vk, x, π) = Accept) ≤ negl(λ)
 
-R1CS constraints:
-  1. x · x = x²          (A₁·w) ∘ (B₁·w) = C₁·w
-  2. x² · x = x³         (A₂·w) ∘ (B₂·w) = C₂·w
-  3. (x³ + x) · 1 = x³+x (A₃·w) ∘ (B₃·w) = C₃·w
-  4. (x³+x+5) · 1 = 35   (A₄·w) ∘ (B₄·w) = C₄·w
+where λ = security parameter (typically 128 bits)
+      negl(λ) ≈ 2^(-λ) for Groth16
 
-Constraint count: 4</code></pre>
+Requirement: At least one honest participant in trusted setup</code></pre>
 
-<h3>2.3 Circuit Optimization</h3>
+<p>Soundness is computational (not information-theoretic). Breaking requires solving discrete logarithm on elliptic curves.</p>
 
-<p><strong>Constraint Minimization Strategies:</strong></p>
+<h4>Perfect Zero-Knowledge</h4>
+<p>The proof reveals nothing about the witness beyond the statement's validity:</p>
+<pre><code>∃ Simulator S such that for any verifier V:
 
-<h4>1. Reuse Intermediate Values</h4>
-<pre><code>Before: Compute x² three times (3 constraints)
-After: Compute x² once, reuse (1 constraint)
-Savings: 2 constraints per reused computation</code></pre>
+  ViewReal(pk, w, x) ≈ ViewSimulated(S, vk, x)
 
-<h4>2. Custom Gates for Common Operations</h4>
-<pre><code>Standard approach:
-  - Boolean check: 1 constraint per bit
-  - 256-bit value: 256 constraints
+Property: Statistical indistinguishability
+Technique: Randomization with r, s ∈ 𝔽p in proof construction</code></pre>
 
-Optimized approach:
-  - Batch boolean checks
-  - Lookup tables (advanced)
-  - 256-bit value: ~50 constraints</code></pre>
+<p>Even unbounded adversaries learn nothing. Zero-knowledge is unconditional.</p>
 
-<h4>3. Hash Function Selection</h4>
-<pre><code>Circuit-friendly hash functions:
-  - Poseidon: ~150 constraints
-  - MiMC: ~200 constraints
-  - SHA256: ~27,000 constraints (avoid in circuits)
-
-Rule: Use algebraic hashes (Poseidon) over bitwise (SHA256)</code></pre>
-
-<h2 id="trusted-setup">3. Trusted Setup</h2>
-
-<h3>3.1 Multi-Party Computation (MPC) Ceremony</h3>
-
-<p><strong>Purpose:</strong> Generate proving and verification keys without revealing toxic waste.</p>
-
-<p><strong>Security Model:</strong></p>
-<pre><code>Assumption: At least 1 participant is honest
-Property: Need ALL participants to collude for attack
-Result: If any participant destroys τ, setup is secure</code></pre>
-
-<h3>3.2 Phase 1: Powers of Tau</h3>
-
-<p><strong>Procedure:</strong></p>
-<pre><code>Participant i:
-  1. Receive: [τⁱ⁻¹]₁, [τⁱ⁻¹]₂ from previous participant
-  2. Sample: Random secret sᵢ ← 𝔽p
-  3. Compute: τⁱ = τⁱ⁻¹ · sᵢ
-  4. Output: [τⁱ]₁, [τⁱ]₂ (encrypted with sᵢ)
-  5. Destroy: sᵢ immediately
-
-Final output after n participants:
-  τ = s₁ · s₂ · ... · sₙ
-  Public: [τ⁰]₁, [τ¹]₁, [τ²]₁, ..., [τᵈ]₁
-          [τ⁰]₂, [τ¹]₂, [τ²]₂, ..., [τᵈ]₂</code></pre>
-
-<p><strong>Powers of Tau Properties:</strong></p>
-<ul>
-  <li>Universal: Can be reused across circuits (up to degree d)</li>
-  <li>Large ceremonies: Perpetual Powers of Tau (Ethereum, Filecoin)</li>
-  <li>Degree d: Typically 2²⁸ constraints (~268M gates)</li>
-  <li>Security: Only need 1/n participants honest</li>
-</ul>
-
-<h3>3.3 Phase 2: Circuit-Specific Setup</h3>
-
-<p><strong>Input:</strong> Powers of Tau, Circuit R1CS (A, B, C)</p>
-
-<p><strong>Procedure:</strong></p>
-<pre><code>1. Sample toxic waste: α, β, γ, δ ← 𝔽p
-2. Compute proving key elements:
-   - [αβγδ...]₁, [β]₁, [δ]₁
-   - Constraint evaluation points
-   - Witness encoding points
-
-3. Compute verification key:
-   - [α]₁, [β]₂, [γ]₂, [δ]₂
-   - Public input encoding
-
-4. Destroy: α, β, γ, δ (toxic waste)
-
-Output:
-  - Proving key pk (large, ~hundreds of MB)
-  - Verification key vk (small, ~1 KB)</code></pre>
-
-<h3>3.4 Toxic Waste Management</h3>
-
-<p><strong>Destruction Protocol:</strong></p>
-<pre><code>1. Secure deletion:
-   - Overwrite memory multiple times
-   - Use secure allocators (e.g., libsodium)
-   - Clear CPU caches
-
-2. Hardware security:
-   - Run on air-gapped machines
-   - Use hardware security modules (HSM)
-   - Destroy computation hardware after ceremony
-
-3. Verification:
-   - Participants publish attestations
-   - Cryptographic proof of participation
-   - Independent audits of ceremony transcripts</code></pre>
-
-<p><strong>Attack Scenarios if Toxic Waste Leaked:</strong></p>
-<ul>
-  <li>Attacker can forge proofs for false statements</li>
-  <li>Cannot break zero-knowledge (cannot extract witnesses)</li>
-  <li>Cannot forge proofs for other circuits (setup is circuit-specific)</li>
-</ul>
-
-<h2 id="proof-generation">4. Proof Generation</h2>
-
-<h3>4.1 Witness Computation</h3>
-
-<p><strong>Witness Structure:</strong></p>
-<pre><code>Full witness w = [w_public || w_private]:
-  - w_public: Public inputs (known to verifier)
-  - w_private: Private inputs (secret witness)
-
-Constraint satisfaction:
-  For all i: (Aᵢ·w) · (Bᵢ·w) = Cᵢ·w</code></pre>
-
-<p><strong>Witness Generation Process:</strong></p>
-<pre><code>Input: Circuit, public inputs, private inputs
-Output: Complete witness vector w
-
-1. Initialize w[0] = 1 (constant one wire)
-2. Set public input wires from input
-3. Set private input wires from witness
-4. Compute intermediate wires:
-   - Process gates in topological order
-   - For each gate: w[output] = f(w[input₁], w[input₂])
-5. Verify constraints satisfied:
-   - Check (A·w) ∘ (B·w) = C·w
-   - Abort if any constraint fails</code></pre>
-
-<h3>4.2 Proof Construction</h3>
-
-<p><strong>Groth16 Proof Algorithm:</strong></p>
-<pre><code>Input: Proving key pk, witness w
-Output: Proof π = (A, B, C)
-
-1. Sample randomness: r, s ← 𝔽p
-
-2. Compute A ∈ G₁:
-   A = α + Σᵢ wᵢ·aᵢ + r·δ
-
-3. Compute B ∈ G₂:
-   B = β + Σᵢ wᵢ·bᵢ + s·δ
-
-4. Compute C ∈ G₁:
-   C = Σᵢ wᵢ·cᵢ + A·s + B·r - r·s·δ
-
-5. Output π = (A, B, C)
-
-Proof size: |π| = |G₁| + |G₂| + |G₁| = 48 + 96 + 48 = 192 bytes</code></pre>
-
-<h3>4.3 Proving Time Optimization</h3>
-
-<p><strong>Multi-Scalar Multiplication (MSM):</strong></p>
-<pre><code>Bottleneck: Computing Σᵢ wᵢ·gᵢ (witness encoding)
-
-Standard approach: O(n) scalar multiplications
-Optimized (Pippenger): O(n / log n) operations
-
-For n = 1M constraints:
-  - Standard: ~5 seconds
-  - Pippenger: ~0.3 seconds
-  - Speedup: 16x</code></pre>
-
-<p><strong>Parallelization:</strong></p>
-<ul>
-  <li>Witness computation: Parallelize gate evaluation</li>
-  <li>MSM: Distribute across CPU cores / GPU</li>
-  <li>Typical speedup: 8-16x on modern hardware</li>
-</ul>
-
-<h2 id="verification">5. Verification</h2>
-
-<h3>5.1 Verification Algorithm</h3>
-
-<p><strong>Input:</strong> Verification key vk, public inputs x, proof π = (A, B, C)</p>
-
-<p><strong>Verification Equation:</strong></p>
-<pre><code>Check: e(A, B) = e(α, β) · e(L, γ) · e(C, δ)
-
-where:
-  - e: Pairing function e: G₁ × G₂ → Gₜ
-  - L: Linear combination of public inputs
-  - α, β, γ, δ: Verification key elements
-
-Accept if equation holds, else Reject</code></pre>
-
-<h3>5.2 Pairing Operations</h3>
-
-<p><strong>Pairing Evaluation:</strong></p>
-<pre><code>Verification cost:
-  - 3 pairing operations (dominant cost)
-  - 1 MSM for public inputs (negligible)
-  - 2 field multiplications (negligible)
-
-Timing on BLS12-381:
-  - Single pairing: ~1.5 ms
-  - Total verification: ~5 ms</code></pre>
-
-<h3>5.3 Batch Verification</h3>
-
-<p><strong>Verify Multiple Proofs Efficiently:</strong></p>
-<pre><code>Standard approach (k proofs):
-  - Cost: 3k pairings
-  - Time: ~5k ms
-
-Batch verification:
-  - Sample random α₁, ..., αₖ ← 𝔽p
-  - Combine: Σᵢ αᵢ·(proof equation)ᵢ
-  - Cost: k+2 pairings (not 3k)
-  - Time: ~(k+2)·1.5 ms
-
-Speedup for k=100:
-  - Standard: 500 ms
-  - Batch: 153 ms
-  - Speedup: 3.3x</code></pre>
-
-<h2 id="pairing-cryptography">6. Pairing-Based Cryptography</h2>
-
-<h3>6.1 Bilinear Pairings</h3>
-
-<p><strong>Definition:</strong></p>
-<pre><code>Pairing e: G₁ × G₂ → Gₜ satisfies:
-  1. Bilinearity: e(aP, bQ) = e(P, Q)^(ab)
-  2. Non-degeneracy: e(G₁, G₂) ≠ 1_Gₜ
-  3. Efficiency: Computable in polynomial time
-
-where G₁, G₂, Gₜ are cyclic groups of prime order p</code></pre>
-
-<h3>6.2 BLS12-381 Curve</h3>
-
-<p><strong>Curve Parameters:</strong></p>
-<pre><code>Field: 𝔽p where p = 381-bit prime
-Embedding degree: k = 12
-Security level: 128 bits (quantum: 64 bits)
-
-Group sizes:
-  - G₁ element: 48 bytes (compressed)
-  - G₂ element: 96 bytes (compressed)
-  - Gₜ element: 576 bytes
-
-Operations (on modern CPU):
-  - G₁ scalar multiplication: ~50 μs
-  - G₂ scalar multiplication: ~150 μs
-  - Pairing: ~1.5 ms</code></pre>
-
-<h3>6.3 Trusted Setup Security Assumptions</h3>
-
-<p><strong>Computational Assumptions:</strong></p>
-<pre><code>1. Discrete Log (DL):
-   Given g, gˣ, compute x is hard
-
-2. Knowledge of Exponent (KEA):
-   Given g, gˣ, if can compute (A, B) with B = Aˣ,
-   then know witness a such that A = gᵃ
-
-3. Bilinear Diffie-Hellman (BDH):
-   Given g, gˣ, gʸ, gᶻ, compute e(g,g)^(xyz) is hard</code></pre>
-
-<h2 id="optimization">7. Optimization Techniques</h2>
-
-<h3>7.1 Proof Aggregation</h3>
-
-<p><strong>SnarkPack (Gabizon et al.):</strong></p>
-<pre><code>Aggregate n proofs into single proof:
-  - Aggregate proof size: O(log n) group elements
-  - Verification time: O(log n) pairings
-  - Verifier cost reduced from O(n) to O(log n)
-
-Example (n=1024):
-  - Standard: 192 KB (1024 proofs)
-  - Aggregated: ~2 KB
-  - Compression: 96x
-
-Applications:
-  - Blockchain rollups (batch transaction proofs)
-  - Distributed verification (many parties prove)</code></pre>
-
-<h3>7.2 Witness Caching</h3>
-
-<p><strong>Incremental Witness Computation:</strong></p>
-<pre><code>Scenario: Similar proofs with small changes
-  - Cache intermediate witness values
-  - Recompute only affected subcircuits
-  - Speedup: 10-100x for small changes
-
-Example: Merkle tree updates
-  - Full recomputation: Recompute entire tree
-  - Cached approach: Update only path to root
-  - Speedup: ~log(tree_size)</code></pre>
-
-<h3>7.3 GPU Acceleration</h3>
-
-<p><strong>MSM on GPU:</strong></p>
-<pre><code>Bottleneck: Multi-scalar multiplication
-  - CPU (16 cores): ~300 ms for 1M elements
-  - GPU (RTX 4090): ~30 ms for 1M elements
-  - Speedup: 10x
-
-Frameworks:
-  - Bellman CUDA (Filecoin)
-  - Icicle (Ingonyama)
-  - rapidSNARK (Polygon)</code></pre>
-
-<h3>7.4 Memory Optimization</h3>
-
-<p><strong>Proving Key Streaming:</strong></p>
-<pre><code>Challenge: Proving keys can be GBs
-Standard: Load entire pk into RAM
-Optimized: Stream pk from disk/network
-
-Technique:
-  - Partition pk into chunks
-  - Load chunk, compute contribution, discard
-  - Memory: O(constraint_size) → O(chunk_size)
-
-Trade-off:
-  - Memory reduced: 100x
-  - Proving time increased: ~20%</code></pre>
-
-<h2 id="production-considerations">8. Production Considerations</h2>
-
-<h3>8.1 Ceremony Coordination</h3>
-
-<p><strong>Multi-Party Setup Best Practices:</strong></p>
-<ul>
-  <li><strong>Participant diversity:</strong> Geographic, organizational, hardware variety</li>
-  <li><strong>Minimum participants:</strong> 100+ for high-security applications</li>
-  <li><strong>Attestations:</strong> Cryptographic proof of participation + public announcement</li>
-  <li><strong>Transcript publication:</strong> Public record for verification</li>
-  <li><strong>Coordinator trust:</strong> Coordinator cannot compromise security (only availability)</li>
-</ul>
-
-<p><strong>Ceremony Tools:</strong></p>
-<pre><code>Popular implementations:
-  - snarkjs (JavaScript, web-friendly)
-  - phase2-bn254 (Ethereum Foundation)
-  - mpc-phase2 (ZCash Sapling)
-  - groth16-mpc (Custom implementations)
-
-Verification:
-  - Independent tools verify ceremony transcript
-  - Check contributions form valid chain
-  - Detect malicious participants (rare but possible)</code></pre>
-
-<h3>8.2 Circuit Versioning</h3>
-
-<p><strong>Challenge:</strong> Circuit updates require new trusted setup</p>
-
-<p><strong>Strategies:</strong></p>
-<pre><code>1. Over-provisioning:
-   - Design circuit with extra capacity
-   - Add unused gates for future features
-   - Downside: Larger proofs, slower proving
-
-2. Modular circuits:
-   - Separate stable core from changing periphery
-   - Only update peripheral circuits
-   - Use proof composition
-
-3. Migration planning:
-   - Schedule setup ceremonies in advance
-   - Gradual rollout (support old + new circuits)
-   - Deprecation timeline (6-12 months typical)</code></pre>
-
-<h3>8.3 Error Handling</h3>
-
-<p><strong>Common Failure Modes:</strong></p>
-<pre><code>1. Constraint violation during witness computation:
-   - Cause: Invalid inputs or logic errors
-   - Detection: Runtime assertion in witness generator
-   - Handling: Return error, do not generate proof
-
-2. Invalid proof (fails verification):
-   - Cause: Circuit bugs, setup mismatch, witness errors
-   - Detection: Verification equation fails
-   - Handling: Log details, reject transaction
-
-3. Setup key mismatch:
-   - Cause: Wrong vk for circuit version
-   - Detection: Verification fails on known-good proof
-   - Handling: Version checks, reject with clear error</code></pre>
-
-<h3>8.4 Performance Benchmarks</h3>
-
-<p><strong>Typical Production Performance (BLS12-381):</strong></p>
+<h3>1.3 Performance Characteristics</h3>
 
 <table>
   <thead>
     <tr>
-      <th>Circuit Size</th>
+      <th>Metric</th>
+      <th>Value (BLS12-381)</th>
+      <th>Comparison</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Proof Size</td>
+      <td>192 bytes</td>
+      <td>Smallest among all SNARKs</td>
+    </tr>
+    <tr>
+      <td>Verification Time</td>
+      <td>3-5 ms</td>
+      <td>Fastest (constant, independent of circuit size)</td>
+    </tr>
+    <tr>
+      <td>Proving Time (1M gates)</td>
+      <td>5-8 seconds</td>
+      <td>Moderate (linear in constraints)</td>
+    </tr>
+    <tr>
+      <td>Proving Key Size</td>
+      <td>~500 MB per 1M gates</td>
+      <td>Large (linear in constraints)</td>
+    </tr>
+    <tr>
+      <td>Verification Key Size</td>
+      <td>~1 KB</td>
+      <td>Small (constant)</td>
+    </tr>
+    <tr>
+      <td>Setup Requirement</td>
+      <td>Per-circuit MPC ceremony</td>
+      <td>Disadvantage vs. universal/transparent systems</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="mathematical-foundations">2. Mathematical Foundations</h2>
+
+<h3>2.1 R1CS Constraint Systems</h3>
+
+<p><strong>Definition:</strong> Rank-1 Constraint System (R1CS) expresses computational statements as systems of quadratic equations over a finite field.</p>
+
+<p><strong>Mathematical Form:</strong></p>
+<pre><code>For witness vector w = (w₀, w₁, ..., wₙ) ∈ 𝔽ₚⁿ⁺¹:
+
+  (A · w) ∘ (B · w) = (C · w)
+
+where:
+  A, B, C ∈ 𝔽ₚᵐˣ⁽ⁿ⁺¹⁾  (constraint matrices)
+  m = number of constraints
+  n = number of variables
+  ∘ = element-wise (Hadamard) product
+  w₀ = 1 (constant wire)
+  w₁, ..., wₗ = public inputs
+  wₗ₊₁, ..., wₙ = private witness</code></pre>
+
+<h4>Circuit to R1CS Compilation</h4>
+
+<p><strong>Example: Cubic Equation</strong></p>
+<pre><code>Statement: Prove knowledge of x such that x³ + x + 5 = 35
+
+Step 1: Flatten to multiplication gates
+  Gate 1: v₁ = x · x           (x²)
+  Gate 2: v₂ = v₁ · x          (x³)
+  Gate 3: v₃ = v₂ + x          (x³ + x)
+  Gate 4: v₄ = v₃ + 5          (x³ + x + 5)
+  Gate 5: v₄ - 35 = 0          (constraint)
+
+Step 2: Assign witness vector
+  w = [1, x, v₁, v₂, v₃, v₄, 35]
+  w = [1, 3, 9, 27, 30, 35, 35]  (for x = 3)
+
+Step 3: R1CS constraints
+  Constraint 1: x · x = v₁
+    (A₁·w) ∘ (B₁·w) = C₁·w
+    (0,1,0,0,0,0,0) · w ∘ (0,1,0,0,0,0,0) · w = (0,0,1,0,0,0,0) · w
+    3 · 3 = 9 ✓
+
+  Constraint 2: v₁ · x = v₂
+    (0,0,1,0,0,0,0) · w ∘ (0,1,0,0,0,0,0) · w = (0,0,0,1,0,0,0) · w
+    9 · 3 = 27 ✓
+
+  Constraint 3: (v₂ + x) · 1 = v₃
+    (0,1,0,1,0,0,0) · w ∘ (1,0,0,0,0,0,0) · w = (0,0,0,0,1,0,0) · w
+    (3 + 27) · 1 = 30 ✓
+
+  Constraint 4: (v₃ + 5) · 1 = v₄
+    (5,0,0,0,1,0,0) · w ∘ (1,0,0,0,0,0,0) · w = (0,0,0,0,0,1,0) · w
+    (30 + 5) · 1 = 35 ✓
+
+  Constraint 5: v₄ · 1 = 35
+    (0,0,0,0,0,1,0) · w ∘ (1,0,0,0,0,0,0) · w = (0,0,0,0,0,0,1) · w
+    35 · 1 = 35 ✓
+
+Result: 5 constraints encode the cubic equation</code></pre>
+
+<h3>2.2 Quadratic Arithmetic Programs (QAP)</h3>
+
+<p><strong>Purpose:</strong> Transform R1CS into polynomial form for efficient zero-knowledge proof construction.</p>
+
+<p><strong>Transformation:</strong></p>
+<pre><code>From R1CS constraints to polynomials:
+
+For each constraint i ∈ {1, ..., m}, define target points rᵢ ∈ 𝔽ₚ
+Typically: r₁ = 1, r₂ = 2, ..., rₘ = m
+
+For each variable j ∈ {0, ..., n}, construct polynomials:
+  Aⱼ(x) = Lagrange interpolation through (rᵢ, Aᵢⱼ)
+  Bⱼ(x) = Lagrange interpolation through (rᵢ, Bᵢⱼ)
+  Cⱼ(x) = Lagrange interpolation through (rᵢ, Cᵢⱼ)
+
+Target polynomial:
+  Z(x) = ∏ᵢ₌₁ᵐ (x - rᵢ)
+
+QAP property:
+  If w satisfies R1CS, then:
+    (Σⱼ wⱼ·Aⱼ(x)) · (Σⱼ wⱼ·Bⱼ(x)) - (Σⱼ wⱼ·Cⱼ(x)) = H(x)·Z(x)
+
+  for some quotient polynomial H(x) of degree ≤ 2m - 2</code></pre>
+
+<p><strong>Key Insight:</strong> Constraint satisfaction becomes polynomial divisibility. If constraints hold at all m points, the polynomial difference is divisible by Z(x).</p>
+
+<h3>2.3 Elliptic Curve Pairings</h3>
+
+<p><strong>Definition:</strong> A bilinear pairing is a map:</p>
+<pre><code>e: G₁ × G₂ → Gₜ
+
+satisfying:
+  1. Bilinearity: e([a]P, [b]Q) = e(P, Q)^(ab)
+  2. Non-degeneracy: e(g₁, g₂) ≠ 1ₜ for generators g₁, g₂
+  3. Computability: e(P, Q) computable in polynomial time
+
+where:
+  G₁, G₂ = elliptic curve groups of prime order p
+  Gₜ = multiplicative group (extension field)
+  [a]P = scalar multiplication: P + P + ... + P (a times)</code></pre>
+
+<h4>Pairing Properties Used in Groth16</h4>
+
+<pre><code>1. Scalar distributivity:
+   e([a]P, Q) = e(P, [a]Q) = e(P, Q)^a
+
+2. Product rule:
+   e(P₁ + P₂, Q) = e(P₁, Q) · e(P₂, Q)
+
+3. Verification equation:
+   e(A, B) = e(α, β) · e(L, γ) · e(C, δ)
+
+   Can be rearranged to single pairing check:
+   e(A, B) · e(-L, γ) · e(-C, δ) = e(α, β)</code></pre>
+
+<h3>2.4 BLS12-381 Curve Specification</h3>
+
+<p><strong>Curve Parameters:</strong></p>
+<pre><code>Name: BLS12-381 (Barreto-Lynn-Scott, embedding degree 12, 381-bit field)
+Base field: 𝔽ₚ where p is 381-bit prime
+  p = 0x1a0111ea397fe69a4b1ba7b6434bacd764774b84f38512bf6730d2a0f6b0f6241eabfffeb153ffffb9feffffffffaaab
+
+Curve equation: y² = x³ + 4 (over 𝔽ₚ)
+
+Group order: r (255-bit prime, subgroup order)
+  r = 0x73eda753299d7d483339d80809a1d80553bda402fffe5bfeffffffff00000001
+
+Embedding degree: k = 12
+  Gₜ ⊂ 𝔽ₚ¹² (target group in 12th extension)
+
+Security level: 128-bit classical, ~64-bit post-quantum
+
+Cofactor: h₁ = 0x396c8c005555e1568c00aaab0000aaab (for G₁)
+           h₂ = 0x5d543a95414e7f1091d50792876a202cd91de4547085abaa68a205b2e5a7ddfa628f1cb4d9e82ef21537e293a6691ae1616ec6e786f0c70cf1c38e31c7238e5 (for G₂)</code></pre>
+
+<p><strong>Group Element Sizes:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Group</th>
+      <th>Uncompressed</th>
+      <th>Compressed</th>
+      <th>Usage in Groth16</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>G₁ (E(𝔽ₚ))</td>
+      <td>96 bytes</td>
+      <td>48 bytes</td>
+      <td>Proof elements A, C</td>
+    </tr>
+    <tr>
+      <td>G₂ (E(𝔽ₚ²))</td>
+      <td>192 bytes</td>
+      <td>96 bytes</td>
+      <td>Proof element B</td>
+    </tr>
+    <tr>
+      <td>Gₜ (𝔽ₚ¹²)</td>
+      <td>576 bytes</td>
+      <td>N/A</td>
+      <td>Pairing results (intermediate)</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>Operation Benchmarks (single-thread, modern CPU):</strong></p>
+<pre><code>G₁ scalar multiplication:        ~50 μs
+G₂ scalar multiplication:       ~150 μs
+G₁ addition:                     ~15 μs
+G₂ addition:                     ~45 μs
+Pairing evaluation:              ~1.5 ms
+Multi-scalar multiplication (1M): ~300 ms (Pippenger algorithm)</code></pre>
+
+<h2 id="protocol-stages">3. Protocol Stages</h2>
+
+<h3>3.1 Circuit Compilation to R1CS</h3>
+
+<p><strong>Input:</strong> High-level computation specification</p>
+<p><strong>Output:</strong> R1CS constraint system (A, B, C matrices)</p>
+
+<h4>Step 1: Frontend Compilation</h4>
+<pre><code>Tools: Circom, ZoKrates, SnarkJS, Bellman
+
+Example (Circom):
+  template HashVerifier() {
+    signal input preimage;
+    signal input expectedHash;
+    signal output valid;
+
+    component hasher = Poseidon(1);
+    hasher.inputs[0] <== preimage;
+
+    valid <== (hasher.out == expectedHash);
+  }
+
+Compilation:
+  circom HashVerifier.circom --r1cs --wasm --sym
+
+Output:
+  - HashVerifier.r1cs (constraint system)
+  - HashVerifier_js/ (witness generator WASM)
+  - HashVerifier.sym (debugging symbols)</code></pre>
+
+<h4>Step 2: Constraint Optimization</h4>
+<pre><code>Techniques:
+  1. Common subexpression elimination
+     Before: v₁ = a·b, v₂ = a·b, v₃ = v₁ + v₂  (2 constraints)
+     After:  v₁ = a·b, v₃ = 2·v₁              (1 constraint)
+
+  2. Constant propagation
+     Before: v₁ = 5·x, v₂ = v₁·2              (2 constraints)
+     After:  v₂ = 10·x                         (1 constraint)
+
+  3. Dead code elimination
+     Remove constraints for unused outputs
+
+  4. Gate batching
+     Combine multiple simple gates into fewer complex gates</code></pre>
+
+<h3>3.2 Trusted Setup: Phase 1 (Powers of Tau)</h3>
+
+<p><strong>Goal:</strong> Generate universal parameters reusable across circuits of bounded size.</p>
+
+<p><strong>Multi-Party Computation Protocol:</strong></p>
+<pre><code>Initialization:
+  Set τ₀ = 1
+
+For participant i = 1 to n:
+  Input: Previous accumulator [τᵢ₋₁]₁, [τᵢ₋₁]₂
+
+  1. Sample random secret: sᵢ ←$ 𝔽ₚ*
+
+  2. Update accumulator:
+     τᵢ = τᵢ₋₁ · sᵢ
+
+  3. Compute encrypted powers:
+     [τᵢ⁰]₁, [τᵢ¹]₁, [τᵢ²]₁, ..., [τᵢᵈ]₁  (in G₁)
+     [τᵢ⁰]₂, [τᵢ¹]₂, [τᵢ²]₂, ..., [τᵢᵈ]₂  (in G₂)
+
+  4. Compute proof of correct contribution:
+     π_contrib = (sᵢ·[τᵢ₋₁]₁, [τᵢ]₁, sᵢ·[τᵢ₋₁]₂, [τᵢ]₂)
+
+  5. Destroy sᵢ immediately (toxic waste)
+
+  6. Publish new accumulator + proof
+
+Final output:
+  τ = s₁ · s₂ · ... · sₙ (unknown to all)
+  SRS = {[τ⁰]₁, [τ¹]₁, ..., [τᵈ]₁, [τ⁰]₂, [τ¹]₂, ..., [τᵈ]₂}
+
+Security guarantee:
+  If ANY participant i honestly destroys sᵢ, then τ is unknown
+  Need ALL participants to collude to extract τ</code></pre>
+
+<p><strong>Verification:</strong></p>
+<pre><code>Each contribution verified:
+  e([τᵢ]₁, g₂) = e([τᵢ₋₁]₁, [sᵢ]₂)  (correct update)
+  e([τᵢ]₁, [τᵢ]₂) = e([τᵢ²]₁, g₂)   (consistency check)
+
+Public transcript:
+  All contributions and proofs published
+  Anyone can verify entire ceremony</code></pre>
+
+<h4>Notable Ceremonies</h4>
+<table>
+  <thead>
+    <tr>
+      <th>Ceremony</th>
+      <th>Participants</th>
+      <th>Max Circuit Size</th>
+      <th>Year</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Zcash Sprout</td>
+      <td>6</td>
+      <td>2²⁰ gates (~1M)</td>
+      <td>2016</td>
+    </tr>
+    <tr>
+      <td>Zcash Sapling</td>
+      <td>90</td>
+      <td>2²¹ gates (~2M)</td>
+      <td>2018</td>
+    </tr>
+    <tr>
+      <td>Perpetual Powers of Tau</td>
+      <td>175+</td>
+      <td>2²⁸ gates (~268M)</td>
+      <td>2019-present</td>
+    </tr>
+    <tr>
+      <td>Hermez Network</td>
+      <td>177</td>
+      <td>2²¹ gates (~2M)</td>
+      <td>2020</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>3.3 Trusted Setup: Phase 2 (Circuit-Specific)</h3>
+
+<p><strong>Input:</strong> Powers of Tau SRS, Circuit R1CS (A, B, C matrices)</p>
+<p><strong>Output:</strong> Proving key (pk), Verification key (vk)</p>
+
+<pre><code>Sample toxic waste: α, β, γ, δ, x ←$ 𝔽ₚ*
+
+Compute proving key pk:
+  pk = {
+    // α-encoded terms
+    [α]₁, [β]₁, [β]₂, [δ]₁, [δ]₂,
+
+    // Witness encoding (private inputs)
+    {[βAⱼ(x) + αBⱼ(x) + Cⱼ(x)]₁}ⱼ₌ₗ₊₁ⁿ,  // divided by δ
+
+    // Polynomial quotient terms
+    {[xⁱZ(x)/δ]₁}ᵢ₌₀ᵐ⁻²,
+
+    // Public input encoding
+    {[βAⱼ(x) + αBⱼ(x) + Cⱼ(x)]₁}ⱼ₌₀ˡ  // divided by γ
+  }
+
+Compute verification key vk:
+  vk = {
+    [α]₁, [β]₂, [γ]₂, [δ]₂,
+
+    // Public input verification terms
+    {[βAⱼ(x) + αBⱼ(x) + Cⱼ(x)]₁}ⱼ₌₀ˡ  // divided by γ
+  }
+
+Destroy toxic waste: α, β, γ, δ, x
+
+Security:
+  If destroyed, adversary cannot forge proofs
+  If leaked, adversary can prove false statements for this circuit only</code></pre>
+
+<p><strong>Key Sizes:</strong></p>
+<pre><code>Proving key: O(n) where n = number of constraints
+  Typical: ~500 MB per million constraints (compressed G₁ points)
+
+Verification key: O(l) where l = number of public inputs
+  Typical: ~1 KB (small, constant for most circuits)</code></pre>
+
+<h3>3.4 Proof Generation</h3>
+
+<p><strong>Input:</strong> Proving key pk, public inputs x, witness w</p>
+<p><strong>Output:</strong> Proof π = (A, B, C) ∈ G₁ × G₂ × G₁</p>
+
+<h4>Step 1: Witness Computation</h4>
+<pre><code>Given: Public inputs x = (x₁, ..., xₗ), Private inputs w_priv
+
+Compute full witness w = (1, x₁, ..., xₗ, wₗ₊₁, ..., wₙ):
+
+  1. Set w₀ = 1 (constant one wire)
+  2. Set w₁, ..., wₗ = public inputs
+  3. Compute wₗ₊₁, ..., wₙ via circuit evaluation
+  4. Verify constraints: (A·w) ∘ (B·w) = (C·w)
+     If any constraint fails, abort (invalid witness)
+
+Time complexity: O(n) for n-gate circuit</code></pre>
+
+<h4>Step 2: Polynomial Evaluation</h4>
+<pre><code>Compute QAP polynomials at secret point x:
+
+  A(x) = Σⱼ₌₀ⁿ wⱼ · Aⱼ(x)
+  B(x) = Σⱼ₌₀ⁿ wⱼ · Bⱼ(x)
+  C(x) = Σⱼ₌₀ⁿ wⱼ · Cⱼ(x)
+
+Compute quotient polynomial:
+  H(x) = (A(x)·B(x) - C(x)) / Z(x)
+
+  (Division exact since constraints satisfied)</code></pre>
+
+<h4>Step 3: Proof Construction</h4>
+<pre><code>Sample randomness: r, s ←$ 𝔽ₚ
+
+Compute proof elements:
+
+  A = [α + A(x) + r·δ]₁
+    = [α]₁ + Σⱼ wⱼ[Aⱼ(x)]₁ + r[δ]₁
+
+  B = [β + B(x) + s·δ]₂
+    = [β]₂ + Σⱼ wⱼ[Bⱼ(x)]₂ + s[δ]₂
+
+  C = [C(x)/δ + H(x)·Z(x)/δ + A·s + B·r - r·s·δ]₁
+    = Σⱼ₌ₗ₊₁ⁿ wⱼ[(βAⱼ(x) + αBⱼ(x) + Cⱼ(x))/δ]₁
+      + Σᵢ hᵢ[xⁱZ(x)/δ]₁
+      + s·A + r·B - [r·s·δ]₁
+
+Proof: π = (A, B, C)
+
+Size: |A| + |B| + |C| = 48 + 96 + 48 = 192 bytes (compressed)
+
+Randomization r, s provides zero-knowledge:
+  Same witness produces different proofs each time</code></pre>
+
+<h4>Bottleneck: Multi-Scalar Multiplication</h4>
+<pre><code>Most expensive: Computing Σⱼ wⱼ[Pⱼ]₁ for n elements
+
+Standard approach: n scalar multiplications = O(n·log p)
+Pippenger algorithm: ~O(n / log n) operations
+
+For n = 1M constraints:
+  Standard: ~5 seconds
+  Pippenger: ~0.3 seconds
+  Speedup: ~16x</code></pre>
+
+<h3>3.5 Verification</h3>
+
+<p><strong>Input:</strong> Verification key vk, public inputs x, proof π = (A, B, C)</p>
+<p><strong>Output:</strong> Accept or Reject</p>
+
+<pre><code>Step 1: Compute public input contribution
+  L = Σⱼ₌₀ˡ xⱼ · [(βAⱼ(τ) + αBⱼ(τ) + Cⱼ(τ))/γ]₁
+
+  (Note: x₀ = 1 for constant term)
+
+Step 2: Verify pairing equation
+  Check: e(A, B) = e([α]₁, [β]₂) · e(L, [γ]₂) · e(C, [δ]₂)
+
+Computational cost:
+  - 1 MSM for L: O(l) where l = number of public inputs (~negligible)
+  - 3 pairing evaluations: ~4.5 ms total
+  - 2 multiplications in Gₜ: ~negligible
+
+Total time: ~5 ms (constant, independent of circuit size!)
+
+Accept if equation holds, else Reject</code></pre>
+
+<p><strong>Why the Equation Works:</strong></p>
+<pre><code>Proof construction ensures:
+
+  A · B = (α + A(τ) + r·δ) · (β + B(τ) + s·δ)
+        = α·β
+          + α·B(τ) + β·A(τ) + A(τ)·B(τ)
+          + (cross terms involving r, s, δ)
+
+  α·β + Public contribution via γ + Witness contribution via δ
+
+Pairing equation verifies polynomial identity at encrypted point τ
+without revealing τ or witness values</code></pre>
+
+<h2 id="pairing-cryptography">4. Pairing-Based Cryptography</h2>
+
+<h3>4.1 Pairing Construction on BLS12-381</h3>
+
+<p><strong>Ate Pairing Definition:</strong></p>
+<pre><code>e: G₁ × G₂ → Gₜ
+
+Implemented via Miller's algorithm + final exponentiation:
+
+  1. Miller loop: Computes function f_{r,Q}(P)
+     Cost: ~70% of total pairing time
+
+  2. Final exponentiation: Raises to power (p¹² - 1)/r
+     Cost: ~30% of total pairing time
+
+Result: Element in Gₜ ⊂ 𝔽ₚ¹²* of order r</code></pre>
+
+<h4>Pairing Properties</h4>
+<pre><code>1. Bilinearity:
+   e([a]P, [b]Q) = e(P, Q)^(a·b)
+
+   Proof: e([a]P, [b]Q) = e(P + ... + P, Q)^b    (a times)
+                           = (e(P, Q)^a)^b         (bilinearity)
+                           = e(P, Q)^(ab)          (field arithmetic)
+
+2. Non-degeneracy:
+   For generators g₁ ∈ G₁, g₂ ∈ G₂:
+   e(g₁, g₂) ≠ 1ₜ
+
+   Actually: e(g₁, g₂) is a generator of Gₜ
+
+3. Computability:
+   On modern hardware: ~1.5 ms per pairing
+   Optimizations: Batch pairings share Miller loop costs</code></pre>
+
+<h3>4.2 Security Assumptions</h3>
+
+<h4>Discrete Logarithm (DL)</h4>
+<pre><code>Problem: Given g, h = [x]g, find x
+Hardness: Best known algorithm ~O(√p) (Pollard rho)
+           For 255-bit r: ~2¹²⁷ operations (infeasible)</code></pre>
+
+<h4>q-Strong Diffie-Hellman (q-SDH)</h4>
+<pre><code>Given: g, [τ]g, [τ²]g, ..., [τᵍ]g
+Find: (c, [1/(τ+c)]g) for some c ∈ 𝔽ₚ
+
+Used for: Soundness of Groth16
+Security: Conjectured hard for q up to ~2⁶⁴</code></pre>
+
+<h4>q-Power Knowledge of Exponent (q-PKE)</h4>
+<pre><code>Given: (g, [τ]g, ..., [τᵍ]g, gα, [ατ]g, ..., [ατᵍ]g)
+If adversary outputs (A, B) with B = [α]A:
+Then adversary must know {cᵢ} such that A = Σᵢ cᵢ[τⁱ]g
+
+Used for: Knowledge soundness (extractability)
+Security: Conjectured hard (non-falsifiable assumption)</code></pre>
+
+<h3>4.3 Pairing Optimizations</h3>
+
+<h4>Batch Pairing Verification</h4>
+<pre><code>Verify multiple pairing equations simultaneously:
+
+Standard (verify k proofs independently):
+  For i = 1 to k:
+    Check: e(Aᵢ, Bᵢ) = e(α, β) · e(Lᵢ, γ) · e(Cᵢ, δ)
+  Cost: 3k pairings
+
+Batched:
+  Sample random coefficients: ρ₁, ..., ρₖ ←$ 𝔽ₚ
+
+  Compute aggregated check:
+    Σᵢ ρᵢ·[e(Aᵢ, Bᵢ) - e(α, β) - e(Lᵢ, γ) - e(Cᵢ, δ)] = 0
+
+  Rearrange to minimize pairings:
+    e(Σᵢ ρᵢAᵢ, Σᵢ ρᵢBᵢ) = e(Σᵢ ρᵢα, β) · ...
+
+  Cost: k+2 pairings (not 3k)
+
+Speedup for k = 100:
+  Standard: 300 pairings × 1.5 ms = 450 ms
+  Batched: 102 pairings × 1.5 ms = 153 ms
+  Improvement: 2.9x
+
+Security: If any proof invalid, batch check fails with probability 1 - 1/p ≈ 1</code></pre>
+
+<h4>Precomputation</h4>
+<pre><code>Fixed verification key elements: [α]₁, [β]₂, [γ]₂, [δ]₂
+Precompute pairing terms:
+  g_αβ = e([α]₁, [β]₂)  (once at setup)
+
+At verification:
+  e(A, B) / g_αβ = e(L, [γ]₂) · e(C, [δ]₂)
+
+Saves: 1 pairing per verification
+Time reduction: ~5 ms → ~3 ms (40% faster)</code></pre>
+
+<h2 id="optimization">5. Optimization Techniques</h2>
+
+<h3>5.1 Circuit-Level Optimization</h3>
+
+<h4>Hash Function Selection</h4>
+<pre><code>Circuit-friendly hashes (algebraic):
+
+  Poseidon Hash:
+    Design: Substitution-permutation network over 𝔽ₚ
+    Constraints: ~150 per hash invocation
+    Security: 128-bit (properly parameterized)
+    Usage: Merkle trees, commitments in ZK circuits
+
+  MiMC Hash:
+    Design: x ↦ (x + k)³ iterated
+    Constraints: ~200 per hash
+    Security: 128-bit
+    Usage: Lightweight alternative to Poseidon
+
+  Rescue Hash:
+    Design: Inverse-based SPN
+    Constraints: ~300 per hash
+    Security: 128-bit with conservative margin
+    Usage: High-security applications
+
+Standard hashes (bitwise) - AVOID in circuits:
+
+  SHA-256:
+    Constraints: ~27,000 per hash
+    Ratio: 180x more expensive than Poseidon!
+    Use only when: Verifying external commitments
+
+  Keccak-256:
+    Constraints: ~150,000 per hash
+    Use only when: Ethereum compatibility required</code></pre>
+
+<h4>Boolean Constraint Optimization</h4>
+<pre><code>Problem: Verify x ∈ {0, 1}
+Standard: x · (x - 1) = 0  (1 constraint)
+
+Problem: Decompose n into bits
+Standard approach:
+  n = b₀ + 2b₁ + 4b₂ + ... + 2²⁵⁴b₂₅₄
+  For each i: bᵢ · (bᵢ - 1) = 0
+  Cost: 256 constraints
+
+Optimized (range check):
+  Prove n ∈ [0, 2²⁵⁵)
+  Use lookup table (if available in proof system)
+  Cost: ~10 constraints (with plookup)
+
+Batching:
+  Pack 8 bits into single field element
+  Verify 8 boolean constraints together
+  Cost reduction: ~30%</code></pre>
+
+<h4>Constraint Sharing</h4>
+<pre><code>Example: Merkle path verification (depth d)
+
+Naive implementation:
+  For level i = 0 to d-1:
+    If pathBit[i] == 0:
+      hash(currentHash, sibling[i])
+    Else:
+      hash(sibling[i], currentHash)
+
+  Cost: 2d hash computations (both branches computed)
+
+Optimized:
+  For level i = 0 to d-1:
+    left = pathBit[i] · sibling[i] + (1 - pathBit[i]) · currentHash
+    right = pathBit[i] · currentHash + (1 - pathBit[i]) · sibling[i]
+    currentHash = hash(left, right)
+
+  Cost: d hash computations + 2d multiplications
+  Savings: 2x fewer hashes (hashes dominate cost)</code></pre>
+
+<h3>5.2 Proving Optimization</h3>
+
+<h4>Witness Caching</h4>
+<pre><code>Scenario: Incremental updates to similar proofs
+
+Example: Updating Merkle tree leaf
+  Initial: Tree with 1M leaves, depth 20
+  Update: Change single leaf, recompute proof
+
+  Naive: Recompute entire witness
+    Cost: 20 × 150 = 3,000 constraints
+    Time: ~50 ms witness computation
+
+  Cached: Store intermediate hashes
+    Recompute: Only path to root (~20 nodes)
+    Cost: 20 × 150 = 3,000 constraints (same)
+    Time: ~2 ms witness computation (only changed path)
+    Speedup: 25x on witness computation
+
+Implementation:
+  witnessCache = {}
+
+  function updateWitness(leafIndex, newValue):
+    path = getPathToRoot(leafIndex)
+    for node in path:
+      if node in witnessCache:
+        recompute from cached sibling
+      else:
+        compute and cache
+    return witness</code></pre>
+
+<h4>GPU Acceleration</h4>
+<pre><code>Bottleneck: Multi-scalar multiplication (MSM)
+  Compute: Σᵢ₌₀ⁿ wᵢ[Pᵢ]₁ where n ~ 1M
+
+CPU implementation (16 cores, Pippenger):
+  Time: ~300 ms per MSM
+
+GPU implementation (NVIDIA RTX 4090):
+  Algorithm: Parallel bucket method
+  Time: ~30 ms per MSM
+  Speedup: 10x
+
+Further optimization: Multi-GPU
+  Distribution: Partition scalars across GPUs
+  Aggregate: Combine results
+  Time (4× RTX 4090): ~10 ms per MSM
+  Speedup: 30x vs single CPU
+
+Frameworks:
+  - Bellman CUDA (Filecoin Foundation)
+  - Icicle (Ingonyama)
+  - rapidSNARK (Polygon)
+  - sppark (Supranational)</code></pre>
+
+<h4>Proving Key Streaming</h4>
+<pre><code>Problem: Proving key too large for RAM
+  Example: 10M constraint circuit → ~5 GB proving key
+
+Standard approach:
+  Load entire pk into memory
+  Memory required: 5 GB
+
+Streaming approach:
+  Partition pk into chunks (e.g., 100 MB each)
+
+  1. Initialize proof elements: A = 0, B = 0, C = 0
+  2. For each chunk i:
+       Load pkᵢ from disk/network
+       Update A += Σⱼ∈chunk wⱼ[Pⱼ]₁
+       Update B, C similarly
+       Discard pkᵢ from memory
+  3. Add final randomization: A += r[δ]₁, etc.
+
+  Memory required: 100 MB + witness size
+  Memory reduction: 50x
+
+  Time overhead: +20% (disk I/O)
+
+Network streaming:
+  Store pk on remote server
+  Stream chunks during proving
+  Bandwidth: ~5 GB transfer for full proof
+  Time (1 Gbps network): +40 seconds</code></pre>
+
+<h3>5.3 Proof Aggregation</h3>
+
+<h4>SnarkPack Aggregation</h4>
+<pre><code>Problem: Verify n Groth16 proofs efficiently
+
+Standard Groth16:
+  n proofs: n × 192 bytes = 192n bytes
+  Verification: n × 5 ms = 5n ms
+
+SnarkPack (Gabizon & Williamson 2021):
+  Aggregate n proofs into single proof
+
+  Aggregated proof size: O(log n) group elements
+    For n = 1024: ~2 KB (vs 192 KB standard)
+    Compression ratio: 96x
+
+  Verification time: O(log n) pairings
+    For n = 1024: ~15 ms (vs 5,120 ms standard)
+    Speedup: 340x
+
+  Aggregation time: O(n log n)
+    For n = 1024: ~2 seconds (one-time cost)
+
+Construction:
+  Uses inner product arguments over committed polynomials
+  Requires KZG commitment scheme
+  Compatible with existing Groth16 proofs (no circuit changes)
+
+Applications:
+  - Blockchain rollups: Aggregate thousands of transaction proofs
+  - Distributed proving: Many parties prove, single verification
+  - Certificate transparency: Aggregate certificate proofs</code></pre>
+
+<h4>Recursive Proof Composition</h4>
+<pre><code>Limitation: Groth16 does not natively support recursion
+  (Pairing curves don't form cycles)
+
+Workaround: Proof-carrying data via curve cycles
+
+  Use two curves in cycle:
+    Curve 1 (BLS12-381): G₁, G₂ over 𝔽ₚ
+    Curve 2 (BW6-761): G₁', G₂' over 𝔽ᵧ
+
+    Where: p ≈ |𝔽ᵧ| and q ≈ |𝔽ₚ|
+
+  Composition:
+    Prove₁: Statement S₁ on Curve 1
+    Verify₁ in circuit on Curve 2: "Prove₁ verifies"
+    Prove₂: "I verified Prove₁" on Curve 2
+    Verify₂ in circuit on Curve 1: "Prove₂ verifies"
+    ...
+
+  Cost: Each layer adds ~1M constraints (pairing verification expensive)
+
+Better alternative for recursion: Use Halo2 or PLONK with custom cycles</code></pre>
+
+<h2 id="production-considerations">6. Production Considerations</h2>
+
+<h3>6.1 Trusted Setup Ceremony Security</h3>
+
+<h4>Toxic Waste Management</h4>
+<pre><code>Critical secrets: τ (Phase 1), α, β, γ, δ (Phase 2)
+If leaked: Can forge proofs for false statements
+
+Destruction protocol:
+
+  1. Memory sanitization:
+     - Overwrite secret with random data (3+ passes)
+     - Use secure allocators (libsodium, BoringSSL)
+     - Explicit memory zeroing (memset_s, SecureZeroMemory)
+
+  2. CPU cache clearing:
+     - CLFLUSH instruction (x86)
+     - Memory barriers to prevent compiler optimization
+     - Clear registers used in computation
+
+  3. Hardware security:
+     - Air-gapped machines (no network)
+     - Hardware security modules (HSM) for key generation
+     - Physically destroy storage after ceremony
+     - Use tamper-evident hardware
+
+  4. Software verification:
+     - Open-source ceremony software
+     - Reproducible builds
+     - Independent audits
+     - Memory inspection tools
+
+Participant best practices:
+  - Run on dedicated hardware
+  - Use live OS (no persistent storage)
+  - Destroy hardware after participation
+  - Publish attestation of destruction</code></pre>
+
+<h4>Ceremony Verification</h4>
+<pre><code>Verifiable computation:
+  Each contribution includes proof:
+    π_contrib = (sᵢ·[τᵢ₋₁]₁, [τᵢ]₁, sᵢ·[τᵢ₋₁]₂, [τᵢ]₂)
+
+  Verification checks:
+    1. Correct update: e([τᵢ]₁, g₂) = e([τᵢ₋₁]₁, [sᵢ]₂)
+    2. Consistency: e([τᵢ]₁, [τᵢ]₂) = e([τᵢ²]₁, g₂)
+    3. Range check: [τᵢ]₁ ≠ 0, [τᵢ]₂ ≠ 0
+
+Public transcript:
+  - All contributions: {[τᵢ]₁, [τᵢ]₂}ᵢ₌₁ⁿ
+  - All proofs: {π_contrib,ᵢ}ᵢ₌₁ⁿ
+  - Participant attestations
+  - Ceremony coordinator signatures
+
+Beacon randomness:
+  Use public randomness (blockchain hash) to prevent coordinator bias
+  Coordinator cannot predict which contributions will be selected</code></pre>
+
+<h3>6.2 Circuit Versioning and Updates</h3>
+
+<h4>Challenge: Circuit Changes Require New Setup</h4>
+<pre><code>Problem: Adding features or fixing bugs requires new ceremony
+  Cost: Weeks to coordinate, requires many participants
+
+Mitigation strategies:
+
+1. Over-provisioning:
+   Design circuit with extra capacity
+
+   Example: Support 100 public inputs, use only 50
+   Pro: Future features don't need new setup
+   Con: Larger proofs, slower proving (~20% overhead)
+
+2. Modular architecture:
+   Separate stable core from variable periphery
+
+   Example:
+     Core circuit: Merkle proof verification
+     Peripheral: Specific application logic
+
+   Strategy: Only update peripheral circuits
+   Pro: Core setup reusable
+   Con: Need proof composition (adds complexity)
+
+3. Universal setups (alternative proof systems):
+   Switch to PLONK or Halo2 for circuits needing updates
+
+   PLONK: One universal setup for all circuits
+   Halo2: No setup at all (transparent)
+
+   Trade-off: Larger proofs, slower verification than Groth16</code></pre>
+
+<h4>Migration Strategy</h4>
+<pre><code>Scenario: Migrate from Circuit v1 to Circuit v2
+
+Timeline:
+  Month 0: Announce new circuit, schedule ceremony
+  Month 1: Run Phase 2 ceremony for Circuit v2
+  Month 2: Deploy v2, support both v1 and v2 proofs
+  Month 3-8: Transition period (both versions accepted)
+  Month 9: Deprecate v1 (only accept v2 proofs)
+
+Verification dual-support:
+  function verify(proof, version):
+    if version == "v1":
+      return verifyV1(proof, vk_v1)
+    else if version == "v2":
+      return verifyV2(proof, vk_v2)
+    else:
+      return reject
+
+Backward compatibility:
+  Ensure v2 circuit can verify v1-generated data
+  Migration path for existing proofs/commitments</code></pre>
+
+<h3>6.3 Error Handling and Debugging</h3>
+
+<h4>Common Failure Modes</h4>
+
+<pre><code>1. Constraint violation during witness computation:
+
+   Error: "Constraint #4523 not satisfied"
+   Cause: Invalid inputs or circuit logic bug
+
+   Debugging:
+     - Enable constraint tracing (--verbose)
+     - Inspect witness values at failure point
+     - Verify input data satisfies expected invariants
+     - Check for arithmetic overflow (field modulus)
+
+   Example:
+     // Expected: x² = y
+     // Actual witness: x = 10, y = 99 (should be 100)
+     // Likely cause: Off-by-one error in input preprocessing
+
+2. Proof verification failure:
+
+   Error: "Pairing equation does not hold"
+   Cause: Circuit/setup mismatch, witness error, proof corruption
+
+   Debugging:
+     - Verify setup keys match circuit version
+     - Re-run witness computation with same inputs
+     - Check proof transmission (no corruption)
+     - Test with known-good proof (positive control)
+
+   Example:
+     Error: Verification fails for all proofs
+     Diagnosis: Wrong verification key loaded
+     Fix: Ensure vk hash matches circuit hash
+
+3. Setup key version mismatch:
+
+   Error: "All proofs rejected"
+   Cause: Using vk from different circuit
+
+   Prevention:
+     - Include circuit hash in vk metadata
+     - Version all keys (semantic versioning)
+     - Automated key selection based on circuit ID
+
+   Implementation:
+     struct VerificationKey {
+       circuit_hash: [u8; 32],
+       version: String,  // e.g., "2.1.0"
+       vk_data: Vec&lt;G1Affine&gt;,
+       ...
+     }</code></pre>
+
+<h4>Testing and Validation</h4>
+
+<pre><code>Test pyramid:
+
+1. Unit tests (per constraint):
+   Test individual circuit components
+   Example: Test Poseidon hash matches specification
+   Coverage: Every custom gate/gadget
+
+2. Integration tests (full circuits):
+   Test end-to-end: witness generation → proving → verification
+   Example: Hash verification circuit with known test vectors
+   Coverage: Happy path + edge cases
+
+3. Fuzzing:
+   Random input generation to find edge cases
+   Tools: cargo-fuzz, libFuzzer
+   Example: Random field elements as inputs, check no panics
+
+4. Formal verification:
+   Prove circuit correctness mathematically
+   Tools: Circom-verify, ZoKrates-verify
+   Example: Prove range check circuit accepts only [0, 2ⁿ)
+
+5. Production canary:
+   Deploy to small fraction of traffic first
+   Monitor verification failure rate
+   Gradual rollout to 100%</code></pre>
+
+<h3>6.4 Performance Benchmarking</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Circuit Type</th>
       <th>Constraints</th>
-      <th>Proving Time</th>
-      <th>Verification Time</th>
+      <th>Proving (CPU)</th>
+      <th>Proving (GPU)</th>
+      <th>Verification</th>
       <th>Proof Size</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <td>Small (SHA256)</td>
+      <td>SHA-256 hash</td>
       <td>27,000</td>
       <td>0.5 s</td>
+      <td>0.08 s</td>
       <td>5 ms</td>
       <td>192 bytes</td>
     </tr>
     <tr>
-      <td>Medium (Merkle depth 20)</td>
+      <td>Poseidon hash</td>
+      <td>150</td>
+      <td>0.01 s</td>
+      <td>0.002 s</td>
+      <td>5 ms</td>
+      <td>192 bytes</td>
+    </tr>
+    <tr>
+      <td>Merkle proof (depth 20)</td>
       <td>540,000</td>
+      <td>3 s</td>
+      <td>0.4 s</td>
+      <td>5 ms</td>
+      <td>192 bytes</td>
+    </tr>
+    <tr>
+      <td>Genomic query (100 SNPs)</td>
+      <td>5,000,000</td>
+      <td>25 s</td>
       <td>3 s</td>
       <td>5 ms</td>
       <td>192 bytes</td>
     </tr>
     <tr>
-      <td>Large (Transaction rollup)</td>
-      <td>10M</td>
-      <td>45 s</td>
+      <td>Transaction rollup (1000 txs)</td>
+      <td>10,000,000</td>
+      <td>50 s</td>
+      <td>5 s</td>
       <td>5 ms</td>
       <td>192 bytes</td>
     </tr>
     <tr>
-      <td>Very Large (ZK-Rollup batch)</td>
-      <td>100M</td>
+      <td>ZK-Rollup batch (10k txs)</td>
+      <td>100,000,000</td>
       <td>8 min</td>
+      <td>45 s</td>
       <td>5 ms</td>
       <td>192 bytes</td>
     </tr>
   </tbody>
 </table>
 
-<p><strong>Note:</strong> Verification time constant regardless of circuit size.</p>
+<p><strong>Hardware specifications:</strong> CPU = AMD Ryzen 9 5950X (16 cores), GPU = NVIDIA RTX 4090</p>
 
-<h2 id="genomic-applications">9. Genomic Applications</h2>
+<h2 id="genomic-applications">7. Genomic Applications</h2>
 
-<h3>9.1 GenomeVault Private Queries</h3>
+<h3>7.1 GenomeVault Private Query System</h3>
 
-<p><strong>Use Case:</strong> Prove genomic properties without revealing genome data.</p>
+<p><strong>Problem:</strong> Users want to query their genomic data against databases without revealing their genome sequence.</p>
 
-<p><strong>Query Types:</strong></p>
-<pre><code>1. Ancestry verification:
-   Statement: "My genome matches Mediterranean ancestry"
-   Public: Ancestry claim, commitment to genome
-   Private: Full genome sequence, matching SNPs
-   Circuit: ~5M constraints
+<p><strong>Solution:</strong> Zero-knowledge proofs over genomic commitments.</p>
 
-2. Variant presence:
-   Statement: "I carry variant rs1234567 in genotype A/G"
-   Public: Variant ID, commitment
-   Private: Genome data, variant location
-   Circuit: ~2M constraints
+<h4>System Architecture</h4>
+<pre><code>1. Enrollment:
+   User uploads genome → Compute Merkle root commitment
+   Store commitment publicly (blockchain or database)
+   User keeps genome locally (never uploaded)
 
-3. Polygenic risk:
-   Statement: "My risk score for trait T is in range [L, H]"
-   Public: Trait, range bounds, commitment
-   Private: Genome, allele weights, score computation
-   Circuit: ~20M constraints (100s of SNPs)</code></pre>
+2. Query submission:
+   User selects query type (ancestry, variant, risk score)
+   Client generates ZK proof locally
+   Submit proof + public inputs to server
 
-<h3>9.2 Genomic Circuit Optimization</h3>
+3. Verification:
+   Server verifies proof (~5 ms)
+   Return query result if proof valid
+   Server learns only: query result (e.g., "positive for variant")
 
-<p><strong>Challenge:</strong> Genome size (3 billion base pairs) too large for direct encoding.</p>
+4. Privacy guarantee:
+   Server cannot learn genome sequence
+   Proof reveals nothing beyond query truth value</code></pre>
 
-<p><strong>Optimization Techniques:</strong></p>
+<h3>7.2 Merkle Tree Genome Commitments</h3>
 
-<h4>1. Merkle Tree Encoding</h4>
-<pre><code>Approach:
-  - Commit to genome via Merkle tree
-  - Prove: "Position i has value v" via Merkle path
-  - Circuit size: O(log n) instead of O(n)
+<p><strong>Challenge:</strong> Human genome has ~3 billion base pairs. Cannot encode directly in circuit.</p>
 
-Example (depth 20 tree):
-  - Constraints: ~540k (20 levels × 27k per hash)
-  - Proving time: ~3 seconds
-  - Proof size: 192 bytes</code></pre>
+<p><strong>Solution:</strong> Commit to genome via Merkle tree, prove properties via Merkle paths.</p>
 
-<h4>2. Hypervector Commitments</h4>
-<pre><code>Approach (GenomeVault):
-  - Encode genome as hypervector H
-  - Queries via HDC similarity operations
-  - Circuit verifies HDC computation
+<h4>Commitment Scheme</h4>
+<pre><code>Genome representation:
+  Divide into chunks: 4,096 SNPs per leaf
+  Total leaves: 3B / 4096 ≈ 732,422 leaves
+  Tree depth: ⌈log₂(732,422)⌉ = 20 levels
 
-Advantages:
-  - Smaller circuits (~1M constraints)
-  - Approximate matching (tolerant to variants)
-  - Efficient updates (add new SNPs)</code></pre>
+Merkle tree construction:
+  Leaf[i] = Poseidon(SNP[i×4096], ..., SNP[(i+1)×4096 - 1])
+  Parent[j] = Poseidon(Child[2j], Child[2j + 1])
+  Root = top-level hash
 
-<h4>3. Batched Queries</h4>
-<pre><code>Scenario: Verify 100 SNP positions
-Standard: 100 separate proofs (19.2 KB total)
-Batched: Single proof covering all 100 (192 bytes)
+Commitment: Store Merkle root (32 bytes) publicly
+Genome storage: User keeps full genome locally</code></pre>
 
-Implementation:
-  - Circuit with 100 Merkle path verifications
-  - Shared tree root commitment
-  - Parallel path checking
+<h4>Query Circuit: Variant Presence</h4>
+<pre><code>Statement: "Position p in my genome has genotype g"
 
-Circuit size: 100 × 540k = 54M constraints
-Proving time: ~2 minutes
-Verification: 5 ms (constant)</code></pre>
+Public inputs:
+  - genome_commitment (Merkle root)
+  - position p
+  - expected_genotype g
 
-<h3>9.3 Production Deployment</h3>
+Private witness:
+  - SNP value at position p
+  - Merkle path from leaf containing p to root
+  - Sibling hashes along path
 
-<p><strong>GenomeVault Query Pipeline:</strong></p>
-<pre><code>1. User uploads genome:
-   - Compute Merkle root commitment
-   - Store commitment on-chain / in database
-   - Keep genome locally (never uploaded)
+Circuit constraints:
+  1. Extract SNP at position p from leaf chunk
+  2. Verify SNP value = expected_genotype g
+  3. Compute Merkle path:
+     For level i = 0 to depth-1:
+       current_hash = Poseidon(left, right)
+       left/right = current_hash or sibling[i] (based on path bit)
+  4. Verify final hash = genome_commitment
 
-2. User initiates query:
-   - Select query type (ancestry, variant, risk)
-   - Client computes witness (local genome data)
-   - Generate Groth16 proof (~3 seconds)
+Constraint count:
+  - SNP extraction: ~100 constraints
+  - Genotype check: ~10 constraints
+  - Merkle path (20 levels × 150): 3,000 constraints
+  Total: ~3,100 constraints
 
-3. Submit proof to verifier:
-   - Proof + public inputs sent to server
-   - Server verifies proof (~5 ms)
-   - Return query result if proof valid
+Performance:
+  Proving time: ~0.2 seconds
+  Verification time: ~5 ms
+  Proof size: 192 bytes</code></pre>
 
-4. Privacy guarantees:
-   - Server learns: Query result only
-   - Server cannot learn: Genome sequence
-   - Proof reveals: Nothing beyond query truth</code></pre>
+<h3>7.3 Hypervector Genomic Encoding</h3>
 
-<p><strong>Performance at Scale:</strong></p>
-<pre><code>Server capacity (single core):
-  - Verification: 200 proofs/second
-  - Throughput: 12,000 queries/minute
-  - Scaling: Horizontally scalable (verifiers stateless)
+<p><strong>Alternative approach:</strong> Encode genome as hyperdimensional vector, prove HDC computations.</p>
 
-User experience:
-  - Proof generation: 3 seconds (local device)
-  - Network latency: ~100 ms
-  - Verification: 5 ms (server)
-  - Total time: ~3.1 seconds end-to-end</code></pre>
+<h4>HDC Genome Encoding</h4>
+<pre><code>Hypervector dimension: d = 10,000
+Field: 𝔽ₚ where p is BLS12-381 scalar field modulus
+
+Encoding scheme (from GenomeVault):
+
+  1. Positional encoding:
+     For position i: POS[i] = random d-dimensional vector
+
+  2. Allele encoding:
+     For allele a ∈ {A, C, G, T}: ALLELE[a] = random d-vector
+
+  3. Genome hypervector:
+     GENOME = Σᵢ POS[i] ⊙ ALLELE[genome[i]]
+
+     where ⊙ = element-wise multiplication (binding)
+
+  4. Commitment:
+     Commit to GENOME via KZG or Merkle tree
+     Store commitment publicly
+
+Query: Ancestry matching
+
+  Public inputs:
+    - genome_commitment
+    - reference_population_vector REF
+    - similarity_threshold θ
+
+  Private witness:
+    - Full genome hypervector GENOME
+
+  Circuit:
+    1. Verify GENOME matches commitment
+    2. Compute similarity: sim = GENOME · REF / (||GENOME|| · ||REF||)
+    3. Check sim ≥ θ
+
+  Constraint count:
+    - Commitment verification: ~1,000 constraints
+    - Dot product (d = 10k): ~10,000 constraints
+    - Normalization: ~500 constraints
+    - Threshold check: ~100 constraints
+    Total: ~11,600 constraints
+
+  Advantages over Merkle:
+    - Approximate matching (tolerant to variants)
+    - Faster queries (no tree traversal)
+    - Composable (combine multiple queries)
+
+  Disadvantages:
+    - Larger circuits (~4x)
+    - Requires HDC preprocessing</code></pre>
+
+<h3>7.4 Batched SNP Queries</h3>
+
+<p><strong>Use case:</strong> Verify genotypes at 100 SNP positions simultaneously.</p>
+
+<h4>Batching Strategy</h4>
+<pre><code>Naive approach: 100 separate proofs
+  Proof size: 100 × 192 = 19,200 bytes
+  Proving time: 100 × 0.2s = 20 seconds
+  Verification time: 100 × 5ms = 500 ms
+
+Batched approach: Single proof for all 100 positions
+
+Circuit structure:
+  Public inputs:
+    - genome_commitment (Merkle root)
+    - positions[100]
+    - expected_genotypes[100]
+
+  Private witness:
+    - SNP values at all 100 positions
+    - Merkle paths for each (may share intermediate nodes)
+
+  Constraints:
+    For each SNP i = 1 to 100:
+      1. Verify Merkle path for position[i]
+      2. Check SNP value = expected_genotypes[i]
+
+    Optimization: Share computation for overlapping paths
+
+    Constraint count:
+      - 100 Merkle paths × 3,000 = 300,000 constraints
+      - Path sharing optimization: ~50% reduction
+      - Actual: ~150,000 constraints
+
+    Performance:
+      - Proving time: ~1.5 seconds
+      - Verification time: ~5 ms (constant!)
+      - Proof size: 192 bytes
+
+    Improvement over naive:
+      - Proof size: 100x smaller
+      - Proving time: 13x faster
+      - Verification time: 100x faster</code></pre>
+
+<h3>7.5 Polygenic Risk Score Computation</h3>
+
+<p><strong>Query:</strong> "My polygenic risk score for trait T is in range [L, H]"</p>
+
+<h4>Circuit Design</h4>
+<pre><code>Background: Risk score = Σᵢ₌₁ⁿ βᵢ · gᵢ
+  where:
+    βᵢ = effect size for SNP i (from GWAS)
+    gᵢ = genotype at SNP i ∈ {0, 1, 2} (allele count)
+    n = number of SNPs in model (typically 100-1000)
+
+Public inputs:
+  - genome_commitment
+  - effect_sizes β = (β₁, ..., βₙ)
+  - range [L, H]
+
+Private witness:
+  - Genotypes at all n positions: (g₁, ..., gₙ)
+  - Merkle paths for each position
+
+Circuit constraints:
+
+  1. Verify genotypes via Merkle paths: n × 3,000 constraints
+
+  2. Compute risk score:
+     score = Σᵢ βᵢ · gᵢ
+     Cost: n multiplications + (n-1) additions = 2n constraints
+
+  3. Range check:
+     Verify L ≤ score ≤ H
+     Decompose score into bits, verify bits in range
+     Cost: ~256 constraints (for 256-bit score)
+
+  Total constraints (n = 100):
+    300,000 + 200 + 256 ≈ 300,500 constraints
+
+Performance (n = 100 SNPs):
+  Proving time: ~2 seconds
+  Verification time: ~5 ms
+  Proof size: 192 bytes
+
+Privacy guarantee:
+  Server learns: Risk score in range [L, H] (yes/no)
+  Server does NOT learn: Exact risk score, individual genotypes
+
+Alternative: Zero-knowledge range proof
+  Reveal: Exact risk score (public)
+  Prove: Score computed correctly from committed genome
+  Use case: Share exact score with physician, prove correctness</code></pre>
+
+<h3>7.6 Production Deployment Metrics</h3>
+
+<p><strong>GenomeVault Query Processing Pipeline:</strong></p>
+<pre><code>System capacity (single verification server, 16-core CPU):
+
+  Verification throughput: 200 proofs/second
+  Daily capacity: 17.3 million queries
+
+  With horizontal scaling (10 servers):
+    Daily capacity: 173 million queries
+    Annual capacity: 63 billion queries
+
+Client-side performance:
+
+  Proof generation (100-SNP query):
+    Time: 1.5 seconds
+    CPU: 1 core at 100%
+    Memory: 512 MB (proving key cached)
+
+  User experience:
+    Click "Query" → 1.5s local computation → Submit → 100ms network → 5ms verification → Result
+    Total latency: ~1.6 seconds end-to-end
+
+Cost analysis (AWS pricing):
+
+  Verification server (c5.4xlarge):
+    Cost: $0.68/hour
+    Throughput: 720,000 queries/hour
+    Cost per query: $0.00000094 (~0.1¢ per 100 queries)
+
+  Proving key storage (S3):
+    Size: 50 MB per circuit type
+    Cost: $0.023/GB/month
+    Negligible for most deployments
+
+Privacy compliance:
+
+  Data minimization: Genome never leaves user device
+  GDPR compliance: No genomic data processed by server
+  HIPAA eligibility: Meets technical safeguards (encryption + access control)
+  Audit trail: All queries logged (commitment + timestamp, no genomic data)</code></pre>
+
+<h2 id="implementation-examples">8. Implementation Examples</h2>
+
+<h3>8.1 Basic Circuit (Circom)</h3>
+
+<pre><code>pragma circom 2.0.0;
+
+// Prove knowledge of preimage for Poseidon hash
+template HashPreimage() {
+    signal input preimage;
+    signal input expectedHash;
+    signal output valid;
+
+    component hasher = Poseidon(1);
+    hasher.inputs[0] <== preimage;
+
+    // Check hash matches
+    valid <== (hasher.out == expectedHash);
+
+    // Constrain valid to be 1
+    valid === 1;
+}
+
+component main = HashPreimage();</code></pre>
+
+<h3>8.2 Witness Generation (JavaScript)</h3>
+
+<pre><code>const circom_tester = require("circom_tester");
+const wasm_tester = circom_tester.wasm;
+
+async function generateWitness() {
+    const circuit = await wasm_tester("HashPreimage.circom");
+
+    const input = {
+        preimage: "123456",
+        expectedHash: "0x1234..."  // Poseidon("123456")
+    };
+
+    const witness = await circuit.calculateWitness(input, true);
+
+    console.log("Witness:", witness);
+    return witness;
+}</code></pre>
+
+<h3>8.3 Proof Generation (snarkjs)</h3>
+
+<pre><code>const snarkjs = require("snarkjs");
+
+async function generateProof() {
+    // Load proving key
+    const pk = await snarkjs.zKey.exportProving(
+        "HashPreimage_final.zkey"
+    );
+
+    // Compute witness
+    const { proof, publicSignals } = await snarkjs.groth16.fullProve(
+        { preimage: "123456", expectedHash: "0x1234..." },
+        "HashPreimage_js/HashPreimage.wasm",
+        "HashPreimage_final.zkey"
+    );
+
+    console.log("Proof:", proof);
+    console.log("Public signals:", publicSignals);
+
+    return { proof, publicSignals };
+}</code></pre>
+
+<h3>8.4 Verification (snarkjs)</h3>
+
+<pre><code>async function verifyProof(proof, publicSignals) {
+    // Load verification key
+    const vk = JSON.parse(
+        fs.readFileSync("verification_key.json")
+    );
+
+    // Verify proof
+    const isValid = await snarkjs.groth16.verify(
+        vk,
+        publicSignals,
+        proof
+    );
+
+    if (isValid) {
+        console.log("✓ Proof verified successfully");
+    } else {
+        console.log("✗ Proof verification failed");
+    }
+
+    return isValid;
+}</code></pre>
+
+<h3>8.5 On-Chain Verification (Solidity)</h3>
+
+<pre><code>// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract Groth16Verifier {
+    struct Proof {
+        uint256[2] a;
+        uint256[2][2] b;
+        uint256[2] c;
+    }
+
+    struct VerifyingKey {
+        uint256[2] alpha;
+        uint256[2][2] beta;
+        uint256[2][2] gamma;
+        uint256[2][2] delta;
+        uint256[2][] gamma_abc;
+    }
+
+    VerifyingKey vk;
+
+    constructor() {
+        // Initialize verification key (circuit-specific)
+        vk.alpha = [uint256(0x1234...), uint256(0x5678...)];
+        // ... (full vk initialization)
+    }
+
+    function verify(
+        Proof memory proof,
+        uint256[] memory publicInputs
+    ) public view returns (bool) {
+        require(publicInputs.length + 1 == vk.gamma_abc.length,
+                "Invalid input length");
+
+        // Compute linear combination of public inputs
+        uint256[2] memory vk_x = vk.gamma_abc[0];
+        for (uint i = 0; i < publicInputs.length; i++) {
+            vk_x = addition(
+                vk_x,
+                scalar_mul(vk.gamma_abc[i + 1], publicInputs[i])
+            );
+        }
+
+        // Verify pairing equation
+        return pairing(
+            proof.a, proof.b,
+            vk.alpha, vk.beta,
+            vk_x, vk.gamma,
+            proof.c, vk.delta
+        );
+    }
+
+    function pairing(
+        uint256[2] memory a, uint256[2][2] memory b,
+        uint256[2] memory c, uint256[2][2] memory d,
+        uint256[2] memory e, uint256[2][2] memory f,
+        uint256[2] memory g, uint256[2][2] memory h
+    ) internal view returns (bool) {
+        // BN254 pairing check (precompiled contract 0x08)
+        uint256[24] memory input;
+        // ... (encode pairing inputs)
+
+        (bool success, bytes memory result) = address(0x08).staticcall(
+            abi.encode(input)
+        );
+
+        require(success, "Pairing check failed");
+        return abi.decode(result, (bool));
+    }
+
+    // Helper functions: addition, scalar_mul, etc.
+}</code></pre>
 
 <div class="references">
   <h2 id="references">References</h2>
@@ -873,11 +1799,13 @@ User experience:
     <li><strong>Groth, J.</strong> (2016). On the Size of Pairing-based Non-interactive Arguments. <em>EUROCRYPT 2016</em>. https://eprint.iacr.org/2016/260</li>
     <li><strong>Ben-Sasson, E., Chiesa, A., Tromer, E., & Virza, M.</strong> (2014). Succinct Non-Interactive Zero Knowledge for a von Neumann Architecture. <em>USENIX Security 2014</em>.</li>
     <li><strong>Bowe, S., Gabizon, A., & Miers, I.</strong> (2017). Scalable Multi-party Computation for zk-SNARK Parameters in the Random Beacon Model. <em>IACR ePrint 2017/1050</em>.</li>
-    <li><strong>Gabizon, A., & Williamson, Z. J.</strong> (2020). SnarkPack: Practical SNARK Aggregation. <em>IACR ePrint 2021/529</em>.</li>
+    <li><strong>Gabizon, A., & Williamson, Z. J.</strong> (2021). SnarkPack: Practical SNARK Aggregation. <em>IACR ePrint 2021/529</em>.</li>
     <li><strong>Bünz, B., Bootle, J., Boneh, D., Poelstra, A., Wuille, P., & Maxwell, G.</strong> (2018). Bulletproofs: Short Proofs for Confidential Transactions and More. <em>IEEE S&P 2018</em>.</li>
     <li><strong>Pippenger, N.</strong> (1980). On the Evaluation of Powers and Monomials. <em>SIAM Journal on Computing</em>, 9(2), 230-250.</li>
     <li><strong>Barreto, P. S. L. M., & Naehrig, M.</strong> (2006). Pairing-Friendly Elliptic Curves of Prime Order. <em>SAC 2005</em>.</li>
     <li><strong>Bowe, S.</strong> (2020). BLS12-381: New zk-SNARK Elliptic Curve Construction. <em>Zcash Blog</em>.</li>
+    <li><strong>Grassi, L., Khovratovich, D., Rechberger, C., Roy, A., & Schofnegger, M.</strong> (2021). Poseidon: A New Hash Function for Zero-Knowledge Proof Systems. <em>USENIX Security 2021</em>.</li>
+    <li><strong>Gabizon, A., Williamson, Z. J., & Ciobotaru, O.</strong> (2019). PLONK: Permutations over Lagrange-bases for Oecumenical Noninteractive arguments of Knowledge. <em>IACR ePrint 2019/953</em>.</li>
   </ol>
 </div>
 

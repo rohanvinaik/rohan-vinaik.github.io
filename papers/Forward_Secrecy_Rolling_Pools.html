@@ -14,7 +14,7 @@
       --bg: #0a0a0a;
       --text: #e0e0e0;
       --text-secondary: #a0a0a0;
-      --accent: #00ffff;
+      --accent: #00ff00;
       --border: #333;
       --code-bg: #1a1a1a;
     }
@@ -140,6 +140,34 @@
       white-space: pre;
       font-family: 'JetBrains Mono', monospace;
     }
+    .theorem {
+      background: var(--code-bg);
+      padding: 16px;
+      border-left: 3px solid var(--accent);
+      margin: 20px 0;
+      font-size: 0.85rem;
+    }
+    .theorem-title {
+      color: var(--accent);
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      font-size: 0.75rem;
+    }
+    th, td {
+      border: 1px solid var(--border);
+      padding: 12px;
+      text-align: left;
+    }
+    th {
+      background: var(--code-bg);
+      color: var(--accent);
+      font-weight: 600;
+    }
     .references {
       font-size: 0.75rem;
       margin-top: 32px;
@@ -163,7 +191,7 @@
 <a href="../index.html#reference" class="back-link">← Back to Reference</a>
 
 <h1>Forward Secrecy & Rolling Pool Updates: Temporal Security Through Ephemeral State</h1>
-<div class="paper-meta">January 2025 · Technical Reference · Version 1.0</div>
+<div class="paper-meta">January 2025 · Technical Reference · Version 2.0</div>
 
 <div class="tags">
   <a href="../index.html?filter=CRYPTOGRAPHY" class="tag">[CRYPTOGRAPHY]</a>
@@ -179,620 +207,2047 @@
 </div>
 
 <div class="abstract">
-  <strong>Abstract:</strong> Forward secrecy guarantees that compromise of long-term keys does not retroactively compromise past session keys or data. Rolling pool updates extend this principle to computational reference pools—collections of encoding parameters, basis vectors, or cryptographic material that evolve over time. This framework establishes temporal security boundaries through ephemeral state management, ensuring that system compromise at time t reveals nothing about states at t-k. We present mathematical foundations, implementation strategies across time-based and event-based rotation schemes, secure transition protocols, and applications in genomic data protection and distributed systems.
+  <strong>Abstract:</strong> Forward secrecy ensures that compromise of long-term cryptographic keys does not retroactively compromise past sessions. This comprehensive reference extends the principle to rolling reference pools—dynamic collections of encoding parameters, basis vectors, and cryptographic material that evolve through temporal epochs. We establish theoretical foundations grounded in information theory and computational hardness assumptions, formalize security guarantees through entropy independence theorems, present practical mechanisms including cryptographic ratchets and pool rotation protocols, analyze implementation strategies across time-based and event-based schedules, examine secure transition protocols with overlap windows, evaluate security against adaptive adversaries, and demonstrate applications in genomic data protection (GenomeVault), secure messaging (Signal Protocol), and distributed systems (blockchain committees, DHTs). Mathematical proofs, concrete protocols, and attack analysis provide a complete framework for achieving temporal security isolation where past compromise reveals nothing about prior states.
 </div>
 
 <div class="quick-nav">
   <h3>Quick Navigation</h3>
   <ul>
     <li><a href="#core-principles">1. Core Principles</a></li>
-    <li><a href="#mechanisms">2. Mechanisms & Protocols</a></li>
-    <li><a href="#implementation-strategies">3. Implementation Strategies</a></li>
-    <li><a href="#secure-transitions">4. Secure Pool Transitions</a></li>
-    <li><a href="#applications">5. Applications</a></li>
-    <li><a href="#mathematical-guarantees">6. Mathematical Guarantees</a></li>
+    <li><a href="#mathematical-foundations">2. Mathematical Foundations</a></li>
+    <li><a href="#mechanisms">3. Mechanisms & Protocols</a></li>
+    <li><a href="#implementation-strategies">4. Implementation Strategies</a></li>
+    <li><a href="#security-analysis">5. Security Analysis</a></li>
+    <li><a href="#applications">6. Applications</a></li>
     <li><a href="#references">References</a></li>
   </ul>
 </div>
 
 <h2 id="core-principles">1. Core Principles</h2>
 
-<h3>1.1 Forward Secrecy Definition</h3>
+<h3>1.1 Forward Secrecy: Past Compromise Independence</h3>
 
-<p><strong>Classical Definition:</strong> In cryptographic protocols, forward secrecy (also called perfect forward secrecy, PFS) ensures that session keys derived from long-term keys cannot be compromised even if the long-term keys are later compromised.</p>
+<p><strong>Fundamental Property:</strong> A cryptographic protocol achieves forward secrecy if compromise of long-term secret keys does not compromise the confidentiality of past session keys or encrypted data.</p>
 
-<div class="code-block">Formal property:
-  ∀ session s at time t, ∀ adversary A compromising system at time t' > t:
-    Pr[A recovers session_key(s)] ≤ negl(λ)
+<div class="theorem">
+  <div class="theorem-title">Definition 1.1 (Perfect Forward Secrecy)</div>
+  A key exchange protocol \(\Pi\) provides perfect forward secrecy if for all sessions \(s\) completed at time \(t\), and for all probabilistic polynomial-time adversaries \(\mathcal{A}\) who compromise the system at time \(t' > t\):
 
-Where λ is security parameter, negl is negligible function</div>
+  \[
+  \Pr[\mathcal{A}(\text{transcript}(s), \text{state}(t')) \text{ recovers } k_s] \leq \text{negl}(\lambda)
+  \]
 
-<h4>Key Property: Temporal Independence</h4>
-<p>Past states are cryptographically independent of current state:</p>
-<div class="code-block">State(t-1) ⊥ State(t) | compromise(t)
+  where \(k_s\) is the session key, \(\lambda\) is the security parameter, and \(\text{negl}(\cdot)\) is a negligible function.
+</div>
 
-Information-theoretic: Even with unbounded computation
-Computational: Under hardness assumptions</div>
+<h4>Core Insight: Temporal Security Isolation</h4>
 
-<h3>1.2 Rolling Pools Extension</h3>
+<p>Forward secrecy creates a temporal firewall: knowledge of current state provides no computational advantage in recovering past states. This differs from standard encryption where key compromise enables retroactive decryption of all ciphertexts.</p>
 
-<p><strong>Extended Definition:</strong> Rolling pools generalize forward secrecy to computational reference materials—basis vectors, encoding dictionaries, transformation parameters—that periodically refresh.</p>
+<div class="code-block">Temporal Independence Property:
 
-<h4>Pool Components</h4>
-<ul>
-  <li><strong>Reference Pool:</strong> Collection of encoding parameters (hypervectors, basis sets, hash functions)</li>
-  <li><strong>Generation Epoch:</strong> Time period or event count during which pool remains static</li>
-  <li><strong>Transition Protocol:</strong> Secure method for updating pool without information leakage</li>
-  <li><strong>Overlap Window:</strong> Period where old and new pools coexist for transition</li>
-</ul>
+Let State(t) = complete system state at time t
+    Compromise(t') = adversary gains State(t') at time t' > t
 
-<h3>1.3 Security Goals</h3>
+Forward Secrecy Guarantee:
+  H(State(t) | Compromise(t')) = H(State(t))
 
-<h4>Past State Protection</h4>
-<div class="code-block">Guarantee: Compromise at epoch e reveals nothing about epochs < e-k
-  where k = secure erasure depth
+Interpretation: Conditional entropy equals prior entropy
+             → Compromise reveals zero information about past</div>
 
-Formalization:
-  H(Pool(e-k) | Pool(e), compromise(e)) = H(Pool(e-k))
+<h4>Necessity of Ephemeral Secrets</h4>
 
-Entropy unchanged by future compromise</div>
+<p>Forward secrecy requires that session keys depend on ephemeral (short-lived) secrets that are securely deleted after use. Long-term keys may authenticate parties but must not directly encrypt session data.</p>
 
-<h4>Future State Protection</h4>
-<div class="code-block">Guarantee: Current pool reveals nothing about future pools
+<h3>1.2 Backward Secrecy: Future State Protection</h3>
 
-Formalization:
-  Pool(e+1) = DerivePool(Entropy_source(e+1))
-  where Entropy_source is independent of Pool(e)</div>
+<p>Backward secrecy (also called future secrecy or key independence) ensures that compromise at time \(t\) does not compromise future session keys generated after healing.</p>
 
-<h4>Transition Security</h4>
-<div class="code-block">Guarantee: Pool update protocol reveals minimal information
+<div class="theorem">
+  <div class="theorem-title">Definition 1.2 (Post-Compromise Security)</div>
+  A protocol provides post-compromise security if after compromise at time \(t_0\), the system can "heal" by time \(t_0 + \Delta\) such that sessions after \(t_0 + \Delta\) are secure:
 
-Leaked information ≤ overlap_window_size × query_rate
-Minimized by atomic transitions, ephemeral overlap</div>
+  \[
+  \Pr[\mathcal{A}(\text{state}(t_0)) \text{ recovers } k_s] \leq \text{negl}(\lambda) \quad \forall s \text{ at } t > t_0 + \Delta
+  \]
+</div>
 
-<h2 id="mechanisms">2. Mechanisms & Protocols</h2>
+<p>Healing mechanisms inject fresh entropy unreachable from compromised state, re-establishing security through entropy accumulation.</p>
 
-<h3>2.1 Ephemeral Key Exchange</h3>
+<h3>1.3 Rolling Reference Pools: Generalized Forward Secrecy</h3>
 
-<h4>Diffie-Hellman with Forward Secrecy</h4>
-<div class="code-block">Setup: Cyclic group G of prime order q, generator g
+<p><strong>Extended Concept:</strong> Rolling pools generalize forward secrecy beyond session keys to arbitrary computational reference materials—hypervector bases, encoding dictionaries, hash function families, random projections—that periodically refresh.</p>
 
-Protocol (per session):
-  1. Party A: Generate ephemeral a ← ℤq, send g^a
-  2. Party B: Generate ephemeral b ← ℤq, send g^b
-  3. Both: Compute shared secret K = g^(ab)
-  4. Derive session key: k = KDF(K, session_context)
-  5. CRITICAL: Delete ephemeral values (a, b)
+<h4>Pool Structure</h4>
 
-Forward secrecy property:
-  - Long-term keys only authenticate, don't encrypt
-  - Compromise of long-term keys ≠ compromise of past K values
-  - Past K values deleted, cannot be reconstructed</div>
-
-<h4>Signal Protocol (Double Ratchet)</h4>
-<div class="code-block">Combines:
-  - DH ratchet: New ephemeral DH key per message round
-  - Symmetric ratchet: Hash chain for key derivation
-
-State evolution:
-  RootKey(n+1) = KDF(RootKey(n), DH_output(n))
-  MessageKey(n) = KDF(ChainKey(n))
-  ChainKey(n+1) = KDF(ChainKey(n))
-
-Forward secrecy: Deleting ChainKey(n) prevents decrypting message(n) later</div>
-
-<h3>2.2 Rolling Reference Pools</h3>
-
-<h4>Hypervector Pool Rotation</h4>
-<div class="code-block">Context: High-dimensional computing with basis vectors
-
-Pool structure:
-  HVPool(e) = {hv_1, hv_2, ..., hv_n} ∈ ({0,1}^d)^n
-  where d = hypervector dimension (typically 10,000)
-
-Generation (epoch e):
-  seed(e) = Hash(master_seed || epoch_id || fresh_entropy)
-  HVPool(e) = PRNG(seed(e), n × d bits)
-
-Security properties:
-  - Statistical independence: <HVPool(e), HVPool(e')> ≈ 0 for e ≠ e'
-  - One-way: HVPool(e) → seed(e) computationally infeasible
-  - Forward secrecy: Deleting seed(e) prevents regenerating HVPool(e)</div>
-
-<h4>Cryptographic Pool Evolution</h4>
-<div class="code-block">Hash function rotation:
-  HashPool(e) = {H_1, H_2, ..., H_k}
-
-Update strategy:
-  1. Time-based: New pool every Δt (hours, days)
-  2. Event-based: New pool every N operations
-  3. Entropy-based: New pool when accumulated entropy > threshold
-
-Transition:
-  - Overlap period: Both HashPool(e) and HashPool(e+1) active
-  - Grace period: Old pool accepts requests, new pool generates
-  - Cutover: Old pool deactivated, entropy erased</div>
-
-<h3>2.3 Entropy Reset Mechanisms</h3>
-
-<h4>Secure Deletion</h4>
-<div class="code-block">Problem: Standard deletion doesn't guarantee erasure
-  - File deletion: Only removes pointer, data remains
-  - Memory deletion: May persist in swap, cache
-
-Secure erasure protocol:
-  1. Overwrite: Write random data multiple times
-  2. Verify: Read back, confirm randomness
-  3. Deallocation: Free memory, clear pointers
-  4. (Hardware) Encryption: Delete encryption key (instant erasure)</div>
-
-<h4>Entropy Injection</h4>
-<div class="code-block">Goal: Refresh pool with provably independent randomness
-
-Sources:
-  - Hardware RNG: Quantum noise, thermal fluctuations
-  - Blockchain randomness: VRF outputs, block hashes
-  - Network timing: Packet arrival jitter
-  - User entropy: Mouse movements, keystroke timings
-
-Mixing:
-  NewEntropy = Hash(OldSeed || HW_RNG || Blockchain || Network || User)
-
-Property: Compromise of any single source ≠ predictable output</div>
-
-<h2 id="implementation-strategies">3. Implementation Strategies</h2>
-
-<h3>3.1 Time-Based Rotation</h3>
-
-<h4>Fixed Interval Strategy</h4>
-<div class="code-block">Configuration:
-  rotation_interval = 24 hours (example)
-  overlap_window = 1 hour
-
-Epoch schedule:
-  Epoch 0: 00:00 - 24:00
-  Epoch 1: 24:00 - 48:00
-  Overlap: 23:00 - 25:00 (both pools active)
-
-Implementation:
-  epoch_id = floor(current_time / rotation_interval)
-
-  if in_overlap_window():
-    accept_queries_from(current_epoch)
-    accept_queries_from(previous_epoch)  # backward compat
-    generate_with(current_epoch)  # forward progress
-  else:
-    use_single_pool(current_epoch)</div>
-
-<h4>Advantages</h4>
-<ul>
-  <li>Predictable: Known rotation schedule</li>
-  <li>Simple coordination: All nodes use wall-clock time</li>
-  <li>Audit-friendly: Clear epoch boundaries</li>
-</ul>
-
-<h4>Disadvantages</h4>
-<ul>
-  <li>Rigid: Cannot adapt to threat level changes</li>
-  <li>Clock dependency: Requires synchronized clocks</li>
-  <li>Granularity: Fixed time windows may be too coarse/fine</li>
-</ul>
-
-<h3>3.2 Event-Based Rotation</h3>
-
-<h4>Operation Count Strategy</h4>
-<div class="code-block">Configuration:
-  operations_per_epoch = 1,000,000
-  overlap_operations = 100,000
-
-State tracking:
-  operation_counter = 0
-  current_epoch = 0
-
-On each operation:
-  operation_counter += 1
-  if operation_counter >= operations_per_epoch:
-    trigger_rotation()
-    operation_counter = 0
-    current_epoch += 1</div>
-
-<h4>Adaptive Strategy</h4>
-<div class="code-block">Trigger rotation on:
-  - High-risk events: Authentication failures, suspicious queries
-  - Entropy threshold: Accumulated queries exceed information budget
-  - External signals: Security advisories, detected breaches
-
-Dynamic adjustment:
-  if threat_level == HIGH:
-    rotation_interval = min_interval
-  elif threat_level == MEDIUM:
-    rotation_interval = standard_interval
-  else:
-    rotation_interval = max_interval</div>
-
-<h4>Advantages</h4>
-<ul>
-  <li>Responsive: Adapts to system usage and threat level</li>
-  <li>Deterministic: Based on state, not external clock</li>
-  <li>Fair: Equal protection across operations, not time</li>
-</ul>
-
-<h4>Disadvantages</h4>
-<ul>
-  <li>Coordination complexity: Distributed systems need consensus on count</li>
-  <li>State requirements: Must track operation counter reliably</li>
-  <li>Unpredictable timing: External observers see variable epochs</li>
-</ul>
-
-<h3>3.3 Hybrid Approaches</h3>
-
-<div class="code-block">Combined strategy:
-  rotation_trigger = min(
-    time_since_last_rotation >= max_time_interval,
-    operations_since_last_rotation >= max_operation_count,
-    manual_trigger_received
-  )
-
-Example configuration:
-  - Max time: 7 days (upper bound on exposure)
-  - Max operations: 10M queries (information theory bound)
-  - Manual trigger: Incident response, security upgrade
-
-Provides:
-  - Upper time bound: Even if unused, rotation happens
-  - Operation bound: Even if slow, heavy use triggers rotation
-  - Emergency capability: Manual override for incidents</div>
-
-<h2 id="secure-transitions">4. Secure Pool Transitions</h2>
-
-<h3>4.1 Overlap Protocol</h3>
-
-<h4>Three-Phase Transition</h4>
-<div class="code-block">Phase 1: Pre-rotation (Generate new pool)
-  - Generate Pool(e+1) from fresh entropy
-  - Verify statistical properties (independence, uniformity)
-  - Distribute to all nodes (encrypted channels)
-  - Status: Pool(e) active, Pool(e+1) standby
-
-Phase 2: Overlap Window (Dual pool operation)
-  - Accept queries referencing Pool(e) or Pool(e+1)
-  - All new encodings use Pool(e+1)
-  - All responses indicate Pool(e+1) for future queries
-  - Duration: Long enough for all clients to update
-
-Phase 3: Post-rotation (Secure erasure)
-  - Deactivate Pool(e)
-  - Securely erase Pool(e) from memory
-  - Erase seed(e) to prevent regeneration
-  - Status: Pool(e+1) sole active pool</div>
-
-<h4>Atomic Transition (Zero overlap)</h4>
-<div class="code-block">For high-security contexts:
-  1. Announce rotation at time T
-  2. At T-ε: Flush all pending operations
-  3. At T: Atomic switch (all nodes simultaneously)
-  4. At T+ε: Resume operations with new pool
-
-Requires:
-  - Precise clock synchronization (NTP, GPS)
-  - Brief service interruption acceptable
-  - Coordination mechanism (consensus protocol)
-
-Benefit: Zero window where both pools accessible</div>
-
-<h3>4.2 Backward Compatibility</h3>
-
-<h4>Versioned Encoding</h4>
-<div class="code-block">Encoding format:
-  {
-    "version": epoch_id,
-    "encoding": actual_encoding,
-    "timestamp": creation_time
+<div class="code-block">Reference Pool (epoch e):
+  Pool(e) = {
+    basis_vectors: Collection of high-dimensional vectors
+    hash_family: Set of cryptographic hash functions
+    random_seeds: Pseudorandom number generator states
+    encoding_params: Domain-specific transformation parameters
   }
 
-Decoding logic:
-  if encoding.version == current_epoch:
-    decode_with(Pool(current_epoch))
-  elif encoding.version == current_epoch - 1 and in_overlap():
-    decode_with(Pool(current_epoch - 1))
-  else:
-    return ERROR_EXPIRED_ENCODING</div>
+Properties:
+  - Deterministic generation from entropy source
+  - Statistical independence between epochs
+  - Secure erasure after epoch transition
+  - Versioned for backward compatibility during overlap</div>
 
-<h4>Grace Period</h4>
+<h4>Epoch Management</h4>
+
 <ul>
-  <li>Allow old pool for decoding during overlap</li>
-  <li>Reject old pool for new encodings immediately</li>
-  <li>Clients notified to update references</li>
-  <li>After grace period: Old encodings considered invalid</li>
+  <li><strong>Generation Epoch:</strong> Time interval or event count during which a pool remains active</li>
+  <li><strong>Overlap Window:</strong> Transition period where multiple pool versions coexist for compatibility</li>
+  <li><strong>Rotation Trigger:</strong> Condition initiating pool update (time threshold, operation count, security event)</li>
+  <li><strong>Erasure Protocol:</strong> Secure deletion ensuring pool cannot be reconstructed after rotation</li>
 </ul>
 
-<h3>4.3 Distributed Coordination</h3>
+<h3>1.4 Security Goals</h3>
 
-<h4>Consensus-Based Rotation</h4>
-<div class="code-block">In distributed systems (e.g., blockchain):
+<h4>Goal 1: Past Pool Confidentiality</h4>
 
-Rotation proposal:
-  1. Leader proposes: "Rotate to epoch e+1 at height h"
-  2. Validators vote on proposal
-  3. If quorum reached: Schedule rotation
-  4. At height h: All nodes execute rotation atomically
-
-Consistency guarantee:
-  - All honest nodes use same pool at same time
-  - Byzantine nodes cannot cause pool disagreement
-  - Chain reorganization < finality → rotation reverted</div>
-
-<h4>Gossip-Based Propagation</h4>
-<div class="code-block">For eventually consistent systems:
-
-Protocol:
-  1. Generate new pool, broadcast to peers
-  2. Peers verify, re-broadcast to neighbors
-  3. When node sees pool from k distinct paths: Accept
-  4. After propagation delay T_prop: Enable new pool
-
-Probabilistic guarantee:
-  Pr[all nodes have pool after T_prop] ≥ 1 - ε
-  where ε decreases exponentially with T_prop</div>
-
-<h2 id="applications">5. Applications</h2>
-
-<h3>5.1 Genomic Data Protection</h3>
-
-<h4>GenomeVault Hypervector Rotation</h4>
-<div class="code-block">Context: Genomic encodings using hyperdimensional computing
-
-Pool structure:
-  - SNP encoders: 1M hypervectors (one per common variant)
-  - Projection bases: 100 random hypervectors for dimensionality reduction
-  - Hash functions: Family for locality-sensitive hashing
-
-Rotation schedule:
-  - Time-based: Every 30 days
-  - Event-based: Every 100k queries OR security incident
-
-Forward secrecy benefit:
-  - Compromise at day 60 → Cannot decode queries from day 0-29
-  - Old genomic encodings cannot be reverse-engineered
-  - Re-identification attacks limited to current epoch window</div>
-
-<h4>Implementation</h4>
-<div class="code-block">class GenomeVaultPool:
-    def __init__(self):
-        self.current_epoch = 0
-        self.pools = {}
-
-    def rotate(self, new_entropy):
-        # Generate new pool
-        new_epoch = self.current_epoch + 1
-        new_pool = self.generate_pool(new_entropy, new_epoch)
-
-        # Add to active pools (overlap window)
-        self.pools[new_epoch] = new_pool
-
-        # Schedule erasure of old pool
-        self.schedule_erasure(self.current_epoch - 1)
-
-        self.current_epoch = new_epoch
-
-    def generate_pool(self, entropy, epoch):
-        seed = Hash(self.master_seed || epoch || entropy)
-        return {
-            'snp_encoders': generate_hypervectors(seed, 1_000_000, 10_000),
-            'projection_basis': generate_hypervectors(seed, 100, 10_000),
-            'hash_family': generate_hash_functions(seed, 32)
-        }
-
-    def encode_genome(self, genome_data):
-        # Always use current epoch for new encodings
-        pool = self.pools[self.current_epoch]
-        encoding = encode_with_pool(genome_data, pool)
-        return {'epoch': self.current_epoch, 'encoding': encoding}
-
-    def query(self, query_encoding):
-        # Accept current and previous epoch during overlap
-        if query_encoding.epoch in self.pools:
-            pool = self.pools[query_encoding.epoch]
-            return process_with_pool(query_encoding, pool)
-        else:
-            raise ExpiredEncodingError()</div>
-
-<h3>5.2 Distributed Systems</h3>
-
-<h4>Blockchain Validator Committees</h4>
-<div class="code-block">Problem: Static validator set vulnerable to targeted attacks
-
-Rolling committee solution:
-  - Committee epoch: 1000 blocks (~3.3 hours)
-  - Selection: VRF-based randomness from block N-100
-  - Transition: Gradual (validators added/removed in batches)
-
-Forward secrecy property:
-  - Compromising validators at epoch e
-    → Cannot forge signatures from epoch < e
-  - Old validator keys deleted after rotation
-  - Historical blocks remain valid (signatures preserved)
-    but cannot be forged retroactively</div>
-
-<h4>DHT Key Rotation</h4>
-<div class="code-block">Distributed Hash Table with rolling hash functions:
-
-Hash family rotation:
-  - Epoch duration: 24 hours
-  - Hash family: {H_1, H_2, ..., H_k} for k-replication
-  - Rotation: Replace H_i with H'_i using fresh entropy
-
-Rebalancing protocol:
-  1. Announce new hash family at epoch boundary
-  2. Nodes compute new key mappings
-  3. Overlap period: Accept lookups under old/new hashes
-  4. Data migration: Move keys to new responsible nodes
-  5. Confirm migration, erase old hash function
-
-Benefit: Past key distribution patterns not revealed by current hash</div>
-
-<h3>5.3 Secure Communication</h3>
-
-<h4>TLS 1.3 Forward Secrecy</h4>
-<div class="code-block">Key exchange with ephemeral Diffie-Hellman:
-
-Handshake:
-  1. Client → Server: ClientHello + ephemeral_key_share
-  2. Server → Client: ServerHello + ephemeral_key_share + Certificate
-  3. Both derive: handshake_secret = HKDF(ECDH(ephemeral_keys))
-  4. Both derive: application_keys from handshake_secret
-  5. CRITICAL: Delete ephemeral_keys
-
-Post-handshake:
-  - Application data encrypted with application_keys
-  - Server compromise → Cannot decrypt past sessions
-  - Only current session at risk (if keys not rotated)</div>
-
-<h4>Key Update Mechanism</h4>
-<div class="code-block">TLS 1.3 in-session key rotation:
-
-KeyUpdate message:
-  - Either party requests new application_keys
-  - Derive: new_key = HKDF-Expand(current_key, "traffic upd")
-  - Delete: current_key
-  - Continue: with new_key
-
-Effect:
-  - Rolling forward secrecy within long-lived connections
-  - Compromise at time T → Only data from T onward at risk
-  - Data before T protected by deleted keys</div>
-
-<h2 id="mathematical-guarantees">6. Mathematical Guarantees</h2>
-
-<h3>6.1 Information-Theoretic Bounds</h3>
-
-<h4>Entropy Independence Theorem</h4>
-<div class="code-block">Theorem: If Pool(e) generated from independent entropy source,
-         then Pool(e) and Pool(e') are statistically independent.
-
-Proof sketch:
-  Let X = entropy(e), Y = entropy(e') with X ⊥ Y
-  Pool(e) = F(X), Pool(e') = F(Y) for deterministic F
-
-  Then: I(Pool(e); Pool(e')) = I(F(X); F(Y))
-                                ≤ I(X; Y)  (data processing inequality)
-                                = 0  (independence)
-
-  Where I(·;·) is mutual information.
-
-Consequence: Observing Pool(e') reveals nothing about Pool(e)</div>
-
-<h4>Perfect Forward Secrecy Condition</h4>
-<div class="code-block">Definition: Protocol achieves perfect forward secrecy if:
-  H(Session(t) | State(t')) = H(Session(t))  for all t' > t
-
-Necessary conditions:
-  1. Ephemeral keys: Session keys independent of long-term keys
-  2. Secure deletion: State(t) erased before State(t')
-  3. One-way derivation: State(t') ↛ State(t) (computationally)
-
-Sufficient condition:
-  Session(t) = F(Ephemeral(t), Context(t))
-  where Ephemeral(t) deleted immediately after session</div>
-
-<h3>6.2 Computational Assumptions</h3>
-
-<h4>Discrete Logarithm Hardness</h4>
-<div class="code-block">For Diffie-Hellman based forward secrecy:
-
-Assumption: Given g, g^a ∈ G, computing a is hard
-  Pr[A(g, g^a) = a] ≤ ε(λ) for negligible ε
-
-Forward secrecy reduction:
-  If adversary breaks forward secrecy of DH protocol,
-  then adversary can compute discrete logarithms.
-
-Contrapositive:
-  If discrete log hard → Forward secrecy holds</div>
-
-<h4>Pseudorandom Function Security</h4>
-<div class="code-block">For hash-based pool generation:
-
-Assumption: H : {0,1}^λ × {0,1}^* → {0,1}^n is PRF
-  For random key K, H(K, ·) indistinguishable from random function
-
-Forward secrecy guarantee:
-  Pool(e) = H(seed(e), epoch_id)
-  If seed(e) deleted, distinguisher cannot tell Pool(e) from random
-
-  Advantage: |Pr[D(Pool(e)) = 1] - Pr[D(Random) = 1]| ≤ negl(λ)</div>
-
-<h3>6.3 Composition Theorems</h3>
-
-<h4>Sequential Composition</h4>
-<div class="code-block">Theorem: If each epoch transition provides forward secrecy,
-         then k sequential epochs provide k-fold forward secrecy.
+<div class="code-block">Property: Compromise at epoch e reveals nothing about epochs &lt; e-k
+          where k = erasure depth (minimum 1)
 
 Formalization:
-  Let FS(e) = forward secrecy guarantee at epoch e
+  I(Pool(e-k) ; Pool(e) | Compromise(e)) = 0
 
-  Then: FS(e_1 → e_2 → ... → e_k) = min(FS(e_i)) × k
+  where I(·;·) is mutual information
 
-  Interpretation: Security compounds over epochs
-  Attack must break k independent security barriers</div>
+Interpretation: Pools cryptographically independent across epochs</div>
 
-<h4>Hybrid Security</h4>
-<div class="code-block">Theorem: Combining information-theoretic and computational FS
-         provides defense against both bounded and unbounded adversaries.
+<h4>Goal 2: Future Pool Unpredictability</h4>
 
-Construction:
-  - Information-theoretic: One-time pad for current session
-  - Computational: DH for key agreement
-  - Rolling: Periodic rotation of both
+<div class="code-block">Property: Current pool reveals nothing about future pools
 
-Security:
-  - Bounded adversary: Computational FS sufficient
-  - Unbounded adversary: Information-theoretic FS (if OTP key fresh)
-  - Practical: Both mechanisms provide defense-in-depth</div>
+Formalization:
+  Pool(e+1) = GeneratePool(Entropy(e+1))
+  where Entropy(e+1) ⊥ Pool(e)  (independent)
 
-<h3>6.4 Adversarial Models</h3>
+Consequence: Cannot predict Pool(e+1) from Pool(e) alone</div>
 
-<h4>Snapshot Adversary</h4>
-<div class="code-block">Model: Adversary obtains state snapshot at single time t_0
+<h4>Goal 3: Minimal Transition Leakage</h4>
 
-Guarantee: Forward secrecy protects all sessions before t_0
+<div class="code-block">Property: Pool rotation protocol reveals minimal information
 
-Limitation: Sessions after t_0 may be compromised
-  - Current keys may be in snapshot
-  - Future keys if derived from compromised state
+Information Leakage Bound:
+  I(Pool(e) ; Pool(e+1)) ≤ overlap_window × query_rate
 
-Defense: Post-compromise security (PCS)
-  - Inject new entropy after t_0
-  - "Heal" from compromise over time</div>
-
-<h4>Adaptive Adversary</h4>
-<div class="code-block">Model: Adversary observes protocol, adaptively compromises parties
-
-Guarantee: Forward secrecy for sessions before compromise time
-
-Strategy: Adversary optimal strategy
-  - Compromise when most sessions in overlap window
-  - Maximize number of simultaneously accessible pools
-
-Defense: Minimize overlap window duration
+Minimization Strategies:
   - Atomic transitions (zero overlap)
-  - Aggressive pool erasure
-  - Limit backward compatibility period</div>
+  - Encrypted pool distribution
+  - Authenticated transitions only</div>
+
+<h2 id="mathematical-foundations">2. Mathematical Foundations</h2>
+
+<h3>2.1 Entropy Accumulation & Independence</h3>
+
+<h4>Entropy Source Requirements</h4>
+
+<p>Secure pool generation requires high-entropy sources with independence guarantees.</p>
+
+<div class="theorem">
+  <div class="theorem-title">Theorem 2.1 (Entropy Accumulation)</div>
+  Let \(X_1, X_2, \ldots, X_n\) be independent random variables with min-entropy \(H_\infty(X_i) \geq k\). A randomness extractor \(\text{Ext}: \{0,1\}^{n \cdot m} \times \{0,1\}^d \to \{0,1\}^\ell\) produces output indistinguishable from uniform:
+
+  \[
+  \Delta(\text{Ext}(X_1 \| X_2 \| \cdots \| X_n, S), U_\ell) \leq \epsilon
+  \]
+
+  where \(S\) is a random seed, \(U_\ell\) is uniform over \(\{0,1\}^\ell\), and \(\Delta\) is statistical distance, provided \(\ell \leq nk - 2\log(1/\epsilon)\).
+</div>
+
+<p><strong>Application:</strong> Combining multiple entropy sources (hardware RNG, blockchain randomness, user entropy) through extractors ensures pool generation unpredictability even if some sources are weak.</p>
+
+<h4>Pool Independence via Seeding</h4>
+
+<div class="code-block">Provably Independent Pool Generation:
+
+Input:
+  master_seed: Long-term secret (256+ bits)
+  epoch_id: Monotonically increasing counter
+  fresh_entropy: High-entropy from external source (≥128 bits)
+
+Generation:
+  seed(e) = HKDF-Extract(master_seed, epoch_id || fresh_entropy)
+  Pool(e) = HKDF-Expand(seed(e), pool_size)
+
+Guarantee: Pool(e) and Pool(e') indistinguishable from independent
+           random variables if fresh_entropy sources independent</div>
+
+<h3>2.2 Cryptographic Ratchets</h3>
+
+<p>Ratchet mechanisms provide one-way state evolution: current state cryptographically independent from past states.</p>
+
+<div class="theorem">
+  <div class="theorem-title">Definition 2.2 (Cryptographic Ratchet)</div>
+  A ratchet is a sequence of states \(\{S_0, S_1, S_2, \ldots\}\) where:
+
+  \[
+  S_{i+1} = H(S_i, \text{fresh}_i)
+  \]
+
+  for a one-way function \(H\) and independent fresh entropy \(\text{fresh}_i\), such that:
+
+  \[
+  \Pr[\mathcal{A}(S_j) \text{ recovers } S_i] \leq \text{negl}(\lambda) \quad \forall j > i
+  \]
+</div>
+
+<h4>Hash Ratchet</h4>
+
+<div class="code-block">Simple Hash Chain:
+  S_0 = initial_seed
+  S_{i+1} = SHA-256(S_i)
+
+Properties:
+  - One-way: S_i ↛ S_{i-1} (preimage resistance)
+  - Fast: Constant-time hashing
+  - Stateless: Can compute S_i given S_0
+
+Forward Secrecy: Deleting S_i prevents computing earlier states
+Limitation: Requires storing current S_i (compromise reveals future)</div>
+
+<h4>Key-Derivation Ratchet</h4>
+
+<div class="code-block">HKDF-Based Ratchet with Entropy Injection:
+
+State Evolution:
+  ChainKey(0) = HKDF-Extract(master_key, initial_salt)
+  ChainKey(i+1) = HKDF-Extract(ChainKey(i), fresh_entropy(i))
+
+Key Derivation:
+  MessageKey(i) = HKDF-Expand(ChainKey(i), "message-key" || i)
+
+Usage:
+  - Use MessageKey(i) for encryption
+  - Delete ChainKey(i) after deriving MessageKey(i)
+  - Store only ChainKey(i+1)
+
+Guarantee: Compromise at step j → Cannot decrypt messages &lt; j</div>
+
+<h4>Diffie-Hellman Ratchet</h4>
+
+<div class="code-block">Double Ratchet (Signal Protocol):
+
+DH Ratchet Step (per message round):
+  - Alice: Generate ephemeral a_i, publish g^{a_i}
+  - Bob: Generate ephemeral b_i, publish g^{b_i}
+  - Both: Compute DH_i = g^{a_i b_i}
+
+Root Key Update:
+  RootKey(i+1) = HKDF(RootKey(i), DH_i)
+
+Symmetric Ratchet:
+  ChainKey_send(0) = HKDF(RootKey(i), "send")
+  ChainKey_recv(0) = HKDF(RootKey(i), "recv")
+  ChainKey(j+1) = HKDF(ChainKey(j), "chain")
+
+Properties:
+  - Continuous forward secrecy (deleting ephemeral DH keys)
+  - Post-compromise security (new DH outputs inject entropy)
+  - Asynchronous operation (parties alternate publishing)</div>
+
+<h3>2.3 Key Derivation Functions</h3>
+
+<p>KDFs extract cryptographic keys from potentially weak or biased sources, providing computational indistinguishability from uniform randomness.</p>
+
+<div class="theorem">
+  <div class="theorem-title">Definition 2.3 (Pseudorandom Function)</div>
+  A function family \(\mathcal{F} = \{f_k : \{0,1\}^* \to \{0,1\}^n\}_{k \in \{0,1\}^\lambda}\) is a pseudorandom function (PRF) if for all PPT distinguishers \(\mathcal{D}\):
+
+  \[
+  \left| \Pr_{k \leftarrow \{0,1\}^\lambda}[\mathcal{D}^{f_k}(\cdot) = 1] - \Pr_{R \leftarrow \text{Funcs}}[\mathcal{D}^R(\cdot) = 1] \right| \leq \text{negl}(\lambda)
+  \]
+
+  where \(\text{Funcs}\) is the set of all functions from \(\{0,1\}^*\) to \(\{0,1\}^n\).
+</div>
+
+<h4>HKDF (HMAC-based Key Derivation)</h4>
+
+<div class="code-block">HKDF Structure:
+
+Extract Phase (entropy accumulation):
+  PRK = HKDF-Extract(salt, IKM)
+      = HMAC-Hash(salt, IKM)
+
+  Input:  salt (optional, high-entropy)
+          IKM (input keying material, possibly weak)
+  Output: PRK (pseudorandom key, full-entropy)
+
+Expand Phase (key stretching):
+  OKM = HKDF-Expand(PRK, info, L)
+      = T(1) || T(2) || ... || T(⌈L/HashLen⌉)
+  where:
+    T(0) = empty string
+    T(i) = HMAC-Hash(PRK, T(i-1) || info || i)
+
+  Input:  PRK (pseudorandom key from Extract)
+          info (context string for domain separation)
+          L (desired output length)
+  Output: OKM (output keying material, L bytes)
+
+Security: If HMAC is a PRF, HKDF-Expand output indistinguishable
+         from random given only length L and info (not PRK)</div>
+
+<h4>Application to Pool Generation</h4>
+
+<div class="code-block">Generating Hypervector Pool with HKDF:
+
+Input:
+  master_secret: 256-bit long-term key
+  epoch_counter: 64-bit monotonic counter
+  fresh_randomness: 256-bit from hardware RNG
+
+Step 1: Extract combined entropy
+  PRK = HKDF-Extract(
+    salt = fresh_randomness,
+    IKM  = master_secret || epoch_counter
+  )
+
+Step 2: Expand to pool size (e.g., 1M × 10k-dimensional hypervectors)
+  For each hypervector i in 1..1,000,000:
+    HV[i] = HKDF-Expand(
+      PRK  = PRK,
+      info = "hypervector" || i || epoch_counter,
+      L    = 10,000 bits
+    )
+
+Security Properties:
+  - Computational independence: HV[i] from epoch e and epoch e'
+    indistinguishable without knowing PRK values
+  - Domain separation: "hypervector" || i ensures distinct outputs
+  - Forward secrecy: Deleting PRK prevents regenerating HV pool</div>
+
+<h3>2.4 Computational Hardness Assumptions</h3>
+
+<h4>Discrete Logarithm Problem</h4>
+
+<div class="theorem">
+  <div class="theorem-title">Assumption 2.4 (Discrete Logarithm)</div>
+  Let \(\mathbb{G}\) be a cyclic group of prime order \(q\) with generator \(g\). The discrete logarithm problem is hard in \(\mathbb{G}\) if for all PPT adversaries \(\mathcal{A}\):
+
+  \[
+  \Pr_{x \leftarrow \mathbb{Z}_q}[\mathcal{A}(g, g^x) = x] \leq \text{negl}(\lambda)
+  \]
+</div>
+
+<p><strong>Implication for Forward Secrecy:</strong> Ephemeral Diffie-Hellman provides forward secrecy under DL assumption. Even if adversary learns long-term keys \((g^a_{\text{static}}, g^b_{\text{static}})\), they cannot compute ephemeral shared secret \(g^{xy}\) from \((g^x, g^y)\) without solving discrete logarithms.</p>
+
+<h4>Computational Diffie-Hellman Problem</h4>
+
+<div class="theorem">
+  <div class="theorem-title">Assumption 2.5 (CDH)</div>
+  Let \(\mathbb{G}\) be a cyclic group of order \(q\) with generator \(g\). The computational Diffie-Hellman problem is hard if for all PPT \(\mathcal{A}\):
+
+  \[
+  \Pr_{x,y \leftarrow \mathbb{Z}_q}[\mathcal{A}(g, g^x, g^y) = g^{xy}] \leq \text{negl}(\lambda)
+  \]
+</div>
+
+<h4>Pseudorandom Generator Security</h4>
+
+<div class="theorem">
+  <div class="theorem-title">Assumption 2.6 (PRG)</div>
+  A pseudorandom generator \(G: \{0,1\}^\lambda \to \{0,1\}^{\ell(\lambda)}\) with \(\ell(\lambda) > \lambda\) is secure if for all PPT \(\mathcal{D}\):
+
+  \[
+  \left| \Pr_{s \leftarrow \{0,1\}^\lambda}[\mathcal{D}(G(s)) = 1] - \Pr_{r \leftarrow \{0,1\}^{\ell(\lambda)}}[\mathcal{D}(r) = 1] \right| \leq \text{negl}(\lambda)
+  \]
+</div>
+
+<p><strong>Application:</strong> Pool generation via PRG seeded with securely erased seed achieves computational forward secrecy. Given Pool(e) = G(seed(e)), adversary cannot distinguish Pool(e) from random if seed(e) erased.</p>
+
+<h2 id="mechanisms">3. Mechanisms & Protocols</h2>
+
+<h3>3.1 Ephemeral Diffie-Hellman Key Exchange</h3>
+
+<h4>Basic Protocol</h4>
+
+<div class="code-block">Ephemeral Diffie-Hellman (DHE):
+
+Setup:
+  Public parameters: (G, g, q) where G cyclic group, order q, generator g
+  Long-term keys: Alice (a_static, g^{a_static}), Bob (b_static, g^{b_static})
+
+Protocol (per session):
+  1. Alice → Bob:
+     - Generate ephemeral x ←$ Z_q
+     - Send: (g^x, SIG_{a_static}(g^x || session_id))
+
+  2. Bob → Alice:
+     - Generate ephemeral y ←$ Z_q
+     - Send: (g^y, SIG_{b_static}(g^y || session_id))
+
+  3. Both parties compute:
+     - Shared secret: K = g^{xy}
+     - Session key: k_session = KDF(K, "session" || session_id)
+
+  4. CRITICAL STEP: Securely erase ephemeral values
+     - Alice: Overwrite and delete x
+     - Bob: Overwrite and delete y
+
+Security Properties:
+  - Authentication: Signatures prevent impersonation
+  - Forward secrecy: Deleting (x,y) → cannot reconstruct K
+  - Compromise of (a_static, b_static) → past sessions remain secure</div>
+
+<h4>TLS 1.3 Handshake (Simplified)</h4>
+
+<div class="code-block">TLS 1.3 with Forward Secrecy:
+
+ClientHello:
+  - Client generates ephemeral x ←$ Z_q
+  - Sends: g^x (key_share)
+
+ServerHello:
+  - Server generates ephemeral y ←$ Z_q
+  - Sends: g^y (key_share), Certificate, CertificateVerify
+
+Key Derivation:
+  1. Compute DHE: K = g^{xy}
+  2. Extract: Early_Secret = HKDF-Extract(0, 0)
+  3. Derive: Handshake_Secret = HKDF-Extract(Early_Secret, K)
+  4. Expand: handshake_traffic_secret = HKDF-Expand(Handshake_Secret, ...)
+  5. Expand: application_traffic_secret = HKDF-Expand(Master_Secret, ...)
+
+Ephemeral Key Deletion:
+  - After computing K, both parties delete (x, y)
+  - After deriving application keys, delete Handshake_Secret
+
+Result: Compromise of server's long-term key → cannot decrypt past sessions</div>
+
+<h3>3.2 Signal Protocol Double Ratchet</h3>
+
+<p>The Signal Protocol combines Diffie-Hellman ratchet (for continuous forward secrecy) with symmetric key ratchet (for immediate deletion) to achieve both forward secrecy and post-compromise security.</p>
+
+<h4>Protocol State</h4>
+
+<div class="code-block">Signal Protocol State (per party):
+
+Persistent State:
+  - Root key: RK (derived from initial X3DH handshake)
+  - Sending chain key: CK_send
+  - Receiving chain key: CK_recv
+  - Current DH key pair: (dh_priv, dh_pub)
+  - Partner's DH public key: dh_partner
+
+Message State (ephemeral):
+  - Message keys: MK_i (derived and immediately deleted)</div>
+
+<h4>Sending Messages</h4>
+
+<div class="code-block">Send(plaintext):
+  1. Derive message key:
+     MK = HKDF(CK_send, "message-key")
+
+  2. Advance sending chain:
+     CK_send = HKDF(CK_send, "chain-key")
+
+  3. Encrypt:
+     ciphertext = Encrypt(MK, plaintext)
+
+  4. Send message:
+     message = (dh_pub, counter, ciphertext)
+
+  5. DELETE MK immediately after encryption
+
+  6. Every N messages (e.g., N=100), perform DH ratchet step</div>
+
+<h4>DH Ratchet Step</h4>
+
+<div class="code-block">DH_Ratchet():
+  1. Generate new ephemeral DH key pair:
+     (dh_priv_new, dh_pub_new) ←$ GenerateKeypair()
+
+  2. Compute shared secret with partner's key:
+     DH_output = DH(dh_priv, dh_partner)
+
+  3. Update root key:
+     (RK_new, CK_send_new) = HKDF(RK, DH_output, "ratchet")
+
+  4. DELETE old DH private key:
+     SecureErase(dh_priv)
+
+  5. Update state:
+     RK = RK_new
+     CK_send = CK_send_new
+     dh_priv = dh_priv_new
+     dh_pub = dh_pub_new
+
+Forward Secrecy: Deleting dh_priv prevents computing past DH_output values
+Post-Compromise Security: New DH_output injects entropy, healing from compromise</div>
+
+<h4>Security Analysis</h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Scenario</th>
+      <th>Compromised Data</th>
+      <th>Secure Messages</th>
+      <th>Mechanism</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Past message compromise</td>
+      <td>State at time t</td>
+      <td>All messages before t</td>
+      <td>Symmetric ratchet (deleted MK)</td>
+    </tr>
+    <tr>
+      <td>Current state compromise</td>
+      <td>Current RK, CK</td>
+      <td>Past DH ratchet epochs</td>
+      <td>DH ratchet (deleted dh_priv)</td>
+    </tr>
+    <tr>
+      <td>Future healing</td>
+      <td>State at time t</td>
+      <td>Messages after t + 1 DH ratchet</td>
+      <td>New DH output injects entropy</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>3.3 Rolling Reference Pool Protocols</h3>
+
+<h4>Hypervector Pool Rotation</h4>
+
+<div class="code-block">Context: High-dimensional computing (e.g., GenomeVault genomic encoding)
+
+Pool Structure (epoch e):
+  HVPool(e) = {
+    basis_vectors: {hv_1, hv_2, ..., hv_n} ∈ ({0,1}^d)^n
+    projection_matrix: Random d×k matrix for dimensionality reduction
+    hash_family: {h_1, h_2, ..., h_m} for LSH
+  }
+
+  Typical parameters: d=10,000 (hypervector dimension)
+                      n=1,000,000 (number of basis vectors)
+                      k=100 (projection dimension)
+                      m=32 (hash functions)
+
+Generation Protocol:
+
+  GenerateHVPool(epoch_id, master_seed, fresh_entropy):
+    1. Extract entropy:
+       PRK = HKDF-Extract(fresh_entropy, master_seed || epoch_id)
+
+    2. Generate basis vectors:
+       For i = 1 to n:
+         seed_i = HKDF-Expand(PRK, "basis" || i, 32 bytes)
+         hv_i = PRNG(seed_i, d bits)  // Random binary hypervector
+
+    3. Generate projection matrix:
+       For row r = 1 to d, col c = 1 to k:
+         seed_rc = HKDF-Expand(PRK, "projection" || r || c, 32 bytes)
+         P[r,c] = GaussianPRNG(seed_rc)  // Random Gaussian entries
+
+    4. Generate hash family:
+       For j = 1 to m:
+         seed_j = HKDF-Expand(PRK, "hash" || j, 32 bytes)
+         h_j = InitHash(seed_j)
+
+    5. CRITICAL: Store epoch metadata
+       metadata = {epoch_id, generation_timestamp, expiration_timestamp}
+
+    6. Return HVPool(e) = {basis_vectors, projection_matrix, hash_family, metadata}
+
+Statistical Independence Verification:
+  - Check <hv_i, hv_j> ≈ d/2 ± O(√d) for i ≠ j (orthogonality)
+  - Verify each hv_i has Hamming weight ≈ d/2 (balance)
+  - Confirm projection matrix entries ~ N(0,1) (Gaussian)</div>
+
+<h4>Rotation Trigger Conditions</h4>
+
+<div class="code-block">Hybrid Rotation Policy:
+
+Trigger rotation if ANY condition met:
+
+1. Time-based threshold:
+   current_time - epoch_start_time ≥ MAX_EPOCH_DURATION
+   Example: MAX_EPOCH_DURATION = 30 days
+
+2. Operation-based threshold:
+   operation_count ≥ MAX_OPERATIONS_PER_EPOCH
+   Example: MAX_OPERATIONS_PER_EPOCH = 10,000,000 queries
+
+3. Entropy-based threshold:
+   accumulated_queries × log(pool_size) ≥ ENTROPY_BUDGET
+   Example: ENTROPY_BUDGET = 2^80 (information-theoretic bound)
+
+4. Security event:
+   - Detected intrusion attempt
+   - Anomalous query pattern
+   - External threat intelligence
+   - Manual administrator trigger
+
+5. Scheduled maintenance:
+   - Coordinated upgrade across distributed nodes
+   - Cryptographic algorithm migration
+
+Adaptive Adjustment:
+  If threat_level == CRITICAL:
+    MAX_EPOCH_DURATION = 24 hours
+    MAX_OPERATIONS_PER_EPOCH = 1,000,000
+  Elif threat_level == HIGH:
+    MAX_EPOCH_DURATION = 7 days
+    MAX_OPERATIONS_PER_EPOCH = 5,000,000
+  Else:
+    MAX_EPOCH_DURATION = 30 days
+    MAX_OPERATIONS_PER_EPOCH = 10,000,000</div>
+
+<h4>Secure Transition Protocol</h4>
+
+<div class="code-block">Three-Phase Pool Rotation:
+
+PHASE 1: PRE-ROTATION (Preparation)
+---------
+Duration: 1-24 hours before transition
+
+Actions:
+  1. Generate new pool:
+     HVPool(e+1) = GenerateHVPool(e+1, master_seed, fresh_entropy)
+
+  2. Verify statistical properties:
+     Assert(VerifyIndependence(HVPool(e+1)))
+
+  3. Distribute to all nodes (encrypted channels):
+     For each node in distributed_system:
+       Send(Encrypt(node.public_key, HVPool(e+1)))
+
+  4. Nodes acknowledge receipt and verification:
+     Wait for quorum acknowledgments (e.g., 2/3 of nodes)
+
+  Status: HVPool(e) = ACTIVE, HVPool(e+1) = STANDBY
+
+PHASE 2: OVERLAP WINDOW (Transition)
+---------
+Duration: Configured overlap period (e.g., 1-6 hours)
+
+Actions:
+  1. Activate both pools:
+     ACTIVE_POOLS = {HVPool(e), HVPool(e+1)}
+
+  2. Query handling policy:
+     - Accept queries referencing HVPool(e) or HVPool(e+1)
+     - Process queries using referenced pool version
+     - Return results tagged with pool version
+
+  3. Encoding policy:
+     - ALL NEW encodings use HVPool(e+1) ONLY
+     - Clients notified to update references to e+1
+     - Legacy decodings still supported for HVPool(e)
+
+  4. Monitoring:
+     - Track query distribution across pool versions
+     - Detect clients not updating to e+1
+     - Alert administrators if transition stalled
+
+PHASE 3: POST-ROTATION (Cleanup)
+---------
+Triggered when: overlap_end_time reached OR
+                95% of queries using HVPool(e+1)
+
+Actions:
+  1. Deactivate old pool:
+     ACTIVE_POOLS = {HVPool(e+1)}
+     DEPRECATED_POOLS = {HVPool(e)}
+
+  2. Grace period for stragglers:
+     For duration = GRACE_PERIOD (e.g., 1 hour):
+       If query references HVPool(e):
+         Return ERROR_DEPRECATED_POOL with e+1 reference
+
+  3. SECURE ERASURE (CRITICAL):
+     a. Overwrite pool data:
+        For i = 1 to 3:  // Multiple passes
+          Overwrite HVPool(e) with random data
+
+     b. Erase generation seed:
+        SecureDelete(PRK(e))
+
+     c. Zero memory:
+        MemoryBarrier()
+        ZeroMemory(HVPool(e) memory region)
+
+     d. Confirm erasure:
+        Assert(MemoryRegionIsZero(HVPool(e)))
+
+  4. Update epoch metadata:
+     current_epoch = e+1
+     epoch_history.append({epoch: e, end_time: now, reason: rotation_trigger})
+
+  5. Log rotation event (audit trail):
+     Log("Pool rotation completed: e+1 active, e securely erased")
+
+Forward Secrecy Guarantee:
+  After Phase 3, HVPool(e) cannot be reconstructed:
+    - Pool data overwritten with random bits
+    - Generation seed PRK(e) securely deleted
+    - Even with master_seed, cannot regenerate (fresh_entropy lost)</div>
+
+<h3>3.4 Atomic Transitions (Zero-Overlap)</h3>
+
+<p>For maximum security contexts where overlap window is unacceptable, atomic transitions provide instantaneous pool switching at synchronized time.</p>
+
+<div class="code-block">Atomic Pool Rotation Protocol:
+
+Prerequisites:
+  - Precise time synchronization across all nodes (NTP, GPS, PTP)
+  - Acceptable brief service interruption
+  - Distributed consensus mechanism (Raft, PBFT, blockchain)
+
+Protocol:
+
+1. ROTATION PROPOSAL
+   Time: T - 24 hours
+
+   Proposer (leader node):
+     proposal = {
+       new_epoch: e+1,
+       rotation_time: T (Unix timestamp),
+       new_pool_hash: Hash(HVPool(e+1)),
+       proposer_signature: Sign(proposer_key, proposal)
+     }
+
+   Broadcast proposal to all nodes
+
+2. VALIDATION & VOTING
+   Time: T - 24 hours to T - 1 hour
+
+   Each node:
+     - Verify proposal signature
+     - Generate HVPool(e+1) locally using deterministic seed
+     - Verify Hash(HVPool(e+1)) == new_pool_hash
+     - Cast vote: {accept/reject, signature}
+
+   Quorum requirement: ≥ 2/3 of nodes vote accept
+
+3. COMMITMENT
+   Time: T - 1 hour
+
+   If quorum reached:
+     All nodes: STATUS = ROTATION_SCHEDULED
+     Set alarm for rotation_time = T
+
+   If quorum failed:
+     Abort rotation, retry with new proposal
+
+4. PRE-TRANSITION FREEZE
+   Time: T - 60 seconds
+
+   All nodes:
+     - Stop accepting new queries (return MAINTENANCE status)
+     - Flush pending operations
+     - Complete in-flight queries
+     - Confirm all operations settled
+
+5. ATOMIC SWITCH
+   Time: T (synchronized across all nodes)
+
+   Simultaneously on all nodes:
+     AtomicSwitch():
+       ACTIVE_POOL = HVPool(e+1)
+       SecureErase(HVPool(e))
+       current_epoch = e+1
+       STATUS = OPERATIONAL
+
+   Synchronization accuracy: ±100ms (achievable with NTP)
+
+6. POST-TRANSITION VERIFICATION
+   Time: T + 60 seconds
+
+   Each node:
+     - Broadcast: {node_id, current_epoch, pool_hash}
+
+   Verification:
+     - All nodes report current_epoch = e+1
+     - All nodes report identical pool_hash
+     - If mismatch: ALERT, investigate Byzantine node
+
+Security Properties:
+  - Zero-overlap window → No period with both pools accessible
+  - Synchronized transition → Consistent state across distributed system
+  - Atomic erasure → Immediate forward secrecy, no gradual transition
+
+Tradeoffs:
+  - Requires service interruption (typically 1-2 minutes)
+  - Needs reliable synchronization (failures can cause inconsistency)
+  - Not suitable for 24/7 high-availability systems</div>
+
+<h2 id="implementation-strategies">4. Implementation Strategies</h2>
+
+<h3>4.1 Time-Based Rotation</h3>
+
+<h4>Fixed Interval Strategy</h4>
+
+<div class="code-block">Configuration:
+  ROTATION_INTERVAL = 24 hours  // Epoch duration
+  OVERLAP_WINDOW = 2 hours      // Transition period
+  GRACE_PERIOD = 30 minutes     // Stragglers handling
+
+Epoch Schedule:
+  Epoch 0: [2025-01-01 00:00:00, 2025-01-02 00:00:00)
+  Overlap:  2025-01-01 22:00:00 - 2025-01-02 02:00:00
+  Epoch 1: [2025-01-02 00:00:00, 2025-01-03 00:00:00)
+  Overlap:  2025-01-02 22:00:00 - 2025-01-03 02:00:00
+
+Implementation:
+
+  def get_current_epoch(current_time):
+      epoch_id = floor(current_time / ROTATION_INTERVAL)
+      return epoch_id
+
+  def in_overlap_window(current_time):
+      time_into_epoch = current_time % ROTATION_INTERVAL
+      return (ROTATION_INTERVAL - OVERLAP_WINDOW) <= time_into_epoch < ROTATION_INTERVAL
+         or time_into_epoch < OVERLAP_WINDOW
+
+  def get_active_pools(current_time):
+      current_epoch = get_current_epoch(current_time)
+
+      if in_overlap_window(current_time):
+          # Support both current and previous epoch
+          return [HVPool(current_epoch), HVPool(current_epoch - 1)]
+      else:
+          return [HVPool(current_epoch)]
+
+  def encode_data(data, current_time):
+      current_epoch = get_current_epoch(current_time)
+      # Always encode with current epoch, even during overlap
+      pool = HVPool(current_epoch)
+      encoding = pool.encode(data)
+      return {
+          'epoch': current_epoch,
+          'encoding': encoding,
+          'timestamp': current_time
+      }
+
+  def query_data(query_encoding, current_time):
+      active_pools = get_active_pools(current_time)
+
+      # Find pool matching query's epoch
+      for pool in active_pools:
+          if pool.epoch == query_encoding['epoch']:
+              return pool.process_query(query_encoding['encoding'])
+
+      # Query references expired epoch
+      raise ExpiredEpochError(
+          f"Query epoch {query_encoding['epoch']} expired. Current: {get_current_epoch(current_time)}"
+      )</div>
+
+<h4>Advantages</h4>
+<ul>
+  <li><strong>Predictability:</strong> Rotation schedule known in advance, enabling preemptive preparation</li>
+  <li><strong>Simplicity:</strong> Clock-based logic, no distributed state tracking required</li>
+  <li><strong>Auditability:</strong> Clear epoch boundaries for compliance and forensics</li>
+  <li><strong>Coordination:</strong> All nodes synchronize via NTP, no explicit consensus needed</li>
+</ul>
+
+<h4>Disadvantages</h4>
+<ul>
+  <li><strong>Clock Dependency:</strong> Requires synchronized clocks; clock skew causes inconsistency</li>
+  <li><strong>Inflexibility:</strong> Cannot adapt to threat level changes without manual reconfiguration</li>
+  <li><strong>Fixed Granularity:</strong> Time windows may be too coarse (over-rotation) or too fine (under-rotation)</li>
+  <li><strong>Predictable Pattern:</strong> Adversary knows rotation schedule, can time attacks to overlap windows</li>
+</ul>
+
+<h3>4.2 Event-Based Rotation</h3>
+
+<h4>Operation Count Strategy</h4>
+
+<div class="code-block">Configuration:
+  OPERATIONS_PER_EPOCH = 10,000,000  // Trigger after 10M operations
+  OVERLAP_OPERATIONS = 500,000        // Overlap lasts 500k operations
+
+State Tracking:
+  class OperationCounter:
+      def __init__(self):
+          self.current_epoch = 0
+          self.operation_count = 0
+          self.epoch_start_count = 0
+          self.pools = {0: GeneratePool(0)}
+
+      def record_operation(self):
+          self.operation_count += 1
+
+          # Check rotation threshold
+          if self.operation_count - self.epoch_start_count >= OPERATIONS_PER_EPOCH:
+              self.trigger_rotation()
+
+      def trigger_rotation(self):
+          new_epoch = self.current_epoch + 1
+
+          # Generate new pool
+          self.pools[new_epoch] = GeneratePool(new_epoch)
+
+          # Schedule old pool deletion after overlap
+          deletion_threshold = self.operation_count + OVERLAP_OPERATIONS
+          self.schedule_deletion(self.current_epoch, deletion_threshold)
+
+          # Update state
+          self.current_epoch = new_epoch
+          self.epoch_start_count = self.operation_count
+
+      def get_active_pools(self):
+          # During overlap: both current and previous
+          operations_into_epoch = self.operation_count - self.epoch_start_count
+
+          if operations_into_epoch < OVERLAP_OPERATIONS:
+              return [self.pools[self.current_epoch],
+                     self.pools.get(self.current_epoch - 1)]
+          else:
+              return [self.pools[self.current_epoch]]
+
+Distributed Coordination (required for multi-node systems):
+
+  Consensus Protocol:
+    1. Each node maintains local operation counter
+    2. Periodically broadcast: {node_id, operation_count}
+    3. Compute global count: SUM(all node operation_counts)
+    4. When global_count >= OPERATIONS_PER_EPOCH:
+       - Initiate rotation proposal
+       - Nodes vote on rotation at specific global_count
+       - Quorum agreement triggers synchronized rotation</div>
+
+<h4>Adaptive Rotation Strategy</h4>
+
+<div class="code-block">Dynamic Threshold Adjustment:
+
+Threat Level Model:
+  threat_level = assess_threat()  // LOW, MEDIUM, HIGH, CRITICAL
+
+Configuration Matrix:
+  rotation_params = {
+      'LOW':      {'operations': 20_000_000, 'time': 60 days},
+      'MEDIUM':   {'operations': 10_000_000, 'time': 30 days},
+      'HIGH':     {'operations':  5_000_000, 'time': 14 days},
+      'CRITICAL': {'operations':  1_000_000, 'time':  7 days}
+  }
+
+Threat Assessment Factors:
+  - Authentication failure rate (failed logins, invalid queries)
+  - Query pattern anomalies (statistical outliers, timing attacks)
+  - External threat intelligence (CVE announcements, dark web mentions)
+  - System compromise indicators (intrusion detection alerts)
+  - Regulatory requirements (GDPR, HIPAA compliance triggers)
+
+Adaptive Implementation:
+
+  def assess_threat():
+      score = 0
+
+      # Authentication failures
+      if auth_failure_rate > 0.05:  # >5% failures
+          score += 20
+
+      # Query anomalies
+      if query_pattern_anomaly_score > threshold:
+          score += 30
+
+      # External intelligence
+      if critical_CVE_announced:
+          score += 50
+
+      # Intrusion indicators
+      if intrusion_detected:
+          score += 100
+
+      # Map score to threat level
+      if score >= 100: return 'CRITICAL'
+      if score >= 50:  return 'HIGH'
+      if score >= 20:  return 'MEDIUM'
+      return 'LOW'
+
+  def update_rotation_threshold():
+      threat = assess_threat()
+      params = rotation_params[threat]
+
+      OPERATIONS_PER_EPOCH = params['operations']
+      MAX_EPOCH_DURATION = params['time']
+
+      log(f"Threat level {threat}: rotation every {params['operations']} ops or {params['time']}")
+
+Trigger Conditions (ANY condition triggers rotation):
+  1. Operation count threshold met
+  2. Time threshold met (backup condition)
+  3. Manual emergency trigger
+  4. Threat level increase (e.g., MEDIUM → HIGH)
+  5. Specific security events (intrusion detected, key compromise)</div>
+
+<h4>Advantages</h4>
+<ul>
+  <li><strong>Responsiveness:</strong> Adapts to actual system usage and threat landscape</li>
+  <li><strong>Fairness:</strong> Equal security per operation, regardless of time distribution</li>
+  <li><strong>Efficiency:</strong> Avoids unnecessary rotations during low-activity periods</li>
+  <li><strong>Security-Driven:</strong> Rotation frequency matches risk level</li>
+</ul>
+
+<h4>Disadvantages</h4>
+<ul>
+  <li><strong>Complexity:</strong> Requires distributed operation counting and consensus</li>
+  <li><strong>Unpredictability:</strong> Rotation timing variable, harder to schedule maintenance</li>
+  <li><strong>State Requirements:</strong> Must reliably track operation counters (persistence, replication)</li>
+  <li><strong>Coordination Overhead:</strong> Nodes must sync operation counts and agree on rotation</li>
+</ul>
+
+<h3>4.3 Hybrid Approach (Recommended)</h3>
+
+<div class="code-block">Combined Time + Event + Adaptive Strategy:
+
+Configuration:
+  MIN_ROTATION_INTERVAL = 7 days     // Minimum time between rotations
+  MAX_ROTATION_INTERVAL = 90 days    // Maximum time without rotation
+  OPERATIONS_THRESHOLD = 10_000_000  // Operation count trigger
+  ENTROPY_BUDGET = 2^80              // Information-theoretic limit
+
+Rotation Trigger Logic:
+
+  def should_rotate(current_time, operation_count, threat_level):
+      time_since_rotation = current_time - last_rotation_time
+      operations_since_rotation = operation_count - last_rotation_count
+
+      # Hard upper bound (always rotate)
+      if time_since_rotation >= MAX_ROTATION_INTERVAL:
+          return True, "MAX_TIME_REACHED"
+
+      # Minimum interval guard (prevent too-frequent rotation)
+      if time_since_rotation < MIN_ROTATION_INTERVAL:
+          return False, "MIN_TIME_NOT_REACHED"
+
+      # Operation threshold
+      if operations_since_rotation >= OPERATIONS_THRESHOLD:
+          return True, "OPERATION_THRESHOLD"
+
+      # Entropy budget (information-theoretic)
+      queries_made = get_query_count_since_rotation()
+      entropy_leaked = queries_made * log2(POOL_SIZE)
+      if entropy_leaked >= ENTROPY_BUDGET:
+          return True, "ENTROPY_BUDGET_EXCEEDED"
+
+      # Threat-level adaptive
+      threat_params = rotation_params[threat_level]
+      if operations_since_rotation >= threat_params['operations']:
+          return True, f"THREAT_LEVEL_{threat_level}"
+      if time_since_rotation >= threat_params['time']:
+          return True, f"THREAT_TIME_{threat_level}"
+
+      # Manual trigger
+      if manual_rotation_requested:
+          return True, "MANUAL_TRIGGER"
+
+      # Security event
+      if security_event_detected:
+          return True, "SECURITY_EVENT"
+
+      return False, "NO_TRIGGER"
+
+Benefits:
+  - Upper time bound: Even unused systems rotate within 90 days
+  - Minimum time guard: Prevents DoS via forced rotation attacks
+  - Operation fairness: Heavy usage triggers rotation proportionally
+  - Information-theoretic protection: Respects entropy budgets
+  - Threat responsiveness: Accelerates rotation under threat
+  - Emergency capability: Manual override for incidents
+
+Example Scenarios:
+  1. Low-activity system: Rotates every 90 days (MAX_ROTATION_INTERVAL)
+  2. High-activity system: Rotates every 10M operations (OPERATIONS_THRESHOLD)
+  3. Under attack: Rotates every 7 days + 1M operations (threat-adaptive)
+  4. Incident response: Manual trigger immediately rotates
+  5. Query-heavy usage: Entropy budget forces rotation after 2^80 bits leaked</div>
+
+<h3>4.4 Distributed Coordination Mechanisms</h3>
+
+<h4>Consensus-Based Rotation (Blockchain/BFT)</h4>
+
+<div class="code-block">Byzantine Fault Tolerant Pool Rotation:
+
+Context: Distributed system with n nodes, up to f Byzantine (malicious) nodes
+Requirement: 3f + 1 ≤ n (e.g., 4 nodes tolerate 1 Byzantine)
+
+Protocol:
+
+1. ROTATION PROPOSAL
+   Proposer (deterministic leader selection):
+     proposal = {
+       epoch: e+1,
+       activation_height: h (blockchain height or round number),
+       pool_commitment: Commit(HVPool(e+1)) = Hash(HVPool(e+1)),
+       timestamp: T,
+       signature: Sign(proposer_key, proposal)
+     }
+
+   Broadcast to all validators
+
+2. PRE-VOTE PHASE
+   Each validator:
+     - Verify proposal signature
+     - Check activation_height > current_height
+     - Generate HVPool(e+1) deterministically
+     - Verify Commit(HVPool(e+1)) == proposal.pool_commitment
+     - Broadcast: PreVote(e+1, h, commitment, signature)
+
+   Wait for 2f+1 PreVotes with matching commitment
+
+3. PRE-COMMIT PHASE
+   Upon receiving 2f+1 matching PreVotes:
+     Each validator:
+       - Broadcast: PreCommit(e+1, h, commitment, signature)
+
+   Wait for 2f+1 PreCommits with matching commitment
+
+4. COMMIT PHASE
+   Upon receiving 2f+1 matching PreCommits:
+     Rotation is committed, schedule activation at height h
+
+   Guarantee: If any honest validator commits, all honest validators
+              will commit (safety + liveness in BFT)
+
+5. ACTIVATION
+   When blockchain reaches height h:
+     All validators atomically:
+       - Switch to HVPool(e+1)
+       - Securely erase HVPool(e)
+       - Update current_epoch = e+1
+
+   Chain reorganization handling:
+     If reorg occurs and height h reverted:
+       - Revert to HVPool(e)
+       - Restart rotation protocol
+
+     If reorg depth < finality threshold:
+       - Rotation safe, HVPool(e) already erased
+       - Accept that reorg'd chain may use different pool
+
+Security Properties:
+  - Consistency: All honest nodes use same pool at same height
+  - Byzantine resistance: Up to f malicious nodes cannot cause disagreement
+  - Censorship resistance: 2f+1 honest nodes guarantee progress</div>
+
+<h4>Gossip-Based Propagation (Eventually Consistent)</h4>
+
+<div class="code-block">Epidemic Pool Dissemination:
+
+Context: Peer-to-peer network, no central authority, eventual consistency acceptable
+
+Protocol:
+
+1. POOL GENERATION
+   Any node can generate new pool:
+     new_pool = {
+       epoch: e+1,
+       pool_data: HVPool(e+1),
+       generation_time: T,
+       generator_id: node_id,
+       signature: Sign(node_key, Hash(pool_data))
+     }
+
+2. GOSSIP BROADCAST
+   Generator node:
+     - Send new_pool to k random neighbors (e.g., k=5)
+
+   Receiving nodes:
+     a. Verify signature
+     b. Verify pool_data correctness (statistical tests)
+     c. Check epoch = current_epoch + 1
+     d. If valid and not seen before:
+        - Store new_pool
+        - Forward to k random neighbors (excluding sender)
+        - Increment propagation_counter
+     e. Track received-from sources
+
+3. CONFIDENCE BUILDING
+   Each node tracks:
+     - Number of distinct paths received new_pool (path_count)
+     - Verification confirmations from neighbors
+
+   Acceptance threshold:
+     If path_count >= CONFIDENCE_THRESHOLD (e.g., 10):
+       Accept new_pool as valid for epoch e+1
+
+4. ACTIVATION SCHEDULING
+   After accepting new_pool:
+     activation_time = generation_time + PROPAGATION_DELAY
+
+     PROPAGATION_DELAY chosen to ensure high probability (e.g., 99.9%)
+     that all nodes have received pool
+
+     Typical: PROPAGATION_DELAY = 6 × average_gossip_round_time
+
+5. COORDINATED TRANSITION
+   At activation_time:
+     - Switch to HVPool(e+1)
+     - Enter overlap window for OVERLAP_DURATION
+     - After overlap, erase HVPool(e)
+
+Probabilistic Guarantees:
+
+  Propagation Time:
+    In network with n nodes, average degree d, gossip round τ:
+      Time to reach all nodes ≈ log_d(n) × τ
+
+    Example: n=1000 nodes, d=5 neighbors, τ=1s
+             → 3 rounds × 1s = 3 seconds full propagation
+
+  Reliability:
+    Probability all nodes receive after k rounds:
+      P(full coverage) ≥ 1 - (1 - d/n)^k
+
+    With PROPAGATION_DELAY = 6τ (6 rounds):
+      P(full coverage) > 0.999 for typical networks
+
+Advantages:
+  - No central coordination
+  - Resilient to node failures
+  - Scales to large networks
+
+Disadvantages:
+  - Probabilistic guarantee (not deterministic)
+  - Slower than consensus protocols
+  - Requires longer overlap windows for safety</div>
+
+<h2 id="security-analysis">5. Security Analysis</h2>
+
+<h3>5.1 Attack Scenarios</h3>
+
+<h4>Scenario 1: Snapshot Compromise</h4>
+
+<div class="code-block">Attack Model:
+  - Adversary obtains complete system state snapshot at time t_0
+  - Snapshot includes: current pool, generation seeds, operation logs
+  - Adversary is computationally bounded (polynomial-time)
+
+Compromised Data:
+  - HVPool(current_epoch) at t_0
+  - Operation logs: queries made using HVPool(current_epoch)
+  - System state: current keys, pending operations
+
+Secure Data (Forward Secrecy Protection):
+  - HVPool(epoch) for all epochs < current_epoch
+    Reason: Generation seeds securely erased
+  - Historical query results from past epochs
+    Reason: Cannot decode without past pools
+  - Historical raw data encoded with past pools
+    Reason: Encoding irreversible without original pool
+
+Attack Capabilities:
+  ✓ Decrypt queries from t_0 onward (until next rotation)
+  ✓ Forge new queries using HVPool(current_epoch)
+  ✗ Decrypt historical queries (forward secrecy prevents)
+  ✗ Reconstruct past pools (one-way generation, erased seeds)
+
+Mitigation:
+  - Detect compromise through monitoring
+  - Immediately trigger emergency rotation
+  - Rotate to new epoch with fresh entropy
+  - Invalidate all queries from compromised epoch
+  - Notify users to re-encode data with new pool</div>
+
+<h4>Scenario 2: Adaptive Compromise During Overlap</h4>
+
+<div class="code-block">Attack Model:
+  - Adversary observes system continuously
+  - Strategically compromises during overlap window to maximize damage
+  - Goal: Access both HVPool(e) and HVPool(e+1) simultaneously
+
+Adversary Strategy:
+  1. Monitor for rotation announcements
+  2. Wait for overlap window start
+  3. Compromise system during overlap
+  4. Extract both pools before HVPool(e) erased
+
+Compromised Data:
+  - HVPool(e): Old pool, still in memory during overlap
+  - HVPool(e+1): New pool, just activated
+  - Queries from both epochs during overlap period
+
+Impact:
+  - Can decode queries from epoch e and e+1
+  - Extended window of compromise (overlap duration)
+  - Historical data before epoch e still protected (forward secrecy)
+
+Mitigation Strategies:
+
+1. Minimize Overlap Duration:
+   overlap_window = 1 hour (instead of 24 hours)
+   Reduces exposure window by 24×
+
+2. Atomic Transitions:
+   Zero-overlap rotation → No simultaneous pool access
+   Requires: synchronized transition, brief service interruption
+
+3. Encrypted Pool Storage:
+   Even during overlap, pools encrypted in memory
+   Requires: compromise also obtains encryption keys
+   Defense-in-depth: Adds extra barrier
+
+4. Overlap Monitoring:
+   Enhanced intrusion detection during overlap windows
+   Flag suspicious access patterns
+   Automatic rotation abort if attack detected
+
+5. Staggered Deletion:
+   Delete most sensitive parts of HVPool(e) immediately
+   Keep minimal compatibility data for overlap
+   Reduces compromise value during overlap
+
+Security vs. Availability Tradeoff:
+  - Shorter overlap → Higher security, lower availability
+  - Longer overlap → Lower security, higher availability
+  Recommended: Adaptive overlap based on threat level</div>
+
+<h4>Scenario 3: Long-Term Key Compromise</h4>
+
+<div class="code-block">Attack Model:
+  - Adversary compromises long-term master_seed used for pool generation
+  - Compromise occurs at time t_c
+  - Adversary has access to all historical metadata (epoch_ids, timestamps)
+
+Compromised Data (WITHOUT forward secrecy):
+  If fresh_entropy NOT used:
+    - Can regenerate ALL historical pools
+    - Pool(e) = DeterministicGenerate(master_seed, epoch_id)
+    - Complete historical decryption possible
+
+Compromised Data (WITH forward secrecy + fresh entropy):
+  - Can generate FUTURE pools (if fresh_entropy source also compromised)
+  - Pool(e) = Generate(master_seed, epoch_id, fresh_entropy(e))
+  - Cannot regenerate PAST pools (fresh_entropy(e) not stored)
+
+Attack Capabilities:
+  ✓ Generate future pools (until master_seed rotated)
+  ✓ Impersonate system (forge queries with valid pools)
+  ✗ Regenerate past pools (requires fresh_entropy from past epochs)
+  ✗ Decrypt historical data (even with master_seed)
+
+Critical Requirement: Ephemeral Entropy Sources
+
+  fresh_entropy(e) must be:
+    1. High-entropy (≥128 bits min-entropy)
+    2. Unpredictable (from cryptographically secure RNG)
+    3. NOT stored long-term (deleted after pool generation)
+    4. Independent across epochs
+
+  Sources:
+    - Hardware RNG (TPM, CPU RDRAND)
+    - Blockchain randomness (VRF outputs, block hashes)
+    - External randomness beacons (NIST randomness beacon, drand)
+    - Network timing jitter
+
+  Combination:
+    fresh_entropy = Hash(HW_RNG || Blockchain || Network || User)
+
+    Even if adversary controls some sources, others provide security
+
+Mitigation:
+  - Rotate master_seed periodically (e.g., annually)
+  - Use hardware security module (HSM) for master_seed storage
+  - Multi-party computation for master_seed (threshold cryptography)
+  - Rotate immediately upon suspected compromise
+  - Audit logs: Detect unauthorized pool generation attempts</div>
+
+<h3>5.2 Key Compromise Impact Analysis</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Compromised Secret</th>
+      <th>Impact Scope</th>
+      <th>Historical Data</th>
+      <th>Future Data</th>
+      <th>Mitigation</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Session key only</td>
+      <td>Single session</td>
+      <td>Secure (FS)</td>
+      <td>Secure (independence)</td>
+      <td>None needed</td>
+    </tr>
+    <tr>
+      <td>Current pool HVPool(e)</td>
+      <td>Current epoch queries</td>
+      <td>Secure (FS, erased pools)</td>
+      <td>Secure (next epoch fresh)</td>
+      <td>Emergency rotation</td>
+    </tr>
+    <tr>
+      <td>Pool during overlap</td>
+      <td>Two epochs (e, e+1)</td>
+      <td>Secure (FS, e-1 erased)</td>
+      <td>Secure (e+2 independent)</td>
+      <td>Shorten overlap, atomic transition</td>
+    </tr>
+    <tr>
+      <td>Master seed only</td>
+      <td>Future pools</td>
+      <td>Secure (fresh entropy required)</td>
+      <td>Compromised until rotation</td>
+      <td>Immediate master seed rotation</td>
+    </tr>
+    <tr>
+      <td>Master seed + epoch metadata</td>
+      <td>Future pools</td>
+      <td>Secure (fresh entropy lost)</td>
+      <td>Compromised until rotation</td>
+      <td>Master seed + all keys rotation</td>
+    </tr>
+    <tr>
+      <td>Entropy source</td>
+      <td>Depends on other sources</td>
+      <td>Secure (multi-source mixing)</td>
+      <td>Reduced entropy until source fixed</td>
+      <td>Switch to backup entropy sources</td>
+    </tr>
+    <tr>
+      <td>All system state at time t</td>
+      <td>Current + future (until heal)</td>
+      <td>Secure (FS guarantees)</td>
+      <td>Compromised until PCS healing</td>
+      <td>Fresh entropy injection, full rotation</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>5.3 Forward vs. Backward Secrecy Comparison</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Property</th>
+      <th>Forward Secrecy</th>
+      <th>Backward Secrecy (PCS)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Protection Direction</td>
+      <td>Past sessions secure after compromise</td>
+      <td>Future sessions secure after healing</td>
+    </tr>
+    <tr>
+      <td>Mechanism</td>
+      <td>Ephemeral keys, secure deletion</td>
+      <td>Fresh entropy injection</td>
+    </tr>
+    <tr>
+      <td>Guarantee Type</td>
+      <td>Immediate (past already encrypted)</td>
+      <td>Eventual (after healing period Δ)</td>
+    </tr>
+    <tr>
+      <td>Adversary Model</td>
+      <td>Passive eavesdropper, future compromise</td>
+      <td>Active attacker, maintains access</td>
+    </tr>
+    <tr>
+      <td>Required for FS</td>
+      <td>One-way key derivation, deletion</td>
+      <td>Independent entropy sources</td>
+    </tr>
+    <tr>
+      <td>Required for BS</td>
+      <td>Continuous entropy injection</td>
+      <td>Compromise detection, healing protocol</td>
+    </tr>
+    <tr>
+      <td>Example Protocol</td>
+      <td>TLS 1.3 ephemeral DH</td>
+      <td>Signal Double Ratchet</td>
+    </tr>
+    <tr>
+      <td>Pool Application</td>
+      <td>Cannot regenerate past pools</td>
+      <td>New pools after emergency rotation</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>5.4 Information-Theoretic Security Analysis</h3>
+
+<h4>Entropy Budget Calculation</h4>
+
+<div class="code-block">Query Information Leakage:
+
+Setup:
+  - Pool size: |HVPool| = n basis vectors
+  - Query: Encodes data using subset of basis vectors
+  - Response: Binary or numerical result
+
+Information Leaked per Query:
+
+  Worst case (perfect query):
+    I_query = log_2(n)  bits
+
+  Example: n = 1,000,000 basis vectors
+           I_query ≈ 20 bits per query
+
+Total Leakage after k Queries:
+  I_total = k × log_2(n)
+
+Security Threshold:
+  Rotate when I_total approaches pool entropy
+
+  Pool entropy: H(HVPool) ≈ n × d bits (for n d-dimensional vectors)
+  Example: 1M vectors × 10k bits = 10^10 bits total entropy
+
+  But effective entropy against targeted attack:
+    H_effective ≈ log_2(|HVPool configurations|)
+                ≈ log_2(2^{pool_generation_seed_bits})
+                = 256 bits (for 256-bit seed)
+
+Conservative Rotation Threshold:
+  Rotate when: k × log_2(n) ≥ 80 bits (safety margin)
+
+  For n = 10^6: k ≥ 4,000,000 queries
+
+  Interpretation: After 4M queries, adversary has sufficient
+                  information to potentially narrow pool space</div>
+
+<h4>Perfect Secrecy Conditions</h4>
+
+<div class="theorem">
+  <div class="theorem-title">Theorem 5.1 (Information-Theoretic Forward Secrecy)</div>
+  A pool rotation protocol achieves information-theoretic forward secrecy if:
+
+  \[
+  H(\text{Pool}(e) \mid \text{Pool}(e'), \text{System}(t')) = H(\text{Pool}(e))
+  \]
+
+  for all \(e < e'\) and compromise time \(t'\) during epoch \(e'\), where \(H(\cdot)\) is Shannon entropy.
+
+  <strong>Sufficient Conditions:</strong>
+  <ol>
+    <li>Pool(e) generated from independent entropy: \(\text{Entropy}(e) \perp \text{Entropy}(e')\)</li>
+    <li>Generation seed erased: \(\text{Seed}(e) \notin \text{System}(t')\)</li>
+    <li>Pool generation one-way: \(\text{Pool}(e) \not\to \text{Seed}(e)\) even with unbounded computation</li>
+  </ol>
+</div>
+
+<p><strong>Practical Achievement:</strong> Information-theoretic FS requires true randomness (not PRG) and unconditional erasure. Use quantum randomness or physical entropy sources combined with secure hardware deletion.</p>
+
+<h3>5.5 Adversary Capabilities vs. Defenses</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Adversary Type</th>
+      <th>Capabilities</th>
+      <th>Defeated By</th>
+      <th>Not Defeated By</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Passive Eavesdropper</td>
+      <td>Records all network traffic</td>
+      <td>Forward secrecy (ephemeral keys)</td>
+      <td>Standard encryption (static keys)</td>
+    </tr>
+    <tr>
+      <td>Snapshot Attacker</td>
+      <td>Single-time system state dump</td>
+      <td>FS (past pools erased), BS (future entropy)</td>
+      <td>No rotation (all history compromised)</td>
+    </tr>
+    <tr>
+      <td>Persistent Attacker</td>
+      <td>Continuous access, observes all operations</td>
+      <td>BS/PCS (healing after Δ), frequent rotation</td>
+      <td>FS alone (future still compromised)</td>
+    </tr>
+    <tr>
+      <td>Adaptive Attacker</td>
+      <td>Chooses compromise time strategically</td>
+      <td>Atomic transitions, minimal overlap</td>
+      <td>Long overlap windows (both pools exposed)</td>
+    </tr>
+    <tr>
+      <td>Quantum Attacker</td>
+      <td>Breaks DH, RSA (Shor's algorithm)</td>
+      <td>Post-quantum KEM, symmetric ratchets</td>
+      <td>Classical DH-only forward secrecy</td>
+    </tr>
+    <tr>
+      <td>Unbounded Attacker</td>
+      <td>Infinite computation (info-theoretic)</td>
+      <td>Perfect FS (true randomness, OTP)</td>
+      <td>Computational FS (PRG-based)</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="applications">6. Applications</h2>
+
+<h3>6.1 GenomeVault: Genomic Data Protection</h3>
+
+<h4>System Overview</h4>
+
+<p>GenomeVault protects genomic data using hyperdimensional computing with rolling pool rotation to prevent long-term genomic privacy compromise.</p>
+
+<div class="code-block">GenomeVault Architecture:
+
+Components:
+  - Genomic Database: Stores hypervector encodings of genomes
+  - Query Engine: Processes similarity searches, variant lookups
+  - HVPool Manager: Handles pool generation, rotation, erasure
+  - Entropy Oracle: Provides fresh randomness for each epoch
+
+HVPool Structure (per epoch):
+  SNP_encoders: 10M hypervectors (one per common SNP)
+               Each: 10,000-dimensional binary vector
+
+  Haplotype_encoders: 100K hypervectors (common haplotype blocks)
+                     Each: 10,000-dimensional binary vector
+
+  Projection_basis: 500 random Gaussian vectors
+                   For dimensionality reduction (10K → 500)
+
+  LSH_functions: 64 locality-sensitive hash functions
+                For approximate nearest neighbor search
+
+Pool Size Calculation:
+  Total vectors: 10M + 100K = 10.1M vectors
+  Dimension: 10,000 bits per vector
+  Storage: 10.1M × 10K bits = 101 Gbits ≈ 12.6 GB per pool</div>
+
+<h4>Encoding Protocol</h4>
+
+<div class="code-block">Encoding Genome with HVPool(e):
+
+Input: Genome G = sequence of SNP genotypes {g_1, g_2, ..., g_n}
+       where g_i ∈ {0/0, 0/1, 1/1} (homozygous ref, het, homozygous alt)
+
+Encoding Steps:
+  1. SNP Encoding:
+     For each SNP i:
+       If g_i == 0/0: hv_i = SNP_encoders[i]
+       If g_i == 0/1: hv_i = SNP_encoders[i] ⊕ ALT_mask
+       If g_i == 1/1: hv_i = NOT(SNP_encoders[i])
+
+  2. Genome Hypervector (bundling):
+     GenomeHV = hv_1 ⊕ hv_2 ⊕ ... ⊕ hv_n  (XOR bundling)
+
+     Property: GenomeHV approximately preserves similarity
+               Hamming(GenomeHV_A, GenomeHV_B) ≈ genetic_distance(A, B)
+
+  3. Dimensionality Reduction:
+     GenomeProjection = Projection_basis × GenomeHV
+                      → 500-dimensional real-valued vector
+
+  4. LSH Indexing:
+     For each hash h in LSH_functions:
+       bucket_id[h] = h(GenomeProjection)
+
+     Store mapping: {bucket_ids} → database_record_id
+
+  5. Store Encoding:
+     database[record_id] = {
+       'epoch': e,
+       'genomic_hv': GenomeHV,
+       'projection': GenomeProjection,
+       'lsh_buckets': bucket_ids,
+       'metadata': patient_id_encrypted
+     }
+
+Forward Secrecy Property:
+  - GenomeHV bound to HVPool(e)
+  - Future compromise (epoch e+k) cannot decode GenomeHV
+  - Requires HVPool(e) to reverse encoding → deleted after rotation</div>
+
+<h4>Query Protocol with Pool Versioning</h4>
+
+<div class="code-block">Similarity Query (Find similar genomes):
+
+Input: Query genome Q, similarity threshold τ
+
+Query Processing:
+  1. Determine query pool version:
+     query_epoch = current_epoch
+     HVPool_query = HVPool(query_epoch)
+
+  2. Encode query:
+     QueryHV = EncodeGenome(Q, HVPool_query)
+     QueryProjection = Projection_basis(query_epoch) × QueryHV
+
+  3. LSH candidate retrieval:
+     candidates = []
+     For each hash h in LSH_functions(query_epoch):
+       bucket_id = h(QueryProjection)
+       candidates += database.lookup(bucket_id)
+
+  4. Candidate filtering (versioned):
+     results = []
+     For each candidate in candidates:
+       # Check pool version compatibility
+       if candidate.epoch in active_pools():
+         # Retrieve appropriate pool for candidate
+         HVPool_candidate = HVPool(candidate.epoch)
+
+         # Compute similarity in hypervector space
+         similarity = HammingSimilarity(QueryHV, candidate.genomic_hv)
+
+         if similarity ≥ τ:
+           results.append(candidate)
+       else:
+         # Candidate from expired epoch, skip or flag for re-encoding
+         log_warning(f"Skipping candidate from expired epoch {candidate.epoch}")
+
+  5. Return ranked results:
+     return sorted(results, key=lambda x: x.similarity, reverse=True)
+
+Overlap Window Handling:
+  During overlap (epoch e → e+1):
+    active_pools() = {e, e+1}
+
+    - New encodings: Use HVPool(e+1) only
+    - Query processing: Accept candidates from both epochs
+    - Cross-epoch comparison: Use epoch-specific pools for each candidate
+
+  After overlap:
+    active_pools() = {e+1}
+
+    - Reject queries referencing epoch e
+    - Flag database records still encoded with epoch e for re-encoding</div>
+
+<h4>Rotation Schedule & Security Parameters</h4>
+
+<div class="code-block">GenomeVault Rotation Policy:
+
+Time-based trigger:
+  ROTATION_INTERVAL = 90 days (quarterly rotation)
+  Rationale: Genomic data long-term sensitive, frequent rotation costly
+
+Operation-based trigger:
+  QUERY_THRESHOLD = 50,000,000 queries per epoch
+  Rationale: Entropy budget (50M × log₂(10M) ≈ 1.2 billion bits leaked)
+
+Security-event trigger:
+  - Detected breach attempt
+  - Regulatory requirement (e.g., HIPAA audit)
+  - Cryptographic algorithm weakness discovered
+
+Overlap Window:
+  OVERLAP_DURATION = 7 days
+  Rationale: Allow clients (hospitals, researchers) time to update
+
+  During overlap:
+    - Clinical systems continue using old encodings
+    - New research queries use new pool
+    - Background re-encoding of critical datasets
+
+Re-encoding Strategy:
+  Priority tiers:
+    1. Active clinical datasets (re-encode within 7 days)
+    2. Research cohorts (re-encode within 30 days)
+    3. Archived data (re-encode within 90 days or purge)
+
+Forward Secrecy Benefit:
+  Scenario: Database breach at day 180 (epoch 2)
+
+  Compromised:
+    - HVPool(2): Current pool at breach time
+    - Genomic encodings from epoch 2 (days 90-180)
+
+  Secure (Forward Secrecy):
+    - HVPool(0): Epoch 0 pool (days 0-90) → Seed erased at day 90
+    - HVPool(1): Epoch 1 pool (days 90-180) → Seed erased at day 180
+    - Genomic encodings from epochs 0, 1 cannot be decoded
+    - Historical queries from epochs 0, 1 remain private
+
+  Impact Limitation:
+    Only 90 days of data compromised instead of entire database history</div>
+
+<h3>6.2 Signal Protocol: Secure Messaging</h3>
+
+<h4>Double Ratchet Implementation</h4>
+
+<div class="code-block">Signal Protocol Forward Secrecy:
+
+Initialization (X3DH Handshake):
+  - Alice, Bob exchange long-term identity keys
+  - Perform triple Diffie-Hellman for initial shared secret
+  - Derive initial root key: RK_0
+
+Symmetric Ratchet (per message):
+  Sending:
+    1. MessageKey = KDF(ChainKey_send, "message")
+    2. Encrypt: Ciphertext = Encrypt(MessageKey, Plaintext)
+    3. ChainKey_send = KDF(ChainKey_send, "chain")
+    4. DELETE MessageKey immediately
+
+  Receiving:
+    1. MessageKey = KDF(ChainKey_recv, "message")
+    2. Decrypt: Plaintext = Decrypt(MessageKey, Ciphertext)
+    3. ChainKey_recv = KDF(ChainKey_recv, "chain")
+    4. DELETE MessageKey immediately
+
+DH Ratchet (every message round or N messages):
+  Alice sends:
+    1. Generate new ephemeral: (a_new, A_new = g^{a_new})
+    2. Compute: DH_send = (a_new)^{B_current}
+    3. Update root: (RK_new, ChainKey_send_new) = KDF(RK, DH_send)
+    4. DELETE a_old
+    5. Send: (A_new, message encrypted with new ChainKey_send)
+
+  Bob receives:
+    1. Compute: DH_recv = (b_current)^{A_new}
+    2. Update root: (RK_new, ChainKey_recv_new) = KDF(RK, DH_recv)
+    3. Process message with new ChainKey_recv
+
+  Bob responds:
+    1. Generate new ephemeral: (b_new, B_new = g^{b_new})
+    2. Compute: DH_send = (b_new)^{A_new}
+    3. Update root: (RK_new, ChainKey_send_new) = KDF(RK, DH_send)
+    4. DELETE b_old
+    5. Send: (B_new, message encrypted with new ChainKey_send)
+
+Forward Secrecy at Multiple Levels:
+
+Level 1: Immediate (message-level)
+  - MessageKeys deleted after single use
+  - Compromise at message n: Cannot decrypt message n-1
+
+Level 2: Short-term (chain-level)
+  - ChainKeys evolve via one-way function
+  - Compromise: Cannot rewind chain to past messages
+
+Level 3: Medium-term (DH ratchet)
+  - Ephemeral DH keys deleted after ratchet step
+  - Compromise: Cannot compute past DH outputs → past root keys secure
+
+Level 4: Long-term (session)
+  - Sessions periodically terminated, new X3DH handshake
+  - Even identity key compromise: Past sessions used deleted ephemeral keys</div>
+
+<h4>Out-of-Order Message Handling</h4>
+
+<div class="code-block">Skipped Message Keys (maintaining FS with unreliable delivery):
+
+Problem: Message n+5 arrives before messages n+1, n+2, n+3, n+4
+         Need to decrypt n+5, but must maintain forward secrecy
+
+Solution: Derive and store skipped message keys
+
+Receiving out-of-order message:
+  Current ChainKey state: ChainKey_recv (at message n)
+  Received message: #(n+5)
+
+  1. Derive skipped keys:
+     MK_{n+1} = KDF(ChainKey_recv, "message")
+     ChainKey_recv = KDF(ChainKey_recv, "chain")
+
+     MK_{n+2} = KDF(ChainKey_recv, "message")
+     ChainKey_recv = KDF(ChainKey_recv, "chain")
+
+     ... continue until n+4
+
+  2. Store skipped keys:
+     skipped_message_keys[(ChainKey_id, n+1)] = MK_{n+1}
+     skipped_message_keys[(ChainKey_id, n+2)] = MK_{n+2}
+     ...
+
+  3. Derive current message key:
+     MK_{n+5} = KDF(ChainKey_recv, "message")
+     ChainKey_recv = KDF(ChainKey_recv, "chain")
+
+  4. Decrypt message n+5:
+     Plaintext = Decrypt(MK_{n+5}, Ciphertext)
+
+  5. DELETE MK_{n+5}
+
+  6. When messages n+1, n+2, ... arrive:
+     Retrieve MK from skipped_message_keys, decrypt, DELETE
+
+Forward Secrecy Property:
+  - Skipped keys stored temporarily (bounded storage)
+  - Once message arrives and decrypted, key deleted
+  - Maximum skip limit prevents DoS (e.g., MAX_SKIP = 1000)
+  - After DH ratchet step, skipped keys from old chain erased</div>
+
+<h3>6.3 Blockchain Validator Committees</h3>
+
+<h4>Rolling Committee Selection</h4>
+
+<div class="code-block">Validator Committee Rotation (Ethereum-style):
+
+Problem: Static validator set vulnerable to:
+  - Targeted attacks (adversary identifies, compromises validators)
+  - Long-term collusion
+  - Centralization risk
+
+Solution: Rotate committee membership using verifiable randomness
+
+Committee Structure:
+  - Total validators: N (e.g., 100,000 staked validators)
+  - Active committee size: k (e.g., 128 validators per committee)
+  - Committee epoch: E blocks (e.g., 32 blocks ≈ 6.4 minutes)
+
+Rotation Protocol:
+
+  1. Randomness Generation (VRF-based):
+     At block height h (start of epoch):
+       seed(h) = VRF(block_proposer_secret, h)
+       VRF_proof = ProveVRF(block_proposer_secret, h)
+
+     Validators verify:
+       VerifyVRF(block_proposer_public, h, seed(h), VRF_proof) == TRUE
+
+  2. Committee Selection (deterministic shuffle):
+     validator_indices = [0, 1, 2, ..., N-1]
+     shuffled = ShuffleList(validator_indices, seed(h))
+
+     committee(h) = shuffled[0:k]  // First k validators
+
+  3. Activation:
+     For each validator v in committee(h):
+       Participate in consensus for blocks [h, h+E)
+       Sign attestations, propose blocks per assigned slots
+
+  4. Deactivation:
+     At block h+E:
+       Committee(h) deactivated
+       Validators return to general pool
+       DELETE ephemeral committee keys (if used)
+
+Forward Secrecy via Ephemeral Committee Keys:
+
+  Optional enhancement (not all blockchains use):
+    When selected to committee:
+      - Generate ephemeral signing key: (sk_ephemeral, pk_ephemeral)
+      - Register pk_ephemeral on-chain (signed by long-term validator key)
+      - Use sk_ephemeral for all attestations/proposals during epoch
+
+    After committee rotation:
+      - DELETE sk_ephemeral
+      - Signatures from epoch remain valid (pk_ephemeral on-chain)
+      - Cannot forge signatures for past epochs (sk deleted)
+
+Security Benefits:
+  - Unpredictability: Adversary cannot predict committee members in advance
+                     (seed only known at epoch start)
+  - Temporal isolation: Compromising committee at epoch e
+                       → Cannot affect epochs e-1, e+1 (different members)
+  - Forward secrecy: Ephemeral keys deleted after rotation
+                    → Past signatures cannot be forged retroactively</div>
+
+<h3>6.4 Distributed Hash Tables (DHT)</h3>
+
+<h4>Hash Function Family Rotation</h4>
+
+<div class="code-block">Rolling Hash Functions for DHT Key Distribution:
+
+Context: DHT (e.g., Kademlia, Chord) maps keys to nodes using hash function
+Problem: Static hash function reveals long-term key distribution patterns
+
+Solution: Rotate hash function family periodically
+
+Hash Family Structure (epoch e):
+  H(e) = {h_1, h_2, ..., h_k}  // k hash functions for replication
+
+  Each h_i: {0,1}^* → [0, 2^m) // m-bit address space
+
+Generation:
+  For i = 1 to k:
+    seed_i = HKDF(master_seed, "dht-hash" || epoch || i)
+    h_i = SipHash(seed_i, ·)  // Fast keyed hash function
+
+Key Mapping:
+  For data key D:
+    responsible_nodes = []
+    For each h_i in H(e):
+      address = h_i(D)
+      node = FindClosestNode(address, DHT_routing_table)
+      responsible_nodes.append(node)
+
+    Store D at all responsible_nodes (k-replication)
+
+Rotation Protocol:
+
+  PHASE 1: Announce New Hash Family
+    Epoch boundary: time T
+    At T - MIGRATION_WINDOW:
+      - Distribute H(e+1) to all DHT nodes
+      - Nodes verify hash family correctness
+
+  PHASE 2: Data Migration
+    During [T - MIGRATION_WINDOW, T]:
+      For each stored key D:
+        old_nodes = responsible_nodes(D, H(e))
+        new_nodes = responsible_nodes(D, H(e+1))
+
+        transfer_nodes = new_nodes - old_nodes
+        For each node in transfer_nodes:
+          Send(node, D, value(D))
+
+      Nodes receiving data:
+        Store data for epoch e+1
+        Mark as "active after T"
+
+  PHASE 3: Cutover
+    At time T:
+      - All nodes switch to H(e+1) for lookups
+      - All nodes accept queries under H(e+1) only
+
+  PHASE 4: Cleanup
+    At T + GRACE_PERIOD:
+      For each stored key D:
+        old_nodes = responsible_nodes(D, H(e))
+        new_nodes = responsible_nodes(D, H(e+1))
+
+        removed_nodes = old_nodes - new_nodes
+        If current_node in removed_nodes:
+          DELETE(D)  // No longer responsible
+
+      DELETE H(e)  // Erase old hash family
+
+Forward Secrecy Benefit:
+  - Compromise at epoch e+1: Adversary learns H(e+1)
+  - Cannot reconstruct H(e) (seed deleted)
+  - Historical key distribution patterns from epoch e remain private
+  - Past node responsibilities cannot be determined
+
+Use Case: Privacy-Preserving DHT
+  - Genomic data: Keys = genome hashes
+  - Rotation prevents long-term mapping analysis
+  - Adversary cannot build profile of which nodes store which genome types
+  - Temporal unlinkability: Genome stored at different nodes each epoch</div>
 
 <div class="references">
   <h2 id="references">References</h2>
   <ol>
-    <li><strong>Diffie, W., & Hellman, M.</strong> (1976). New directions in cryptography. <em>IEEE Transactions on Information Theory</em>, 22(6), 644-654.</li>
-    <li><strong>Menezes, A., Van Oorschot, P., & Vanstone, S.</strong> (1996). <em>Handbook of Applied Cryptography</em>. CRC Press.</li>
-    <li><strong>Marlinspike, M., & Perrin, T.</strong> (2016). The Double Ratchet Algorithm. <em>Signal Specification</em>.</li>
-    <li><strong>Rescorla, E.</strong> (2018). The Transport Layer Security (TLS) Protocol Version 1.3. <em>RFC 8446</em>.</li>
-    <li><strong>Cohn-Gordon, K., Cremers, C., Dowling, B., Garratt, L., & Stebila, D.</strong> (2017). A formal security analysis of the Signal messaging protocol. <em>IEEE European Symposium on Security and Privacy</em>.</li>
-    <li><strong>Unger, N., Dechand, S., Bonneau, J., Fahl, S., Perl, H., Goldberg, I., & Smith, M.</strong> (2015). SoK: Secure messaging. <em>IEEE Symposium on Security and Privacy</em>.</li>
-    <li><strong>Bellare, M., & Rogaway, P.</strong> (1993). Entity authentication and key distribution. <em>CRYPTO</em>.</li>
-    <li><strong>Gutmann, P.</strong> (1996). Secure deletion of data from magnetic and solid-state memory. <em>USENIX Security Symposium</em>.</li>
+    <li><strong>Diffie, W., & Hellman, M.</strong> (1976). New directions in cryptography. <em>IEEE Transactions on Information Theory</em>, 22(6), 644-654. [Foundational work introducing public-key cryptography and Diffie-Hellman key exchange]</li>
+
+    <li><strong>Menezes, A., Van Oorschot, P., & Vanstone, S.</strong> (1996). <em>Handbook of Applied Cryptography</em>. CRC Press. [Comprehensive reference for cryptographic protocols and forward secrecy]</li>
+
+    <li><strong>Marlinspike, M., & Perrin, T.</strong> (2016). The Double Ratchet Algorithm. <em>Signal Specification</em>. [Signal Protocol specification, defining continuous forward secrecy and post-compromise security]</li>
+
+    <li><strong>Rescorla, E.</strong> (2018). The Transport Layer Security (TLS) Protocol Version 1.3. <em>RFC 8446</em>. [TLS 1.3 specification with mandatory forward secrecy via ephemeral Diffie-Hellman]</li>
+
+    <li><strong>Cohn-Gordon, K., Cremers, C., Dowling, B., Garratt, L., & Stebila, D.</strong> (2017). A formal security analysis of the Signal messaging protocol. <em>IEEE European Symposium on Security and Privacy</em>, 451-466. [Formal verification of Signal's forward secrecy and post-compromise security properties]</li>
+
+    <li><strong>Unger, N., Dechand, S., Bonneau, J., Fahl, S., Perl, H., Goldberg, I., & Smith, M.</strong> (2015). SoK: Secure messaging. <em>IEEE Symposium on Security and Privacy</em>, 232-249. [Systematic analysis of forward secrecy in messaging protocols]</li>
+
+    <li><strong>Bellare, M., & Rogaway, P.</strong> (1993). Entity authentication and key distribution. <em>CRYPTO</em>, 232-249. [Formal models for authenticated key exchange with forward secrecy]</li>
+
+    <li><strong>Krawczyk, H., & Eronen, P.</strong> (2010). HMAC-based Extract-and-Expand Key Derivation Function (HKDF). <em>RFC 5869</em>. [HKDF specification for cryptographically sound key derivation]</li>
+
+    <li><strong>Gutmann, P.</strong> (1996). Secure deletion of data from magnetic and solid-state memory. <em>USENIX Security Symposium</em>, 77-89. [Techniques for secure erasure critical to forward secrecy]</li>
+
+    <li><strong>Dodis, Y., Reyzin, L., & Smith, A.</strong> (2004). Fuzzy extractors: How to generate strong keys from biometrics and other noisy data. <em>EUROCRYPT</em>, 523-540. [Randomness extraction for entropy accumulation]</li>
+
+    <li><strong>Poettering, B., & Rösler, P.</strong> (2018). Towards bidirectional ratcheted key exchange. <em>CRYPTO</em>, 3-32. [Analysis of ratchet mechanisms for continuous forward secrecy]</li>
+
+    <li><strong>Alwen, J., Coretti, S., & Dodis, Y.</strong> (2019). The double ratchet: Security notions, proofs, and modularization for the Signal protocol. <em>EUROCRYPT</em>, 129-158. [Formal security analysis of double ratchet construction]</li>
   </ol>
 </div>
 
-<script src="../theme-sync.js"></script>
 </body>
 </html>

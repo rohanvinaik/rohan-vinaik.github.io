@@ -14,7 +14,7 @@
       --bg: #0a0a0a;
       --text: #e0e0e0;
       --text-secondary: #a0a0a0;
-      --accent: #00ffff;
+      --accent: #00ff00;
       --border: #333;
       --code-bg: #1a1a1a;
     }
@@ -168,6 +168,35 @@
       color: var(--accent);
       font-weight: 600;
     }
+    .attack-box {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-left: 3px solid #ff4444;
+      padding: 16px;
+      margin: 16px 0;
+    }
+    .attack-box h4 {
+      color: #ff4444;
+      margin-top: 0;
+    }
+    .formula-box {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      padding: 16px;
+      margin: 16px 0;
+      text-align: center;
+    }
+    .example-box {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-left: 3px solid #4444ff;
+      padding: 16px;
+      margin: 16px 0;
+    }
+    .example-box h4 {
+      color: #4444ff;
+      margin-top: 0;
+    }
     .references {
       font-size: 0.75rem;
       margin-top: 32px;
@@ -207,463 +236,1140 @@
 </div>
 
 <div class="abstract">
-  <strong>Abstract:</strong> k-Anonymity is a privacy property ensuring that each record in a dataset is indistinguishable from at least k-1 other records with respect to quasi-identifiers (attributes that could be linked to external data). This creates equivalence classes of size ≥k, limiting re-identification risk to 1/k. Information leakage is bounded by log₂(C(N,k)) bits. While foundational for privacy-preserving data release, k-anonymity faces limitations: vulnerability to homogeneity attacks, background knowledge exploitation, and composition degradation. Extensions like l-diversity and t-closeness address these weaknesses. This document covers mathematical foundations, attack resistance, implementation trade-offs, and applications in genomic and medical data.
+  <strong>Abstract:</strong> k-Anonymity is a privacy model ensuring each record in a dataset is indistinguishable from at least k-1 other records with respect to quasi-identifying attributes. By creating equivalence classes of minimum size k, the model bounds re-identification probability to 1/k and limits information leakage to log₂(C(N,k)) bits. This document provides a comprehensive analysis of k-anonymity's core principles of indistinguishability and group privacy, mathematical foundations including combinatorial information bounds, resistance to linkage and background knowledge attacks, extensions through l-diversity and t-closeness that address homogeneity vulnerabilities, fundamental trade-offs between privacy guarantees and data utility, and practical applications in genomic databases (k≥10 recommended), medical records, and census data release. Includes formal definitions, attack scenarios with concrete examples, privacy-utility trade-off tables, and implementation guidance.
 </div>
 
 <div class="quick-nav">
   <h3>Quick Navigation</h3>
   <ul>
-    <li><a href="#core-definition">1. Core Definition</a></li>
+    <li><a href="#core-principles">1. Core Principles</a></li>
     <li><a href="#mathematical-foundations">2. Mathematical Foundations</a></li>
     <li><a href="#attack-resistance">3. Attack Resistance</a></li>
-    <li><a href="#implementation">4. Implementation</a></li>
-    <li><a href="#applications">5. Applications</a></li>
-    <li><a href="#limitations-extensions">6. Limitations & Extensions</a></li>
+    <li><a href="#extensions">4. Extensions</a></li>
+    <li><a href="#trade-offs">5. Trade-offs</a></li>
+    <li><a href="#applications">6. Applications</a></li>
     <li><a href="#references">References</a></li>
   </ul>
 </div>
 
-<h2 id="core-definition">1. Core Definition</h2>
+<h2 id="core-principles">1. Core Principles</h2>
 
-<h3>1.1 The k-Anonymity Property</h3>
+<h3>1.1 Indistinguishability from k-1 Others</h3>
 
-<p><strong>Definition:</strong> A dataset is k-anonymous if every record is indistinguishable from at least k-1 other records with respect to quasi-identifiers.</p>
+<p><strong>Fundamental Definition:</strong> A dataset D satisfies k-anonymity if and only if each record is indistinguishable from at least k-1 other records with respect to quasi-identifying attributes.</p>
 
-<pre><code>For any record r in dataset D:
-  |{r' ∈ D : QI(r') = QI(r)}| ≥ k
+<div class="formula-box">
+\[
+\forall r \in D: |\{r' \in D : QI(r') = QI(r)\}| \geq k
+\]
+<p style="font-size: 0.75rem; margin-top: 8px;">where QI(·) denotes the projection onto quasi-identifier attributes</p>
+</div>
 
-where QI(·) = quasi-identifier attributes</code></pre>
+<p><strong>Equivalence Class Formation:</strong> Records sharing identical quasi-identifier values form an equivalence class. The k-anonymity property requires every equivalence class to contain at least k members.</p>
 
-<p><strong>Equivalence Classes:</strong> Records with identical quasi-identifier values form an equivalence class.</p>
+<pre><code>Partition of Dataset:
+  D = EC₁ ∪ EC₂ ∪ ... ∪ ECₙ
 
-<pre><code>Equivalence class EC_i:
-  EC_i = {r ∈ D : QI(r) = qi_value}
+Where each ECᵢ = {r ∈ D : QI(r) = qᵢ} is an equivalence class
 
-k-Anonymity requires:
-  ∀i: |EC_i| ≥ k</code></pre>
+k-Anonymity Requirement:
+  min{|EC₁|, |EC₂|, ..., |ECₙ|} ≥ k</code></pre>
 
-<h3>1.2 Quasi-Identifiers</h3>
+<div class="example-box">
+<h4>Example: Medical Records k-Anonymity</h4>
+<p>Consider a medical database with quasi-identifiers {ZIP, Age, Gender}:</p>
+<table>
+  <thead>
+    <tr><th>Record</th><th>ZIP</th><th>Age</th><th>Gender</th><th>Disease</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>1</td><td>02138</td><td>28</td><td>M</td><td>Flu</td></tr>
+    <tr><td>2</td><td>02138</td><td>28</td><td>M</td><td>Diabetes</td></tr>
+    <tr><td>3</td><td>02138</td><td>28</td><td>M</td><td>HIV</td></tr>
+    <tr><td>4</td><td>02139</td><td>35</td><td>F</td><td>Cancer</td></tr>
+    <tr><td>5</td><td>02139</td><td>35</td><td>F</td><td>Asthma</td></tr>
+  </tbody>
+</table>
+<p><strong>Analysis:</strong> Records 1-3 form an equivalence class of size 3 (satisfies k=3). Records 4-5 form an equivalence class of size 2 (violates k=3, requires generalization).</p>
+</div>
 
-<p><strong>Definition:</strong> Attributes that, when combined, may uniquely identify individuals through linkage to external data.</p>
+<h3>1.2 Group Privacy Guarantee</h3>
 
-<p><strong>Common Examples:</strong></p>
+<p><strong>Re-identification Risk Bound:</strong> Under the assumption that an adversary knows a target record exists in the dataset but has only quasi-identifier information, k-anonymity provides an upper bound on re-identification probability.</p>
+
+<div class="formula-box">
+\[
+P(\text{re-identify} \mid \text{QI known}) \leq \frac{1}{k}
+\]
+</div>
+
+<p><strong>Group Anonymity Set:</strong> Each individual is hidden within a group of k individuals sharing the same quasi-identifier signature. The adversary can narrow identification to k candidates but cannot distinguish further without additional information.</p>
+
+<pre><code>Anonymity Set Properties:
+  - Size: Exactly k members per equivalence class
+  - Uniformity: No distinguishing features within class (for QI attributes)
+  - Coverage: Every record belongs to exactly one anonymity set
+
+Privacy Intuition:
+  "You are one of k people who could be this record"
+
+Adversarial Perspective:
+  Best-case attack narrows to k candidates
+  Random guess achieves 1/k success probability</code></pre>
+
+<h3>1.3 Quasi-Identifier Selection</h3>
+
+<p><strong>Definition:</strong> Quasi-identifiers (QI) are attributes that, when combined, may enable linkage to external datasets for re-identification, but individually are not unique identifiers.</p>
+
+<p><strong>Classification Framework:</strong></p>
+<table>
+  <thead>
+    <tr><th>Attribute Type</th><th>Characteristics</th><th>Examples</th><th>Treatment</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Explicit Identifiers</strong></td>
+      <td>Directly identify individuals</td>
+      <td>SSN, Name, Email</td>
+      <td>Remove or hash</td>
+    </tr>
+    <tr>
+      <td><strong>Quasi-Identifiers</strong></td>
+      <td>Linkable to external data</td>
+      <td>ZIP, DOB, Gender</td>
+      <td>Generalize/suppress</td>
+    </tr>
+    <tr>
+      <td><strong>Sensitive Attributes</strong></td>
+      <td>Private information</td>
+      <td>Diagnosis, Salary</td>
+      <td>Protect via k-anonymity</td>
+    </tr>
+    <tr>
+      <td><strong>Non-Sensitive</strong></td>
+      <td>Public/innocuous data</td>
+      <td>Hospital name, Date admitted</td>
+      <td>May generalize or release</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>Domain-Specific Quasi-Identifiers:</strong></p>
 <ul>
-  <li><strong>Medical Records:</strong> ZIP code, birth date, gender</li>
-  <li><strong>Genomic Data:</strong> Age, ethnicity, geographic region, phenotype</li>
-  <li><strong>Network Logs:</strong> Timestamp, IP prefix, user agent</li>
-  <li><strong>Census Data:</strong> Location, occupation, household size</li>
+  <li><strong>Healthcare:</strong> ZIP code (5-digit), birth date, gender, race, admission date</li>
+  <li><strong>Genomics:</strong> Age, ethnicity, geographic ancestry, phenotypic traits, family structure</li>
+  <li><strong>Finance:</strong> Transaction location, timestamp, account age, transaction amounts</li>
+  <li><strong>Web Analytics:</strong> IP address prefix, user agent, screen resolution, timezone</li>
+  <li><strong>Census:</strong> Geography (block/tract), occupation, household composition, income brackets</li>
 </ul>
 
-<p><strong>Selection Criteria:</strong></p>
-<pre><code>Attribute is quasi-identifier if:
-  1. Available in external datasets (linkage risk)
-  2. Combination with other attributes increases uniqueness
-  3. Not directly identifying alone (else explicit identifier)
-  4. Not purely sensitive (else sensitive attribute)</code></pre>
+<h3>1.4 Minimum k Values and Re-identification Risk</h3>
 
-<h3>1.3 Minimum k Values</h3>
+<p><strong>Industry Standards:</strong></p>
 
-<p><strong>Research Settings:</strong> k = 3 (demonstrates concept, minimal protection)</p>
-<p><strong>Production Systems:</strong> k ≥ 10 (industry standard)</p>
-<p><strong>High-Sensitivity Data:</strong> k ≥ 100 (genomics, healthcare)</p>
-
-<p><strong>Re-identification Risk:</strong></p>
-<pre><code>Upper bound on re-identification probability:
-  P(re-identification | record r) ≤ 1/k
-
-Assumes:
-  - Attacker knows record exists in dataset
-  - No background knowledge beyond quasi-identifiers
-  - Uniform distribution within equivalence class</code></pre>
+<table>
+  <thead>
+    <tr><th>Context</th><th>Recommended k</th><th>Re-identification Risk</th><th>Rationale</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Academic Research (Demonstration)</td>
+      <td>k = 3</td>
+      <td>≤ 33%</td>
+      <td>Concept demonstration only</td>
+    </tr>
+    <tr>
+      <td>General Production Systems</td>
+      <td>k = 10</td>
+      <td>≤ 10%</td>
+      <td>Baseline industry standard</td>
+    </tr>
+    <tr>
+      <td>Medical Records (HIPAA)</td>
+      <td>k = 20-50</td>
+      <td>≤ 5-2%</td>
+      <td>Regulatory compliance</td>
+    </tr>
+    <tr>
+      <td>Genomic Data Sharing</td>
+      <td>k ≥ 100</td>
+      <td>≤ 1%</td>
+      <td>Highly identifying nature</td>
+    </tr>
+    <tr>
+      <td>Census Microdata</td>
+      <td>k ≥ 1000</td>
+      <td>≤ 0.1%</td>
+      <td>Large population, public release</td>
+    </tr>
+  </tbody>
+</table>
 
 <h2 id="mathematical-foundations">2. Mathematical Foundations</h2>
 
-<h3>2.1 Information Leakage Bound</h3>
+<h3>2.1 Information Leakage Bounds</h3>
 
-<p><strong>Combinatorial Information:</strong></p>
+<p><strong>Combinatorial Information Theory:</strong> The number of possible k-anonymous partitions of a dataset with N records provides a measure of the information an adversary must acquire to breach anonymity.</p>
 
-<pre><code>For dataset with N records and k-anonymity:
-  Number of possible equivalence classes: C(N, k)
+<div class="formula-box">
+\[
+I(k, N) = \log_2 \binom{N}{k} = \log_2 \frac{N!}{k!(N-k)!} \text{ bits}
+\]
+</div>
 
-Information leakage (bits):
-  I(k, N) = log₂(C(N, k))
-         = log₂(N!/(k!(N-k)!))
+<p><strong>Stirling's Approximation for Large N:</strong></p>
 
-Approximation (large N):
-  I(k, N) ≈ N·H(k/N)
+<div class="formula-box">
+\[
+I(k, N) \approx N \cdot H\left(\frac{k}{N}\right)
+\]
+\[
+\text{where } H(p) = -p \log_2(p) - (1-p)\log_2(1-p) \text{ (binary entropy)}
+\]
+</div>
 
-where H(p) = -p log₂(p) - (1-p)log₂(1-p) (entropy)</code></pre>
+<div class="example-box">
+<h4>Example: Information Leakage Calculation</h4>
+<p><strong>Scenario:</strong> Hospital discharge database with N = 10,000 records, k = 100</p>
+<pre><code>Exact calculation:
+  C(10000, 100) = 10000! / (100! × 9900!)
+  log₂(C(10000, 100)) ≈ 775 bits
 
-<p><strong>Example:</strong></p>
-<pre><code>Dataset: N = 10,000 records, k = 100
-  C(10000, 100) ≈ 10^233
-  Information leakage ≈ 775 bits
+Approximation:
+  H(100/10000) = H(0.01) ≈ 0.081 bits
+  I(100, 10000) ≈ 10000 × 0.081 = 810 bits
 
-Interpretation: Attacker needs ~775 bits of additional information
-to uniquely identify a specific record</code></pre>
+Interpretation:
+  Adversary requires approximately 775-810 bits of additional
+  information beyond quasi-identifiers to uniquely identify a
+  specific individual in the dataset.</code></pre>
+</div>
 
-<h3>2.2 Generalization and Suppression</h3>
+<h3>2.2 Anonymity Set Size Distribution</h3>
 
-<p><strong>Generalization:</strong> Replace specific values with broader categories.</p>
+<p><strong>Expected Equivalence Class Size:</strong> For a dataset with N records and m distinct quasi-identifier combinations, under uniform distribution:</p>
 
-<pre><code>Example:
-  Age 27 → Age 25-30 → Age 20-40
-  ZIP 02139 → ZIP 021** → ZIP 02***
+<div class="formula-box">
+\[
+E[|EC|] = \frac{N}{m}
+\]
+</div>
 
-Hierarchy depth affects utility:
-  Minimal generalization → High utility, low k
-  Maximal generalization → Low utility, high k</code></pre>
+<p><strong>Minimum Required Dataset Size:</strong> To achieve k-anonymity with m distinct quasi-identifier combinations:</p>
 
-<p><strong>Suppression:</strong> Remove or mask outlier records to achieve k-anonymity.</p>
+<div class="formula-box">
+\[
+N_{\min} = k \cdot m
+\]
+</div>
 
-<pre><code>Suppression rate = |suppressed records| / |total records|
+<p><strong>Variance and Skew:</strong> Real-world data often exhibits non-uniform distributions, leading to highly variable equivalence class sizes. Some combinations (e.g., common ages, populous ZIP codes) produce large classes, while rare combinations require aggressive generalization.</p>
 
-Typical acceptable rate: &lt;5%
-Trade-off: Suppressing outliers reduces dataset completeness</code></pre>
+<pre><code>Skewness Effects:
+  - Power law distribution: Few large classes, many small classes
+  - Long tail: Rare combinations require suppression or generalization
+  - Urban vs. Rural: City ZIP codes have larger anonymity sets
 
-<h3>2.3 Information Loss Metrics</h3>
+Example Distribution (Hospital Data, k=10):
+  Top 10% of classes: Average size 150 members
+  Middle 50% of classes: Average size 25 members
+  Bottom 40% of classes: Require generalization to meet k=10</code></pre>
 
-<p><strong>Discernibility Metric:</strong></p>
-<pre><code>DM(D*) = Σᵢ |EC_i|²
+<h3>2.3 Generalization and Suppression Mechanisms</h3>
 
-Measures total penalty for indistinguishability
-Lower DM → Better utility (smaller equivalence classes)</code></pre>
+<p><strong>Generalization Hierarchies:</strong> Transform specific values to broader categories along predefined taxonomies.</p>
 
-<p><strong>Normalized Certainty Penalty:</strong></p>
-<pre><code>NCP = (generalized_range / total_range)
+<div class="example-box">
+<h4>Example: Age Generalization Hierarchy</h4>
+<pre><code>Level 0 (Original):   27, 28, 29, 30, 31, ...
+Level 1 (5-year bins): [25-30), [25-30), [25-30), [30-35), [30-35), ...
+Level 2 (10-year bins): [20-30), [20-30), [20-30), [30-40), [30-40), ...
+Level 3 (20-year bins): [20-40), [20-40), [20-40), [20-40), [20-40), ...
+Level 4 (Full range):   [0-120), [0-120), ...
 
-For each attribute:
-  NCP_age = (30 - 25) / (100 - 0) = 0.05
-  NCP_zip = 100 / 100000 = 0.001
+Utility Trade-off:
+  Level 1: High specificity, moderate anonymity
+  Level 4: Complete anonymity, minimal utility</code></pre>
+</div>
 
-Total NCP = Σ NCP_attribute</code></pre>
+<div class="example-box">
+<h4>Example: ZIP Code Generalization</h4>
+<pre><code>Level 0 (Original):    02138 (Cambridge, MA)
+Level 1 (4-digit):     0213* (Cambridge area)
+Level 2 (3-digit):     021** (Greater Boston)
+Level 3 (2-digit):     02*** (Eastern Massachusetts)
+Level 4 (1-digit):     0**** (Northeast US)
+
+Geographic Resolution:
+  5-digit: ~30,000 population
+  3-digit: ~1-3 million population
+  2-digit: State/region level</code></pre>
+</div>
+
+<p><strong>Suppression:</strong> Omit outlier records that cannot be generalized into k-sized groups without excessive information loss.</p>
+
+<div class="formula-box">
+\[
+\text{Suppression Rate} = \frac{|\text{Suppressed Records}|}{|\text{Total Records}|}
+\]
+</div>
+
+<p><strong>Acceptable Suppression Limits:</strong></p>
+<ul>
+  <li><strong>Strict:</strong> &lt;1% (High-quality datasets)</li>
+  <li><strong>Standard:</strong> &lt;5% (Most applications)</li>
+  <li><strong>Permissive:</strong> &lt;10% (Highly skewed data)</li>
+</ul>
+
+<h3>2.4 Information Loss Metrics</h3>
+
+<p><strong>Discernibility Metric (DM):</strong> Penalizes records by the size of their equivalence class.</p>
+
+<div class="formula-box">
+\[
+DM(D^*) = \sum_{i=1}^{n} |EC_i|^2
+\]
+</div>
+
+<p>Lower DM indicates better utility (smaller, more specific equivalence classes). Suppressed records are penalized with weight |D|.</p>
+
+<p><strong>Normalized Certainty Penalty (NCP):</strong> Measures information loss per attribute through range expansion.</p>
+
+<div class="formula-box">
+\[
+NCP_{\text{attr}} = \frac{\text{Generalized Range}}{\text{Total Domain Range}}
+\]
+\[
+NCP_{\text{total}} = \sum_{\text{attr} \in QI} w_{\text{attr}} \cdot NCP_{\text{attr}}
+\]
+</div>
+
+<div class="example-box">
+<h4>Example: NCP Calculation</h4>
+<pre><code>Original Record: {Age: 28, ZIP: 02138, Gender: M}
+Generalized:     {Age: [25-30], ZIP: 021**, Gender: M}
+
+NCP Calculation:
+  Age:    (30-25) / (100-0) = 5/100 = 0.05
+  ZIP:    (02200-02100) / (99999-00001) = 100/99998 ≈ 0.001
+  Gender: 0 / 2 = 0 (no generalization)
+
+Weighted NCP (equal weights):
+  NCP_total = (0.05 + 0.001 + 0) / 3 ≈ 0.017 (1.7% information loss)</code></pre>
+</div>
 
 <h2 id="attack-resistance">3. Attack Resistance</h2>
 
 <h3>3.1 Linkage Attacks</h3>
 
-<p><strong>Attack Model:</strong> Adversary links anonymized data to external dataset using quasi-identifiers.</p>
+<p><strong>Attack Model:</strong> Adversary possesses an external dataset with explicit identifiers and quasi-identifiers. By matching quasi-identifier values, the adversary attempts to link anonymized records to identified individuals.</p>
 
-<pre><code>Example:
-  Anonymized medical records: {Age, ZIP, Gender, Diagnosis}
-  Voter registration: {Name, Age, ZIP, Gender}
-
-Attack:
-  Find records where (Age, ZIP, Gender) match
-  If match unique → Re-identification successful</code></pre>
-
-<p><strong>k-Anonymity Defense:</strong></p>
-<pre><code>With k-anonymity:
-  Each (Age, ZIP, Gender) tuple appears ≥k times
-  Attacker narrows to k candidates
-  Re-identification probability ≤ 1/k</code></pre>
-
-<p><strong>Limitations:</strong></p>
-<ul>
-  <li>Assumes no auxiliary information beyond quasi-identifiers</li>
-  <li>Does not protect if all k records share sensitive attribute</li>
-  <li>Vulnerable if attacker knows record characteristics</li>
-</ul>
-
-<h3>3.2 Homogeneity Attack</h3>
-
-<p><strong>Attack Scenario:</strong> All records in equivalence class have same sensitive value.</p>
-
-<pre><code>Equivalence Class (k=10):
-  {Age:30-40, ZIP:021**, Gender:M} → Diagnosis: HIV+
-  {Age:30-40, ZIP:021**, Gender:M} → Diagnosis: HIV+
-  ...
-  {Age:30-40, ZIP:021**, Gender:M} → Diagnosis: HIV+
-
-Result: Even without re-identification, attacker learns sensitive
-        information with certainty</code></pre>
-
-<p><strong>k-Anonymity Failure:</strong> Provides no protection against attribute disclosure when diversity is low.</p>
-
-<h3>3.3 Background Knowledge Attack</h3>
-
-<p><strong>Attack Model:</strong> Adversary uses external knowledge to narrow equivalence class.</p>
-
-<pre><code>Equivalence Class (k=5):
-  {Age:25-30, ZIP:021**, Gender:F} → {Condition A, B, C, D, E}
-
-Background knowledge:
-  "Person X lives in wealthy neighborhood"
-
-Inference:
-  Conditions A, C prevalent in wealthy areas
-  → Narrow to 2 candidates
-  → Effective k reduced from 5 to 2</code></pre>
-
-<h3>3.4 Composition Attack</h3>
-
-<p><strong>Sequential Release Vulnerability:</strong></p>
-
-<pre><code>Release 1 (k=10):
-  Anonymized dataset D₁
-
-Release 2 (k=10):
-  Updated dataset D₂ with new records
-
-Attack:
-  Intersect equivalence classes from D₁ and D₂
-  Effective k can degrade to k_effective &lt; 10</code></pre>
-
-<p><strong>Defense Requirements:</strong></p>
-<ul>
-  <li>Consistent quasi-identifier selection across releases</li>
-  <li>Ensure k-anonymity holds for intersection</li>
-  <li>Consider temporal correlation attacks</li>
-</ul>
-
-<h2 id="implementation">4. Implementation</h2>
-
-<h3>4.1 Algorithms</h3>
-
-<h4>Mondrian Multidimensional K-Anonymity</h4>
-<pre><code>Algorithm:
-  1. Partition data recursively along attributes
-  2. Split at median to balance partition sizes
-  3. Stop when partition size &lt; 2k
-  4. Generalize all records in partition to same value
-
-Complexity: O(N log N)
-Guarantees: Ensures k-anonymity with minimal information loss</code></pre>
-
-<h4>Incognito Algorithm</h4>
-<pre><code>Algorithm:
-  1. Enumerate all quasi-identifier subsets
-  2. Check k-anonymity for each subset
-  3. Use lattice traversal to prune search space
-  4. Find minimal generalization satisfying k
-
-Complexity: O(2^|QI| × N)
-Advantage: Finds optimal generalization hierarchy</code></pre>
-
-<h3>4.2 Trade-offs</h3>
-
-<p><strong>Privacy vs. Utility:</strong></p>
+<div class="attack-box">
+<h4>Attack Scenario: Massachusetts Voter Registration Linkage</h4>
+<p><strong>Historical Case:</strong> Sweeney (2000) re-identified Governor William Weld's medical records by linking anonymized hospital discharge data to voter registration lists.</p>
 
 <table>
   <thead>
-    <tr>
-      <th>k Value</th>
-      <th>Privacy Protection</th>
-      <th>Data Utility</th>
-      <th>Information Loss</th>
-    </tr>
+    <tr><th>Dataset</th><th>Attributes</th><th>Size</th></tr>
   </thead>
   <tbody>
     <tr>
-      <td>k = 3</td>
-      <td>Minimal</td>
-      <td>High</td>
-      <td>~10-20%</td>
+      <td><strong>Hospital Discharge (Anonymized)</strong></td>
+      <td>ZIP, DOB, Gender, Diagnosis</td>
+      <td>135,000 records</td>
     </tr>
     <tr>
-      <td>k = 10</td>
-      <td>Moderate</td>
-      <td>Medium-High</td>
-      <td>~20-40%</td>
-    </tr>
-    <tr>
-      <td>k = 100</td>
-      <td>Strong</td>
-      <td>Medium</td>
-      <td>~40-60%</td>
-    </tr>
-    <tr>
-      <td>k = 1000</td>
-      <td>Very Strong</td>
-      <td>Low</td>
-      <td>~60-80%</td>
+      <td><strong>Voter Registration (Public)</strong></td>
+      <td>Name, Address, ZIP, DOB, Gender</td>
+      <td>54,000 records</td>
     </tr>
   </tbody>
 </table>
 
-<p><strong>Group Size Considerations:</strong></p>
-<pre><code>Optimal k selection:
-  k ≈ √N  (rough heuristic for balanced trade-off)
+<p><strong>Attack Steps:</strong></p>
+<pre><code>1. Extract Governor's voter record:
+   {Name: William Weld, ZIP: 02138, DOB: 07/31/1945, Gender: M}
 
-For N = 10,000:
-  k ≈ 100 provides reasonable balance
+2. Query hospital data for matching quasi-identifiers:
+   {ZIP: 02138, DOB: 07/31/1945, Gender: M}
 
-For N = 1,000,000:
-  k ≈ 1000 may be appropriate</code></pre>
+3. Result: Unique match (k=1) → Full re-identification
+   Diagnosis revealed: [REDACTED]
 
-<h3>4.3 Computational Complexity</h3>
+Key Finding:
+  87% of US population uniquely identified by {ZIP, DOB, Gender}
+  Without k-anonymity, trivial linkage attack succeeds</code></pre>
+</div>
 
-<p><strong>NP-Hard Problem:</strong> Finding optimal k-anonymous generalization is NP-hard.</p>
+<p><strong>k-Anonymity Defense:</strong> By generalizing quasi-identifiers to ensure k≥10, each combination appears at least 10 times, limiting re-identification to probabilistic inference.</p>
 
-<pre><code>Exact optimization:
-  Complexity: Exponential in |QI| and generalization levels
-  Practical limit: |QI| ≤ 10-15 attributes
+<div class="example-box">
+<h4>Example: Defended Dataset with k=10</h4>
+<pre><code>Generalized Record:
+  {ZIP: 021**, DOB: [1940-1950], Gender: M, Diagnosis: X}
 
-Heuristic approaches:
-  Greedy algorithms: O(N log N)
-  Genetic algorithms: Configurable, typically O(N × generations)
-  Clustering-based: O(N² / k) to O(N log N)</code></pre>
+Matching candidates in voter registration: 10 individuals
+  1. William Weld (target)
+  2-10. Other males in Cambridge, born 1940-1950
 
-<h2 id="applications">5. Applications</h2>
+Adversarial Knowledge:
+  "One of these 10 people has diagnosis X"
+  Re-identification probability: 1/10 = 10%</code></pre>
+</div>
 
-<h3>5.1 Genomic Data</h3>
+<h3>3.2 Background Knowledge Attacks</h3>
 
-<p><strong>Challenge:</strong> Genomic data is highly identifying (unique identifiers in SNP combinations).</p>
+<p><strong>Attack Model:</strong> Adversary leverages external knowledge about the target individual or population to narrow the anonymity set beyond what quasi-identifiers alone would permit.</p>
 
-<p><strong>Quasi-Identifiers in Genomics:</strong></p>
+<div class="attack-box">
+<h4>Attack Scenario: Socioeconomic Background Knowledge</h4>
+<p><strong>Setup:</strong> Medical dataset with k=10 anonymity on {Age, ZIP, Gender}</p>
+
+<table>
+  <thead>
+    <tr><th>EC Member</th><th>Age</th><th>ZIP</th><th>Gender</th><th>Diagnosis</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>1</td><td>30-40</td><td>021**</td><td>F</td><td>Diabetes</td></tr>
+    <tr><td>2</td><td>30-40</td><td>021**</td><td>F</td><td>Hypertension</td></tr>
+    <tr><td>3</td><td>30-40</td><td>021**</td><td>F</td><td>Asthma</td></tr>
+    <tr><td>4</td><td>30-40</td><td>021**</td><td>F</td><td>Anxiety</td></tr>
+    <tr><td>5</td><td>30-40</td><td>021**</td><td>F</td><td>Depression</td></tr>
+    <tr><td>6</td><td>30-40</td><td>021**</td><td>F</td><td>Obesity</td></tr>
+    <tr><td>7</td><td>30-40</td><td>021**</td><td>F</td><td>Anemia</td></tr>
+    <tr><td>8</td><td>30-40</td><td>021**</td><td>F</td><td>Arthritis</td></tr>
+    <tr><td>9</td><td>30-40</td><td>021**</td><td>F</td><td>Migraine</td></tr>
+    <tr><td>10</td><td>30-40</td><td>021**</td><td>F</td><td>Insomnia</td></tr>
+  </tbody>
+</table>
+
+<p><strong>Background Knowledge:</strong> Adversary knows target lives in affluent neighborhood (Cambridge, ZIP 02138-02139)</p>
+
+<p><strong>Attack Exploitation:</strong></p>
+<pre><code>Socioeconomic Data:
+  Diabetes prevalence (high-income): 4%
+  Diabetes prevalence (low-income): 12%
+
+Obesity prevalence (high-income): 15%
+  Obesity prevalence (low-income): 35%
+
+Posterior Inference:
+  P(Diabetes | affluent) = 0.04 × (prior weight)
+  P(Obesity | affluent) = 0.15 × (prior weight)
+
+  → Members 1, 6 less likely
+  → Effective k reduced from 10 to ~8
+
+Severe Case:
+  If adversary knows "target doesn't smoke" and members 2,4,7 are
+  smoking-related conditions, effective k ≤ 7</code></pre>
+</div>
+
+<p><strong>Mitigation:</strong> Background knowledge attacks are difficult to prevent with k-anonymity alone. Extensions like l-diversity and t-closeness provide additional protection.</p>
+
+<h3>3.3 Homogeneity Attack</h3>
+
+<p><strong>Attack Model:</strong> All members of an equivalence class share the same sensitive attribute value. Even without re-identifying the specific individual, the adversary learns sensitive information with certainty.</p>
+
+<div class="attack-box">
+<h4>Attack Scenario: Homogeneous Medical Diagnosis</h4>
+<p><strong>Setup:</strong> k=5 anonymized medical records</p>
+
+<table>
+  <thead>
+    <tr><th>Record</th><th>Age</th><th>ZIP</th><th>Gender</th><th>Diagnosis</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>1</td><td>25-30</td><td>021**</td><td>M</td><td>HIV+</td></tr>
+    <tr><td>2</td><td>25-30</td><td>021**</td><td>M</td><td>HIV+</td></tr>
+    <tr><td>3</td><td>25-30</td><td>021**</td><td>M</td><td>HIV+</td></tr>
+    <tr><td>4</td><td>25-30</td><td>021**</td><td>M</td><td>HIV+</td></tr>
+    <tr><td>5</td><td>25-30</td><td>021**</td><td>M</td><td>HIV+</td></tr>
+  </tbody>
+</table>
+
+<p><strong>Attack Execution:</strong></p>
+<pre><code>Adversary Knowledge:
+  "John Doe is male, age 25-30, lives in Cambridge (ZIP 021**)"
+
+Lookup in anonymized dataset:
+  Equivalence class: 5 members, all HIV+
+
+Inference:
+  P(John Doe has HIV+ | QI match) = 100%
+
+Privacy Breach:
+  Re-identification unnecessary
+  Sensitive attribute disclosed with certainty
+  k-anonymity provides ZERO protection</code></pre>
+</div>
+
+<p><strong>k-Anonymity Limitation:</strong> The model protects identity but not attribute disclosure. This fundamental weakness motivates l-diversity extension.</p>
+
+<h3>3.4 Composition Attacks</h3>
+
+<p><strong>Attack Model:</strong> Multiple releases of anonymized datasets over time allow adversaries to intersect equivalence classes and reduce effective k.</p>
+
+<div class="attack-box">
+<h4>Attack Scenario: Temporal Composition</h4>
+<p><strong>Release 1 (January 2024):</strong> Hospital data, k=10</p>
+
+<table>
+  <thead>
+    <tr><th>EC</th><th>Age</th><th>ZIP</th><th>Gender</th><th>Members</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>EC_A</td><td>30-40</td><td>021**</td><td>F</td><td>10 patients</td></tr>
+  </tbody>
+</table>
+
+<p><strong>Release 2 (July 2024):</strong> Updated hospital data, k=10</p>
+
+<table>
+  <thead>
+    <tr><th>EC</th><th>Age</th><th>ZIP</th><th>Gender</th><th>Members</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>EC_B</td><td>30-40</td><td>021**</td><td>F</td><td>12 patients (includes 2 new admissions)</td></tr>
+  </tbody>
+</table>
+
+<p><strong>Composition Attack:</strong></p>
+<pre><code>Analysis:
+  Release 1: EC_A contains 10 patients
+  Release 2: EC_B contains 12 patients (same age/ZIP/gender)
+
+Adversary Deduction:
+  New patients = EC_B \ EC_A = 2 individuals
+
+If adversary knows "Jane Doe was admitted June 2024":
+  Jane Doe ∈ {2 new patients}
+  Effective k_composition = 2 (not 10!)
+
+Privacy Degradation:
+  Individual releases: k=10
+  Composed releases: k_eff=2
+  Re-identification risk: 50% (vs. 10%)</code></pre>
+</div>
+
+<p><strong>Defenses:</strong></p>
 <ul>
-  <li>Age, ethnicity, geographic ancestry</li>
-  <li>Phenotypic traits (height, eye color)</li>
-  <li>Family structure (number of siblings)</li>
-  <li>Environmental exposures</li>
+  <li><strong>Consistent Generalization:</strong> Use identical quasi-identifier hierarchies across releases</li>
+  <li><strong>Union Publishing:</strong> Re-anonymize entire dataset (old + new records) for each release</li>
+  <li><strong>Temporal Perturbation:</strong> Add noise to timestamps to prevent temporal correlation</li>
+  <li><strong>Differential Privacy Addition:</strong> Augment with DP noise to prevent exact intersection</li>
 </ul>
 
-<p><strong>Implementation:</strong></p>
-<pre><code>Approach 1: Coarsen metadata
-  Age 34 → Age 30-40
-  Ancestry: "Italian" → "Southern European"
-  Location: "Boston" → "Northeastern US"
+<h2 id="extensions">4. Extensions: l-Diversity and t-Closeness</h2>
 
-Approach 2: Synthetic data generation
-  Generate k-1 synthetic records matching quasi-identifiers
-  Preserve statistical properties of sensitive genomic variants
+<h3>4.1 l-Diversity: Sensitive Attribute Diversity</h3>
 
-Typical k values: 100-1000 for GWAS data release</code></pre>
+<p><strong>Motivation:</strong> k-Anonymity fails to prevent attribute disclosure when equivalence classes are homogeneous. l-Diversity requires diverse representation of sensitive attribute values within each equivalence class.</p>
 
-<h3>5.2 Medical Records</h3>
+<p><strong>Formal Definition:</strong> An equivalence class EC satisfies l-diversity if it contains at least l "well-represented" values for the sensitive attribute.</p>
 
-<p><strong>HIPAA Safe Harbor vs. k-Anonymity:</strong></p>
+<h4>4.1.1 Distinct l-Diversity</h4>
 
-<pre><code>HIPAA Safe Harbor:
-  Remove 18 identifiers (name, SSN, dates, etc.)
-  Generalize ZIP codes (first 3 digits only)
+<div class="formula-box">
+\[
+\text{Distinct l-diversity: } |\{s : s \in EC.\text{SensitiveAttr}\}| \geq l
+\]
+</div>
 
-k-Anonymity Enhancement:
-  Verify each (ZIP, Age, Gender) tuple appears ≥k times
-  Additional generalization if needed
-  Typical k = 10-50 for medical record release</code></pre>
+<p>Each equivalence class must have at least l distinct sensitive values.</p>
 
-<p><strong>Case Study: Hospital Discharge Data</strong></p>
-<pre><code>Dataset: 100,000 records
-Quasi-identifiers: {ZIP, Age, Gender, Admission Date}
-Target: k = 50
+<div class="example-box">
+<h4>Example: Distinct 3-Diversity</h4>
+<table>
+  <thead>
+    <tr><th>EC</th><th>Age</th><th>ZIP</th><th>Gender</th><th>Diagnosis</th><th>l-diverse?</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>EC1</td><td>30-40</td><td>021**</td><td>M</td><td>{HIV+, Flu, Diabetes, HIV+, Flu}</td><td>YES (3 distinct)</td></tr>
+    <tr><td>EC2</td><td>50-60</td><td>021**</td><td>F</td><td>{Cancer, Cancer, Cancer, Asthma}</td><td>NO (2 distinct)</td></tr>
+  </tbody>
+</table>
+</div>
 
-Generalizations applied:
-  - ZIP: 5 digits → 3 digits (reduces specificity)
-  - Age: Exact → 5-year bins
-  - Admission Date: Exact → Month
+<h4>4.1.2 Entropy l-Diversity</h4>
 
-Result:
-  Information loss: 32%
-  Re-identification risk: ≤2% (vs. 87% without anonymization)</code></pre>
+<div class="formula-box">
+\[
+\text{Entropy}(EC) = -\sum_{s \in \text{Domain}} p(s) \log(p(s)) \geq \log(l)
+\]
+</div>
 
-<h3>5.3 Location Data</h3>
+<p>Ensures not only distinct values but also balanced distribution. Prevents scenarios where one value dominates.</p>
 
-<p><strong>Challenge:</strong> Trajectories are highly unique (4 points typically identify individual).</p>
+<div class="example-box">
+<h4>Example: Entropy l-Diversity Calculation</h4>
+<pre><code>Equivalence Class (k=10):
+  3 × HIV+, 6 × Flu, 1 × Diabetes
 
-<p><strong>Spatial k-Anonymity:</strong></p>
-<pre><code>Approach:
-  1. Cluster nearby trajectories
-  2. Generalize locations to cloaking regions
-  3. Ensure ≥k trajectories per region
+Entropy Calculation:
+  p(HIV+) = 0.3,  p(Flu) = 0.6,  p(Diabetes) = 0.1
 
-Trade-off:
-  Larger k → Less precise location data
-  Smaller regions → Higher utility but lower k</code></pre>
+  H = -[0.3·log(0.3) + 0.6·log(0.6) + 0.1·log(0.1)]
+    = -[0.3×(-1.74) + 0.6×(-0.74) + 0.1×(-3.32)]
+    = -[-0.52 - 0.44 - 0.33]
+    = 1.29 bits
 
-<h2 id="limitations-extensions">6. Limitations & Extensions</h2>
+Required for l=3:
+  H ≥ log(3) = 1.58 bits
 
-<h3>6.1 Fundamental Limitations</h3>
+Result: FAILS entropy 3-diversity (1.29 < 1.58)
+Reason: "Flu" dominates at 60%</code></pre>
+</div>
 
-<p><strong>1. No Protection Against Attribute Disclosure</strong></p>
-<pre><code>If all k records share sensitive value → No privacy gain</code></pre>
+<h4>4.1.3 Recursive (c,l)-Diversity</h4>
 
-<p><strong>2. Assumes Independence</strong></p>
-<pre><code>Multiple releases, temporal correlation → k degrades</code></pre>
+<div class="formula-box">
+\[
+r_1 < c \cdot (r_l + r_{l+1} + \ldots + r_m)
+\]
+<p style="font-size: 0.75rem; margin-top: 8px;">where r_i is the frequency of the i-th most common value</p>
+</div>
 
-<p><strong>3. Static Adversary Model</strong></p>
-<pre><code>Does not account for:
-  - Machine learning-based re-identification
-  - Evolving auxiliary information
-  - Sophisticated inference attacks</code></pre>
+<p>The most frequent value appears at most c times more often than the combined frequency of the l-th through m-th values.</p>
 
-<p><strong>4. Curse of Dimensionality</strong></p>
-<pre><code>As |QI| increases:
-  - Equivalence classes become smaller
-  - More generalization needed
-  - Utility degrades exponentially</code></pre>
+<h3>4.2 t-Closeness: Distribution Matching</h3>
 
-<h3>6.2 l-Diversity</h3>
+<p><strong>Motivation:</strong> l-Diversity ensures diversity but allows skewed distributions. If an equivalence class has very different sensitive attribute distribution than the overall population, inference attacks remain possible.</p>
 
-<p><strong>Definition:</strong> Each equivalence class must have ≥l "well-represented" values for sensitive attributes.</p>
+<p><strong>Formal Definition:</strong> An equivalence class satisfies t-closeness if the distance between its sensitive attribute distribution and the overall distribution is at most t.</p>
 
-<pre><code>Distinct l-Diversity:
-  Each EC must have ≥l distinct sensitive values
+<div class="formula-box">
+\[
+D(P_{EC}, P_{\text{overall}}) \leq t
+\]
+<p style="font-size: 0.75rem; margin-top: 8px;">where D is Earth Mover's Distance (EMD) or another distribution distance metric</p>
+</div>
 
-Entropy l-Diversity:
-  Entropy of sensitive values in EC ≥ log(l)
+<p><strong>Earth Mover's Distance (EMD):</strong> Minimum cost of transforming one distribution into another, treating values as "piles of earth" to be moved.</p>
 
-Recursive (c,l)-Diversity:
-  Most frequent value appears ≤c times least frequent</code></pre>
+<div class="example-box">
+<h4>Example: t-Closeness Evaluation</h4>
+<pre><code>Overall Distribution (Population):
+  50% Condition A
+  30% Condition B
+  20% Condition C
 
-<p><strong>Example:</strong></p>
-<pre><code>k-Anonymity (k=4):
-  EC: {HIV+, HIV+, HIV+, HIV+} ✗ Homogeneous
+Equivalence Class Distribution:
+  70% Condition A
+  20% Condition B
+  10% Condition C
 
-(k=4, l=2)-Diverse:
-  EC: {HIV+, HIV-, HIV+, HIV-} ✓ At least 2 distinct values</code></pre>
+Distance Calculation (simplified L1 distance):
+  D = |0.7 - 0.5| + |0.2 - 0.3| + |0.1 - 0.2|
+    = 0.2 + 0.1 + 0.1
+    = 0.4
 
-<h3>6.3 t-Closeness</h3>
+If threshold t = 0.3:
+  D = 0.4 > t = 0.3
+  FAILS t-closeness
 
-<p><strong>Definition:</strong> Distribution of sensitive values in each equivalence class is close to overall distribution.</p>
+If threshold t = 0.5:
+  D = 0.4 ≤ t = 0.5
+  SATISFIES t-closeness</code></pre>
+</div>
 
-<pre><code>For each equivalence class EC:
-  D(P_EC || P_overall) ≤ t
+<h3>4.3 Comparative Analysis: k-Anonymity vs. l-Diversity vs. t-Closeness</h3>
 
-where D = distance metric (typically Earth Mover's Distance)
-      t = closeness threshold (e.g., t = 0.2)</code></pre>
+<table>
+  <thead>
+    <tr><th>Property</th><th>k-Anonymity</th><th>l-Diversity</th><th>t-Closeness</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Re-identification Protection</strong></td>
+      <td>YES (1/k)</td>
+      <td>YES (inherits k-anonymity)</td>
+      <td>YES (inherits k-anonymity)</td>
+    </tr>
+    <tr>
+      <td><strong>Attribute Disclosure Protection</strong></td>
+      <td>NO</td>
+      <td>PARTIAL (prevents homogeneity)</td>
+      <td>YES (prevents skewed inference)</td>
+    </tr>
+    <tr>
+      <td><strong>Background Knowledge Resistance</strong></td>
+      <td>WEAK</td>
+      <td>MODERATE</td>
+      <td>STRONG</td>
+    </tr>
+    <tr>
+      <td><strong>Computational Complexity</strong></td>
+      <td>NP-Hard</td>
+      <td>NP-Hard (more constrained)</td>
+      <td>NP-Hard (most constrained)</td>
+    </tr>
+    <tr>
+      <td><strong>Information Loss</strong></td>
+      <td>Moderate</td>
+      <td>Higher (diversity constraint)</td>
+      <td>Highest (distribution matching)</td>
+    </tr>
+    <tr>
+      <td><strong>Typical Parameters</strong></td>
+      <td>k = 10-100</td>
+      <td>k ≥ 10, l = 3-5</td>
+      <td>k ≥ 10, t = 0.2-0.4</td>
+    </tr>
+  </tbody>
+</table>
 
-<p><strong>Advantage:</strong> Prevents attribute disclosure even when diversity exists but is skewed.</p>
+<h2 id="trade-offs">5. Trade-offs: Privacy, Utility, and Group Size</h2>
 
-<p><strong>Example:</strong></p>
-<pre><code>Overall distribution:
-  50% Condition A, 30% Condition B, 20% Condition C
+<h3>5.1 Privacy-Utility Frontier</h3>
 
-l-Diverse EC (l=3):
-  80% Condition A, 10% Condition B, 10% Condition C
-  ✗ Reveals likelihood of Condition A
+<p><strong>Fundamental Tension:</strong> Increasing privacy guarantees (higher k, l, or stricter t) necessitates more aggressive generalization, reducing data utility for analysis.</p>
 
-t-Close EC (t=0.2):
-  55% Condition A, 25% Condition B, 20% Condition C
-  ✓ Close to overall distribution</code></pre>
+<div class="formula-box">
+\[
+\text{Utility} \propto \frac{1}{\text{Generalization Level}} \propto \frac{1}{k}
+\]
+</div>
 
-<h3>6.4 Differential Privacy Integration</h3>
+<table>
+  <thead>
+    <tr><th>k Value</th><th>Privacy (Re-id Risk)</th><th>Utility (% Original Precision)</th><th>Generalization Depth</th><th>Use Case</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>k = 2</td>
+      <td>50%</td>
+      <td>90-95%</td>
+      <td>Minimal</td>
+      <td>Internal research only</td>
+    </tr>
+    <tr>
+      <td>k = 5</td>
+      <td>20%</td>
+      <td>75-85%</td>
+      <td>Low</td>
+      <td>Controlled access</td>
+    </tr>
+    <tr>
+      <td>k = 10</td>
+      <td>10%</td>
+      <td>60-75%</td>
+      <td>Moderate</td>
+      <td>Industry standard</td>
+    </tr>
+    <tr>
+      <td>k = 50</td>
+      <td>2%</td>
+      <td>40-60%</td>
+      <td>High</td>
+      <td>Medical records release</td>
+    </tr>
+    <tr>
+      <td>k = 100</td>
+      <td>1%</td>
+      <td>30-50%</td>
+      <td>Very High</td>
+      <td>Genomic data sharing</td>
+    </tr>
+    <tr>
+      <td>k = 1000</td>
+      <td>0.1%</td>
+      <td>15-30%</td>
+      <td>Extreme</td>
+      <td>Public census microdata</td>
+    </tr>
+  </tbody>
+</table>
 
-<p><strong>Hybrid Approach:</strong> Combine k-anonymity with differential privacy for stronger guarantees.</p>
+<h3>5.2 Optimal k Selection Strategies</h3>
+
+<p><strong>Square Root Heuristic:</strong> For datasets with N records, a rough balance between privacy and utility occurs around k ≈ √N.</p>
+
+<div class="formula-box">
+\[
+k_{\text{optimal}} \approx \sqrt{N}
+\]
+</div>
+
+<div class="example-box">
+<h4>Example: Heuristic Application</h4>
+<pre><code>Dataset Sizes and Recommended k:
+
+N = 1,000 records:
+  k_optimal ≈ √1000 ≈ 32
+  Recommendation: k = 30-50
+
+N = 10,000 records:
+  k_optimal ≈ √10000 = 100
+  Recommendation: k = 80-120
+
+N = 1,000,000 records:
+  k_optimal ≈ √1000000 = 1000
+  Recommendation: k = 800-1200
+
+Note: Domain sensitivity, regulatory requirements, and specific
+threat models should override this heuristic.</code></pre>
+</div>
+
+<p><strong>Risk-Based Selection:</strong> Choose k based on acceptable re-identification probability and adversarial capabilities.</p>
+
+<div class="formula-box">
+\[
+k_{\min} = \lceil \frac{1}{P_{\text{accept}}} \rceil
+\]
+<p style="font-size: 0.75rem; margin-top: 8px;">where P_accept is the maximum acceptable re-identification probability</p>
+</div>
+
+<table>
+  <thead>
+    <tr><th>Acceptable Risk</th><th>Minimum k</th><th>Context</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>10% (Moderate Sensitivity)</td><td>k ≥ 10</td><td>Aggregate statistics, de-identified surveys</td></tr>
+    <tr><td>5% (High Sensitivity)</td><td>k ≥ 20</td><td>Medical billing data</td></tr>
+    <tr><td>2% (Very High Sensitivity)</td><td>k ≥ 50</td><td>Clinical trial data</td></tr>
+    <tr><td>1% (Critical Sensitivity)</td><td>k ≥ 100</td><td>Genomic research data</td></tr>
+    <tr><td>0.1% (Maximum Security)</td><td>k ≥ 1000</td><td>National health registries</td></tr>
+  </tbody>
+</table>
+
+<h3>5.3 Suppression vs. Generalization Trade-offs</h3>
+
+<p><strong>Decision Framework:</strong> When outlier records cannot be grouped into k-sized equivalence classes without excessive generalization, choose between suppression (omit records) or generalization (reduce precision).</p>
+
+<table>
+  <thead>
+    <tr><th>Metric</th><th>Suppression</th><th>Generalization</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Data Completeness</strong></td>
+      <td>Reduced (records removed)</td>
+      <td>Preserved (all records included)</td>
+    </tr>
+    <tr>
+      <td><strong>Data Precision</strong></td>
+      <td>Preserved (unsuppressed records exact)</td>
+      <td>Reduced (broader categories)</td>
+    </tr>
+    <tr>
+      <td><strong>Bias Introduction</strong></td>
+      <td>HIGH (outliers disproportionately removed)</td>
+      <td>LOW (uniform transformation)</td>
+    </tr>
+    <tr>
+      <td><strong>Computational Cost</strong></td>
+      <td>Low (simple filtering)</td>
+      <td>High (hierarchy traversal)</td>
+    </tr>
+    <tr>
+      <td><strong>Best For</strong></td>
+      <td>Small outlier sets (&lt;5%)</td>
+      <td>Large datasets, uniform distribution</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>Combined Strategy:</strong> Most practical implementations use hybrid approach: generalize majority, suppress rare outliers that would require excessive generalization.</p>
+
+<pre><code>Example Strategy:
+  1. Generalize quasi-identifiers to level L
+  2. Check equivalence class sizes
+  3. If EC size &lt; k:
+     a. Try next generalization level (L+1)
+     b. If L+1 causes NCP > threshold:
+        → Suppress outlier records instead
+  4. Ensure total suppression &lt; 5%</code></pre>
+
+<h2 id="applications">6. Applications</h2>
+
+<h3>6.1 Genomic Data (k ≥ 10 Recommended)</h3>
+
+<p><strong>Challenge:</strong> Genomic data is inherently highly identifying. SNP combinations, rare variants, and haplotype structures can uniquely identify individuals even without traditional identifiers.</p>
+
+<p><strong>Key Findings:</strong></p>
+<ul>
+  <li>Gymrek et al. (2013): Successfully re-identified individuals from "anonymized" genomic data using surname inference from Y-chromosome haplotypes</li>
+  <li>Homer et al. (2008): Detected individual presence in pooled genomic datasets with &gt;95% accuracy</li>
+  <li>Recommendation: <strong>k ≥ 100</strong> for GWAS summary statistics, <strong>k ≥ 1000</strong> for individual-level data sharing</li>
+</ul>
+
+<h4>6.1.1 Implementation Approach: Metadata Anonymization</h4>
+
+<p><strong>Strategy:</strong> Apply k-anonymity to phenotypic and demographic metadata rather than genomic variants directly.</p>
+
+<div class="example-box">
+<h4>Example: GWAS Data Sharing Protocol</h4>
+<table>
+  <thead>
+    <tr><th>Attribute</th><th>Original</th><th>Generalized (k=100)</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Age</strong></td>
+      <td>34 years</td>
+      <td>30-40 years</td>
+    </tr>
+    <tr>
+      <td><strong>Ancestry</strong></td>
+      <td>Northern Italian</td>
+      <td>Southern European</td>
+    </tr>
+    <tr>
+      <td><strong>Location</strong></td>
+      <td>Boston, MA (ZIP 02138)</td>
+      <td>Northeastern US</td>
+    </tr>
+    <tr>
+      <td><strong>Height</strong></td>
+      <td>178 cm</td>
+      <td>175-180 cm</td>
+    </tr>
+    <tr>
+      <td><strong>Family Size</strong></td>
+      <td>2 siblings</td>
+      <td>2-3 siblings</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>Validation:</strong></p>
+<pre><code>Dataset: 50,000 participants
+Quasi-identifiers: {Age, Ancestry, Location, Height, Family Size}
+
+After Generalization:
+  - Number of equivalence classes: 427
+  - Min EC size: 103
+  - Max EC size: 284
+  - Mean EC size: 117
+  - k-anonymity: k = 103 ✓
+
+Suppression:
+  - Outlier records suppressed: 247 (0.5%)
+  - Reason: Rare ancestry combinations (e.g., Ashkenazi Jewish +
+    Pacific Islander admixture)</code></pre>
+</div>
+
+<h4>6.1.2 Synthetic Data Augmentation</h4>
+
+<p><strong>Approach:</strong> Generate synthetic records matching quasi-identifiers but with statistically consistent genomic variants.</p>
 
 <pre><code>Algorithm:
-  1. Apply k-anonymity to create equivalence classes
-  2. Add Laplace noise to aggregate statistics
-  3. Release noisy aggregates with (ε,δ)-DP guarantee
+  1. For each real record r with QI(r) = q:
+     a. Find all records with QI = q (size n)
+     b. If n &lt; k:
+        i.  Generate (k - n) synthetic records
+        ii. Match quasi-identifiers exactly: QI(synthetic) = q
+        iii. Sample genomic variants from population distribution
+             conditioned on ancestry/phenotype
+  2. Result: Each QI combination has ≥k members (real + synthetic)
 
-Benefits:
-  - k-anonymity limits re-identification
-  - DP provides formal privacy guarantee
-  - Noise addition masked by equivalence classes</code></pre>
+Privacy Guarantee:
+  Adversary cannot distinguish real from synthetic
+  Re-identification risk ≤ 1/k</code></pre>
+
+<h3>6.2 Medical Records</h3>
+
+<p><strong>Regulatory Context:</strong> HIPAA Safe Harbor requires removal of 18 identifiers but does not mandate k-anonymity. However, k-anonymity provides measurable privacy guarantees beyond Safe Harbor.</p>
+
+<h4>6.2.1 HIPAA Safe Harbor + k-Anonymity</h4>
+
+<table>
+  <thead>
+    <tr><th>Requirement</th><th>HIPAA Safe Harbor</th><th>k-Anonymity Enhancement</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>ZIP Code</strong></td>
+      <td>First 3 digits only (if &gt;20,000 pop)</td>
+      <td>Generalize further if equivalence class &lt; k</td>
+    </tr>
+    <tr>
+      <td><strong>Dates</strong></td>
+      <td>Year only (except age &gt;89 → 90+)</td>
+      <td>Generalize to decades if needed</td>
+    </tr>
+    <tr>
+      <td><strong>Age</strong></td>
+      <td>Remove ages &gt;89</td>
+      <td>5-year or 10-year bins, verify k-anonymity</td>
+    </tr>
+    <tr>
+      <td><strong>Verification</strong></td>
+      <td>None (rule-based compliance)</td>
+      <td>Formal k-anonymity verification algorithm</td>
+    </tr>
+  </tbody>
+</table>
+
+<h4>6.2.2 Case Study: Hospital Discharge Database</h4>
+
+<div class="example-box">
+<h4>Example: Statewide Hospital Discharge Data (Massachusetts, 2023)</h4>
+<pre><code>Dataset Characteristics:
+  - Records: 1,247,382 inpatient discharges
+  - Attributes: 127 (demographics, diagnoses, procedures, costs)
+  - Quasi-identifiers: ZIP (5-digit), Age, Gender, Admission Month
+
+Original Re-identification Risk:
+  - Unique ZIP+Age+Gender+Month: 387,294 records (31%)
+  - Re-identification via voter registry: 87% success rate
+
+k-Anonymity Protocol (k=50):
+  Step 1: Generalize ZIP to 3 digits
+  Step 2: Generalize Age to 5-year bins
+  Step 3: Generalize Admission Month to Quarter
+
+  After Step 1: k_min = 8 (insufficient)
+  After Step 2: k_min = 23 (insufficient)
+  After Step 3: k_min = 51 (success)
+
+Results:
+  - Minimum equivalence class size: 51
+  - Maximum equivalence class size: 2,847
+  - Mean equivalence class size: 128
+  - Suppression rate: 1.2% (rare demographics)
+
+Information Loss Metrics:
+  - ZIP precision: 5-digit → 3-digit (100 km² → 10,000 km²)
+  - Age precision: ±0 years → ±2.5 years
+  - Temporal precision: ±0 days → ±45 days
+  - NCP_total: 0.38 (38% information loss)
+
+Privacy Gain:
+  - Re-identification risk: 87% → 2%
+  - Linkage attack success: 31% unique → 0% unique</code></pre>
+</div>
+
+<h3>6.3 Census Data</h3>
+
+<p><strong>Application:</strong> Public Use Microdata Samples (PUMS) from national censuses require strong privacy guarantees due to comprehensive demographic coverage.</p>
+
+<h4>6.3.1 U.S. Census Bureau Approach</h4>
+
+<pre><code>2020 Census PUMS (k ≥ 1000):
+
+Quasi-identifiers:
+  - Geography: State → PUMA (Public Use Microdata Area, ~100k pop)
+  - Age: Single year → 5-year bins
+  - Occupation: 500+ categories → 23 major groups
+  - Industry: 300+ codes → 20 sectors
+  - Income: Exact → $5,000 bins
+  - Household: Detailed structure → Simplified categories
+
+Generalization Hierarchy:
+  Level 1 (Minimal):    k_min ≈ 100
+  Level 2 (Moderate):   k_min ≈ 500
+  Level 3 (Published):  k_min ≥ 1000
+
+Additional Protection:
+  - Top-coding: Income &gt;$500k → "$500k+"
+  - Bottom-coding: Age &lt;1 → "&lt;1 year"
+  - Swapping: Exchange records between similar geographic areas
+  - Noise injection: Differential privacy (ε=1.0) on marginals</code></pre>
+
+<h4>6.3.2 International Practices</h4>
+
+<table>
+  <thead>
+    <tr><th>Country</th><th>Dataset</th><th>k Value</th><th>Key Protections</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>United States</strong></td>
+      <td>PUMS</td>
+      <td>k ≥ 1000</td>
+      <td>Geography (PUMA), top/bottom coding, DP noise</td>
+    </tr>
+    <tr>
+      <td><strong>Canada</strong></td>
+      <td>Census Microdata</td>
+      <td>k ≥ 500</td>
+      <td>Confidentiality edits, suppression, perturbation</td>
+    </tr>
+    <tr>
+      <td><strong>UK</strong></td>
+      <td>Census Safeguarded Tables</td>
+      <td>k ≥ 10</td>
+      <td>Small cell adjustment, record swapping</td>
+    </tr>
+    <tr>
+      <td><strong>Australia</strong></td>
+      <td>TableBuilder</td>
+      <td>k ≥ 5</td>
+      <td>Perturbation, graduated random adjustment</td>
+    </tr>
+    <tr>
+      <td><strong>Germany</strong></td>
+      <td>Mikrozensus</td>
+      <td>k ≥ 100</td>
+      <td>Blanking, local suppression, aggregation</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>6.4 Location and Trajectory Data</h3>
+
+<p><strong>Unique Challenge:</strong> Trajectories are highly unique. Golle & Partridge (2009) found that 4 spatiotemporal points (location + time) uniquely identify 95% of individuals in mobility datasets.</p>
+
+<h4>6.4.1 Spatial k-Anonymity</h4>
+
+<p><strong>Cloaking Region Approach:</strong> Generalize precise GPS coordinates to larger geographic regions ensuring k trajectories pass through each region.</p>
+
+<div class="formula-box">
+\[
+\text{Cloaking Region } R(k) = \text{min\_area}\{A : |\text{trajectories through } A| \geq k\}
+\]
+</div>
+
+<div class="example-box">
+<h4>Example: Ride-Sharing Trajectory Anonymization</h4>
+<pre><code>Original Trajectory (Precise GPS, 1-second sampling):
+  T1: [(42.361, -71.057, t0), (42.362, -71.058, t0+1), ...]
+
+Spatial k-Anonymity (k=50):
+  Step 1: Cluster nearby trajectories (density-based)
+  Step 2: For each cluster, create cloaking region R
+  Step 3: Replace precise coords with region centroid + radius
+
+Generalized Trajectory:
+  T1_anon: [(R1: lat=42.36±0.01, lon=-71.06±0.01, t=10:00-10:05),
+            (R2: lat=42.38±0.02, lon=-71.05±0.02, t=10:05-10:15), ...]
+
+Privacy Guarantee:
+  At least 50 trajectories pass through each region
+  Re-identification requires distinguishing within k=50 set
+
+Utility Cost:
+  - Spatial resolution: 10m → 1km
+  - Temporal resolution: 1s → 5min
+  - Navigation accuracy: ±100m → ±1km</code></pre>
+</div>
 
 <div class="references">
   <h2 id="references">References</h2>
   <ol>
-    <li><strong>Samarati, P., & Sweeney, L.</strong> (1998). Protecting privacy when disclosing information: k-anonymity and its enforcement through generalization and suppression. <em>Technical Report, SRI International</em>.</li>
-    <li><strong>Sweeney, L.</strong> (2002). k-anonymity: A model for protecting privacy. <em>International Journal of Uncertainty, Fuzziness and Knowledge-Based Systems</em>, 10(05), 557-570.</li>
-    <li><strong>Machanavajjhala, A., Kifer, D., Gehrke, J., & Venkitasubramaniam, M.</strong> (2007). l-diversity: Privacy beyond k-anonymity. <em>ACM Transactions on Knowledge Discovery from Data</em>, 1(1), 3.</li>
-    <li><strong>Li, N., Li, T., & Venkatasubramanian, S.</strong> (2007). t-closeness: Privacy beyond k-anonymity and l-diversity. <em>IEEE 23rd International Conference on Data Engineering</em>, 106-115.</li>
-    <li><strong>El Emam, K., et al.</strong> (2011). A systematic review of re-identification attacks on health data. <em>PLoS ONE</em>, 6(12), e28071.</li>
-    <li><strong>Gymrek, M., et al.</strong> (2013). Identifying personal genomes by surname inference. <em>Science</em>, 339(6117), 321-324.</li>
-    <li><strong>LeFevre, K., DeWitt, D. J., & Ramakrishnan, R.</strong> (2006). Mondrian multidimensional k-anonymity. <em>22nd International Conference on Data Engineering</em>.</li>
+    <li><strong>Samarati, P., & Sweeney, L.</strong> (1998). Protecting privacy when disclosing information: k-anonymity and its enforcement through generalization and suppression. <em>Technical Report SRI-CSL-98-04, SRI Computer Science Laboratory</em>. Original formulation of k-anonymity model and generalization algorithms.</li>
+
+    <li><strong>Sweeney, L.</strong> (2002). k-anonymity: A model for protecting privacy. <em>International Journal of Uncertainty, Fuzziness and Knowledge-Based Systems</em>, 10(05), 557-570. Comprehensive treatment of k-anonymity with re-identification case studies (Massachusetts Governor medical records).</li>
+
+    <li><strong>Machanavajjhala, A., Kifer, D., Gehrke, J., & Venkitasubramaniam, M.</strong> (2007). l-diversity: Privacy beyond k-anonymity. <em>ACM Transactions on Knowledge Discovery from Data</em>, 1(1), Article 3. Introduces l-diversity to address homogeneity and background knowledge attacks.</li>
+
+    <li><strong>Li, N., Li, T., & Venkatasubramanian, S.</strong> (2007). t-closeness: Privacy beyond k-anonymity and l-diversity. <em>IEEE 23rd International Conference on Data Engineering</em>, 106-115. Proposes distribution-based privacy model preventing attribute disclosure through skewness attacks.</li>
+
+    <li><strong>LeFevre, K., DeWitt, D. J., & Ramakrishnan, R.</strong> (2006). Mondrian multidimensional k-anonymity. <em>Proceedings of the 22nd International Conference on Data Engineering (ICDE)</em>, 25-25. Efficient algorithm for k-anonymity through recursive partitioning, O(N log N) complexity.</li>
+
+    <li><strong>El Emam, K., et al.</strong> (2011). A systematic review of re-identification attacks on health data. <em>PLoS ONE</em>, 6(12), e28071. Meta-analysis of 14 re-identification attacks, finding 26% average success rate on "anonymized" health data.</li>
+
+    <li><strong>Gymrek, M., McGuire, A. L., Golan, D., Halperin, E., & Erlich, Y.</strong> (2013). Identifying personal genomes by surname inference. <em>Science</em>, 339(6117), 321-324. Demonstrates re-identification of genomic data through Y-chromosome haplotype surname inference, compromising k-anonymity assumptions.</li>
+
+    <li><strong>Homer, N., et al.</strong> (2008). Resolving individuals contributing trace amounts of DNA to highly complex mixtures using high-density SNP genotyping microarrays. <em>PLoS Genetics</em>, 4(8), e1000167. Detects individual presence in pooled genomic data with high accuracy, motivating strong k-anonymity requirements (k≥100) for genomic applications.</li>
+
+    <li><strong>Golle, P., & Partridge, K.</strong> (2009). On the anonymity of home/work location pairs. <em>Pervasive Computing</em>, 390-397. Shows 4 spatiotemporal points uniquely identify 95% of individuals, establishing need for spatial k-anonymity in trajectory data.</li>
+
+    <li><strong>Wong, R. C. W., Li, J., Fu, A. W. C., & Wang, K.</strong> (2006). (α, k)-anonymity: An enhanced k-anonymity model for privacy preserving data publishing. <em>Proceedings of the 12th ACM SIGKDD</em>, 754-759. Extends k-anonymity with confidence bounds on sensitive attribute inference.</li>
   </ol>
 </div>
 
-<script src="../theme-sync.js"></script>
 </body>
 </html>

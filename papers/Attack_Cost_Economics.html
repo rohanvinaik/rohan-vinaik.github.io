@@ -14,7 +14,7 @@
       --bg: #0a0a0a;
       --text: #e0e0e0;
       --text-secondary: #a0a0a0;
-      --accent: #00ffff;
+      --accent: #00ff00;
       --border: #333;
       --code-bg: #1a1a1a;
     }
@@ -168,6 +168,16 @@
       color: var(--accent);
       font-weight: 600;
     }
+    .highlight-box {
+      background: var(--code-bg);
+      border: 1px solid var(--accent);
+      padding: 16px;
+      margin: 20px 0;
+      font-size: 0.85rem;
+    }
+    .highlight-box strong {
+      color: var(--accent);
+    }
     .references {
       font-size: 0.75rem;
       margin-top: 32px;
@@ -207,723 +217,1441 @@
 </div>
 
 <div class="abstract">
-  <strong>Abstract:</strong> Attack cost economics treats economic infeasibility as a fundamental security layer, complementing cryptographic and computational defenses. This framework quantifies attack costs across three dimensions—computational resources (electricity, hardware amortization), temporal constraints (opportunity cost, hardware depreciation), and risk exposure (legal penalties, detection probability)—to establish security through economic barriers. This document covers cost modeling principles, physical impossibility bounds, defense strategies, and practical applications in genomic security where 2^256 operations exceed global economic capacity and 2^516 operations violate thermodynamic limits.
+  <strong>Abstract:</strong> Economic barriers constitute a fundamental security layer that complements cryptographic and computational defenses by making attacks financially irrational. This framework quantifies attack costs across computational resources (electricity, hardware), temporal constraints (opportunity cost, depreciation), and risk exposure (legal penalties, detection probability) to establish practical security thresholds. We demonstrate that 2^256 operations cost $10^48 (exceeding global wealth of ~$10^15), while 2^516 operations require energy exceeding the observable universe's mass-energy equivalent, establishing physical impossibility bounds. Through cost-benefit analysis, rate limiting economics, and case studies in genomic data protection, cryptocurrency mining, and cloud infrastructure breaches, we show how maximizing attacker costs while minimizing defender costs creates sustainable security architectures that render rational attacks economically infeasible.
 </div>
 
 <div class="quick-nav">
   <h3>Quick Navigation</h3>
   <ul>
-    <li><a href="#framework">1. Economic Security Framework</a></li>
-    <li><a href="#cost-models">2. Attack Cost Models</a></li>
+    <li><a href="#framework">1. Core Framework</a></li>
+    <li><a href="#cost-models">2. Cost Models</a></li>
     <li><a href="#defense-strategies">3. Defense Strategies</a></li>
-    <li><a href="#physical-bounds">4. Physical Impossibility Bounds</a></li>
-    <li><a href="#genomic-applications">5. Genomic Security Applications</a></li>
+    <li><a href="#practical-bounds">4. Practical Bounds</a></li>
+    <li><a href="#case-studies">5. Case Studies</a></li>
+    <li><a href="#optimization">6. Optimization</a></li>
     <li><a href="#references">References</a></li>
   </ul>
 </div>
 
-<h2 id="framework">1. Economic Security Framework</h2>
+<h2 id="framework">1. Core Framework: Economic Barriers as Security</h2>
 
-<h3>1.1 Core Principle</h3>
+<h3>1.1 Fundamental Security Condition</h3>
 
-<p><strong>Definition:</strong> A system is economically secure if the expected cost of successful attack exceeds the expected value gained.</p>
+<p>A system achieves economic security when the expected cost of a successful attack exceeds the expected value gained by the attacker. This creates a rational economic barrier independent of cryptographic strength.</p>
 
-<pre><code>Economic Security Condition:
-  E[Attack Cost] > E[Attack Value]
+<div class="highlight-box">
+  <strong>Economic Security Condition:</strong><br>
+  \( \mathbb{E}[\text{Cost}_{\text{attack}}] > \mathbb{E}[\text{Value}_{\text{gain}}] \)
+</div>
+
+<p>Expanding this condition:</p>
+
+<pre><code>Expected Attack Cost:
+  E[C_attack] = P(success) × C_attempt + P(failure) × C_detection + C_opportunity
 
 where:
-  E[Attack Cost] = P(success) × Cost(attempt) + P(failure) × Cost(detection)
-  E[Attack Value] = P(success) × Value(data) - Risk(legal consequences)</code></pre>
+  C_attempt     = Computational + Hardware + Energy + Infrastructure costs
+  C_detection   = P(detect | attempt) × (Legal_penalty + Reputation_loss)
+  C_opportunity = Alternative_return × Capital_locked × Time_duration
 
-<p><strong>Security holds when:</strong></p>
-<ul>
-  <li>Computational costs exceed attacker resources</li>
-  <li>Time requirements exceed value depreciation window</li>
-  <li>Detection risk imposes unacceptable penalties</li>
-</ul>
+Expected Attack Value:
+  E[V_gain] = P(success) × V_data - Risk_discount
 
-<h3>1.2 Three-Dimensional Cost Model</h3>
+where:
+  V_data        = Market value of compromised data
+  Risk_discount = Expected legal consequences + future earning loss</code></pre>
 
-<h4>Dimension 1: Computational Resources</h4>
+<h3>1.2 Cost-Benefit Decision Model</h3>
 
-<p><strong>Components:</strong></p>
-<pre><code>Total Computational Cost = Hardware + Energy + Infrastructure
+<p>Rational attackers operate under economic constraints and make decisions based on expected profit:</p>
 
-Hardware Cost:
-  - ASIC/GPU acquisition: $10K-10M per unit
-  - Amortization: 2-3 year useful life
-  - Obsolescence risk: 20-40% annual depreciation
+<pre><code>Attack Decision:
+  Proceed if: E[Profit] = E[V_gain] - E[C_attack] > 0
+  Abort if:   E[Profit] ≤ 0
 
-Energy Cost:
-  - Power consumption: 100W-5kW per device
-  - Electricity rate: $0.10-0.30 per kWh
-  - Cooling overhead: 1.2-1.5× multiplier
+Key Thresholds:
+  1. Budget constraint: C_attempt ≤ B_available
+  2. Time constraint:   T_attack ≤ T_window (before data depreciates)
+  3. Risk threshold:    P(detect) × Penalty < Risk_tolerance
+  4. Opportunity cost:  ROI_attack > ROI_alternative</code></pre>
 
-Infrastructure Cost:
-  - Data center space: $100-500 per kW/month
-  - Network bandwidth: $0.01-0.10 per GB
-  - Operational overhead: 20-30% of capital costs</code></pre>
+<h3>1.3 Three-Dimensional Cost Framework</h3>
 
-<h4>Dimension 2: Temporal Constraints</h4>
-
-<p><strong>Time-dependent costs:</strong></p>
-<pre><code>Temporal Cost = Opportunity Cost + Depreciation + Value Decay
-
-Opportunity Cost:
-  - Capital locked in attack infrastructure
-  - Alternative investment returns: 5-15% annually
-  - Liquidity constraints
-
-Hardware Depreciation:
-  - Moore's Law: 2× performance every 18-24 months
-  - Attack hardware loses 30-50% value annually
-  - Stranded investment if attack fails
-
-Value Decay:
-  - Data freshness: Medical data depreciates 10-20% annually
-  - Genomic data: Lower depreciation (5-10% annually)
-  - Competitive intelligence: Rapid depreciation (50%+ annually)</code></pre>
-
-<h4>Dimension 3: Risk Exposure</h4>
-
-<p><strong>Legal and detection risks:</strong></p>
-<pre><code>Risk Cost = P(detection) × E[Penalty] + Reputation Loss
-
-Detection Probability:
-  - Active monitoring: P(detect) = 0.1-0.9 per attempt
-  - Honeypot traps: False success with guaranteed detection
-  - Anomaly detection: Pattern analysis over time
-
-Legal Penalties:
-  - HIPAA violations: $50K-1.5M per record
-  - GDPR violations: 4% global revenue or €20M
-  - Criminal prosecution: Years of imprisonment
-  - Civil liability: Class-action lawsuits
-
-Reputation Loss:
-  - Loss of access to legitimate services
-  - Professional consequences
-  - Future earning capacity reduction</code></pre>
-
-<h3>1.3 Attacker Economic Rationality</h3>
-
-<p><strong>Rational attacker decision model:</strong></p>
-
-<pre><code>Attack if: E[Profit] > 0
-
-E[Profit] = P(success) × Value - Total Cost - E[Penalties]
-
-Rational attackers abort when:
-  1. Computational cost exceeds budget
-  2. Time-to-completion exceeds value window
-  3. Detection probability × penalty exceeds value
-  4. Opportunity cost of alternatives dominates</code></pre>
-
-<h2 id="cost-models">2. Attack Cost Models</h2>
-
-<h3>2.1 Brute Force Attack Economics</h3>
-
-<h4>Cost Structure</h4>
-
-<p><strong>For keyspace of size 2^n:</strong></p>
-
-<pre><code>Expected Operations: 2^(n-1)  (50% of keyspace on average)
-
-Cost per Operation:
-  - SHA-256 hash: ~10^-8 seconds on modern GPU
-  - AES decrypt: ~10^-7 seconds
-  - Elliptic curve operation: ~10^-5 seconds
-
-Total Time = 2^(n-1) × Cost_per_op
-
-Hardware Required:
-  - GPU farm: 1,000-100,000 GPUs
-  - Performance: 10^9 - 10^12 operations/second
-  - Cost: $1M-100M capital investment
-
-Energy Cost:
-  - Power draw: 100 MW - 10 GW
-  - Annual electricity: $10M - $1B (at $0.10/kWh)
-  - Cooling: Additional 20-50% energy overhead</code></pre>
-
-<h4>Economic Breakpoints</h4>
+<p>Attack costs manifest across three orthogonal dimensions, each providing independent security barriers:</p>
 
 <table>
   <thead>
     <tr>
-      <th>Key Size</th>
+      <th>Dimension</th>
+      <th>Primary Components</th>
+      <th>Defense Strategy</th>
+      <th>Attacker Impact</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Computational</strong></td>
+      <td>Hardware, electricity, infrastructure</td>
+      <td>Large keyspace (2^128+)</td>
+      <td>Capital expenditure requirement</td>
+    </tr>
+    <tr>
+      <td><strong>Temporal</strong></td>
+      <td>Opportunity cost, depreciation, value decay</td>
+      <td>Key rotation, forward secrecy</td>
+      <td>Time-to-completion constraint</td>
+    </tr>
+    <tr>
+      <td><strong>Risk</strong></td>
+      <td>Legal penalties, detection probability</td>
+      <td>Honeypots, audit logs, rate limits</td>
+      <td>Expected penalty exceeds value</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="cost-models">2. Cost Models</h2>
+
+<h3>2.1 Computational Costs</h3>
+
+<h4>2.1.1 Hardware Economics</h4>
+
+<p>Computational attacks require significant capital investment in specialized hardware:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Hardware Type</th>
+      <th>Unit Cost</th>
+      <th>Performance (hash/s)</th>
+      <th>Power Draw</th>
+      <th>Lifetime</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Consumer GPU (RTX 4090)</td>
+      <td>$1,600</td>
+      <td>~10^11</td>
+      <td>450W</td>
+      <td>2-3 years</td>
+    </tr>
+    <tr>
+      <td>Mining ASIC (Antminer S19)</td>
+      <td>$3,500</td>
+      <td>~10^14</td>
+      <td>3,250W</td>
+      <td>1-2 years</td>
+    </tr>
+    <tr>
+      <td>Cloud GPU (AWS p4d.24xlarge)</td>
+      <td>$32.77/hr</td>
+      <td>~10^15</td>
+      <td>N/A (metered)</td>
+      <td>On-demand</td>
+    </tr>
+    <tr>
+      <td>Custom ASIC (development)</td>
+      <td>$10M-100M</td>
+      <td>~10^16</td>
+      <td>Variable</td>
+      <td>3-5 years</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>Hardware Cost Formula:</strong></p>
+
+<pre><code>Total Hardware Cost:
+  C_hw = (N_units × Unit_cost) / Utilization_period
+       + (N_units × Unit_cost × Depreciation_rate × Time)
+
+For 1000 GPU farm over 1 year:
+  C_hw = (1000 × $1,600) / 1 + (1000 × $1,600 × 0.3 × 1)
+       = $1.6M + $480K = $2.08M
+
+Depreciation rates:
+  Consumer GPU: 30-40% annually
+  Mining ASIC:  40-50% annually (rapid obsolescence)
+  Custom ASIC:  20-30% annually (single-purpose risk)</code></pre>
+
+<h4>2.1.2 Energy Economics</h4>
+
+<p>Energy costs often exceed hardware costs for long-duration attacks:</p>
+
+<pre><code>Energy Cost Formula:
+  C_energy = Power_draw × Time × Electricity_rate × Cooling_factor
+
+where:
+  Power_draw     = Watts per device × Number of devices
+  Time           = Attack duration in hours
+  Electricity    = $0.10-0.30 per kWh (varies by region)
+  Cooling_factor = 1.2-1.5× (PUE for data centers)
+
+Example: 1000-GPU farm for 1 year
+  Power_draw = 1000 × 450W = 450 kW
+  Time       = 8,760 hours
+  Rate       = $0.12/kWh
+  Cooling    = 1.3×
+
+  C_energy = 450 kW × 8,760 hr × $0.12/kWh × 1.3
+           = $616,000 per year
+
+Energy cost exceeds hardware cost after: 2.08M / 616K = 3.4 years</code></pre>
+
+<h4>2.1.3 Keyspace Attack Cost</h4>
+
+<p>Cost scaling for brute-force attacks on different keyspaces:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Keyspace</th>
       <th>Operations</th>
-      <th>Time (GPU farm)</th>
-      <th>Energy Cost</th>
+      <th>GPU-Years (10^11 h/s)</th>
+      <th>Energy Cost ($0.12/kWh)</th>
       <th>Feasibility</th>
     </tr>
   </thead>
   <tbody>
     <tr>
       <td>2^64</td>
-      <td>2^63</td>
-      <td>Hours-Days</td>
-      <td>$100-1,000</td>
-      <td>✅ Trivial (avoid)</td>
+      <td>9.2 × 10^18</td>
+      <td>2.9</td>
+      <td>$1,500</td>
+      <td>Trivial (hours-days)</td>
     </tr>
     <tr>
       <td>2^80</td>
-      <td>2^79</td>
-      <td>Years</td>
-      <td>$1M-10M</td>
-      <td>⚠️ Nation-state feasible</td>
+      <td>6.0 × 10^23</td>
+      <td>1.9 × 10^5</td>
+      <td>$100M</td>
+      <td>Nation-state feasible</td>
     </tr>
     <tr>
       <td>2^128</td>
-      <td>2^127</td>
-      <td>10^20 years</td>
-      <td>$10^25</td>
-      <td>❌ Economically impossible</td>
+      <td>1.7 × 10^38</td>
+      <td>5.4 × 10^19</td>
+      <td>$3 × 10^22</td>
+      <td>Exceeds global GDP</td>
     </tr>
     <tr>
       <td>2^256</td>
-      <td>2^255</td>
-      <td>10^58 years</td>
+      <td>5.8 × 10^76</td>
+      <td>1.8 × 10^58</td>
+      <td>$10^61</td>
       <td>Exceeds global wealth</td>
-      <td>❌ Economically absurd</td>
     </tr>
     <tr>
       <td>2^512</td>
-      <td>2^511</td>
-      <td>Heat death of universe</td>
-      <td>Violates thermodynamics</td>
-      <td>❌ Physically impossible</td>
+      <td>6.7 × 10^153</td>
+      <td>2.1 × 10^135</td>
+      <td>Violates physics</td>
+      <td>Thermodynamically impossible</td>
     </tr>
   </tbody>
 </table>
 
-<h3>2.2 Specialized Hardware Economics</h3>
+<h3>2.2 Temporal Costs</h3>
 
-<h4>ASIC Development Costs</h4>
+<h4>2.2.1 Opportunity Cost</h4>
 
-<p><strong>Custom attack hardware:</strong></p>
+<p>Capital locked in attack infrastructure cannot be invested elsewhere:</p>
 
-<pre><code>ASIC Development:
-  Design phase: $5M-50M (6-18 months)
-  Fabrication (tape-out): $1M-10M per mask set
-  Manufacturing setup: $100M-1B (for volume production)
-  Time to market: 12-24 months
+<pre><code>Opportunity Cost Formula:
+  C_opportunity = Capital_invested × Alternative_ROI × Time_locked
 
-Performance Gains:
-  - SHA-256 ASIC: 1000× faster than GPU
-  - Energy efficiency: 10-100× better than GPU
-  - But: Development risk, obsolescence, single-purpose
+Example: $10M hardware investment for 5-year attack
+  Alternative: S&P 500 index fund (10% annual return)
 
-Economic Viability:
-  - Only for targets with value > $100M
-  - Requires certainty attack will succeed
-  - Vulnerable to algorithm changes (stranded investment)</code></pre>
+  C_opportunity = $10M × 0.10 × 5 = $5M
 
-<h4>Cloud Computing Economics</h4>
+Total cost = Hardware ($10M) + Opportunity ($5M) = $15M
 
-<p><strong>Attack using rented compute:</strong></p>
+Net Present Value (NPV) discount:
+  NPV = Future_value / (1 + r)^t
 
-<pre><code>AWS GPU Instance (p4d.24xlarge):
-  - 8× NVIDIA A100 GPUs
-  - Cost: $32.77 per hour
-  - Performance: ~10^15 ops/sec (hash operations)
+  If attack yields $20M after 5 years:
+    NPV = $20M / (1.10)^5 = $12.4M
 
-Attack Cost Scaling:
-  2^64 keyspace: $100-1,000 (feasible)
-  2^80 keyspace: $1M-10M (expensive but possible)
-  2^128 keyspace: $10^25 (exceeds AWS capacity)
+  Net profit = $12.4M - $15M = -$2.6M (unprofitable!)</code></pre>
 
-Detection Risk:
-  - Cloud providers monitor unusual patterns
-  - Terms of service violations
-  - Account termination risk
-  - Legal exposure through payment trails</code></pre>
+<h4>2.2.2 Hardware Depreciation</h4>
 
-<h3>2.3 Rate Limiting Economics</h3>
+<p>Attack hardware loses value during operation due to Moore's Law and wear:</p>
 
-<h4>Query-Based Attacks</h4>
+<pre><code>Depreciation Models:
 
-<p><strong>Cost imposed by rate limits:</strong></p>
+Linear Depreciation:
+  Value(t) = Initial_cost × (1 - Depreciation_rate × t)
 
-<pre><code>Rate Limit: R queries per second
-Target Space: N possible queries
-Attack Time: T = N / R
+  GPU after 2 years at 30%/year:
+    Value = $1,600 × (1 - 0.30 × 2) = $640
+    Loss = $960 (60% of initial investment)
 
-Economic Impact:
-  - Forces serialization (no parallelization advantage)
-  - Extends attack duration (increases detection probability)
-  - Imposes opportunity cost (capital locked for duration)
+Exponential Depreciation (Moore's Law):
+  Value(t) = Initial_cost × (0.5)^(t / 1.5 years)
 
-Example (Genomic Database):
-  Space: 2^256 possible queries
-  Rate limit: 100 queries/second
-  Attack time: 2^256 / 100 ≈ 10^75 seconds (10^67 years)
+  GPU after 3 years:
+    Value = $1,600 × (0.5)^(3/1.5) = $1,600 × 0.25 = $400
+    Loss = $1,200 (75% of initial investment)
 
-  Cost: Impossible regardless of budget</code></pre>
+Stranded Investment Risk:
+  If attack fails or data value depreciates:
+    - Hardware cannot be repurposed (custom ASICs)
+    - Sunk cost = Full hardware investment
+    - Rational decision: Abort early to minimize loss</code></pre>
 
-<h4>API Cost Barriers</h4>
+<h4>2.2.3 Data Value Decay</h4>
 
-<p><strong>Monetized query access:</strong></p>
-
-<pre><code>Pay-per-query model:
-  Cost: $0.01-1.00 per query
-  Attack budget: $1M-100M
-  Queries affordable: 1M-10B
-
-Security Threshold:
-  - Ensure search space >> affordable queries
-  - Example: 2^40 space needs $1T budget at $0.01/query
-
-Detection Strategy:
-  - Unusual query patterns
-  - Sequential exhaustive searches
-  - Budget exhaustion alerts</code></pre>
-
-<h2 id="defense-strategies">3. Defense Strategies</h2>
-
-<h3>3.1 Computational Infeasibility</h3>
-
-<h4>Key Size Selection</h4>
-
-<p><strong>Minimum secure key sizes (2025 standards):</strong></p>
-
-<pre><code>Symmetric Encryption:
-  - Minimum: 128 bits (AES-128)
-  - Recommended: 256 bits (AES-256)
-  - Rationale: 2^128 operations >> attacker resources
-
-Asymmetric Encryption:
-  - RSA: 2048 bits minimum, 4096 bits recommended
-  - ECC: 256 bits (equivalent to RSA-3072)
-  - Quantum-safe: 512+ bits (lattice-based)
-
-Hash Functions:
-  - SHA-256: 256-bit output (collision resistance 2^128)
-  - SHA-512: 512-bit output (collision resistance 2^256)
-  - Preimage resistance: Full output size (2^256, 2^512)</code></pre>
-
-<h4>Computational Hardness Layering</h4>
-
-<p><strong>Multiple economic barriers:</strong></p>
-
-<pre><code>Layer 1: Cryptographic primitive
-  - AES-256 encryption
-  - Cost: 2^256 operations
-  - Time: 10^58 years
-
-Layer 2: Key derivation function (KDF)
-  - PBKDF2, scrypt, Argon2
-  - Cost: 10^6 iterations per key
-  - Multiplies total attack cost by 10^6
-
-Layer 3: Multi-party computation
-  - Requires compromising k-of-n parties
-  - Cost: Multiplicative over single party
-  - Example: 3-of-5 threshold increases cost 10×</code></pre>
-
-<h3>3.2 Temporal Defense Strategies</h3>
-
-<h4>Key Rotation Economics</h4>
-
-<p><strong>Depreciate attack investment:</strong></p>
-
-<pre><code>Rotation Strategy:
-  - Rotate keys every T time units
-  - Attacker must complete attack within T
-  - Failed attacks lose all investment
-
-Economic Impact:
-  If Attack_Time > Rotation_Period:
-    Attack becomes infinite cost (never completes)
-
-Example:
-  - 30-day key rotation
-  - Attack requires 90 days
-  - Attacker cannot succeed (keys rotate 3× during attack)</code></pre>
-
-<h4>Forward Secrecy</h4>
-
-<p><strong>Limit value of compromised keys:</strong></p>
-
-<pre><code>Rolling Key Pools:
-  - Generate new keys periodically
-  - Old keys cannot decrypt new data
-  - Compromise affects only current period
-
-Value Limitation:
-  - Compromised key accesses 1/N of data
-  - Reduces attack value by factor N
-  - May render attack economically unviable
-
-Example:
-  - Daily key rotation (365 keys/year)
-  - Single key compromise: 1/365 of annual data
-  - Attack value reduced 365×</code></pre>
-
-<h3>3.3 Risk-Based Defenses</h3>
-
-<h4>Honeypot Economics</h4>
-
-<p><strong>Increase detection probability:</strong></p>
-
-<pre><code>Honeypot Deployment:
-  - Decoy data appears identical to real data
-  - Ratio: 10-90% honeypots in database
-  - Access to honeypot triggers alert
-
-Economic Impact:
-  - P(detect) = honeypot_ratio
-  - Example: 50% honeypots → P(detect) = 0.5
-
-Expected Attack Cost:
-  E[Cost] = Base_Cost + P(detect) × Penalty
-
-  With 50% honeypots, $1M HIPAA penalty:
-    E[Cost] = Base_Cost + 0.5 × $1M = Base_Cost + $500K
-
-  Attacker must discount attack value by expected penalty</code></pre>
-
-<h4>Legal Penalty Amplification</h4>
-
-<p><strong>Regulatory frameworks as economic deterrent:</strong></p>
-
-<pre><code>Penalty Structures:
-  HIPAA: $50,000-1,500,000 per record
-  GDPR: 4% global revenue or €20M
-  Criminal: 5-20 years imprisonment
-
-Deterrent Effect:
-  - Expected penalty must exceed attack value
-  - E[Penalty] = P(prosecute | detect) × Sentence_value
-
-Example:
-  - Genomic database: 1M records
-  - HIPAA penalty: $100 per record (conservative)
-  - Total exposure: $100M
-  - Detection probability: 30%
-  - Expected penalty: $30M
-
-  Attack value must exceed $30M to be rational</code></pre>
-
-<h3>3.4 Hybrid Defense Strategies</h3>
-
-<p><strong>Combine multiple economic barriers:</strong></p>
-
-<pre><code>Defense Stack:
-1. Computational: 2^256 keyspace (economically impossible)
-2. Temporal: 30-day key rotation (limits attack window)
-3. Rate limiting: 100 queries/sec (serializes attack)
-4. Honeypots: 30% decoys (P(detect) = 0.3)
-5. Legal: $100M penalty exposure
-
-Total Economic Barrier:
-  - Base computational cost: Infinite (2^256)
-  - Time constraint: Must complete in 30 days
-  - Rate limit: Maximum 259M queries in 30 days
-  - Detection risk: 30% × $100M = $30M expected penalty
-
-Result: Attack is simultaneously:
-  - Computationally impossible (2^256 >> 259M queries)
-  - Temporally impossible (key rotation faster than progress)
-  - Economically irrational (penalty exceeds value)</code></pre>
-
-<h2 id="physical-bounds">4. Physical Impossibility Bounds</h2>
-
-<h3>4.1 Landauer's Limit</h3>
-
-<h4>Thermodynamic Minimum Energy</h4>
-
-<p><strong>Physical bound on computation:</strong></p>
-
-<pre><code>Landauer's Principle:
-  Erasing 1 bit requires minimum energy:
-    E_min = k_B × T × ln(2)
-
-  At room temperature (300K):
-    E_min ≈ 2.9 × 10^-21 joules per bit
-
-For 2^256 operations:
-  Minimum energy = 2^256 × 2.9 × 10^-21 J
-                 ≈ 3.4 × 10^56 joules
-
-Energy Comparison:
-  - Sun's lifetime output: ~10^44 joules
-  - Observable universe mass-energy: ~10^70 joules
-
-  2^256 operations: 10^12 × Sun's lifetime output
-  2^512 operations: Exceeds universe mass-energy</code></pre>
-
-<h4>Economic Impossibility</h4>
-
-<p><strong>Cost at market energy rates:</strong></p>
-
-<pre><code>Energy Cost Calculation:
-  Electricity: $0.10 per kWh = $2.78 × 10^-8 per joule
-
-  2^128 operations cost: $10^22 (exceeds global GDP)
-  2^256 operations cost: $10^48 (exceeds global wealth)
-
-Global Economic Capacity:
-  - World GDP: ~$100 trillion = $10^14 per year
-  - Total wealth: ~$500 trillion = $5 × 10^14
-
-Conclusion: 2^256 operations require 10^34 years of global GDP</code></pre>
-
-<h3>4.2 Time-Energy Bounds</h3>
-
-<h4>Bremermann's Limit</h4>
-
-<p><strong>Maximum computational rate:</strong></p>
-
-<pre><code>Bremermann's Limit:
-  Maximum operations per second per kilogram:
-    Rate_max = (c^2) / h ≈ 1.36 × 10^50 ops/sec/kg
-
-  where c = speed of light, h = Planck's constant
-
-For 1 kg of matter:
-  Operations per second: 1.36 × 10^50
-
-  2^256 operations require:
-    Time = 2^256 / (1.36 × 10^50) ≈ 8.5 × 10^26 seconds
-         ≈ 2.7 × 10^19 years (trillions of times universe age)
-
-For Earth's mass (6 × 10^24 kg):
-  Maximum rate: 8.16 × 10^74 ops/sec
-  2^256 still requires: 10^7 years
-  2^512 requires: Age of universe × 10^77</code></pre>
-
-<h3>4.3 Practical Impossibility Thresholds</h3>
-
-<table>
-  <thead>
-    <tr>
-      <th>Keyspace</th>
-      <th>Economic Bound</th>
-      <th>Physical Bound</th>
-      <th>Classification</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>2^64</td>
-      <td>$1K-10K</td>
-      <td>Trivial</td>
-      <td>❌ Insecure</td>
-    </tr>
-    <tr>
-      <td>2^80</td>
-      <td>$1M-10M</td>
-      <td>Feasible</td>
-      <td>⚠️ Nation-state vulnerable</td>
-    </tr>
-    <tr>
-      <td>2^128</td>
-      <td>$10^22 (>global GDP)</td>
-      <td>Feasible (given infinite budget)</td>
-      <td>✅ Economically secure</td>
-    </tr>
-    <tr>
-      <td>2^256</td>
-      <td>$10^48 (>global wealth)</td>
-      <td>Near thermodynamic limit</td>
-      <td>✅ Economically impossible</td>
-    </tr>
-    <tr>
-      <td>2^512</td>
-      <td>Exceeds universe mass-energy</td>
-      <td>Violates thermodynamics</td>
-      <td>✅ Physically impossible</td>
-    </tr>
-  </tbody>
-</table>
-
-<h2 id="genomic-applications">5. Genomic Security Applications</h2>
-
-<h3>5.1 GenomeVault Attack Cost Analysis</h3>
-
-<h4>Privacy Layer Economics</h4>
-
-<p><strong>Multi-layer defense costs:</strong></p>
-
-<pre><code>Layer 1: Differential Encoding
-  - Encodes differences from reference genome
-  - Search space: 2^20 common variants per individual
-  - Cost: $10-100 (brute force affordable)
-  - Defense: Insufficient alone
-
-Layer 2: Hyperdimensional Encoding (HDC)
-  - 10,000-dimensional hypervectors
-  - Semantic similarity, not exact match
-  - Search space: Continuous high-dimensional space
-  - Cost: Query-based only (no brute force)
-
-Layer 3: SHA-256^2 Query Hashing
-  - Query hash: SHA-256(SHA-256(query))
-  - Preimage resistance: 2^256 operations
-  - Cost: $10^48 (economically impossible)
-  - Time: 10^58 years
-
-Layer 4: Information-Theoretic PIR
-  - Server learns nothing about query
-  - Multiple server requirement (3-of-5 threshold)
-  - Cost: Must compromise 3 servers + 2^256 operations
-  - Multiplies attack cost by institutional compromise difficulty
-
-Layer 5: Rate Limiting
-  - 100 queries per second per user
-  - Serializes attack (no parallelization)
-  - Time for 2^40 queries: 349 years
-  - Honeypot detection: 30% of queries
-
-Total Attack Cost:
-  Computational: 2^256 (impossible)
-  + Time constraint: 349 years minimum (for tiny search space)
-  + Detection risk: 30% probability, $100M penalty
-  + Infrastructure: Compromise 3 independent institutions
-
-Expected Cost: Effectively infinite</code></pre>
-
-<h3>5.2 Query-Based Attack Economics</h3>
-
-<h4>Exhaustive Search Costs</h4>
-
-<p><strong>Genomic database query attack:</strong></p>
-
-<pre><code>Attack Scenario: Identify specific individual in database
-
-Search Space:
-  - Unique genomic variants: ~3M per person
-  - Identifying variants: ~100K (unique combinations)
-  - Effective search space: 2^40-2^60
-
-Rate Limit: 100 queries/second
-
-Time Required:
-  2^40 queries: 349 years
-  2^60 queries: 3.6 × 10^8 years
-
-Economic Costs:
-  Infrastructure: 349+ years of compute ($10M+)
-  Opportunity cost: 349 years @ 10% = infinite NPV
-  Detection probability: 1.0 (honeypots over centuries)
-  Legal exposure: $100M+ HIPAA penalties
-
-Conclusion: Economically irrational even for small search spaces</code></pre>
-
-<h3>5.3 Aggregate Attack Economics</h3>
-
-<h4>Statistical Inference Attacks</h4>
-
-<p><strong>Membership inference via aggregate queries:</strong></p>
-
-<pre><code>Attack: Determine if individual X is in database
-
-Method:
-  1. Query aggregate statistics with/without X
-  2. Measure statistical difference
-  3. Infer membership from difference
-
-Defense Layers:
-  - Differential privacy (ε=1.0, δ=10^-5)
-  - Noise addition to aggregate results
-  - Query budget limits (1000 queries per user/month)
-
-Economic Analysis:
-  Required queries: ~10^6 for 95% confidence
-  Query budget: 1000/month
-  Time required: 833 months (69 years)
-
-  Cost: 69 years @ $100/month = $82,800
-  Value: Membership information (limited)
-
-  Detection: Budget exhaustion alerts after 6-12 months
-  Penalty: $1M HIPAA violation
-
-Expected Profit: -$1M (rational attacker aborts)</code></pre>
-
-<h3>5.4 Practical Security Guidelines</h3>
-
-<h4>Genomic Data Protection Thresholds</h4>
+<p>Time-sensitive data depreciates, reducing attack profitability:</p>
 
 <table>
   <thead>
     <tr>
       <th>Data Type</th>
-      <th>Minimum Keyspace</th>
-      <th>Recommended Keyspace</th>
-      <th>Additional Defenses</th>
+      <th>Half-Life</th>
+      <th>Annual Decay</th>
+      <th>Attack Time Constraint</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <td>Public genomic data</td>
-      <td>2^128</td>
-      <td>2^256</td>
-      <td>Rate limiting, attribution</td>
+      <td>Competitive intelligence</td>
+      <td>6 months</td>
+      <td>75%</td>
+      <td>Must complete in weeks</td>
     </tr>
     <tr>
-      <td>Clinical genomic data</td>
-      <td>2^256</td>
-      <td>2^512</td>
-      <td>HIPAA compliance, audit logs</td>
+      <td>Financial data (credentials)</td>
+      <td>3 months</td>
+      <td>87%</td>
+      <td>Must complete before rotation</td>
     </tr>
     <tr>
-      <td>Research biobanks</td>
-      <td>2^256</td>
-      <td>2^512</td>
-      <td>Federated queries, DP noise</td>
+      <td>Personal health records</td>
+      <td>3 years</td>
+      <td>20%</td>
+      <td>1-2 years acceptable</td>
     </tr>
     <tr>
-      <td>Individual genomes</td>
-      <td>2^256</td>
-      <td>2^512</td>
-      <td>Multi-party consent, PIR</td>
+      <td>Genomic data</td>
+      <td>10 years</td>
+      <td>7%</td>
+      <td>Years-decades acceptable</td>
+    </tr>
+    <tr>
+      <td>Cryptographic keys (rotated)</td>
+      <td>30 days</td>
+      <td>100%</td>
+      <td>Must complete within rotation</td>
     </tr>
   </tbody>
 </table>
 
-<h4>Cost-Benefit Decision Framework</h4>
+<pre><code>Value Decay Formula:
+  V(t) = V_0 × e^(-λt)
 
-<p><strong>Defender's security level selection:</strong></p>
+where λ = ln(2) / Half-life
+
+Example: $50M competitive intelligence, 6-month half-life
+  Attack requires 1 year to complete:
+
+  V(1 year) = $50M × e^(-ln(2) × 1/0.5)
+            = $50M × e^(-1.386)
+            = $50M × 0.25 = $12.5M
+
+  Value lost to depreciation: $37.5M (75%)
+  Attack now unprofitable if costs > $12.5M</code></pre>
+
+<h3>2.3 Risk Costs</h3>
+
+<h4>2.3.1 Detection Probability</h4>
+
+<p>Probability of detection increases with attack duration and query volume:</p>
+
+<pre><code>Detection Probability Models:
+
+Per-query detection (honeypots):
+  P(detect | query) = Honeypot_ratio
+  P(detect | n queries) = 1 - (1 - p)^n
+
+  Example: 30% honeypots, 1000 queries
+    P(detect) = 1 - (0.7)^1000 ≈ 1.0 (certain detection)
+
+Time-based detection (anomaly detection):
+  P(detect | duration) = 1 - e^(-λt)
+
+  where λ = Detection_rate (e.g., 0.01/day for 1% daily risk)
+
+  Example: 90-day attack
+    P(detect) = 1 - e^(-0.01 × 90) = 1 - 0.41 = 59%
+
+Combined detection (multiple mechanisms):
+  P(detect_total) = 1 - P(evade_all)
+                  = 1 - (1-P_1)(1-P_2)...(1-P_n)
+
+  Example: Honeypots (30%) + Anomaly (10%/month × 3 months)
+    P(detect) = 1 - (0.7)(0.97)(0.97)(0.97)
+              = 1 - 0.64 = 36%</code></pre>
+
+<h4>2.3.2 Legal Penalty Economics</h4>
+
+<p>Regulatory frameworks impose massive penalties that exceed most attack values:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Regulation</th>
+      <th>Violation Type</th>
+      <th>Penalty Structure</th>
+      <th>Maximum Penalty</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>HIPAA (US Health)</td>
+      <td>Per-record breach</td>
+      <td>$100-50,000 per record</td>
+      <td>$1.5M per violation category</td>
+    </tr>
+    <tr>
+      <td>GDPR (EU Privacy)</td>
+      <td>Data breach</td>
+      <td>4% global annual revenue</td>
+      <td>€20M or 4% revenue, whichever higher</td>
+    </tr>
+    <tr>
+      <td>CFAA (US Computer Fraud)</td>
+      <td>Unauthorized access</td>
+      <td>Criminal prosecution</td>
+      <td>5-20 years imprisonment</td>
+    </tr>
+    <tr>
+      <td>SOX (Financial Data)</td>
+      <td>Data falsification</td>
+      <td>Criminal penalties</td>
+      <td>$5M fine + 20 years imprisonment</td>
+    </tr>
+  </tbody>
+</table>
+
+<pre><code>Expected Penalty Calculation:
+  E[Penalty] = P(detect) × P(prosecute | detect) × Penalty_amount
+
+Example: Genomic database breach (1M records)
+  HIPAA penalty: $100/record (conservative)
+  Total exposure: $100M
+  Detection probability: 30% (honeypots)
+  Prosecution probability: 80% (given detection)
+
+  E[Penalty] = 0.30 × 0.80 × $100M = $24M
+
+Rational attacker threshold:
+  Attack only if: E[Value] - E[Penalty] > $24M
+
+For most attacks: Expected penalty >> Expected value
+  Result: Economically irrational</code></pre>
+
+<h4>2.3.3 Reputation and Future Earnings Loss</h4>
+
+<p>Non-monetary costs that further deter attacks:</p>
+
+<pre><code>Reputation Loss Valuation:
+
+Professional consequences:
+  - Loss of employment: $100K-500K annual salary
+  - Unemployability period: 5-10 years
+  - Present value: $500K-2M
+
+Access loss:
+  - Banned from platforms/services
+  - Unable to conduct legitimate business
+  - Lifetime value: $50K-500K
+
+Criminal record impact:
+  - Difficulty obtaining credit
+  - Travel restrictions
+  - Social stigma
+  - Intangible but significant
+
+Total Reputation Cost: $1M-5M+ for serious offenses
+
+Combined with legal penalties:
+  Total Risk = E[Penalty] + Reputation_loss
+             = $24M + $2M = $26M
+
+This exceeds the value of most attackable datasets.</code></pre>
+
+<h2 id="defense-strategies">3. Defense Strategies</h2>
+
+<h3>3.1 Economic Infeasibility Through Computational Hardness</h3>
+
+<h4>3.1.1 Keyspace Selection</h4>
+
+<p>Choose keyspace size that makes brute-force attacks economically impossible:</p>
 
 <pre><code>Security Level Selection:
-  1. Estimate data value (V)
-  2. Estimate attacker budget (B)
-  3. Select keyspace K such that:
-       Cost(attack with K) > max(V, 10 × B)
 
-  4. Add temporal defenses:
-       Rotation period < Attack_time / 2
+Minimum Secure (2025):
+  Symmetric: 128 bits (AES-128)
+    - Cost: $10^22 (exceeds global GDP of $10^14)
+    - Time: 10^20 years
 
-  5. Add risk defenses:
-       E[Penalty] > V
+  Asymmetric: 256 bits (ECC-256, equivalent to RSA-3072)
+    - Cost: $10^48
+    - Time: 10^58 years
 
-  6. Verify: Total defense cost < 10% of V
+Recommended (quantum-resistant):
+  Symmetric: 256 bits (AES-256)
+    - Cost: $10^61
+    - Margin: 10^47× global wealth
 
-Example (Clinical Genomics):
-  V = $100M (1M patients @ $100/record)
-  B = $50M (nation-state budget)
+  Asymmetric: 512 bits (post-quantum lattice)
+    - Cost: Violates thermodynamics
+    - Margin: Physical impossibility</code></pre>
 
-  Selection:
-    K = 2^256 (Cost >> $50M budget)
-    Rotation: 30 days (attack requires years)
-    Honeypots: 30% (E[Penalty] = $30M)
+<h4>3.1.2 Computational Cost Amplification</h4>
 
-  Defense cost: $1M infrastructure
-  Defense cost ratio: 1% of value (acceptable)</code></pre>
+<p>Layer multiple computational barriers to multiply attack costs:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Defense Layer</th>
+      <th>Mechanism</th>
+      <th>Cost Multiplier</th>
+      <th>Implementation</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Key Derivation (KDF)</td>
+      <td>Iterated hashing</td>
+      <td>10^4 - 10^6×</td>
+      <td>PBKDF2, Argon2</td>
+    </tr>
+    <tr>
+      <td>Memory-hard functions</td>
+      <td>Require large RAM</td>
+      <td>10× - 100×</td>
+      <td>scrypt, Argon2</td>
+    </tr>
+    <tr>
+      <td>Multi-party computation</td>
+      <td>k-of-n threshold</td>
+      <td>C(n,k) ×</td>
+      <td>Shamir secret sharing</td>
+    </tr>
+    <tr>
+      <td>Proof-of-work</td>
+      <td>Computational puzzle</td>
+      <td>Adjustable difficulty</td>
+      <td>Bitcoin-style mining</td>
+    </tr>
+  </tbody>
+</table>
+
+<pre><code>Example: Layered Defense
+  Base: AES-256 encryption
+    Cost: 2^256 operations = $10^61
+
+  + Argon2 KDF (100K iterations):
+    Cost: 2^256 × 10^5 = $10^66
+
+  + 3-of-5 multi-party threshold:
+    Cost: $10^66 × C(5,3) = $10^66 × 10 = $10^67
+
+  Total barrier: $10^67 (10^52× global wealth)
+
+This makes attack economically absurd even with infinite budget.</code></pre>
+
+<h3>3.2 Rate Limiting Economics</h3>
+
+<h4>3.2.1 Query Rate Limits</h4>
+
+<p>Impose serialization constraints that extend attack duration to economic infeasibility:</p>
+
+<pre><code>Rate Limit Cost Model:
+
+Search space: N possible queries
+Rate limit: R queries/second
+Attack time: T = N / R
+
+Economic impact:
+  1. Eliminates parallelization advantage
+  2. Extends duration → increases detection probability
+  3. Increases opportunity cost (capital locked longer)
+
+Example: Genomic database
+  Search space: 2^80 possible genetic queries
+  Rate limit: 100 queries/second
+
+  Attack time: 2^80 / 100 = 1.2 × 10^22 seconds
+                           = 3.8 × 10^14 years
+
+  Cost: Infinite (exceeds universe age)
+
+Even small search spaces become infeasible:
+  2^40 queries at 100/sec = 349 years
+  Opportunity cost at 10% discount: NPV = 0 (worthless)</code></pre>
+
+<h4>3.2.2 Cost-per-Query Pricing</h4>
+
+<p>Monetize queries to directly impose economic barriers:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Pricing Model</th>
+      <th>Cost/Query</th>
+      <th>Search Space Secured</th>
+      <th>Attack Budget Needed</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Nominal (prevent spam)</td>
+      <td>$0.001</td>
+      <td>2^30 (~1B queries)</td>
+      <td>$1M</td>
+    </tr>
+    <tr>
+      <td>Moderate (limit exploration)</td>
+      <td>$0.01</td>
+      <td>2^37 (~137B queries)</td>
+      <td>$1.37B</td>
+    </tr>
+    <tr>
+      <td>High (restrict to legitimate use)</td>
+      <td>$0.10</td>
+      <td>2^40 (~1T queries)</td>
+      <td>$110B</td>
+    </tr>
+    <tr>
+      <td>Prohibitive</td>
+      <td>$1.00</td>
+      <td>2^40 (~1T queries)</td>
+      <td>$1.1T</td>
+    </tr>
+  </tbody>
+</table>
+
+<pre><code>Optimal Pricing Strategy:
+
+Goal: Make search cost > attack value
+  Price per query = (Attack_value / Search_space) × Safety_margin
+
+Example: Protect database worth $100M with 2^40 search space
+  Base price = $100M / 2^40 = $0.09 per query
+  Safety margin: 10×
+  Set price: $0.90 per query
+
+  Exhaustive search cost: 2^40 × $0.90 = $990M
+
+  Rational attacker: Abort (cost >> value)</code></pre>
+
+<h3>3.3 Honey Pots and Detection Economics</h3>
+
+<h4>3.3.1 Honeypot Deployment Strategy</h4>
+
+<p>Decoy data increases detection probability and expected penalties:</p>
+
+<pre><code>Honeypot Ratio Optimization:
+
+Detection probability: P(detect) = r (honeypot ratio)
+False success rate: r (attacker gets worthless data)
+
+Expected attack value:
+  E[Value] = (1 - r) × V_real + r × 0
+           = (1 - r) × V_real
+
+Expected penalty:
+  E[Penalty] = r × Penalty_amount
+
+Net expected value:
+  E[Net] = (1 - r) × V_real - r × Penalty
+
+Attacker aborts when E[Net] ≤ 0:
+  (1 - r) × V_real ≤ r × Penalty
+  V_real ≤ r × (Penalty + V_real)
+  r ≥ V_real / (Penalty + V_real)
+
+Example: Database value $50M, HIPAA penalty $100M
+  r_min = $50M / ($100M + $50M) = 0.33 (33% honeypots)
+
+Deploy 35% honeypots → Attack economically irrational</code></pre>
+
+<h4>3.3.2 Adaptive Honeypot Economics</h4>
+
+<p>Dynamically adjust honeypot ratio based on attacker behavior:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Attack Phase</th>
+      <th>Honeypot Ratio</th>
+      <th>Detection Probability</th>
+      <th>Attacker Strategy</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Initial reconnaissance</td>
+      <td>10%</td>
+      <td>Low</td>
+      <td>Explore freely</td>
+    </tr>
+    <tr>
+      <td>Suspected attack (anomaly)</td>
+      <td>50%</td>
+      <td>High</td>
+      <td>Extreme caution</td>
+    </tr>
+    <tr>
+      <td>Confirmed attack</td>
+      <td>90%</td>
+      <td>Near-certain</td>
+      <td>Abort or get caught</td>
+    </tr>
+    <tr>
+      <td>Post-detection (forensics)</td>
+      <td>100%</td>
+      <td>Certain</td>
+      <td>All queries traced</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>3.4 Temporal Defenses: Key Rotation</h3>
+
+<p>Rotate keys faster than attack completion time to depreciate attacker investment:</p>
+
+<pre><code>Key Rotation Strategy:
+
+Rotation period: T_rotate
+Attack time: T_attack
+
+If T_attack > T_rotate:
+  - Keys change before attack completes
+  - Attacker must restart with new keys
+  - Investment in partial progress lost
+  - Effective cost: Infinite (never completes)
+
+Example: 30-day key rotation
+  Brute-force 2^80 keyspace: 190,000 years
+  Key rotates: 190,000 years × 365/30 = 2.3 million rotations
+
+  Attacker cannot succeed → Infinite effective cost
+
+Optimization:
+  T_rotate = min(T_attack / 10, Data_freshness_period)
+
+  Ensures: Attack fails before 10% completion
+  Limits: Don't rotate faster than data utility requires</code></pre>
+
+<h2 id="practical-bounds">4. Practical Bounds: Physical and Economic Impossibility</h2>
+
+<h3>4.1 Economic Impossibility: 2^256 vs Global Wealth</h3>
+
+<p>Comparing computational costs to global economic capacity:</p>
+
+<pre><code>Global Economic Capacity (2025):
+  World GDP: $100 trillion = $10^14 per year
+  Total wealth: $500 trillion = $5 × 10^14
+
+Energy cost for 2^256 operations:
+  At Landauer limit (thermodynamic minimum):
+    Energy = 2^256 × k_B × T × ln(2)
+           = 2^256 × 2.9 × 10^-21 joules
+           = 3.4 × 10^56 joules
+
+  At $0.10/kWh ($2.78 × 10^-8 per joule):
+    Cost = 3.4 × 10^56 × 2.78 × 10^-8
+         = $9.4 × 10^48
+
+Ratio to global wealth:
+  $10^48 / $5×10^14 = 2 × 10^33
+
+  2^256 operations cost: 2,000,000,000,000,000,000,000,000,000,000,000× global wealth
+
+Conclusion: Economically impossible by 33 orders of magnitude</code></pre>
+
+<h3>4.2 Physical Impossibility: 2^516 vs Universe Mass-Energy</h3>
+
+<p>Beyond economics, physics establishes absolute bounds:</p>
+
+<pre><code>Landauer's Limit (Thermodynamic Minimum):
+  Minimum energy to erase 1 bit at temperature T:
+    E_min = k_B × T × ln(2)
+
+  At room temperature (300K):
+    E_min = 1.38×10^-23 J/K × 300K × 0.693
+          = 2.9 × 10^-21 joules per operation
+
+Energy for 2^512 operations:
+  E_total = 2^512 × 2.9 × 10^-21 joules
+          = 3.8 × 10^133 joules
+
+Observable Universe Mass-Energy:
+  Mass: ~10^53 kg
+  E = mc^2 = 10^53 × (3×10^8)^2 = 9 × 10^69 joules
+
+Ratio:
+  2^512 energy / Universe energy = 3.8×10^133 / 9×10^69
+                                  = 4.2 × 10^63
+
+  2^512 operations require: 42,000,000,000,000,000,000,000,000,000,000,000,
+                           000,000,000,000,000,000,000,000,000,000×
+                           the mass-energy of the entire observable universe
+
+Conclusion: Physically impossible - violates conservation of energy</code></pre>
+
+<h3>4.3 Time Impossibility: Bremermann's Limit</h3>
+
+<p>Maximum computational rate constrained by fundamental physics:</p>
+
+<pre><code>Bremermann's Limit:
+  Maximum operations per second per kilogram of matter:
+    R_max = c^2 / h = (3×10^8 m/s)^2 / (6.626×10^-34 J·s)
+          = 1.36 × 10^50 operations/second/kg
+
+Earth-mass computer (6 × 10^24 kg):
+  R_earth = 6×10^24 kg × 1.36×10^50 ops/s/kg
+          = 8.16 × 10^74 operations/second
+
+Time for 2^256 operations:
+  T = 2^256 / 8.16×10^74
+    = 1.4 × 10^3 seconds
+    = 4.5 × 10^-5 years (still infeasible to build)
+
+Time for 2^512 operations:
+  T = 2^512 / 8.16×10^74
+    = 1.6 × 10^80 seconds
+    = 5.1 × 10^72 years
+    = 3.7 × 10^62 × Age of universe (13.8 billion years)
+
+Conclusion: Even converting Earth to a computer, 2^512 operations
+           require 10^62× the age of the universe</code></pre>
+
+<h3>4.4 Practical Security Thresholds</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Keyspace</th>
+      <th>Operations</th>
+      <th>Cost Estimate</th>
+      <th>Time Estimate</th>
+      <th>Security Level</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>2^64</td>
+      <td>9.2 × 10^18</td>
+      <td>$1,000</td>
+      <td>Hours-Days</td>
+      <td>Insecure - Trivial attack</td>
+    </tr>
+    <tr>
+      <td>2^80</td>
+      <td>6.0 × 10^23</td>
+      <td>$10M</td>
+      <td>Years</td>
+      <td>Weak - Nation-state feasible</td>
+    </tr>
+    <tr>
+      <td>2^128</td>
+      <td>1.7 × 10^38</td>
+      <td>$10^22</td>
+      <td>10^20 years</td>
+      <td>Secure - Exceeds global GDP</td>
+    </tr>
+    <tr>
+      <td>2^192</td>
+      <td>3.1 × 10^57</td>
+      <td>$10^41</td>
+      <td>10^39 years</td>
+      <td>Very Secure - 10^27× global wealth</td>
+    </tr>
+    <tr>
+      <td>2^256</td>
+      <td>5.8 × 10^76</td>
+      <td>$10^61</td>
+      <td>10^58 years</td>
+      <td>Economically Impossible - 10^47× wealth</td>
+    </tr>
+    <tr>
+      <td>2^512</td>
+      <td>6.7 × 10^153</td>
+      <td>N/A</td>
+      <td>10^135 years</td>
+      <td>Physically Impossible - Violates thermodynamics</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="case-studies">5. Case Studies</h2>
+
+<h3>5.1 Case Study: Genomic Data Attack Economics</h3>
+
+<h4>5.1.1 Scenario: GenomeVault Database Breach Attempt</h4>
+
+<p>A sophisticated attacker attempts to identify a specific individual's genomic data from an encrypted database of 10 million genomes.</p>
+
+<pre><code>Attack Objective:
+  - Target: Specific individual in database of 10M genomes
+  - Method: Query-based search using genetic variants
+  - Value: $5M (blackmail, insurance fraud, etc.)
+
+Defense Architecture:
+  Layer 1: Differential privacy encoding
+    - Encodes differences from reference genome
+    - ~3M variants per individual, ~100K identifying
+
+  Layer 2: HDC (Hyperdimensional Computing)
+    - 10,000-dimensional hypervectors
+    - Semantic similarity search (no exact match)
+
+  Layer 3: SHA-256² query hashing
+    - Double-hashed queries for preimage resistance
+    - Keyspace: 2^256
+
+  Layer 4: Multi-party PIR (Private Information Retrieval)
+    - 3-of-5 server threshold
+    - No single server learns query
+
+  Layer 5: Rate limiting
+    - 100 queries/second per user
+    - 30% honeypot queries trigger alerts</code></pre>
+
+<h4>5.1.2 Attack Cost Analysis</h4>
+
+<pre><code>Computational Cost:
+  Brute-force SHA-256² preimage:
+    Operations: 2^256
+    GPU cost: $10^61 (10^47× global wealth)
+    Time: 10^58 years
+    Feasibility: Economically impossible
+
+Query-Based Attack (bypassing preimage):
+  Search space: 2^60 possible genetic queries
+  Rate limit: 100 queries/second
+  Time required: 2^60 / 100 = 3.6 × 10^8 years
+
+Temporal Costs:
+  Hardware depreciation: $1.6M GPU farm × 40%/year × 3.6×10^8 years
+    = Infinite (hardware obsolete before progress)
+
+  Opportunity cost: $1.6M locked × 10% annual return × 3.6×10^8 years
+    = NPV approaches zero (infinite time discount)
+
+Risk Costs:
+  Honeypot detection: 30% of queries
+  Queries to detection: 1 / 0.3 = 3.3 queries (expected)
+  Time to detection: 3.3 / 100 = 0.033 seconds
+
+  HIPAA penalty: $100/record × 10M records = $1B exposure
+  Detection probability: ~100% (honeypots over centuries)
+  Expected penalty: $1B
+
+Total Attack Cost:
+  Computational: $10^61 (impossible)
+  OR Query-based: Infinite time
+  + Risk: $1B penalty (near-certain)
+
+  Total: Effectively infinite
+
+Attack Value: $5M
+
+Economic Decision: E[Profit] = $5M - ∞ = -∞
+  Result: Abort immediately - attack is economically insane</code></pre>
+
+<h3>5.2 Case Study: Cryptocurrency Mining Economics</h3>
+
+<h4>5.2.1 Scenario: Bitcoin Mining Profitability (2025)</h4>
+
+<p>Bitcoin mining provides a real-world example of attack cost economics where computational work must exceed economic threshold to be profitable.</p>
+
+<pre><code>Bitcoin Mining Economics:
+
+Computational Difficulty (2025):
+  Hash rate: ~500 EH/s (5 × 10^20 hashes/second globally)
+  Difficulty: ~60 trillion
+  Block reward: 3.125 BTC (~$200K at $64K/BTC)
+  Block time: ~10 minutes
+
+Hardware Requirements:
+  ASIC miner (Antminer S19 XP):
+    - Cost: $3,500 per unit
+    - Hash rate: 140 TH/s (1.4 × 10^14 h/s)
+    - Power: 3,250W
+    - Efficiency: 23 J/TH
+
+Cost Analysis for Solo Mining:
+  Probability of finding block:
+    P = (Your hash rate) / (Global hash rate)
+      = 140×10^12 / 5×10^20
+      = 2.8 × 10^-7 per 10 minutes
+      = 1 block every 70,000 years
+
+  Energy cost per block (at $0.10/kWh):
+    Energy = 3,250W × 70,000 years × 8,760 hr/year
+           = 1.98 × 10^9 kWh
+    Cost = $198M
+
+  Revenue per block: $200K
+
+  Net profit: $200K - $198M = -$197.8M
+
+Conclusion: Solo mining economically irrational
+
+Pool Mining (Economic Rationality):
+  Join mining pool: Share revenue proportional to contributed hash
+  Revenue per day: (140TH/s / 500EH/s) × $200K × 144 blocks/day
+                  = $8.06 per day
+
+  Energy cost per day: 3.25kW × 24hr × $0.10/kWh = $7.80
+
+  Net profit: $8.06 - $7.80 = $0.26/day ($95/year)
+  ROI: $95 / $3,500 = 2.7% annual return
+
+Break-even electricity cost: $8.06 / 78 kWh = $0.103/kWh
+
+Conclusion: Only profitable with cheap electricity (<$0.10/kWh)</code></pre>
+
+<h4>5.2.2 51% Attack Cost</h4>
+
+<p>Attacking Bitcoin via majority hash power demonstrates economic security:</p>
+
+<pre><code>51% Attack Requirements:
+  Need: >50% of global hash rate = >250 EH/s
+
+Hardware Cost:
+  ASICs needed: 250×10^18 / 140×10^12 = 1.79M units
+  Capital cost: 1.79M × $3,500 = $6.25 billion
+
+Energy Cost (ongoing):
+  Power draw: 1.79M × 3,250W = 5.8 GW
+  Annual cost: 5.8GW × 8,760hr × $0.10/kWh = $5.1 billion/year
+
+Attack Duration Economics:
+  1 hour attack: $580K electricity + $6.25B hardware = $6.25B
+  1 day attack: $14M electricity + $6.25B hardware = $6.26B
+  1 week attack: $98M electricity + $6.25B hardware = $6.35B
+
+Attack Value (realistic):
+  Double-spend maximum: ~$100M (exchange limits)
+  Market manipulation: Unclear, but damages attacker's hardware value
+
+Hardware depreciation:
+  - Attack reveals 51% control → Bitcoin price crashes
+  - ASICs become worthless (single-purpose hardware)
+  - Stranded investment: $6.25B total loss
+
+Economic Decision:
+  Cost: $6.25B (certain loss)
+  Value: $100M (optimistic)
+  Net: -$6.15B
+
+Conclusion: 51% attack economically irrational - loses billions</code></pre>
+
+<h3>5.3 Case Study: Cloud Infrastructure Breach</h3>
+
+<h4>5.3.1 Scenario: AWS Key Brute-Force</h4>
+
+<p>Attempting to brute-force AWS access keys demonstrates cloud security economics:</p>
+
+<pre><code>AWS Access Key Structure:
+  Format: AKIA + 16 characters (A-Z, 2-7, base32)
+  Keyspace: 32^16 = 2^80 possible keys
+
+Brute-Force Cost Using AWS EC2:
+
+Instance: p4d.24xlarge (8× A100 GPUs)
+  - Cost: $32.77/hour
+  - Performance: ~10^15 hash operations/second
+
+Time Required:
+  Operations: 2^80 = 1.2 × 10^24
+  Rate: 10^15 ops/sec
+  Time: 1.2×10^24 / 10^15 = 1.2×10^9 seconds = 38 years
+
+Cost Calculation:
+  Hours: 38 years × 8,760 hr/year = 333,000 hours
+  Cost: 333,000 × $32.77 = $10.9 million
+
+Additional Costs:
+  Detection risk:
+    - AWS monitors unusual API patterns
+    - Terms of Service violations
+    - Account termination after days-weeks
+    - Legal exposure via payment trail
+
+  Expected detection time: 1 week
+  Cost before detection: 168 hr × $32.77 = $5,500
+
+  Penalty for TOS violation:
+    - Account ban (loss of legitimate services)
+    - Potential legal action
+    - No chance of success
+
+Economic Reality:
+  Cost to completion: $10.9M (theoretical)
+  Cost before detection: $5,500 (practical)
+  Probability of success: ~0% (detection before 0.01% progress)
+  Expected value: $0
+
+Conclusion: Attack impossible due to detection, not just cost</code></pre>
+
+<h4>5.3.2 Alternative: Credential Stuffing Economics</h4>
+
+<p>Attackers choose economically rational attacks over brute-force:</p>
+
+<pre><code>Credential Stuffing Attack:
+
+Method: Test leaked username/password pairs
+  - Source: Data breaches (billions of credentials)
+  - Success rate: 0.1-2% (password reuse)
+  - Cost: $0 (use leaked data)
+
+Economics:
+  Cost: Minimal (scripting, proxies ~$100-1,000)
+  Time: Hours-days
+  Success probability: 1% × Number of attempts
+  Detection risk: Low if distributed
+
+  Expected value: 1% × Account_value × Number_accounts
+
+For 1M attempts on accounts worth $1,000 each:
+  Expected value: 0.01 × $1,000 × 1M = $10M
+  Cost: $1,000
+  Expected profit: $9.999M
+
+Comparison to Brute-Force:
+  Credential stuffing: $10M value, $1K cost, days
+  Brute-force:        $0 value, $5.5K cost, never completes
+
+Rational attacker choice: Credential stuffing (obviously)
+
+Defense Implication:
+  - Brute-force already economically impossible
+  - Focus defenses on realistic attacks (credential stuffing)
+  - Multi-factor authentication defeats both</code></pre>
+
+<h3>5.4 Case Study Lessons</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Case Study</th>
+      <th>Primary Defense</th>
+      <th>Economic Barrier</th>
+      <th>Key Insight</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>GenomeVault</td>
+      <td>2^256 keyspace + rate limiting</td>
+      <td>Infinite cost via time constraint</td>
+      <td>Serialization makes parallelization worthless</td>
+    </tr>
+    <tr>
+      <td>Bitcoin Mining</td>
+      <td>Proof-of-work difficulty</td>
+      <td>$6.25B capital + ongoing energy</td>
+      <td>Attack devalues attacker's own investment</td>
+    </tr>
+    <tr>
+      <td>AWS Brute-Force</td>
+      <td>Large keyspace + monitoring</td>
+      <td>Detection before 0.01% progress</td>
+      <td>Detection time << attack time renders cost irrelevant</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="optimization">6. Optimization: Maximizing Attacker Cost, Minimizing Defender Cost</h2>
+
+<h3>6.1 Defender Cost-Benefit Framework</h3>
+
+<h4>6.1.1 Optimal Security Investment</h4>
+
+<p>Defenders should invest in security until marginal cost equals marginal benefit:</p>
+
+<pre><code>Security Investment Optimization:
+
+Objective: Maximize security subject to budget constraint
+  max E[Attack_cost] subject to Defense_cost ≤ Budget
+
+Optimal investment occurs when:
+  d(Attack_cost) / d(Defense_cost) = 1
+
+  (Marginal increase in attack cost = marginal defense cost)
+
+Example Cost Curves:
+
+Defense Level | Defense Cost | Attack Cost | Marginal Efficiency
+--------------|--------------|-------------|--------------------
+AES-128       | $100K        | $10^22      | 10^17
+AES-256       | $150K        | $10^61      | 10^56
+AES-256 + KDF | $200K        | $10^66      | 10^61
++ Multi-party | $500K        | $10^67      | 2×10^61
++ Rate limit  | $600K        | Infinite    | Infinite
++ Honeypots   | $700K        | Infinite    | Infinite
+
+Optimal choice: Rate limiting ($600K)
+  - Achieves infinite attack cost
+  - Further investment ($700K for honeypots) adds detection, not cost
+  - ROI: Infinite attack cost per $600K defense = Best possible</code></pre>
+
+<h4>6.1.2 Security Level Selection Algorithm</h4>
+
+<pre><code>Algorithm: Select Minimum Viable Security
+
+Input:
+  - V: Data value ($)
+  - B_attacker: Estimated attacker budget ($)
+  - T_value: Data value depreciation time
+  - R_legal: Legal/regulatory penalties ($)
+
+Steps:
+  1. Calculate minimum attack cost threshold:
+       C_min = max(10 × V, 100 × B_attacker, R_legal)
+
+     Rationale: Attack must cost 10× value to be irrational
+                Or 100× attacker budget to be infeasible
+                Or exceed legal penalties
+
+  2. Select keyspace K such that:
+       Cost(brute_force, K) > C_min
+
+     Lookup table:
+       C_min < $1M         → K = 2^80  (nation-state threshold)
+       $1M ≤ C_min < $10^15  → K = 2^128 (exceeds GDP)
+       C_min ≥ $10^15        → K = 2^256 (standard)
+
+  3. Add temporal defense if needed:
+       If T_value < ∞:
+         T_rotation = min(T_value / 10, 1 year)
+
+     Ensures keys rotate before data depreciates
+
+  4. Calculate rate limit:
+       R = Search_space / (T_rotation × Safety_margin)
+
+     Ensures exhaustive search impossible within rotation period
+
+  5. Calculate honeypot ratio:
+       r = V / (R_legal + V)
+
+     Ensures expected penalty exceeds attack value
+
+  6. Verify total defense cost:
+       C_defense = C_crypto + C_rotation + C_ratelimit + C_honeypot
+
+       If C_defense > 0.1 × V: Scale back to economical level
+
+Output: Security configuration (K, T_rotation, R, r, C_defense)</code></pre>
+
+<h3>6.2 Asymmetric Defense Advantage</h3>
+
+<p>Well-designed defenses create massive cost asymmetries favoring defenders:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Defense Mechanism</th>
+      <th>Defender Cost</th>
+      <th>Attacker Cost Imposed</th>
+      <th>Cost Ratio (A/D)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>AES-256 encryption</td>
+      <td>$0 (CPU native)</td>
+      <td>$10^61</td>
+      <td>Infinite</td>
+    </tr>
+    <tr>
+      <td>SHA-256 hashing</td>
+      <td>$0 (CPU native)</td>
+      <td>$10^48 (preimage)</td>
+      <td>Infinite</td>
+    </tr>
+    <tr>
+      <td>Rate limiting (100 q/s)</td>
+      <td>$10K (nginx + monitoring)</td>
+      <td>Infinite (time >> universe age)</td>
+      <td>Infinite</td>
+    </tr>
+    <tr>
+      <td>Honeypots (30%)</td>
+      <td>$50K (decoy data + alerts)</td>
+      <td>+$30M (expected penalty)</td>
+      <td>600×</td>
+    </tr>
+    <tr>
+      <td>Key rotation (30 day)</td>
+      <td>$20K (automation)</td>
+      <td>Infinite (never completes)</td>
+      <td>Infinite</td>
+    </tr>
+    <tr>
+      <td>Multi-party (3-of-5)</td>
+      <td>$100K (5 servers)</td>
+      <td>10× base attack cost</td>
+      <td>Variable</td>
+    </tr>
+  </tbody>
+</table>
+
+<pre><code>Total Defense Stack Economics:
+
+Defender Costs:
+  - Infrastructure: $100K (servers, storage)
+  - Cryptography: $0 (CPU-native AES-256, SHA-256)
+  - Rate limiting: $10K (load balancer config)
+  - Honeypots: $50K (decoy generation)
+  - Key rotation: $20K (automation)
+  - Monitoring: $50K (SIEM, alerts)
+  - Total: $230K
+
+Attacker Costs Imposed:
+  - Computational: $10^61 (2^256 keyspace)
+  - Time: Infinite (rate limit + rotation)
+  - Risk: $30M (expected honeypot penalty)
+  - Total: Effectively infinite
+
+Cost Asymmetry:
+  Ratio = ∞ / $230K = Infinite advantage to defender
+
+Conclusion: $230K defense creates insurmountable barrier</code></pre>
+
+<h3>6.3 Defense Optimization Strategies</h3>
+
+<h4>6.3.1 Maximize Cost Ratio, Not Absolute Cost</h4>
+
+<p>Optimal defenses maximize attacker cost per dollar of defender investment:</p>
+
+<pre><code>Cost Efficiency Metric:
+  η = (Attacker cost imposed) / (Defender cost)
+
+Strategies ranked by efficiency:
+
+1. Cryptographic primitives (η = ∞):
+   - AES-256: $0 cost, $10^61 attack cost
+   - Best efficiency possible
+
+2. Rate limiting (η = ∞):
+   - $10K cost, infinite attack time
+   - Extremely efficient
+
+3. Key rotation (η = ∞):
+   - $20K cost, infinite attack time (never completes)
+   - Extremely efficient
+
+4. Honeypots (η = 600):
+   - $50K cost, $30M expected penalty
+   - Very efficient but finite
+
+5. Multi-party computation (η = 10-100):
+   - $100K cost, 10× attack cost multiplier
+   - Efficient but expensive
+
+6. Custom hardware (η = 0.1):
+   - $10M cost, marginal security improvement
+   - Inefficient - avoid
+
+Optimization: Prioritize strategies with η = ∞, then high finite η</code></pre>
+
+<h4>6.3.2 Layered Defense with Diminishing Returns</h4>
+
+<p>Each additional layer provides less marginal security benefit:</p>
+
+<pre><code>Diminishing Returns Analysis:
+
+Layer | Defense | Cost | Marginal Attack Cost | Marginal η
+------|---------|------|----------------------|----------
+1     | AES-128 | $100K| $10^22               | 10^17
+2     | AES-256 | +$50K| +$10^39 ($10^61 total)| 2×10^34
+3     | KDF     | +$50K| ×10^5 ($10^66 total) | 2×10^60
+4     | Rotate  | +$20K| → ∞ (time barrier)   | ∞
+5     | Rate    | +$10K| → ∞ (already ∞)      | 0
+6     | Honeypot| +$50K| +$30M detection      | 0.6M
+
+Optimal stopping point: Layer 4 (rotation)
+  - Cost: $220K
+  - Security: Infinite (time barrier)
+  - Marginal efficiency: ∞
+
+Layer 5+ provide detection/forensics, not additional prevention
+  - Still valuable for incident response
+  - But don't increase attack cost further
+  - Lower priority if budget-constrained</code></pre>
+
+<h3>6.4 Practical Optimization Example: Genomic Database</h3>
+
+<pre><code>Scenario: Secure 10M genomic records worth $100M total
+
+Step 1: Set security threshold
+  Value: $100M
+  Attacker budget (nation-state): $100M
+  Legal penalty (HIPAA): $100/record × 10M = $1B
+
+  Threshold: max(10 × $100M, 100 × $100M, $1B) = $10B
+
+Step 2: Select keyspace
+  Need: Attack cost > $10B
+  Choice: 2^256 (attack cost $10^61 >> $10B)
+  Defense cost: $0 (SHA-256 native)
+
+Step 3: Add temporal defense
+  Data half-life: 10 years (genomic data stable)
+  Rotation period: 1 year (safety margin: 10×)
+  Defense cost: $20K (automation)
+
+Step 4: Add rate limiting
+  Search space: 2^60 genetic queries
+  Rotation period: 1 year = 3.15×10^7 seconds
+  Rate limit: 2^60 / 3.15×10^7 / 10 (safety) ≈ 366 queries/sec
+  Set: 100 queries/sec (extra margin)
+  Defense cost: $10K (load balancer)
+
+Step 5: Add honeypots
+  Required ratio: $100M / ($1B + $100M) = 0.09 (9%)
+  Set: 30% (extra margin)
+  Defense cost: $50K (decoy generation)
+
+Total Defense Cost: $80K
+Total Attack Cost: Infinite (time barrier) + $300M expected penalty
+
+Cost ratio: ∞ / $80K = Infinite advantage
+ROI: $100M data protected for $80K = 1,250× return
+
+Conclusion: $80K defense makes $10B attack impossible</code></pre>
 
 <div class="references">
   <h2 id="references">References</h2>
   <ol>
-    <li><strong>Landauer, R.</strong> (1961). Irreversibility and heat generation in the computing process. <em>IBM Journal of Research and Development</em>, 5(3), 183-191.</li>
-    <li><strong>Bremermann, H. J.</strong> (1962). Optimization through evolution and recombination. <em>Self-Organizing Systems</em>, 93-106.</li>
-    <li><strong>Anderson, R.</strong> (2008). Security Engineering: A Guide to Building Dependable Distributed Systems. <em>Wiley</em>.</li>
-    <li><strong>Schneier, B.</strong> (1996). Applied Cryptography: Protocols, Algorithms, and Source Code in C. <em>John Wiley & Sons</em>.</li>
-    <li><strong>Diffie, W., & Hellman, M.</strong> (1976). New directions in cryptography. <em>IEEE Transactions on Information Theory</em>, 22(6), 644-654.</li>
-    <li><strong>NIST.</strong> (2020). Security Requirements for Cryptographic Modules. <em>FIPS PUB 140-3</em>.</li>
-    <li><strong>Dwork, C.</strong> (2006). Differential privacy. <em>ICALP</em>.</li>
-    <li><strong>Lenstra, A. K., & Verheul, E. R.</strong> (2001). Selecting cryptographic key sizes. <em>Journal of Cryptology</em>, 14(4), 255-293.</li>
+    <li><strong>Landauer, R.</strong> (1961). Irreversibility and heat generation in the computing process. <em>IBM Journal of Research and Development</em>, 5(3), 183-191. doi:10.1147/rd.53.0183</li>
+    <li><strong>Bremermann, H. J.</strong> (1962). Optimization through evolution and recombination. <em>Self-Organizing Systems</em>, 93-106. Spartan Books.</li>
+    <li><strong>Lloyd, S.</strong> (2000). Ultimate physical limits to computation. <em>Nature</em>, 406(6799), 1047-1054. doi:10.1038/35023282</li>
+    <li><strong>Anderson, R.</strong> (2020). Security Engineering: A Guide to Building Dependable Distributed Systems (3rd ed.). <em>Wiley</em>. ISBN: 978-1119642787</li>
+    <li><strong>Schneier, B.</strong> (1996). Applied Cryptography: Protocols, Algorithms, and Source Code in C (2nd ed.). <em>John Wiley & Sons</em>. ISBN: 978-1119096726</li>
+    <li><strong>Diffie, W., & Hellman, M.</strong> (1976). New directions in cryptography. <em>IEEE Transactions on Information Theory</em>, 22(6), 644-654. doi:10.1109/TIT.1976.1055638</li>
+    <li><strong>NIST.</strong> (2020). Security Requirements for Cryptographic Modules. <em>FIPS PUB 140-3</em>. National Institute of Standards and Technology.</li>
+    <li><strong>Lenstra, A. K., & Verheul, E. R.</strong> (2001). Selecting cryptographic key sizes. <em>Journal of Cryptology</em>, 14(4), 255-293. doi:10.1007/s00145-001-0009-4</li>
+    <li><strong>Dwork, C., McSherry, F., Nissim, K., & Smith, A.</strong> (2006). Calibrating noise to sensitivity in private data analysis. <em>Theory of Cryptography Conference</em>, 265-284. Springer.</li>
+    <li><strong>Herley, C., & Van Oorschot, P. C.</strong> (2017). SoK: Science, security and the elusive goal of security as a scientific pursuit. <em>IEEE Symposium on Security and Privacy</em>, 99-120. doi:10.1109/SP.2017.38</li>
+    <li><strong>Moore, T., & Clayton, R.</strong> (2007). Examining the impact of website take-down on phishing. <em>Anti-Phishing Working Group eCrime Researchers Summit</em>, 1-13. doi:10.1145/1299015.1299016</li>
+    <li><strong>Grossklags, J., Christin, N., & Chuang, J.</strong> (2008). Securit and insurance management in networks with heterogeneous agents. <em>ACM Conference on Electronic Commerce</em>, 160-169. doi:10.1145/1386790.1386812</li>
+    <li><strong>Gordon, L. A., & Loeb, M. P.</strong> (2002). The economics of information security investment. <em>ACM Transactions on Information and System Security</em>, 5(4), 438-457. doi:10.1145/581271.581274</li>
+    <li><strong>Narayanan, A., Bonneau, J., Felten, E., Miller, A., & Goldfeder, S.</strong> (2016). Bitcoin and Cryptocurrency Technologies. <em>Princeton University Press</em>. ISBN: 978-0691171692</li>
+    <li><strong>U.S. Department of Health and Human Services.</strong> (2013). HIPAA Privacy, Security, and Breach Notification Audit Program. <em>Office for Civil Rights</em>.</li>
   </ol>
 </div>
 

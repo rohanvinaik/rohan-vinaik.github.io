@@ -14,7 +14,7 @@
       --bg: #0a0a0a;
       --text: #e0e0e0;
       --text-secondary: #a0a0a0;
-      --accent: #00ffff;
+      --accent: #00ff00;
       --border: #333;
       --code-bg: #1a1a1a;
     }
@@ -130,7 +130,7 @@
       margin: 20px 0;
       font-size: 0.75rem;
       overflow-x: auto;
-      white-space: pre;
+      white-space: pre-wrap;
       font-family: 'JetBrains Mono', monospace;
     }
     .comparison-table {
@@ -150,7 +150,19 @@
       color: var(--accent);
       font-weight: 600;
     }
+    .highlight-box {
+      background: var(--code-bg);
+      border: 1px solid var(--accent);
+      padding: 16px;
+      margin: 20px 0;
+      font-size: 0.85rem;
+    }
     ul {
+      margin-bottom: 16px;
+      padding-left: 24px;
+      font-size: 0.85rem;
+    }
+    ol {
       margin-bottom: 16px;
       padding-left: 24px;
       font-size: 0.85rem;
@@ -184,8 +196,8 @@
 
 <a href="../index.html#reference" class="back-link">← Back to Reference</a>
 
-<h1>Information-Theoretic Security</h1>
-<div class="paper-meta">January 2025 · Technical Reference · Version 1.0</div>
+<h1>Information-Theoretic Security: Security from Mathematical Impossibility</h1>
+<div class="paper-meta">January 2025 · Technical Reference · Version 2.0</div>
 
 <div class="tags">
   <a href="../index.html?filter=INFORMATION-THEORY" class="tag">[INFORMATION-THEORY]</a>
@@ -199,165 +211,856 @@
 </div>
 
 <div class="abstract">
-  <strong>Abstract:</strong> Information-theoretic security provides cryptographic guarantees based on mathematical impossibility rather than computational hardness. Unlike computational security (which assumes certain problems are hard to solve), information-theoretic security proves that an attacker with unbounded computational power cannot break the system. This framework underpins provably secure systems including one-time pads, private information retrieval, and hyperdimensional genomic encodings with 2^800,000 possible interpretations. Security holds even against quantum computers and far-future computational advances.
+  <strong>Abstract:</strong> Information-theoretic security provides cryptographic guarantees based on mathematical impossibility rather than computational hardness. Unlike computational security which assumes certain problems are intractable, information-theoretic security proves that an adversary with unbounded computational power cannot break the system because the necessary information simply does not exist in the observable data. This framework, formalized by Claude Shannon in 1949, underpins provably secure systems including one-time pads, private information retrieval, quantum key distribution, and hyperdimensional genomic encodings with 2^800,000 possible interpretations. Security holds unconditionally against quantum computers, algorithmic advances, and far-future cryptanalysis. This reference document presents Shannon's foundational theory, mathematical proofs of security, detailed comparisons with computational approaches, canonical examples including genomic privacy applications, fundamental limitations including the key distribution problem, and practical trade-offs for high-security systems.
 </div>
 
 <div class="quick-nav">
   <h3>Quick Navigation</h3>
   <ul>
-    <li><a href="#definition">1. Definition</a></li>
-    <li><a href="#fundamental-properties">2. Fundamental Properties</a></li>
+    <li><a href="#core-principles">1. Core Principles</a></li>
+    <li><a href="#mathematical-foundations">2. Mathematical Foundations</a></li>
     <li><a href="#shannon-theory">3. Shannon's Theory</a></li>
-    <li><a href="#computational-vs-information">4. Computational vs Information-Theoretic</a></li>
-    <li><a href="#canonical-examples">5. Canonical Examples</a></li>
-    <li><a href="#genomic-applications">6. Genomic Applications</a></li>
+    <li><a href="#examples">4. Canonical Examples</a></li>
+    <li><a href="#computational-vs-information">5. vs Computational Security</a></li>
+    <li><a href="#limitations">6. Limitations</a></li>
+    <li><a href="#applications">7. Applications</a></li>
     <li><a href="#references">References</a></li>
   </ul>
 </div>
 
-<h2 id="definition">1. Definition</h2>
+<h2 id="core-principles">1. Core Principles: Security from Information Theory, Not Computational Hardness</h2>
 
-<p><strong>Information-theoretic security</strong> (also called <strong>unconditional security</strong> or <strong>perfect security</strong>) means that an adversary with unbounded computational resources and unlimited time cannot extract protected information from an observation, even in principle.</p>
+<p><strong>Information-theoretic security</strong> (also called <strong>unconditional security</strong> or <strong>perfect security</strong>) is a security paradigm where protection derives from the fundamental laws of information theory rather than assumptions about computational difficulty.</p>
 
-<h3>1.1 Formal Definition</h3>
+<h3>1.1 The Central Distinction</h3>
 
-<div class="code-block">For plaintext M, ciphertext C, key K:
+<div class="highlight-box">
+<strong>Computational Security:</strong> "This is hard to compute, therefore it's secure"<br>
+<strong>Information-Theoretic Security:</strong> "This is mathematically impossible to determine, therefore it's secure"
+</div>
 
-Perfect Secrecy (Shannon, 1949):
+<p>In computational security, an adversary with infinite time and computational power could theoretically break the system. In information-theoretic security, even a computationally unbounded adversary gains zero information about protected data.</p>
+
+<h3>1.2 Shannon's Insight: Perfect Secrecy</h3>
+
+<p>Claude Shannon's 1949 paper "Communication Theory of Secrecy Systems" introduced the concept of <strong>perfect secrecy</strong>:</p>
+
+<div class="code-block">A cryptosystem has perfect secrecy if:
+
+  Observing the ciphertext provides zero information about the plaintext
+
+Formally:
+  P(M = m | C = c) = P(M = m)  for all m, c
+
+Translation:
+  The probability distribution over plaintexts is identical
+  before and after observing the ciphertext</div>
+
+<p>This means an adversary who intercepts a ciphertext learns absolutely nothing about the plaintext beyond what they already knew. The ciphertext is statistically independent of the plaintext.</p>
+
+<h3>1.3 No Computational Assumptions</h3>
+
+<p>Information-theoretic security makes <strong>zero assumptions</strong> about:</p>
+
+<ul>
+  <li><strong>Computational complexity theory:</strong> Does not require P ≠ NP or any unproven conjectures</li>
+  <li><strong>Adversary's computational power:</strong> Security holds even against unbounded computation</li>
+  <li><strong>Algorithmic advances:</strong> Future algorithms cannot break what is mathematically impossible</li>
+  <li><strong>Technology capabilities:</strong> Quantum computers, analog computing, or hypothetical future technologies cannot violate information-theoretic limits</li>
+  <li><strong>Time constraints:</strong> Security does not degrade over time</li>
+</ul>
+
+<h3>1.4 The Foundation: Shannon's Information Theory</h3>
+
+<p>Information-theoretic security is grounded in Shannon's mathematical theory of communication (1948), which provides rigorous methods to quantify information, uncertainty, and correlation:</p>
+
+<div class="code-block">Key Concepts:
+
+1. Entropy H(X): Measures uncertainty/information content
+2. Conditional Entropy H(X|Y): Uncertainty about X given Y
+3. Mutual Information I(X;Y): Information shared between X and Y
+
+Perfect secrecy in these terms:
   I(M; C) = 0
 
-Equivalently:
-  P(M | C) = P(M)
+Where M is plaintext, C is ciphertext. Zero mutual information
+means observing C reveals nothing about M.</div>
 
-Meaning: observing ciphertext C provides
-zero information about plaintext M</div>
+<p>This mathematical framework allows us to prove security properties with the same rigor as mathematical theorems, rather than relying on empirical hardness or computational assumptions.</p>
 
-<p>The security guarantee is <strong>unconditional</strong>: it holds regardless of:</p>
-<ul>
-  <li>Computational power available to adversary</li>
-  <li>Algorithmic advances or mathematical breakthroughs</li>
-  <li>Quantum computers or hypothetical future technologies</li>
-  <li>Time available for cryptanalysis</li>
-</ul>
+<h3>1.5 Security vs Computational Power</h3>
 
-<h3>1.2 Mathematical Foundation</h3>
+<p>A critical property: information-theoretic security is <strong>independent of computational resources</strong>.</p>
 
-<p>Security derives from <strong>information theory</strong> (Shannon, 1948), which quantifies information content and uncertainty:</p>
+<div class="comparison-table">
+  <thead>
+    <tr>
+      <th>Adversary Capability</th>
+      <th>Computational Security</th>
+      <th>Information-Theoretic Security</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Current computers</td>
+      <td>Secure (if well-designed)</td>
+      <td>Secure</td>
+    </tr>
+    <tr>
+      <td>Supercomputers</td>
+      <td>May be vulnerable</td>
+      <td>Secure</td>
+    </tr>
+    <tr>
+      <td>Quantum computers</td>
+      <td>Vulnerable (Shor's, Grover's algorithms)</td>
+      <td>Secure</td>
+    </tr>
+    <tr>
+      <td>Infinite computational power</td>
+      <td>Completely broken</td>
+      <td>Secure</td>
+    </tr>
+    <tr>
+      <td>Future unknown algorithms</td>
+      <td>Unknown security</td>
+      <td>Secure</td>
+    </tr>
+  </tbody>
+</div>
 
-<div class="code-block">Entropy H(X):
-  H(X) = -Σ P(x) log₂ P(x)
-  Measures uncertainty in random variable X
+<h3>1.6 Mathematical Impossibility, Not Practical Difficulty</h3>
 
-Mutual Information I(X; Y):
-  I(X; Y) = H(X) - H(X|Y)
-  Measures information Y reveals about X
-
-Information-theoretic security:
-  I(M; C) = 0  ⟹  H(M|C) = H(M)
-  Observing C does not reduce uncertainty about M</div>
-
-<h2 id="fundamental-properties">2. Fundamental Properties</h2>
-
-<h3>2.1 No Assumptions About Attacker's Power</h3>
-
-<p>Unlike computational security, which assumes problems like integer factorization are hard, information-theoretic security makes <strong>no assumptions</strong> about:</p>
-
-<ul>
-  <li><strong>Computational complexity:</strong> P ≠ NP not required</li>
-  <li><strong>Algorithmic knowledge:</strong> Attacker may have optimal algorithms</li>
-  <li><strong>Hardware capabilities:</strong> Quantum, analog, or exotic computing allowed</li>
-  <li><strong>Side information:</strong> Security holds even with auxiliary knowledge (in some schemes)</li>
-</ul>
-
-<h3>2.2 Quantum-Resistant by Definition</h3>
-
-<p>Information-theoretic security is inherently quantum-resistant:</p>
-
-<div class="code-block">Quantum computing provides:
-  - Superposition and entanglement
-  - Grover's algorithm: √N speedup for search
-  - Shor's algorithm: Polynomial factoring
-
-But cannot violate:
-  - Fundamental information-theoretic limits
-  - Shannon's perfect secrecy theorem
-  - Holevo's bound on quantum information</div>
-
-<p><strong>Why quantum computers cannot break it:</strong> The security is not based on hardness of computation, but on <em>absence of information</em>. No amount of computational power can extract information that mathematically does not exist in the observation.</p>
-
-<h3>2.3 Mathematical Impossibility</h3>
-
-<p>Breaking information-theoretic security would require:</p>
+<p>Breaking information-theoretic security is not merely "very hard" or "takes too long" — it is <strong>mathematically impossible</strong>, equivalent to:</p>
 
 <ul>
-  <li><strong>Violating Shannon's Source Coding Theorem:</strong> Creating information from nothing</li>
-  <li><strong>Reversing irreversible functions:</strong> Inverting many-to-one mappings with no side information</li>
-  <li><strong>Violating Holevo's Bound:</strong> Extracting more information than physically encoded</li>
+  <li>Determining a number by measuring its modular residue alone (without the modulus)</li>
+  <li>Reconstructing a signal from insufficient measurements (violates sampling theorem)</li>
+  <li>Extracting more information than exists in a message (violates Shannon's source coding theorem)</li>
+  <li>Creating a perpetual motion machine (violates thermodynamics)</li>
 </ul>
 
-<p>These are not computational challenges—they are <strong>mathematical impossibilities</strong> equivalent to creating a perpetual motion machine or violating the second law of thermodynamics.</p>
+<p>These are not engineering challenges; they are fundamental impossibilities rooted in mathematics and physics.</p>
 
-<h2 id="shannon-theory">3. Shannon's Theory and Perfect Secrecy</h2>
+<h2 id="mathematical-foundations">2. Mathematical Foundations: Perfect Secrecy, Mutual Information, Entropy</h2>
 
-<h3>3.1 Shannon's Perfect Secrecy Theorem (1949)</h3>
+<h3>2.1 Entropy: Quantifying Uncertainty</h3>
 
-<p><strong>Theorem:</strong> A cipher has perfect secrecy if and only if:</p>
+<p>Shannon entropy \( H(X) \) measures the average information content or uncertainty in a random variable \( X \):</p>
 
+<div class="code-block">Definition:
+  H(X) = -∑ P(x) log₂ P(x)
+         x∈X
+
+Properties:
+  - H(X) ≥ 0 (non-negative)
+  - H(X) = 0 iff X is deterministic (one value has probability 1)
+  - H(X) is maximized when X is uniformly distributed
+  - For uniform distribution over n values: H(X) = log₂ n
+
+Units: bits (using log₂)</div>
+
+<p><strong>Example:</strong> Fair coin flip: \( X \in \{H, T\} \) with \( P(H) = P(T) = 0.5 \)</p>
+
+<div class="code-block">H(X) = -[0.5 log₂(0.5) + 0.5 log₂(0.5)]
+     = -[0.5(-1) + 0.5(-1)]
+     = 1 bit
+
+Translation: Complete uncertainty about the outcome.
+Observing the result provides exactly 1 bit of information.</div>
+
+<p><strong>Example:</strong> Biased coin: \( P(H) = 0.9, P(T) = 0.1 \)</p>
+
+<div class="code-block">H(X) = -[0.9 log₂(0.9) + 0.1 log₂(0.1)]
+     ≈ 0.469 bits
+
+Lower entropy: outcome more predictable (usually heads)</div>
+
+<h3>2.2 Conditional Entropy: Remaining Uncertainty</h3>
+
+<p>Conditional entropy \( H(X|Y) \) measures the average uncertainty about \( X \) <em>after</em> observing \( Y \):</p>
+
+<div class="code-block">Definition:
+  H(X|Y) = ∑ P(y) H(X|Y=y)
+           y∈Y
+         = -∑∑ P(x,y) log₂ P(x|y)
+           y x
+
+Interpretation:
+  Average entropy of X over all possible observations of Y
+
+Chain Rule:
+  H(X,Y) = H(Y) + H(X|Y)
+
+  Joint entropy = entropy of first variable +
+                  conditional entropy of second given first</div>
+
+<p><strong>Perfect secrecy connection:</strong> For a cipher with plaintext \( M \) and ciphertext \( C \):</p>
+
+<div class="code-block">Perfect secrecy means:
+  H(M|C) = H(M)
+
+Translation:
+  Uncertainty about M after observing C equals
+  uncertainty about M before observing C
+
+  → Observing ciphertext provides zero information</div>
+
+<h3>2.3 Mutual Information: Shared Information</h3>
+
+<p>Mutual information \( I(X;Y) \) quantifies how much information \( X \) and \( Y \) share:</p>
+
+<div class="code-block">Definition:
+  I(X;Y) = H(X) - H(X|Y)
+         = H(Y) - H(Y|X)
+         = H(X) + H(Y) - H(X,Y)
+
+Alternative form:
+  I(X;Y) = ∑∑ P(x,y) log₂ [P(x,y) / (P(x)P(y))]
+           x y
+
+Properties:
+  - I(X;Y) ≥ 0 (non-negative)
+  - I(X;Y) = 0 iff X and Y are independent
+  - I(X;Y) = I(Y;X) (symmetric)
+  - I(X;X) = H(X) (self-information equals entropy)</div>
+
+<p><strong>Interpretation:</strong> \( I(X;Y) \) is the reduction in uncertainty about \( X \) after observing \( Y \).</p>
+
+<div class="code-block">Graphical interpretation:
+
+     H(X)              H(Y)
+    ┌────────┐        ┌────────┐
+    │        │        │        │
+    │   ┌────┼────────┼────┐   │
+    │   │    │        │    │   │
+    └───┼────┘        └────┼───┘
+        │   I(X;Y)        │
+        │ (shared info)   │
+        └─────────────────┘
+
+H(X|Y): Unique information in X (left region only)
+H(Y|X): Unique information in Y (right region only)
+I(X;Y): Shared information (intersection)</div>
+
+<h3>2.4 Perfect Secrecy: Information-Theoretic Definition</h3>
+
+<p>Shannon's perfect secrecy can be expressed equivalently in multiple ways:</p>
+
+<div class="code-block">All equivalent definitions of perfect secrecy:
+
+1. Zero mutual information:
+   I(M; C) = 0
+
+2. No information gain:
+   H(M|C) = H(M)
+
+3. Statistical independence:
+   P(M = m | C = c) = P(M = m)  for all m, c
+
+4. All plaintexts equally likely for any ciphertext:
+   P(M = m | C = c) = constant  for all m (given c)
+
+5. Ciphertext distribution independent of plaintext:
+   P(C = c | M = m) = P(C = c)  for all m, c</div>
+
+<p><strong>Proof of equivalence (1 ↔ 2):</strong></p>
+
+<div class="code-block">I(M; C) = H(M) - H(M|C)
+
+If I(M; C) = 0:
+  H(M) - H(M|C) = 0
+  H(M|C) = H(M)  ✓
+
+Conversely, if H(M|C) = H(M):
+  I(M; C) = H(M) - H(M) = 0  ✓</div>
+
+<h3>2.5 Shannon's Perfect Secrecy Theorem</h3>
+
+<p>Shannon proved necessary and sufficient conditions for perfect secrecy:</p>
+
+<div class="highlight-box">
+<strong>Theorem (Shannon, 1949):</strong> A cipher provides perfect secrecy if and only if:
 <ol>
-  <li>For every plaintext m and ciphertext c: P(M=m | C=c) = P(M=m)</li>
-  <li>Equivalently: |K| ≥ |M| and keys are uniformly random and used only once</li>
+  <li>The number of keys is at least as large as the number of plaintexts: |K| ≥ |M|</li>
+  <li>Every key is equally likely: P(K = k) = 1/|K| for all k</li>
+  <li>Each key is used for exactly one message (single-use)</li>
+  <li>For every plaintext-ciphertext pair (m, c), there exists exactly one key k such that E_k(m) = c</li>
 </ol>
+</div>
 
-<div class="code-block">Perfect Secrecy Requirements:
-  1. Key space ≥ message space: |K| ≥ |M|
-  2. Each key equally probable: P(K=k) = 1/|K|
-  3. Single use: Each key used for exactly one message
-  4. For each (m,c) pair, ∃ unique k: E_k(m) = c
+<p><strong>Proof sketch (necessity of |K| ≥ |M|):</strong></p>
 
-Classic example: One-time pad (Vernam cipher, 1917)</div>
+<div class="code-block">Proof by contradiction:
 
-<h3>3.2 One-Time Pad: The Gold Standard</h3>
+Assume |K| < |M| and perfect secrecy holds.
+
+Pick any ciphertext c. How many plaintexts can produce c?
+  At most |K| plaintexts (one per key)
+
+But we have |M| total plaintexts, and |M| > |K|.
+
+Therefore, there exist plaintexts m₀ that cannot produce c:
+  No key k satisfies E_k(m₀) = c
+
+This means:
+  P(M = m₀ | C = c) = 0 ≠ P(M = m₀)
+
+Contradicts perfect secrecy. ∎
+
+Consequence: Perfect secrecy requires key at least as long as message.</div>
+
+<h3>2.6 Holevo's Bound: Quantum Information Limit</h3>
+
+<p>Even in quantum mechanics, information extraction has fundamental limits:</p>
+
+<div class="code-block">Holevo's Bound (1973):
+
+For quantum states {ρᵢ} sent with probabilities {pᵢ}:
+
+  χ = S(∑ pᵢρᵢ) - ∑ pᵢS(ρᵢ)
+
+Where S(ρ) is von Neumann entropy.
+
+Bound: Cannot extract more than χ bits of classical information
+       from quantum ensemble, regardless of measurement strategy.
+
+Implication: Quantum mechanics does not violate Shannon limits.
+            Information-theoretic security remains valid in quantum regime.</div>
+
+<h2 id="shannon-theory">3. Shannon's Theory: Proofs and Formulas</h2>
+
+<h3>3.1 The One-Time Pad: Shannon's Canonical Example</h3>
+
+<p>The one-time pad (Vernam cipher, 1917) is the archetypal information-theoretically secure system:</p>
 
 <div class="code-block">One-Time Pad Protocol:
-  Message: M ∈ {0,1}^n
-  Key:     K ∈ {0,1}^n  (random, uniform)
-  Encrypt: C = M ⊕ K
-  Decrypt: M = C ⊕ K
 
-Perfect Secrecy Proof:
-  For any message m and ciphertext c:
-    P(M=m | C=c) = P(K = m⊕c) = 1/2^n = P(M=m)
+Message:  M ∈ {0,1}ⁿ
+Key:      K ∈ {0,1}ⁿ  (random, uniform, single-use)
+Encrypt:  C = M ⊕ K     (bitwise XOR)
+Decrypt:  M = C ⊕ K     (same operation)
 
-  Therefore: I(M; C) = 0</div>
+Example:
+  M = 1011001
+  K = 0110101  (random)
+  C = 1101100  (M ⊕ K)</div>
 
-<p><strong>Why it works:</strong> For any observed ciphertext c, <em>every possible message m is equally likely</em> because there exists exactly one key k = m ⊕ c that would produce c. Since keys are uniformly random, all messages have equal posterior probability.</p>
+<h3>3.2 Proof of One-Time Pad Perfect Secrecy</h3>
 
-<h3>3.3 Shannon's Impossibility Results</h3>
+<p><strong>Theorem:</strong> The one-time pad has perfect secrecy.</p>
 
-<p><strong>Key Size Lower Bound:</strong> Perfect secrecy requires |K| ≥ |M|. Proof by contradiction:</p>
+<p><strong>Proof:</strong></p>
 
-<div class="code-block">Assume |K| < |M|:
-  Then ∃ message m₀, ciphertext c such that:
-    No key k satisfies E_k(m₀) = c
+<div class="code-block">Need to show: P(M = m | C = c) = P(M = m) for all m, c
 
-  Therefore:
-    P(M=m₀ | C=c) = 0 ≠ P(M=m₀)
+Step 1: Express conditional probability
+  P(M = m | C = c) = P(M = m, C = c) / P(C = c)
+                   = P(C = c | M = m) P(M = m) / P(C = c)
 
-  Violates perfect secrecy. ∎</div>
+Step 2: Compute P(C = c | M = m)
+  Given M = m, what's probability of seeing C = c?
+  C = M ⊕ K, so c = m ⊕ K
+  This happens when K = m ⊕ c
 
-<p><strong>Key Reuse Catastrophe:</strong> Reusing a one-time pad key completely breaks security:</p>
+  Since K is uniform over {0,1}ⁿ:
+    P(K = m ⊕ c) = 1/2ⁿ
 
-<div class="code-block">Two messages with same key:
+  Therefore: P(C = c | M = m) = 1/2ⁿ
+
+Step 3: Compute P(C = c)
+  P(C = c) = ∑ P(C = c | M = m') P(M = m')
+             m'
+           = ∑ (1/2ⁿ) P(M = m')
+             m'
+           = (1/2ⁿ) ∑ P(M = m')
+             m'
+           = 1/2ⁿ
+
+Step 4: Substitute into conditional probability
+  P(M = m | C = c) = [(1/2ⁿ) P(M = m)] / (1/2ⁿ)
+                   = P(M = m)
+
+Perfect secrecy achieved! ∎</div>
+
+<p><strong>Key insight:</strong> For any ciphertext \( c \), <em>every</em> plaintext \( m \) is equally likely because there exists exactly one key \( k = m \oplus c \) that produces \( c \) from \( m \), and all keys are equally probable.</p>
+
+<h3>3.3 Information-Theoretic Analysis</h3>
+
+<div class="code-block">Entropy calculations for one-time pad:
+
+H(M): Depends on message distribution (could be any value)
+H(K) = n bits (uniform over {0,1}ⁿ)
+H(C) = n bits (XOR with uniform key produces uniform ciphertext)
+
+Mutual information:
+  I(M; C) = H(M) - H(M|C)
+
+  H(M|C): Given ciphertext c, what's uncertainty about M?
+          For each c, every m has equal probability 1/2ⁿ
+          So H(M|C) = log₂(2ⁿ) = n bits... wait, this seems wrong!
+
+Actually, need to be careful:
+  H(M|C) = ∑ P(c) H(M|C=c)
+
+  For OTP, H(M|C=c) equals entropy of uniform distribution
+  over all n-bit strings = n bits
+
+  But average depends on message distribution.
+
+More direct: Use I(M;C) = 0 definition.
+  For OTP, P(M=m|C=c) = P(M=m), so:
+  I(M; C) = 0 bits
+
+Zero mutual information → perfect secrecy. ✓</div>
+
+<h3>3.4 Shannon's Key Length Lower Bound</h3>
+
+<p><strong>Theorem:</strong> Perfect secrecy requires \( H(K) \geq H(M) \).</p>
+
+<p><strong>Proof:</strong></p>
+
+<div class="code-block">From information theory:
+  H(M) = I(M; C) + H(M|C)
+
+For perfect secrecy:
+  I(M; C) = 0
+
+Therefore:
+  H(M) = H(M|C)
+
+Now use data processing inequality:
+  H(M|C) ≤ H(M|K,C)
+
+But given K and C, decryption is deterministic:
+  H(M|K,C) = 0
+
+Wait, this suggests H(M) = 0, which is wrong!
+
+Correct approach:
+  Use Fano's inequality and the fact that:
+  H(M,K) ≥ H(M)
+
+  But H(M,K) ≤ H(M) + H(K)
+
+  And for perfect secrecy: H(M,C) = H(M) + H(C)
+
+  Since C is determined by M and K:
+    H(C|M,K) = 0
+    H(M,K,C) = H(M,K)
+
+  Also: H(M,K,C) ≥ H(C)
+
+  So: H(M,K) ≥ H(C)
+
+  For OTP: H(C) = n bits (uniform)
+
+  And: H(M,K) = H(M) + H(K|M) = H(M) + H(K)  (M,K independent)
+
+  Therefore: H(M) + H(K) ≥ n
+
+  For arbitrary message distributions, worst case is H(M) = n,
+  requiring H(K) ≥ n. ∎
+
+Practical consequence:
+  Key must be at least as long as message for perfect secrecy.</div>
+
+<h3>3.5 Shannon's Impossibility Result: Key Reuse</h3>
+
+<p><strong>Theorem:</strong> Reusing a key destroys perfect secrecy.</p>
+
+<p><strong>Demonstration:</strong></p>
+
+<div class="code-block">Two messages encrypted with same key:
   C₁ = M₁ ⊕ K
   C₂ = M₂ ⊕ K
 
-  Attacker observes C₁ ⊕ C₂:
-    C₁ ⊕ C₂ = (M₁ ⊕ K) ⊕ (M₂ ⊕ K) = M₁ ⊕ M₂
+Attacker computes:
+  C₁ ⊕ C₂ = (M₁ ⊕ K) ⊕ (M₂ ⊕ K)
+          = M₁ ⊕ M₂ ⊕ K ⊕ K
+          = M₁ ⊕ M₂
 
-  Key cancels out → direct relationship between plaintexts
-  Statistical analysis breaks security immediately</div>
+Key completely eliminated!
 
-<h2 id="computational-vs-information">4. Computational vs Information-Theoretic Security</h2>
+Now: I(M₁, M₂; C₁ ⊕ C₂) = I(M₁, M₂; M₁ ⊕ M₂) > 0
+
+Perfect secrecy violated.
+
+Practical attack:
+  If messages have redundancy (e.g., English text):
+    - Most probable byte value: 0x20 (space)
+    - XOR ciphertexts: frequent 0x00 suggests aligned spaces
+    - Build up plaintext through statistical analysis
+
+Historical example:
+  VENONA project: Soviet messages encrypted with reused pads
+  were broken by US/UK cryptanalysts (1940s-1950s)</div>
+
+<h2 id="examples">4. Canonical Examples and Concrete Systems</h2>
+
+<h3>4.1 One-Time Pad: Implementation Details</h3>
+
+<div class="code-block">Practical OTP Example (text):
+
+Alphabet: A=0, B=1, ..., Z=25
+
+Message:  "HELLO"
+          H  E  L  L  O
+          7  4  11 11 14
+
+Key (random):
+          23 15 9  2  17
+
+Ciphertext (add mod 26):
+          (7+23) mod 26 = 4  = E
+          (4+15) mod 26 = 19 = T
+          (11+9) mod 26 = 20 = U
+          (11+2) mod 26 = 13 = N
+          (14+17) mod 26 = 5 = F
+
+Ciphertext: "ETUNF"
+
+Decryption:
+  E → 4;  (4-23) mod 26 = -19 mod 26 = 7 = H  ✓
+  T → 19; (19-15) mod 26 = 4 = E  ✓
+  (etc.)</div>
+
+<p><strong>Why every plaintext equally likely:</strong></p>
+
+<div class="code-block">Given ciphertext "ETUNF", what plaintexts are possible?
+
+"HELLO" → requires key [23,15,9,2,17]   ✓
+"LATER" → requires key [19,15,25,2,17]  ✓
+"WORLD" → requires key [8,15,7,2,17]    ✓
+"BYEOK" → requires key [2,15,19,2,17]   ✓
+
+Every 5-letter message corresponds to exactly one key.
+If keys are uniformly random, all messages equally probable.
+
+Perfect secrecy: Observing "ETUNF" tells you nothing
+about whether plaintext was "HELLO" vs "WORLD".</div>
+
+<h3>4.2 Private Information Retrieval (PIR)</h3>
+
+<p>Information-theoretic PIR allows retrieving database items without revealing which item was accessed:</p>
+
+<div class="code-block">Setting:
+  Database: D = [d₀, d₁, d₂, ..., d_{n-1}]
+  User wants: dᵢ (without revealing i to database)
+
+Information-Theoretic PIR (Chor et al., 1995):
+
+Requires: k non-colluding servers, each with full copy of D
+
+Protocol (simplified 2-server case):
+  User wants d₃ from database D = [d₀, d₁, d₂, d₃]
+
+  Step 1: User generates random query Q₁ = random subset of indices
+          Example: Q₁ = {1, 3}
+
+  Step 2: User creates Q₂ by XORing target with Q₁:
+          Q₂ = Q₁ ⊕ {3} = {1, 3} ⊕ {3} = {1}
+
+  Step 3: Send Q₁ to Server1, Q₂ to Server2
+
+  Step 4: Each server returns XOR of requested items:
+          Server1 returns: d₁ ⊕ d₃
+          Server2 returns: d₁
+
+  Step 5: User recovers target:
+          d₃ = (d₁ ⊕ d₃) ⊕ d₁
+
+Information-theoretic privacy:
+  Server1 sees Q₁ = {1,3}: equally likely to be querying 1 or 3
+  Server2 sees Q₂ = {1}:   no information about true query
+
+  I(i; Q₁) = 0 for Server1 (with non-colluding servers)
+  I(i; Q₂) = 0 for Server2</div>
+
+<p><strong>Communication cost:</strong> Must retrieve O(n) bits for one item from n-item database, vs O(log n) for computational PIR. This is the efficiency trade-off for information-theoretic security.</p>
+
+<h3>4.3 Shamir Secret Sharing</h3>
+
+<p>Information-theoretically secure secret splitting:</p>
+
+<div class="code-block">Shamir (k, n) Threshold Scheme (1979):
+
+Goal: Split secret s among n parties such that:
+  - Any k parties can reconstruct s
+  - Any k-1 parties learn nothing about s (information-theoretic)
+
+Construction:
+  1. Choose random polynomial of degree k-1:
+     p(x) = s + a₁x + a₂x² + ... + a_{k-1}x^{k-1}
+
+     where a₁, ..., a_{k-1} are random coefficients
+     and p(0) = s (the secret)
+
+  2. Distribute shares:
+     Party i receives: (i, p(i))
+
+  3. Reconstruction with k shares:
+     Use Lagrange interpolation to recover p(x)
+     Evaluate p(0) = s
+
+Example (k=3, n=5, secret s=1234):
+  p(x) = 1234 + 166x + 94x²  (random coefficients)
+
+  Shares:
+    Party 1: (1, p(1)) = (1, 1494)
+    Party 2: (2, p(2)) = (2, 1942)
+    Party 3: (3, p(3)) = (3, 2578)
+    Party 4: (4, p(4)) = (4, 3402)
+    Party 5: (5, p(5)) = (5, 4414)
+
+Any 3 shares → unique polynomial → recover s = 1234
+Any 2 shares → infinitely many degree-2 polynomials
+                through those points → s could be anything</div>
+
+<p><strong>Information-theoretic proof:</strong></p>
+
+<div class="code-block">With k-1 shares, what can you determine about s?
+
+You have k-1 points: (x₁, y₁), ..., (x_{k-1}, y_{k-1})
+
+For any value s₀, there exists exactly one degree-(k-1)
+polynomial p₀(x) such that:
+  - p₀(xᵢ) = yᵢ for all i ∈ {1, ..., k-1}
+  - p₀(0) = s₀
+
+Since coefficients a₁, ..., a_{k-1} were chosen uniformly
+at random, all polynomials (and thus all secrets) are
+equally likely.
+
+Therefore: P(s = s₀ | k-1 shares) = P(s = s₀)
+
+Information-theoretic security: I(s; k-1 shares) = 0</div>
+
+<h3>4.4 Quantum Key Distribution (BB84)</h3>
+
+<p>Quantum mechanics provides information-theoretic security for key distribution:</p>
+
+<div class="code-block">BB84 Protocol (Bennett & Brassard, 1984):
+
+Physical basis:
+  - Quantum no-cloning theorem: Cannot copy unknown quantum states
+  - Measurement disturbs superposition states
+  - These are fundamental laws of quantum mechanics
+
+Protocol:
+  1. Alice sends qubits in random bases {+, ×}:
+     + basis: |0⟩ or |1⟩
+     × basis: |+⟩ or |-⟩
+
+  2. Bob measures in random bases {+, ×}
+
+  3. Alice and Bob announce bases (not results)
+
+  4. Keep bits where bases matched, discard rest
+
+  5. Check subset for eavesdropping (should have ~0 errors)
+
+Information-theoretic security:
+
+  If Eve intercepts and measures qubits:
+    - Must guess measurement basis
+    - 50% chance of wrong basis
+    - Disturbs quantum state
+    - Introduces detectable errors
+
+  No-cloning theorem: Eve cannot copy qubit to measure later
+
+  Security does not depend on computational assumptions,
+  but on fundamental quantum mechanics.
+
+  After authenticated key distribution via BB84,
+  can use that key for one-time pad → unconditional security</div>
+
+<h3>4.5 Hyperdimensional Computing: Genomic Privacy</h3>
+
+<p>Information-theoretic privacy through irreversible dimensionality reduction:</p>
+
+<div class="code-block">Genomic Hyperdimensional Encoding:
+
+Original genome:
+  G ∈ {A,C,G,T}^(3×10⁹)  (human genome)
+  Encoded as: G ∈ {0,1}^(2×3×10⁹) ≈ {0,1}^(6×10⁹)
+  Entropy: H(G) ≈ 6×10⁹ bits
+
+Hyperdimensional encoding:
+  h = Φ(G) ∈ {-1,+1}^(10,000)
+
+  Where Φ is random projection:
+    hᵢ = sign(∑ wᵢⱼ Gⱼ)
+         j
+
+  With weights wᵢⱼ ~ N(0,1) (random Gaussian)
+
+Resulting hypervector:
+  h ∈ {-1,+1}^10,000
+  Entropy: H(h) = 10,000 bits</div>
+
+<p><strong>Information-theoretic security analysis:</strong></p>
+
+<div class="code-block">Information loss:
+  H(G) - H(h) ≈ 6×10⁹ - 10⁴ ≈ 6×10⁹ bits lost
+
+Number of genomes mapping to same hypervector:
+  Total genomes: 2^(6×10⁹)
+  Total hypervectors: 2^10,000
+
+  Genomes per hypervector: 2^(6×10⁹) / 2^10,000
+                          = 2^(6×10⁹ - 10⁴)
+                          = 2^(5,999,990,000)
+                          ≈ 2^(6 billion)
+
+This is the preimage size. Given observed h, approximately
+2^(6 billion) different genomes could have produced it.
+
+Without the random projection matrix Φ (which acts as key),
+reconstruction is information-theoretically impossible:
+
+  I(G; h) ≪ H(G)
+
+  Even with h, vast uncertainty remains about G.
+  Mutual information between G and h is tiny compared to
+  total information in G.
+
+Quantum resistance:
+  Not based on computational hardness
+  Information simply does not exist in h
+  Quantum algorithms cannot extract non-existent information</div>
+
+<p><strong>Comparison to computational genomic privacy:</strong></p>
+
+<div class="code-block">Homomorphic Encryption (computational):
+  G → Encrypt(G, pk) → Ciphertext
+
+  Security: RLWE hardness assumption
+  Vulnerable to: Quantum algorithms (potentially)
+                 Future cryptanalysis
+
+  Advantage: Can compute on encrypted data
+  Disadvantage: Computationally expensive, security time-limited
+
+Hyperdimensional Encoding (information-theoretic):
+  G → Φ(G) → h
+
+  Security: 2^(6 billion) preimages
+  Resistant to: All computational attacks (including quantum)
+
+  Advantage: Fast encoding/queries, provably secure forever
+  Disadvantage: Cannot perfectly reconstruct G
+                But can compute similarity!</div>
+
+<p><strong>Similarity preservation:</strong></p>
+
+<div class="code-block">Critical property: Despite irreversibility, similarity is preserved
+
+For genomes G₁, G₂:
+  Distance in genome space: d(G₁, G₂) = Hamming distance
+
+  Distance in hypervector space: d(h₁, h₂) = -(h₁ · h₂)
+
+Johnson-Lindenstrauss Lemma guarantees:
+  d(h₁, h₂) ≈ d(G₁, G₂)  with high probability
+
+  For dimension 10,000, preserves distances within ~5% error
+
+Applications:
+  - Ancestry inference: Find similar genomes in database
+  - Disease risk: Compare to disease-associated profiles
+  - Drug response: Match to pharmacogenomic patterns
+
+  All without reconstructing actual genomes!
+
+This is impossible-to-replicate for computational security:
+  once broken, all genomic data exposed retroactively.
+
+With information-theoretic encoding: even if adversary
+  obtains h and Φ, cannot uniquely determine G.</div>
+
+<h2 id="computational-vs-information">5. Computational vs Information-Theoretic Security: Detailed Comparison</h2>
+
+<h3>5.1 Foundations and Assumptions</h3>
+
+<table class="comparison-table">
+  <thead>
+    <tr>
+      <th>Aspect</th>
+      <th>Computational Security</th>
+      <th>Information-Theoretic Security</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Security basis</strong></td>
+      <td>Hardness of mathematical problems (factoring, discrete log, lattice problems)</td>
+      <td>Mathematical impossibility from information theory</td>
+    </tr>
+    <tr>
+      <td><strong>Assumptions</strong></td>
+      <td>• P ≠ NP (or weaker variants)<br>• Specific problems are hard (unproven)<br>• Adversary is polynomially bounded<br>• No algorithmic breakthroughs</td>
+      <td>• None about computational power<br>• None about problem hardness<br>• None about future algorithms<br>• Only: laws of mathematics hold</td>
+    </tr>
+    <tr>
+      <td><strong>Proof technique</strong></td>
+      <td>Reduction to conjectured hard problem</td>
+      <td>Direct mathematical proof (entropy, mutual information)</td>
+    </tr>
+    <tr>
+      <td><strong>Security guarantee</strong></td>
+      <td>"Breaking this requires solving hard problem"</td>
+      <td>"Breaking this requires violating mathematics"</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>5.2 Attack Resistance</h3>
+
+<table class="comparison-table">
+  <thead>
+    <tr>
+      <th>Attack Type</th>
+      <th>Computational Security</th>
+      <th>Information-Theoretic Security</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Brute force</strong></td>
+      <td>Infeasible with current computers (if key is large enough)</td>
+      <td>Impossible: all keys equally likely</td>
+    </tr>
+    <tr>
+      <td><strong>Algorithmic advances</strong></td>
+      <td>May break security (e.g., Shor's algorithm for RSA)</td>
+      <td>No effect: not based on algorithm hardness</td>
+    </tr>
+    <tr>
+      <td><strong>Quantum computers</strong></td>
+      <td>Breaks RSA, ECC, many systems (Shor's algorithm). Weakens AES (Grover's: √N speedup)</td>
+      <td>No effect: security independent of computational model</td>
+    </tr>
+    <tr>
+      <td><strong>Side channels</strong></td>
+      <td>Can leak key bits (timing, power, EM)</td>
+      <td>Still vulnerable (implementation issue, not theoretical)</td>
+    </tr>
+    <tr>
+      <td><strong>Mathematical breakthrough</strong></td>
+      <td>Could break instantly (e.g., P=NP proof, efficient factoring)</td>
+      <td>Cannot break: relies on information theory axioms</td>
+    </tr>
+    <tr>
+      <td><strong>Infinite time</strong></td>
+      <td>Eventually broken</td>
+      <td>Remains secure</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>5.3 Practical Implications</h3>
 
 <table class="comparison-table">
   <thead>
@@ -369,262 +1072,733 @@ Perfect Secrecy Proof:
   </thead>
   <tbody>
     <tr>
-      <td><strong>Security Basis</strong></td>
-      <td>Hardness of computational problems (factoring, discrete log, etc.)</td>
-      <td>Mathematical impossibility / information theory</td>
+      <td><strong>Key size</strong></td>
+      <td>Small: 128-4096 bits</td>
+      <td>Large: ≥ message size (Shannon bound)</td>
     </tr>
     <tr>
-      <td><strong>Assumptions</strong></td>
-      <td>P ≠ NP, attacker computationally bounded, specific problems are hard</td>
-      <td>No assumptions about attacker's computational power</td>
+      <td><strong>Key reuse</strong></td>
+      <td>Usually safe (AES, RSA)</td>
+      <td>Catastrophic (OTP) or requires careful protocol (PIR)</td>
     </tr>
     <tr>
-      <td><strong>Key Size</strong></td>
-      <td>Small keys (128-4096 bits)</td>
-      <td>Key size ≥ message size (Shannon's theorem)</td>
+      <td><strong>Key distribution</strong></td>
+      <td>Once per keypair (public key) or session</td>
+      <td>For every message (OTP) or via QKD</td>
     </tr>
     <tr>
-      <td><strong>Quantum Resistance</strong></td>
-      <td>Vulnerable to quantum algorithms (Shor's, Grover's)</td>
-      <td>Inherently quantum-resistant</td>
+      <td><strong>Computational cost</strong></td>
+      <td>Moderate (RSA: slow; AES: fast)</td>
+      <td>Very fast (XOR for OTP) to expensive (PIR: O(n))</td>
     </tr>
     <tr>
-      <td><strong>Future-Proof</strong></td>
-      <td>May break with algorithmic advances</td>
-      <td>Provably secure forever</td>
+      <td><strong>Bandwidth</strong></td>
+      <td>Efficient (small ciphertexts)</td>
+      <td>Can be high (PIR, secret sharing)</td>
     </tr>
     <tr>
-      <td><strong>Efficiency</strong></td>
-      <td>Efficient encryption/decryption, key reuse possible</td>
-      <td>May require large keys, typically single-use</td>
-    </tr>
-    <tr>
-      <td><strong>Examples</strong></td>
-      <td>RSA, AES, elliptic curve cryptography</td>
-      <td>One-time pad, quantum key distribution, PIR, HDC genomics</td>
-    </tr>
-    <tr>
-      <td><strong>Security Duration</strong></td>
-      <td>Until broken by sufficient computational power</td>
-      <td>Mathematically permanent</td>
-    </tr>
-    <tr>
-      <td><strong>Proof Type</strong></td>
-      <td>Reduction to unproven conjectures</td>
-      <td>Direct mathematical proof</td>
+      <td><strong>Decryption with key</strong></td>
+      <td>Unique plaintext</td>
+      <td>Unique plaintext (OTP) or approximate (HDC)</td>
     </tr>
   </tbody>
 </table>
 
-<h3>4.1 When Each Is Appropriate</h3>
+<h3>5.4 Security Over Time</h3>
 
-<h4>Use Computational Security When:</h4>
+<div class="code-block">Computational Security Timeline:
+
+Year 0:   System deployed, considered secure
+Year 5:   Still secure (key size adequate)
+Year 10:  Computers 100x faster, still secure (barely)
+Year 15:  New algorithm discovered, security weakened
+Year 20:  Quantum computer prototype, some systems broken
+Year 25:  Large quantum computer, RSA/ECC completely broken
+Year 30:  Archived ciphertexts decrypted retroactively
+
+Information-Theoretic Security Timeline:
+
+Year 0:     System deployed, mathematically secure
+Year 5:     Still secure (mathematical proof unchanged)
+Year 10:    Still secure
+Year 15:    Still secure
+Year 20:    Still secure (quantum computers irrelevant)
+Year 100:   Still secure
+Year 1000:  Still secure
+Forever:    Secure (unless mathematics itself is wrong)</div>
+
+<h3>5.5 When Each Approach Is Appropriate</h3>
+
+<h4>Choose Computational Security When:</h4>
 <ul>
-  <li>Key distribution is difficult or expensive</li>
-  <li>Multiple messages need encryption with same key</li>
-  <li>Efficiency is critical (speed, bandwidth)</li>
-  <li>Security needs are time-bounded (e.g., 20-50 years sufficient)</li>
+  <li><strong>Short security horizon:</strong> Data needs protection for 10-50 years only</li>
+  <li><strong>Key distribution is expensive:</strong> Cannot securely share large keys</li>
+  <li><strong>Need key reuse:</strong> Same key must encrypt many messages (e.g., TLS sessions)</li>
+  <li><strong>Efficiency critical:</strong> Low latency, high throughput required</li>
+  <li><strong>Public key needed:</strong> Asymmetric encryption for key exchange</li>
+  <li><strong>Standard compliance:</strong> Regulations require specific algorithms (AES, RSA)</li>
 </ul>
 
-<h4>Use Information-Theoretic Security When:</h4>
+<h4>Choose Information-Theoretic Security When:</h4>
 <ul>
-  <li>Data must remain secure indefinitely (genomic data, medical records)</li>
-  <li>Quantum computing threats are concern</li>
-  <li>Adversary may have unbounded resources (nation-states, far future)</li>
-  <li>Catastrophic failure consequences (nuclear codes, state secrets)</li>
-  <li>Mathematical guarantee required (compliance, regulatory)</li>
+  <li><strong>Long-term secrecy essential:</strong> Data must remain secret for 50+ years, centuries, or forever (medical records, genomic data, state secrets)</li>
+  <li><strong>Quantum threat is real:</strong> Adversary may have quantum computers now or in future</li>
+  <li><strong>Unlimited adversary resources:</strong> Nation-state or far-future adversaries with unbounded computation</li>
+  <li><strong>Catastrophic failure consequences:</strong> Nuclear launch codes, espionage operations, critical infrastructure</li>
+  <li><strong>Mathematical guarantee required:</strong> Regulatory compliance, legal requirements for provable security</li>
+  <li><strong>Privacy regulations:</strong> HIPAA, GDPR require demonstrable anonymization</li>
+  <li><strong>Key distribution is feasible:</strong> QKD infrastructure available, or one-time key exchange possible</li>
 </ul>
 
-<h2 id="canonical-examples">5. Canonical Examples</h2>
+<h3>5.6 Quantum Resistance: The Critical Difference</h3>
 
-<h3>5.1 One-Time Pad</h3>
+<div class="code-block">Impact of Large-Scale Quantum Computer:
 
-<div class="code-block">Implementation:
-  M = "HELLO" = [7, 4, 11, 11, 14]  (A=0...Z=25)
-  K = [23, 15, 9, 2, 17]  (random)
-  C = (M + K) mod 26 = [4, 19, 20, 13, 5] = "ETUNE"
+RSA-2048:
+  Classical: 2^112 operations → infeasible
+  Quantum (Shor's): ~10^7 operations → trivial
+  Result: Completely broken
 
-Perfect Secrecy:
-  Every 5-letter message equally likely
-  given observation "ETUNE"
+AES-128:
+  Classical: 2^128 operations → infeasible
+  Quantum (Grover's): 2^64 operations → feasible
+  Result: Weakened (need AES-256)
 
-  "HELLO" → requires K=[23,15,9,2,17]  ✓
-  "WORLD" → requires K=[10,1,3,2,17]   ✓
-  "LATER" → requires K=[19,15,25,2,17] ✓
+One-Time Pad:
+  Classical: Cannot break (I(M;C) = 0)
+  Quantum: Still cannot break (information doesn't exist)
+  Result: Still secure
 
-  All keys equally probable → all messages equally probable</div>
+Hyperdimensional Genomic Encoding:
+  Classical: 2^(6 billion) preimages → impossible
+  Quantum: Still 2^(6 billion) preimages → impossible
+  Result: Still secure
 
-<p><strong>Historical Use:</strong> Moscow-Washington hotline (Cold War), high-value diplomatic communications.</p>
+Quantum Key Distribution (BB84):
+  Security based on: Quantum mechanics (no-cloning)
+  Not vulnerable to: Quantum computers (they obey same rules)
+  Result: Information-theoretically secure key distribution</div>
 
-<h3>5.2 Private Information Retrieval (PIR)</h3>
+<h3>5.7 Mathematical Comparison</h3>
 
-<p>Information-theoretic PIR allows querying a database without revealing which item was retrieved:</p>
+<div class="code-block">Security Definitions:
 
-<div class="code-block">Database: D = [d₀, d₁, d₂, d₃]
-Query: Retrieve dᵢ without revealing i
+Computational Security:
+  For all probabilistic polynomial-time adversaries A:
+    Pr[A breaks system] ≤ negl(λ)
 
-Information-theoretic PIR (multiple servers):
-  - Split database across n non-colluding servers
-  - Query designed such that each server sees
-    uniformly random access pattern
-  - Reconstruct answer without any server knowing i
+  Where λ is security parameter, negl(λ) is negligible function
+  (e.g., 2^(-λ))
 
-Security: I(i; Q₁, Q₂, ..., Qₙ₋₁) = 0
-  Even with n-1 servers colluding</div>
-
-<p><strong>Applications:</strong> Private genomic queries, medical record access, patent searches.</p>
-
-<h3>5.3 Secret Sharing (Shamir, 1979)</h3>
-
-<div class="code-block">Shamir's (k,n) Threshold Scheme:
-  Secret s split into n shares
-  Any k shares can reconstruct s
-  Any k-1 shares reveal I(s; shares) = 0
-
-Construction (information-theoretic):
-  - Choose random polynomial p(x) of degree k-1
-    where p(0) = s
-  - Share i: (i, p(i))
-
-  k shares → reconstruct polynomial → recover s
-  k-1 shares → infinitely many possible polynomials
-               → s can be any value</div>
-
-<h3>5.4 Quantum Key Distribution (BB84)</h3>
-
-<div class="code-block">BB84 Protocol (Bennett & Brassard, 1984):
-  Security based on:
-    - No-cloning theorem (quantum mechanics)
-    - Measurement disturbs quantum states
-
-  Information-theoretic guarantee:
-    Eavesdropping detectably alters quantum states
-    Proven secure against any attack allowed by
-    quantum mechanics (no computational assumptions)</div>
-
-<h2 id="genomic-applications">6. Genomic Applications</h2>
-
-<h3>6.1 Hyperdimensional Genomic Encoding</h3>
-
-<p>Hyperdimensional computing provides information-theoretic privacy for genomic data through dimensionality reduction with irreversible many-to-one mapping:</p>
-
-<div class="code-block">Genomic Encoding:
-  Original genome: G ∈ {A,C,G,T}^(4×10⁹)
-  Hypervector: h ∈ {-1,+1}^10,000
-
-  Compression ratio: 800,000×
+  Assumes: A is polynomially bounded
 
 Information-Theoretic Security:
-  Number of genomes mapping to h:
-    |G| / |H| = 2^(8×10⁹) / 2^10,000 = 2^(7,999,990,000)
+  For all adversaries A (even unbounded):
+    I(M; C) = 0
 
-  ≈ 2^800,000 possible original genomes per hypervector</div>
+  Or equivalently:
+    H(M|C) = H(M)
 
-<h3>6.2 Mathematical Irreversibility</h3>
+  Assumes: Nothing about A's computational power
 
-<div class="code-block">Why reconstruction is impossible:
+Key difference:
+  Computational: ∀A ∈ PPT, Pr[break] ≈ 0
+  Information-theoretic: ∀A, I(secret; observation) = 0
 
-1. Information Loss (Shannon):
-   H(G) ≈ 8×10⁹ bits (genome entropy)
-   H(h) = 10,000 bits (hypervector)
+"Approximately 0" vs "Exactly 0"
+"Hard to compute" vs "Impossible to determine"</div>
 
-   Lost information: 8×10⁹ - 10⁴ = 7,999,990,000 bits
+<h2 id="limitations">6. Limitations and the Key Distribution Problem</h2>
 
-2. Many-to-One Mapping:
-   Multiple genomes → same hypervector
-   Without encoding matrix: cannot distinguish
+<h3>6.1 Shannon's Key Size Lower Bound</h3>
 
-3. Preimage Space:
-   For observed h, search space of possible G:
-     |Preimage(h)| ≈ 2^(8×10⁹) / 2^10,000
+<p>The most significant limitation of information-theoretic security:</p>
 
-   Even at 1 exaFLOP (10^18 ops/sec):
-     Time to enumerate: 2^800,000 / 10^18 seconds
-                      ≈ 10^240,000 years
-     (Universe age: 10^10 years)</div>
+<div class="highlight-box">
+<strong>Fundamental Limitation:</strong> Perfect secrecy requires key size at least as large as message size.
 
-<h3>6.3 Similarity-Preserving Privacy</h3>
+For one-time pad: |K| ≥ |M|
 
-<p>Critical property for genomic applications: can compare similarity without reconstruction:</p>
+This is not an engineering limitation—it's a mathematical impossibility to achieve perfect secrecy with smaller keys (Shannon, 1949).
+</div>
 
-<div class="code-block">Genomic Distance Queries:
-  Given: h₁ (patient), h₂ (database entry)
-  Compute: sim(h₁, h₂) = h₁ · h₂
+<p><strong>Implications:</strong></p>
 
-  Result: Approximate genomic similarity
-  Privacy: Neither genome reconstructed
+<div class="code-block">To encrypt n bits with perfect secrecy:
+  Need: n-bit key (minimum)
+  Must: Use each key only once
 
-  Applications:
-    - Disease risk prediction
-    - Ancestry analysis
-    - Drug response matching
-    - Rare variant discovery
+For large data volumes:
 
-All without exposing raw genetic information</div>
+1 GB message → 1 GB key required
+1 TB database → 1 TB key distribution needed
 
-<h3>6.4 Practical Genomic PIR</h3>
+Contrast with AES-256:
+  Any size message → 256-bit key
+  Key reusable for multiple messages (with proper mode)</div>
 
-<div class="code-block">Hypervector-Based Genomic Database Query:
+<h3>6.2 The Key Distribution Problem</h3>
 
-1. Database: {h₁, h₂, ..., hₙ} (hypervectors of genomes)
-2. Query: Patient hypervector h_query
-3. Compute: similarities sim(h_query, hᵢ) for all i
-4. Return: Top-k similar entries (disease risks, etc.)
+<p>How do Alice and Bob share the key securely?</p>
 
-Information-Theoretic Properties:
-  - Database cannot reconstruct patient genome from h_query
-  - Patient cannot reconstruct database genomes from hᵢ
-  - Similarities accurate for clinical use
-  - Security holds even with full database access
+<div class="code-block">The Paradox:
 
-Threat Model:
-  ✓ Honest-but-curious database
-  ✓ Compromised database
-  ✓ Quantum adversary
-  ✓ Far-future cryptanalysis</div>
+To use one-time pad:
+  - Alice and Bob need shared secret key
+  - Key must be as long as all messages they'll ever send
+  - Key must be transmitted securely
 
-<h3>6.5 Comparison: Computational vs Information-Theoretic Genomic Security</h3>
+But if they can transmit key securely:
+  - Why not just transmit the message using that secure channel?
 
-<div class="code-block">Homomorphic Encryption (Computational):
-  Genome → Encrypt with HE → Ciphertext
-  Security: Based on RLWE hardness assumption
-  Key size: 10-100 MB
-  Query time: Minutes to hours
-  Quantum-resistant: Only if lattice assumption holds
-  Future-proof: May break with algorithm advances
+Classic approaches:
 
-Hyperdimensional Encoding (Information-Theoretic):
-  Genome → Encode to hypervector → h
-  Security: 2^800,000 possible preimages
-  Key size: None (random projection is key, need not store)
-  Query time: Milliseconds
-  Quantum-resistant: Mathematical impossibility to reverse
-  Future-proof: Provably secure indefinitely</div>
+1. Physical Courier:
+   - Trusted courier carries key on physical media
+   - Expensive, slow, limited to special cases
+   - Used for: Nuclear launch codes, diplomatic communications
 
-<h3>6.6 Regulatory and Ethical Implications</h3>
+2. Secure Meeting:
+   - Alice and Bob meet in person, exchange keys
+   - Not scalable for internet-scale communication
 
-<p>Information-theoretic security for genomics has profound implications:</p>
+3. Pre-shared Keys:
+   - Generate large pool of random keys in advance
+   - Store securely (e.g., hardware security module)
+   - Use incrementally for future messages
+   - Problem: Eventually run out, need new distribution
 
+4. Quantum Key Distribution:
+   - Use QKD (BB84) to generate shared random keys
+   - Information-theoretically secure key distribution
+   - Requires: Quantum communication channel + classical authenticated channel
+   - Limitation: Short distances (~100 km fiber), specialized hardware</div>
+
+<h3>6.3 Key Reuse Catastrophe</h3>
+
+<p>Reusing keys destroys security entirely:</p>
+
+<div class="code-block">Reused OTP Attack:
+
+C₁ = M₁ ⊕ K
+C₂ = M₂ ⊕ K
+
+Attacker computes:
+  C₁ ⊕ C₂ = M₁ ⊕ M₂
+
+If messages have structure (e.g., English text):
+
+Statistical attack:
+  - Most common byte in English: 0x20 (space)
+  - XOR of two spaces: 0x00
+  - XOR of space and letter: letter XOR 0x20
+
+Frequent 0x00 in C₁ ⊕ C₂ → both messages likely have space there
+
+Build up plaintext incrementally using:
+  - Letter frequency analysis
+  - Common word patterns
+  - Language models
+
+Real example: VENONA
+  - Soviet spy messages (1940s)
+  - Some OTP keys reused
+  - NSA/GCHQ broke messages years later
+  - Revealed atomic espionage</div>
+
+<h3>6.4 Efficiency Trade-offs</h3>
+
+<table class="comparison-table">
+  <thead>
+    <tr>
+      <th>System</th>
+      <th>Bandwidth Overhead</th>
+      <th>Computational Cost</th>
+      <th>Key Material</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>One-Time Pad</td>
+      <td>None (|C| = |M|)</td>
+      <td>Minimal (XOR)</td>
+      <td>|K| = |M|</td>
+    </tr>
+    <tr>
+      <td>Information-Theoretic PIR</td>
+      <td>O(n) communication for 1 item from n items</td>
+      <td>O(n) XOR operations</td>
+      <td>Random query bits</td>
+    </tr>
+    <tr>
+      <td>Shamir Secret Sharing (k,n)</td>
+      <td>n shares, each size |s|</td>
+      <td>Polynomial interpolation O(k²)</td>
+      <td>Random polynomial coefficients</td>
+    </tr>
+    <tr>
+      <td>QKD (BB84)</td>
+      <td>~4× for key generation</td>
+      <td>Quantum state preparation/measurement</td>
+      <td>Generated, not pre-shared</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Compare to computational security:</p>
+
+<div class="code-block">AES-256:
+  Bandwidth: |C| ≈ |M| (minimal overhead)
+  Computation: ~10-20 CPU cycles per byte (modern hardware)
+  Key material: 256 bits total, reusable
+
+RSA-2048:
+  Bandwidth: |C| = 256 bytes (regardless of |M| ≤ 245 bytes)
+  Computation: ~1000× slower than AES
+  Key material: 2048-bit private key, reusable forever
+
+Information-theoretic security trades:
+  Efficiency (key size, sometimes bandwidth)
+  For: Unconditional, everlasting security</div>
+
+<h3>6.5 Limitations Specific to Different Systems</h3>
+
+<h4>One-Time Pad:</h4>
 <ul>
-  <li><strong>HIPAA Compliance:</strong> Mathematical proof of de-identification</li>
-  <li><strong>GDPR Right to Erasure:</strong> Cannot reconstruct → inherently anonymized</li>
-  <li><strong>Genetic Discrimination:</strong> Insurance/employers cannot extract genetic information</li>
-  <li><strong>Long-term Privacy:</strong> Genome remains private for patient's lifetime + descendants</li>
-  <li><strong>Research Ethics:</strong> Use genomic data for research without informed consent concerns about future re-identification</li>
+  <li>Key distribution problem (need secure channel for key of size |M|)</li>
+  <li>Key storage problem (keys as large as all messages)</li>
+  <li>Synchronization problem (must track which key used for which message)</li>
+  <li>Key reuse catastrophic (perfect→zero security instantly)</li>
 </ul>
+
+<h4>Information-Theoretic PIR:</h4>
+<ul>
+  <li>Requires multiple non-colluding servers (trust assumption)</li>
+  <li>Communication cost O(n) for database of size n</li>
+  <li>Computational cost O(n) per query (vs O(log n) for computational PIR)</li>
+  <li>Not practical for very large databases (terabyte-scale)</li>
+</ul>
+
+<h4>Quantum Key Distribution:</h4>
+<ul>
+  <li>Distance limited (~100 km in fiber, ~1000 km satellite)</li>
+  <li>Requires quantum channel + authenticated classical channel</li>
+  <li>Key generation rate limited (kbps to Mbps, not Gbps)</li>
+  <li>Expensive specialized hardware (single-photon detectors, etc.)</li>
+  <li>Vulnerable to denial-of-service (cannot prevent eavesdropping, only detect it)</li>
+</ul>
+
+<h4>Hyperdimensional Genomic Encoding:</h4>
+<ul>
+  <li>Not fully reversible (cannot perfectly reconstruct original genome)</li>
+  <li>Approximate similarity preservation (typically 90-95% accuracy)</li>
+  <li>Encoding matrix Φ must be kept secret or information leakage occurs</li>
+  <li>If adversary obtains Φ + side information, some reconstruction possible</li>
+</ul>
+
+<h3>6.6 The Authentication Problem</h3>
+
+<p>Information-theoretic encryption does not provide authentication:</p>
+
+<div class="code-block">One-Time Pad Malleability:
+
+Original: M
+Key: K
+Ciphertext: C = M ⊕ K
+
+Attacker (without knowing M or K) can:
+  1. Flip any bit in C
+  2. XOR arbitrary pattern with C
+
+Example:
+  If attacker knows M starts with "TRANSFER $100"
+  Can change to "TRANSFER $999" by XORing specific bits
+
+  Recipient decrypts to "TRANSFER $999"
+  No way to detect modification!
+
+Solution: Information-theoretic authentication
+  - Wegman-Carter MAC
+  - Uses universal hash functions
+  - Also requires key material (though smaller)
+  - Adds complexity and key distribution needs</div>
+
+<h3>6.7 Practical Barriers to Adoption</h3>
+
+<div class="code-block">Why isn't everything information-theoretically secure?
+
+1. Key Distribution Barrier:
+   - Internet-scale communication
+   - Billions of parties
+   - Cannot physically distribute |M| bits of key per message
+
+2. Efficiency Requirements:
+   - Real-time video: Gbps throughput
+   - OTP key generation/distribution cannot keep up
+   - AES-GCM: hardware-accelerated, 10+ Gbps
+
+3. Infrastructure:
+   - Existing systems built on computational crypto
+   - Hardware acceleration for AES, RSA
+   - No large-scale QKD networks (yet)
+
+4. Cost:
+   - QKD hardware: $100,000+ per endpoint
+   - AES hardware: <$1 per device
+   - Economic incentives favor computational security
+
+5. "Good Enough" Mentality:
+   - AES-256: secure until ~2050 (conservative estimate)
+   - Many applications don't need century-scale security
+   - Cost-benefit analysis favors computational approach
+
+Where IT security is used:
+  - Nuclear weapons control
+  - Highest-level diplomatic communications
+  - Long-term genomic databases
+  - Quantum-safe government communications
+  - High-value low-bandwidth applications</div>
+
+<h2 id="applications">7. Applications: High-Security Systems and Quantum-Safe Protocols</h2>
+
+<h3>7.1 Government and Military Communications</h3>
+
+<div class="code-block">Moscow-Washington Hotline (Cold War):
+  - One-time pad encrypted communications
+  - Physical courier delivery of key tapes
+  - Used for critical nuclear de-escalation
+  - Information-theoretic security required:
+    Stakes too high for computational assumptions
+
+Modern applications:
+  - Nuclear command and control
+  - Strategic military communications
+  - Intelligence agency top-secret traffic
+  - Diplomatic back-channels
+
+Requirements met:
+  - Low bandwidth (text messages, not video)
+  - High stakes (national security)
+  - Key distribution feasible (physical security infrastructure)
+  - Long-term secrecy essential (decades)</div>
+
+<h3>7.2 Genomic Privacy and Medical Records</h3>
+
+<p>Information-theoretic security for genomic data addresses unique privacy challenges:</p>
+
+<div class="code-block">Why genomic data needs information-theoretic security:
+
+1. Permanent and unchangeable:
+   - Cannot change your genome if compromised
+   - Affects you + blood relatives
+   - Privacy breach is forever
+
+2. Long time horizon:
+   - Medical records kept 50+ years
+   - Genomic data relevant for lifetime + descendants
+   - Computational crypto may break in 20 years
+
+3. Increasing value over time:
+   - As genomic medicine advances, data becomes MORE valuable
+   - Future applications unknown today
+   - Cannot predict what adversaries will want to learn
+
+4. Regulatory requirements:
+   - HIPAA: de-identification requirements
+   - GDPR: right to erasure, purpose limitation
+   - Information-theoretic security provides mathematical proof
+
+Hyperdimensional genomic encoding:
+  - Genome → 10,000-dimensional hypervector
+  - 2^(6 billion) possible original genomes
+  - Can compute similarity without reconstruction
+  - Provably secure against future quantum attacks
+  - Meets regulatory anonymization standards</div>
+
+<h3>7.3 Quantum Key Distribution Networks</h3>
+
+<p>Emerging infrastructure for information-theoretically secure key distribution:</p>
+
+<div class="code-block">Deployed QKD Networks:
+
+1. China:
+   - Beijing-Shanghai QKD backbone (2,000+ km)
+   - Micius satellite for long-distance QKD
+   - Government and financial sector use
+
+2. Europe:
+   - OpenQKD project (EU)
+   - Cross-border QKD links
+   - Testbed for future quantum internet
+
+3. United States:
+   - DARPA quantum network (Boston area, 2000s)
+   - Los Alamos National Lab quantum network
+   - Private sector pilots (e.g., Battelle Memorial Institute)
+
+Use cases:
+  - Secure government communications
+  - Financial transaction security
+  - Critical infrastructure protection
+  - Data center interconnects
+
+Approach:
+  QKD generates shared random keys
+    → Use keys for one-time pad or seed for symmetric crypto
+    → Information-theoretic security for key distribution
+    → Then either perfect (OTP) or computational (AES) security for data</div>
+
+<h3>7.4 High-Security Financial Systems</h3>
+
+<div class="code-block">Private Information Retrieval for Finance:
+
+Stock Trading:
+  - Query stock prices without revealing trading strategy
+  - Information-theoretic PIR hides which stocks queried
+  - Prevents front-running by database
+
+Credit Checks:
+  - Query credit database without revealing loan applicant
+  - Database learns nothing about who was checked
+  - Privacy for applicants, security for lender
+
+Regulatory Compliance Queries:
+  - Banks query regulatory databases (sanctions, watchlists)
+  - Regulator database doesn't learn which entities checked
+  - Information-theoretic privacy for investigations</div>
+
+<h3>7.5 Post-Quantum Cryptography Transition</h3>
+
+<p>Information-theoretic security as the ultimate post-quantum solution:</p>
+
+<div class="code-block">Post-Quantum Crypto Approaches:
+
+Lattice-Based (NIST standards):
+  - CRYSTALS-Kyber (key exchange)
+  - CRYSTALS-Dilithium (signatures)
+  - Security: Computational (lattice problem hardness)
+  - Quantum-resistant: Probably (no known quantum attack)
+  - Future-proof: Unknown (assumptions may break)
+
+Information-Theoretic (QKD + OTP/Symmetric):
+  - QKD for key distribution
+  - OTP or AES-256 for encryption
+  - Security: Mathematical impossibility (QKD) + computational (AES)
+  - Quantum-resistant: Provably (physics-based)
+  - Future-proof: Yes (if QKD channel not compromised)
+
+Hybrid Approach (recommended):
+  1. Use lattice-based crypto for initial key exchange
+  2. Simultaneously establish QKD channel (where available)
+  3. Combine keys: K_final = K_lattice ⊕ K_QKD
+  4. Security if either system is secure
+
+Advantage: Defense in depth
+  - If lattice assumption breaks → QKD protects
+  - If QKD implementation flawed → Lattice protects
+  - Best of both worlds</div>
+
+<h3>7.6 Private Database Queries</h3>
+
+<div class="code-block">Genomic Database Query (Information-Theoretic):
+
+Scenario:
+  - Patient has rare genetic variant
+  - Query research database for similar cases
+  - Don't reveal patient genome to database
+  - Don't learn other patients' genomes
+
+Protocol:
+  1. Patient genome → hypervector h_patient
+  2. Database contains {h₁, h₂, ..., h_n}
+  3. Use PIR to privately retrieve similar hypervectors
+  4. Compute similarity locally: h_patient · h_i
+  5. Return top-k similar cases (disease risks, etc.)
+
+Information-theoretic security:
+  - Database learns I(patient genome; query) = 0
+  - Patient learns only allowed similar cases
+  - Even quantum adversary compromising database learns nothing
+  - Genomic privacy preserved forever
+
+Medical applications:
+  - Rare disease diagnosis
+  - Drug-drug interaction queries
+  - Pharmacogenomic matching
+  - Clinical trial recruitment</div>
+
+<h3>7.7 Secure Multi-Party Computation with IT Security</h3>
+
+<div class="code-block">Information-Theoretic Secret Sharing Applications:
+
+Distributed Key Management:
+  - Split master key among n trustees
+  - Require k trustees to reconstruct
+  - Any k-1 trustees learn I(key; shares) = 0
+
+  Use case: Cryptocurrency cold storage
+    - 5 trustees, need 3 to access funds
+    - Even 2 colluding trustees cannot steal
+
+Secure Voting:
+  - Split each vote among multiple servers
+  - Tally computed via MPC
+  - No single server learns individual votes
+
+  Information-theoretic privacy:
+    - t-1 servers colluding learn nothing
+    - Can withstand future cryptanalysis of ballots
+
+Threshold Cryptography:
+  - Distributed signature generation
+  - n parties, need k to sign
+  - k-1 parties have zero information about key
+
+  Application: Root CA key management
+    - Key never exists in single location
+    - Compromising k-1 parties reveals nothing</div>
+
+<h3>7.8 Long-Term Archival and Digital Preservation</h3>
+
+<div class="code-block">Century-Scale Data Protection:
+
+Challenge: Preserve confidentiality for 100+ years
+  - Computational crypto will break
+  - AES-256: secure until ~2050-2070
+  - RSA: already broken by quantum computers (future)
+  - What about data from 2025 that must stay secret until 2125?
+
+Information-Theoretic Solution:
+
+1. Genomic Repositories:
+   - Encode genomes as hypervectors
+   - Store encoding, not raw data
+   - Privacy: 2^(6 billion) preimages
+   - Secure for centuries (information never existed)
+
+2. Historical Records (declassification):
+   - Encrypt with OTP
+   - Store key in secure facility (e.g., Swiss vault)
+   - Release key after 50/100 years
+   - Before key release: provably impossible to decrypt
+
+3. Time-Lock Puzzles (computational analog):
+   - Not information-theoretically secure
+   - But: Can tune difficulty for specific time period
+   - Combine with Shamir sharing: puzzle + 3-of-5 key split
+   - Security from both computational and IT components
+
+Legal and Archival Use:
+  - State secrets (declassify after 50 years)
+  - Corporate records (competitive info ages out)
+  - Medical records (privacy after patient death + X years)
+  - Historical preservation (privacy until all involved deceased)</div>
+
+<h3>7.9 Critical Infrastructure Protection</h3>
+
+<div class="code-block">SCADA and Industrial Control Systems:
+
+Threat model:
+  - Nation-state adversaries
+  - Potential quantum capabilities
+  - Long-term persistent access
+  - Catastrophic consequences (power grid, water, etc.)
+
+Information-theoretic approach:
+
+Command Authentication:
+  - One-time authentication codes (Wegman-Carter MAC)
+  - Each command authenticated with unique key material
+  - Keys pre-distributed or via QKD
+  - Cannot forge commands even with unlimited computation
+
+Sensor Data Integrity:
+  - Critical sensor readings authenticated
+  - Information-theoretic MAC prevents spoofing
+  - Attacker cannot create valid fake sensor data
+
+Communication Security:
+  - Critical control channels: OTP encryption
+  - QKD for key distribution (where fiber available)
+  - Backup: Physical key distribution to remote sites
+
+Advantage over computational:
+  - No risk of future decryption of logged commands
+  - Quantum-resistant by design
+  - High assurance for critical systems</div>
+
+<h3>7.10 Practical Deployment Considerations</h3>
+
+<div class="code-block">Hybrid Architectures for Real-World Deployment:
+
+Tier 1: Maximum Security (Information-Theoretic)
+  - Nuclear command and control
+  - Top-secret intelligence
+  - Genomic databases
+  - Method: QKD + OTP
+
+Tier 2: High Security (IT + Computational)
+  - Financial transactions
+  - Medical records
+  - Government communications
+  - Method: QKD + AES-256 (key from QKD)
+
+Tier 3: Standard Security (Post-Quantum Computational)
+  - Consumer communications
+  - Web traffic
+  - Enterprise VPNs
+  - Method: Lattice-based crypto (NIST standards)
+
+Progressive adoption:
+  1. Deploy QKD in metro areas first (easier distances)
+  2. Use for critical infrastructure interconnects
+  3. Expand to long-haul with trusted repeater nodes
+  4. Eventually: Quantum repeaters for true long-distance
+  5. Meanwhile: Physical key transport for highest security
+
+Cost-benefit analysis:
+  QKD Endpoint: ~$100k
+  Fiber infrastructure: Existing (if available)
+  Suitable for: Low-moderate bandwidth, high-value
+
+  Not suitable for: Consumer internet, streaming video, IoT
+
+Target: 1-10% of communications using IT security by 2030
+  Where: Government, finance, healthcare, critical infrastructure
+  Impact: Quantum-safe foundation for society's most critical data</div>
 
 <div class="references">
   <h2 id="references">References</h2>
   <ol>
-    <li><strong>Shannon, C. E.</strong> (1948). A Mathematical Theory of Communication. <em>Bell System Technical Journal</em>, 27(3), 379-423.</li>
-    <li><strong>Shannon, C. E.</strong> (1949). Communication Theory of Secrecy Systems. <em>Bell System Technical Journal</em>, 28(4), 656-715.</li>
-    <li><strong>Vernam, G. S.</strong> (1926). Cipher Printing Telegraph Systems. <em>Journal of the AIEE</em>, 45, 109-115.</li>
-    <li><strong>Shamir, A.</strong> (1979). How to Share a Secret. <em>Communications of the ACM</em>, 22(11), 612-613.</li>
-    <li><strong>Bennett, C. H., & Brassard, G.</strong> (1984). Quantum Cryptography: Public Key Distribution and Coin Tossing. <em>Proceedings of IEEE International Conference on Computers, Systems and Signal Processing</em>, 175-179.</li>
-    <li><strong>Chor, B., et al.</strong> (1995). Private Information Retrieval. <em>Proceedings of the 36th Annual Symposium on Foundations of Computer Science</em>, 41-50.</li>
-    <li><strong>Kanerva, P.</strong> (2009). Hyperdimensional Computing: An Introduction to Computing in Distributed Representation with High-Dimensional Random Vectors. <em>Cognitive Computation</em>, 1(2), 139-159.</li>
-    <li><strong>Cover, T. M., & Thomas, J. A.</strong> (2006). <em>Elements of Information Theory</em> (2nd ed.). Wiley-Interscience.</li>
-    <li><strong>Holevo, A. S.</strong> (1973). Bounds for the Quantity of Information Transmitted by a Quantum Communication Channel. <em>Problems of Information Transmission</em>, 9(3), 177-183.</li>
+    <li><strong>Shannon, C. E.</strong> (1948). A Mathematical Theory of Communication. <em>Bell System Technical Journal</em>, 27(3), 379-423. [Foundational paper introducing entropy, mutual information, and information theory]</li>
+
+    <li><strong>Shannon, C. E.</strong> (1949). Communication Theory of Secrecy Systems. <em>Bell System Technical Journal</em>, 28(4), 656-715. [Defines perfect secrecy, proves OTP security, establishes key size lower bound]</li>
+
+    <li><strong>Vernam, G. S.</strong> (1926). Cipher Printing Telegraph Systems For Secret Wire and Radio Telegraphic Communications. <em>Journal of the AIEE</em>, 45, 109-115. [Original one-time pad invention]</li>
+
+    <li><strong>Shamir, A.</strong> (1979). How to Share a Secret. <em>Communications of the ACM</em>, 22(11), 612-613. [Information-theoretically secure secret sharing scheme]</li>
+
+    <li><strong>Bennett, C. H., & Brassard, G.</strong> (1984). Quantum Cryptography: Public Key Distribution and Coin Tossing. <em>Proceedings of IEEE International Conference on Computers, Systems and Signal Processing</em>, 175-179. [BB84 quantum key distribution protocol]</li>
+
+    <li><strong>Chor, B., Goldreich, O., Kushilevitz, E., & Sudan, M.</strong> (1995). Private Information Retrieval. <em>Proceedings of the 36th Annual Symposium on Foundations of Computer Science</em>, 41-50. [Information-theoretic PIR with multiple servers]</li>
+
+    <li><strong>Holevo, A. S.</strong> (1973). Bounds for the Quantity of Information Transmitted by a Quantum Communication Channel. <em>Problems of Information Transmission</em>, 9(3), 177-183. [Holevo bound on quantum information extraction]</li>
+
+    <li><strong>Cover, T. M., & Thomas, J. A.</strong> (2006). <em>Elements of Information Theory</em> (2nd ed.). Wiley-Interscience. [Comprehensive textbook on information theory]</li>
+
+    <li><strong>Kanerva, P.</strong> (2009). Hyperdimensional Computing: An Introduction to Computing in Distributed Representation with High-Dimensional Random Vectors. <em>Cognitive Computation</em>, 1(2), 139-159. [Hyperdimensional computing foundations]</li>
+
+    <li><strong>Wegman, M. N., & Carter, J. L.</strong> (1981). New Hash Functions and Their Use in Authentication and Set Equality. <em>Journal of Computer and System Sciences</em>, 22(3), 265-279. [Information-theoretic message authentication]</li>
+
+    <li><strong>Renner, R.</strong> (2005). Security of Quantum Key Distribution. <em>PhD thesis, ETH Zurich</em>. [Rigorous security proofs for QKD using information theory]</li>
+
+    <li><strong>Maurer, U.</strong> (1993). Secret Key Agreement by Public Discussion from Common Information. <em>IEEE Transactions on Information Theory</em>, 39(3), 733-742. [Information-theoretic key agreement]</li>
+
+    <li><strong>Johnson, W. B., & Lindenstrauss, J.</strong> (1984). Extensions of Lipschitz Mappings into a Hilbert Space. <em>Contemporary Mathematics</em>, 26, 189-206. [JL lemma for dimension reduction with distance preservation]</li>
+
+    <li><strong>Goldwasser, S., & Micali, S.</strong> (1984). Probabilistic Encryption. <em>Journal of Computer and System Sciences</em>, 28(2), 270-299. [Defines semantic security (computational), contrasts with perfect secrecy]</li>
+
+    <li><strong>Shor, P. W.</strong> (1997). Polynomial-Time Algorithms for Prime Factorization and Discrete Logarithms on a Quantum Computer. <em>SIAM Journal on Computing</em>, 26(5), 1484-1509. [Quantum algorithms breaking computational crypto]</li>
   </ol>
 </div>
 
