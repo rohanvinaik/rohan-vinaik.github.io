@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Consensus Protocols for Probabilistic Systems | Rohan Vinaik</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --text: #e0e0e0;
+      --text-secondary: #a0a0a0;
+      --accent: #00ff00;
+      --border: #333;
+      --code-bg: #1a1a1a;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'JetBrains Mono', monospace;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 20px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    h1 {
+      color: var(--accent);
+      font-size: 1.5rem;
+      margin-bottom: 8px;
+      letter-spacing: 0.02em;
+    }
+    h2 {
+      color: var(--accent);
+      font-size: 1.1rem;
+      margin-top: 32px;
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    h3 {
+      color: var(--accent);
+      font-size: 0.95rem;
+      margin-top: 24px;
+      margin-bottom: 12px;
+    }
+    h4 {
+      color: var(--text);
+      font-size: 0.85rem;
+      margin-top: 20px;
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+    p { margin-bottom: 16px; font-size: 0.85rem; }
+    ul, ol {
+      margin-bottom: 16px;
+      margin-left: 24px;
+      font-size: 0.85rem;
+    }
+    li { margin-bottom: 8px; }
+    a {
+      color: var(--accent);
+      text-decoration: none;
+      border-bottom: 1px dotted var(--accent);
+    }
+    a:hover { border-bottom-style: solid; }
+    .back-link {
+      display: inline-block;
+      margin-bottom: 24px;
+      font-size: 0.85rem;
+    }
+    .paper-meta {
+      color: var(--text-secondary);
+      font-size: 0.75rem;
+      margin-bottom: 24px;
+    }
+    .abstract {
+      background: var(--code-bg);
+      padding: 20px;
+      border-left: 3px solid var(--accent);
+      margin-bottom: 32px;
+      font-size: 0.85rem;
+    }
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 32px;
+    }
+    .tag {
+      background: var(--code-bg);
+      padding: 4px 12px;
+      border: 1px solid var(--border);
+      font-size: 0.7rem;
+      color: var(--accent);
+      text-decoration: none;
+      border-bottom: none;
+    }
+    .tag:hover {
+      background: var(--accent);
+      color: var(--bg);
+      border-color: var(--accent);
+    }
+    .quick-nav {
+      background: var(--code-bg);
+      padding: 16px;
+      margin-bottom: 32px;
+      border: 1px solid var(--border);
+    }
+    .quick-nav h3 {
+      margin-top: 0;
+      font-size: 0.85rem;
+    }
+    .quick-nav ul {
+      list-style: none;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 8px;
+      margin-top: 12px;
+      margin-left: 0;
+    }
+    .quick-nav a {
+      font-size: 0.75rem;
+      border-bottom: none;
+      padding: 4px 0;
+      display: block;
+    }
+    .quick-nav a:hover { color: var(--bg); background: var(--accent); padding-left: 8px; }
+    .code-block {
+      background: var(--code-bg);
+      padding: 16px;
+      border: 1px solid var(--border);
+      margin: 16px 0;
+      font-size: 0.75rem;
+      overflow-x: auto;
+      white-space: pre;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .references {
+      font-size: 0.75rem;
+      margin-top: 32px;
+    }
+    .references ol {
+      padding-left: 20px;
+    }
+    .references li {
+      margin-bottom: 12px;
+      line-height: 1.5;
+    }
+    @media (max-width: 768px) {
+      body { padding: 12px; }
+      h1 { font-size: 1.2rem; }
+      h2 { font-size: 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<a href="../index.html#reference" class="back-link">← Back to Reference</a>
+
+<h1>Consensus Protocols for Probabilistic Systems</h1>
+<div class="paper-meta">January 2025 · Technical Reference · Version 1.0</div>
+
+<div class="tags">
+  <a href="../index.html?filter=CONSENSUS" class="tag">[CONSENSUS]</a>
+  <a href="../index.html?filter=PROBABILISTIC-SYSTEMS" class="tag">[PROBABILISTIC-SYSTEMS]</a>
+  <a href="../index.html?filter=DISTRIBUTED-COMPUTING" class="tag">[DISTRIBUTED-COMPUTING]</a>
+  <a href="../index.html?filter=MAJORITY-VOTING" class="tag">[MAJORITY-VOTING]</a>
+  <a href="../index.html?filter=ERROR-PROPAGATION" class="tag">[ERROR-PROPAGATION]</a>
+  <a href="../index.html?filter=PRIVACY-PRESERVING-ML" class="tag">[PRIVACY-PRESERVING-ML]</a>
+  <a href="../index.html?filter=SECURE-MPC" class="tag">[SECURE-MPC]</a>
+  <a href="../index.html?filter=STATISTICAL-INFERENCE" class="tag">[STATISTICAL-INFERENCE]</a>
+  <a href="../index.html?filter=CONFIDENCE-SEQUENCES" class="tag">[CONFIDENCE-SEQUENCES]</a>
+  <a href="../index.html?filter=OPTIMIZATION" class="tag">[OPTIMIZATION]</a>
+</div>
+
+<div class="abstract">
+  <strong>Abstract:</strong> Consensus protocols for probabilistic systems provide a general framework for converting intentional uncertainty into tunable precision guarantees. By running multiple independent trials and aggregating results through majority voting or statistical inference, these protocols achieve deterministic-like behavior while maintaining computational efficiency. This document covers mathematical foundations of majority voting theory, error propagation analysis, confidence interval construction, parameter tuning strategies, and optimization techniques for applications including privacy-preserving machine learning, secure multi-party computation, distributed sensor networks, and genomic analysis.
+</div>
+
+<div class="quick-nav">
+  <h3>Quick Navigation</h3>
+  <ul>
+    <li><a href="#framework-overview">1. Framework Overview</a></li>
+    <li><a href="#mathematical-foundations">2. Mathematical Foundations</a></li>
+    <li><a href="#parameter-tuning">3. Parameter Tuning</a></li>
+    <li><a href="#applications">4. Applications</a></li>
+    <li><a href="#optimization-strategies">5. Optimization Strategies</a></li>
+    <li><a href="#references">References</a></li>
+  </ul>
+</div>
+
+<h2 id="framework-overview">1. Framework Overview</h2>
+
+<h3>1.1 Core Principle</h3>
+
+<p>Probabilistic systems intentionally introduce randomness for computational efficiency, privacy, or fault tolerance. Consensus protocols convert this intentional uncertainty into tunable precision by:</p>
+
+<ul>
+  <li>Running multiple independent trials of the probabilistic algorithm</li>
+  <li>Aggregating results through voting or statistical methods</li>
+  <li>Deriving confidence bounds on final output accuracy</li>
+  <li>Tuning run count based on desired precision requirements</li>
+</ul>
+
+<h3>1.2 Generic Protocol Structure</h3>
+
+<div class="code-block">CONSENSUS-PROTOCOL(input, precision_target):
+  1. Determine run_count from precision_target and algorithm error rate
+  2. Execute run_count independent trials of probabilistic algorithm
+  3. Aggregate results via majority voting or statistical inference
+  4. Compute confidence interval for aggregated result
+  5. Return result with confidence bound
+
+Properties:
+  - Deterministic precision: Controllable via run_count
+  - Embarrassingly parallel: Independent trials
+  - Anytime valid: Partial results available early
+  - Graceful degradation: More runs → higher confidence</div>
+
+<h3>1.3 Key Trade-offs</h3>
+
+<ul>
+  <li><strong>Accuracy vs Computation:</strong> Higher precision requires more trials</li>
+  <li><strong>Time vs Parallelization:</strong> More resources → faster convergence</li>
+  <li><strong>Memory vs Streaming:</strong> Store all results vs sequential aggregation</li>
+  <li><strong>Confidence vs Utilization:</strong> Conservative bounds waste computation</li>
+</ul>
+
+<h2 id="mathematical-foundations">2. Mathematical Foundations</h2>
+
+<h3>2.1 Majority Voting Theory</h3>
+
+<h4>Bernoulli Model</h4>
+<p>Each trial succeeds with probability \( p > 0.5 \). For \( n \) independent trials, the majority vote succeeds if at least \( \lceil n/2 \rceil \) trials succeed.</p>
+
+<div class="code-block">Success probability:
+  P(majority correct) = Σ(k=⌈n/2⌉ to n) (n choose k) p^k (1-p)^(n-k)
+
+Approximation (large n):
+  P(majority correct) ≈ Φ((p - 0.5)√n / √(p(1-p)))
+  where Φ is standard normal CDF</div>
+
+<h4>Required Trials for Confidence</h4>
+<p>To achieve confidence \( 1 - \delta \) with per-trial success probability \( p \):</p>
+
+<div class="code-block">n ≥ (Φ^(-1)(1-δ))^2 · p(1-p) / (p - 0.5)^2
+
+Examples (δ = 0.01, 99% confidence):
+  p = 0.6  → n ≥ 266 trials
+  p = 0.7  → n ≥ 66 trials
+  p = 0.8  → n ≥ 27 trials
+  p = 0.9  → n ≥ 11 trials</div>
+
+<h3>2.2 Chernoff Bounds</h3>
+
+<p>For sum of independent Bernoulli variables \( X = \sum X_i \) with mean \( \mu = E[X] \):</p>
+
+<div class="code-block">P(X ≤ (1-ε)μ) ≤ exp(-ε^2 μ/2)  (lower tail)
+P(X ≥ (1+ε)μ) ≤ exp(-ε^2 μ/3)  (upper tail)
+
+Application:
+  For failure rate δ and tolerance ε:
+  n ≥ (2/ε^2) log(1/δ)  (lower tail)
+  n ≥ (3/ε^2) log(1/δ)  (upper tail)</div>
+
+<h4>Example</h4>
+<div class="code-block">Target: 95% confidence (δ=0.05), 10% tolerance (ε=0.1)
+  n ≥ (3/0.01) log(20) ≈ 900 trials</div>
+
+<h3>2.3 Hoeffding's Inequality</h3>
+
+<p>For bounded random variables \( X_i \in [a_i, b_i] \) with sample mean \( \bar{X} \):</p>
+
+<div class="code-block">P(|X̄ - μ| ≥ t) ≤ 2 exp(-2n²t² / Σ(bᵢ - aᵢ)²)
+
+For [0,1]-bounded variables:
+  P(|X̄ - μ| ≥ t) ≤ 2 exp(-2nt²)
+
+Required samples:
+  n ≥ (1/2t²) log(2/δ)</div>
+
+<h3>2.4 Confidence Sequences</h3>
+
+<p>Time-uniform confidence bounds valid at all sample sizes simultaneously.</p>
+
+<h4>Ville's Inequality</h4>
+<div class="code-block">For non-negative martingale M_t with M_0 = 1:
+  P(∃t: M_t ≥ 1/α) ≤ α
+
+Application: Construct confidence sequence from sequential data
+  without inflating Type I error from multiple testing</div>
+
+<h4>Empirical Bernstein Bound</h4>
+<div class="code-block">For sample mean X̄_n, sample variance V_n:
+  P(∀n ≥ 1: μ ∈ [X̄_n ± radius_n]) ≥ 1-δ
+
+where radius_n = √(2V_n log(c/δ)/n) + 3 log(c/δ)/n
+      c is universal constant ≈ 1.7
+
+Advantage: Adapts to data, tighter than fixed Hoeffding bound</div>
+
+<h3>2.5 Error Propagation</h3>
+
+<h4>Independent Errors</h4>
+<p>For \( k \) independent measurements with errors \( \sigma_i \), combined error:</p>
+
+<div class="code-block">Linear combination: f = Σ aᵢxᵢ
+  σ_f² = Σ aᵢ² σᵢ²
+
+Product/quotient: f = x₁^a₁ · x₂^a₂ · ... · x_k^a_k
+  (σ_f/f)² = Σ aᵢ²(σᵢ/xᵢ)²</div>
+
+<h4>Correlated Errors</h4>
+<div class="code-block">Full covariance matrix Σ:
+  Var(f) = ∇f^T Σ ∇f
+
+where ∇f is gradient of f with respect to input variables</div>
+
+<h2 id="parameter-tuning">3. Parameter Tuning</h2>
+
+<h3>3.1 Accuracy Requirements → Run Count</h3>
+
+<h4>Decision Framework</h4>
+<div class="code-block">1. Determine per-trial error rate p_error (empirical or theoretical)
+2. Set target confidence level (1 - δ), e.g., 95%, 99%, 99.9%
+3. Set tolerance ε for deviation from true value
+4. Apply appropriate concentration inequality:
+
+   Majority Voting:
+     n = ⌈(Φ^(-1)(1-δ))² · p(1-p) / (p-0.5)²⌉
+
+   Mean Estimation:
+     n = ⌈(1/2ε²) log(2/δ)⌉  (Hoeffding)
+     n = ⌈(3/ε²) log(1/δ)⌉   (Chernoff upper tail)
+
+5. Add safety margin (10-20%) for finite-sample effects</div>
+
+<h4>Example: Privacy-Preserving Query</h4>
+<div class="code-block">Given: ε-differentially private query, ε = 1.0
+      Laplace noise scale b = Δf/ε
+      Per-query probability p_correct = 0.7
+
+Target: 99% confidence, 5% tolerance
+
+Method 1 (Majority voting):
+  n = (2.33)² · 0.7·0.3 / (0.2)² ≈ 135 queries
+
+Method 2 (Confidence sequence):
+  Use empirical Bernstein, adjust n online until CI < 0.05
+  Typical: 80-150 queries depending on data variance</div>
+
+<h3>3.2 Time Budgets → Parallelization</h3>
+
+<h4>Resource Allocation</h4>
+<div class="code-block">Given: Total time budget T, per-trial time t, processors P
+
+Sequential:
+  max_trials = T/t
+  achievable_confidence = f(max_trials)  (from inequality)
+
+Parallel:
+  trials_per_processor = ⌈T/(t·P)⌉
+  total_trials = P · trials_per_processor
+  achievable_confidence = f(total_trials)
+
+Speedup factor: S = total_trials_parallel / max_trials_sequential
+              ≈ P (linear in processor count)</div>
+
+<h4>Adaptive Scheduling</h4>
+<div class="code-block">1. Start with initial batch n_0 = min(P, estimated_n/4)
+2. Compute preliminary confidence bound
+3. If bound within tolerance: STOP
+4. Else: estimate remaining trials needed
+5. Schedule next batch, iterate
+
+Benefits:
+  - Early stopping when confidence achieved
+  - Resource efficiency
+  - Anytime-valid results</div>
+
+<h3>3.3 Streaming vs Batch Processing</h3>
+
+<h4>Batch Aggregation</h4>
+<ul>
+  <li>Store all trial results in memory</li>
+  <li>Compute final aggregate once</li>
+  <li>Tight confidence bounds</li>
+  <li>Memory cost: O(n)</li>
+</ul>
+
+<h4>Streaming Aggregation</h4>
+<div class="code-block">Welford's online variance:
+  M₁ = x₁
+  M_k = M_(k-1) + (x_k - M_(k-1))/k
+  S_k = S_(k-1) + (x_k - M_(k-1))(x_k - M_k)
+  Var = S_n/(n-1)
+
+Properties:
+  - Memory: O(1)
+  - Numerically stable
+  - Enables confidence sequences</div>
+
+<h2 id="applications">4. Applications</h2>
+
+<h3>4.1 Privacy-Preserving Machine Learning</h3>
+
+<h4>Federated Gradient Aggregation</h4>
+<div class="code-block">Problem: Aggregate gradients from k clients with noise
+Solution: Multiple aggregation rounds with majority voting
+
+Protocol:
+  1. Each client i computes gradient g_i + Laplace(0, σ²)
+  2. Server runs R consensus rounds:
+     - Collect noisy gradients from all clients
+     - Compute mean gradient
+  3. Final gradient: median of R round means
+  4. Confidence: Apply empirical Bernstein to round variance
+
+Parameters:
+  - R depends on desired convergence tolerance
+  - σ determined by (ε,δ)-differential privacy budget
+  - Typical: R = 10-50 for 95% confidence</div>
+
+<h4>Private Query Response</h4>
+<div class="code-block">Problem: Answer counting query on sensitive database
+Solution: Run query multiple times with independent noise
+
+Steps:
+  1. True answer: count = |{records matching query}|
+  2. Add independent Laplace noise R times:
+     noisy_count_r = count + Lap(Δ/ε)
+  3. Confidence interval from empirical distribution
+  4. Return median with (1-δ) confidence bound
+
+Trade-off:
+  - More queries → better accuracy
+  - Privacy cost: R × ε total budget (or advanced composition)</div>
+
+<h3>4.2 Secure Multi-Party Computation</h3>
+
+<h4>Probabilistic Circuit Evaluation</h4>
+<div class="code-block">Context: Garbled circuits with probabilistic gates
+Challenge: Single bit-flip → incorrect output
+
+Consensus approach:
+  1. Generate R independent garbled circuits
+  2. Evaluate all R circuits
+  3. Take majority vote on output bits
+  4. Confidence: Chernoff bound with per-circuit error rate
+
+Example:
+  Per-circuit error: p_error = 0.05
+  Target: 99.9% confidence
+  Required: R ≥ 11 circuits (from Chernoff)</div>
+
+<h4>Threshold Secret Sharing</h4>
+<div class="code-block">Reconstruction with noisy shares:
+  1. Collect t shares (threshold)
+  2. Reconstruct secret S using Lagrange interpolation
+  3. Repeat with different t-subsets (M times)
+  4. Return mode or median reconstruction
+  5. Confidence from agreement rate
+
+Robust to:
+  - Share corruption
+  - Byzantine participants (up to threshold)
+  - Network errors</div>
+
+<h3>4.3 Distributed Sensor Networks</h3>
+
+<h4>Consensus Estimation</h4>
+<div class="code-block">Scenario: N sensors measure environmental variable
+          Each sensor has noise σ_i
+
+Protocol:
+  1. Each sensor takes R measurements
+  2. Broadcast local mean and variance
+  3. Central aggregator:
+     - Weighted average: μ̂ = Σ wᵢμᵢ / Σ wᵢ
+     - Weights: wᵢ = 1/σᵢ² (inverse variance)
+     - Combined variance: σ̂² = 1/Σwᵢ
+  4. Confidence: t-distribution with ν = N-1 degrees of freedom
+
+Decentralized variant:
+  - Gossip protocol for distributed averaging
+  - Local confidence sequences at each node</div>
+
+<h4>Byzantine Fault Tolerance</h4>
+<div class="code-block">Problem: Up to f malicious sensors sending arbitrary data
+Solution: Consensus with outlier rejection
+
+Algorithm:
+  1. Collect measurements from N sensors
+  2. Remove f largest and f smallest values
+  3. Compute trimmed mean of remaining N-2f values
+  4. Repeat for R rounds
+  5. Confidence interval from bootstrap or empirical bound
+
+Guarantees:
+  - Robust to f < N/3 Byzantine faults
+  - Convergence: O(1/√R)</div>
+
+<h3>4.4 Genomic Analysis</h3>
+
+<h4>Variant Calling with Probabilistic Alignment</h4>
+<div class="code-block">Challenge: Alignment algorithms use heuristics, may miss variants
+Solution: Multi-reference consensus
+
+Protocol:
+  1. Align reads to K reference genomes
+  2. Call variants independently for each alignment
+  3. Aggregate variant calls:
+     - Count supporting alignments for each variant
+     - Confidence = binomial test on support count
+  4. Report variants with ≥ confidence threshold
+
+Parameters:
+  K = 5-10 references typical
+  Confidence threshold: Bonferroni-corrected for multiple testing
+
+Benefits:
+  - Reduces reference bias
+  - Catches alignment-sensitive variants
+  - Quantified uncertainty</div>
+
+<h4>Expression Level Estimation</h4>
+<div class="code-block">Problem: RNA-seq count uncertainty from multi-mapping reads
+Solution: Bootstrap consensus
+
+Steps:
+  1. Probabilistically assign multi-mapping reads
+  2. Estimate expression levels (e.g., FPKM)
+  3. Repeat assignment B times (bootstrap)
+  4. Report median expression with percentile CI
+
+Typical: B = 100-1000 bootstrap replicates
+Output: Expression ± 95% CI for each gene</div>
+
+<h2 id="optimization-strategies">5. Optimization Strategies</h2>
+
+<h3>5.1 Adaptive Stopping</h3>
+
+<h4>Sequential Confidence Bounds</h4>
+<div class="code-block">while not converged:
+    # Run batch of trials
+    batch_results = run_trials(batch_size)
+    all_results.extend(batch_results)
+
+    # Update statistics
+    n = len(all_results)
+    mean = compute_mean(all_results)
+    variance = compute_variance(all_results)
+
+    # Confidence sequence bound
+    radius = sqrt(2*variance*log(c/δ)/n) + 3*log(c/δ)/n
+
+    if radius < tolerance:
+        return mean, radius
+
+    # Estimate remaining trials
+    estimated_remaining = (variance/tolerance²) * log(c/δ)
+    batch_size = min(estimated_remaining, max_batch)</div>
+
+<h4>Benefits</h4>
+<ul>
+  <li>Stops early when sufficient precision achieved</li>
+  <li>No wasted computation</li>
+  <li>Valid confidence at all stopping times</li>
+  <li>Typical savings: 20-40% fewer trials than fixed-n approach</li>
+</ul>
+
+<h3>5.2 Variance Reduction</h3>
+
+<h4>Control Variates</h4>
+<div class="code-block">Technique: Use correlated variable with known mean
+Setup:
+  - Estimate θ (unknown)
+  - Have control variate C with known E[C] = μ_C
+  - Correlation ρ(θ̂, C) ≠ 0
+
+Estimator:
+  θ̂_CV = θ̂ - β(C - μ_C)
+  where β = Cov(θ̂, C) / Var(C)
+
+Variance reduction:
+  Var(θ̂_CV) = (1 - ρ²) Var(θ̂)
+
+Example: Monte Carlo integration
+  - Control: simpler integrable function
+  - Reduction: 50-90% depending on correlation</div>
+
+<h4>Stratified Sampling</h4>
+<div class="code-block">Partition sample space into strata:
+  1. Divide domain into L strata with known probabilities p_l
+  2. Allocate n_l samples to stratum l
+  3. Estimate within each stratum
+  4. Combine: θ̂ = Σ p_l θ̂_l
+
+Optimal allocation (Neyman):
+  n_l ∝ p_l σ_l (proportional to stratum std dev)
+
+Variance:
+  Var(θ̂_stratified) ≤ Var(θ̂_simple)
+  Reduction: 10-70% typical in practice</div>
+
+<h3>5.3 Importance Sampling</h3>
+
+<div class="code-block">Problem: Estimate E_p[f(X)] but sampling from p is hard
+Solution: Sample from proposal q, reweight
+
+Estimator:
+  θ̂_IS = (1/n) Σ f(Xᵢ) · p(Xᵢ)/q(Xᵢ)  where Xᵢ ~ q
+
+Variance:
+  Var(θ̂_IS) = (1/n) ∫ f²(x) p²(x)/q(x) dx - θ²
+
+Optimal q:
+  q*(x) ∝ |f(x)| p(x)  (zero variance if achievable)
+
+Practical:
+  - Choose q with heavier tails than p
+  - Variance reduction: 2-100× for rare events</div>
+
+<h3>5.4 Batch Size Optimization</h3>
+
+<h4>Cost Model</h4>
+<div class="code-block">Total cost = Setup overhead + Per-trial cost
+C_total(B, n) = C_setup · (n/B) + C_trial · n
+
+where:
+  B = batch size
+  n = total trials needed
+  C_setup = cost per batch (communication, synchronization)
+  C_trial = cost per trial
+
+Minimize w.r.t. B:
+  B_opt = sqrt(n · C_setup / C_trial)</div>
+
+<h4>Example</h4>
+<div class="code-block">Parameters:
+  C_setup = 100 ms (network round-trip)
+  C_trial = 1 ms (local computation)
+  n = 1000 trials needed
+
+Optimal batch size:
+  B_opt = sqrt(1000 · 100 / 1) ≈ 316 trials/batch
+
+  Total time: 100 · (1000/316) + 1 · 1000 ≈ 1317 ms
+
+Compare to:
+  B = 1 (fully sequential): 100 · 1000 + 1000 = 101000 ms
+  B = 1000 (single batch): 100 + 1000 = 1100 ms (less adaptive)</div>
+
+<h3>5.5 Parallelization Patterns</h3>
+
+<h4>Map-Reduce Framework</h4>
+<div class="code-block">Map phase:
+  - Distribute trials across P processors
+  - Each processor runs n/P independent trials
+  - Local aggregation (mean, variance)
+
+Reduce phase:
+  - Combine local statistics
+  - Compute global mean: μ̂ = Σ wᵢμᵢ / Σ wᵢ
+  - Compute global variance using parallel algorithm
+  - Derive confidence interval
+
+Communication:
+  - Map → Reduce: O(P) messages
+  - Each message: O(1) summary statistics</div>
+
+<h4>Pipeline Parallelism</h4>
+<div class="code-block">Stage 1: Trial execution (compute-intensive)
+Stage 2: Result aggregation (memory-intensive)
+Stage 3: Confidence evaluation (lightweight)
+
+Pipeline:
+  - Overlap stages across batches
+  - While batch B_k aggregates, batch B_(k+1) executes
+  - Steady-state throughput: max(stage times)
+
+Benefit: Hide aggregation latency behind execution</div>
+
+<div class="references">
+  <h2 id="references">References</h2>
+  <ol>
+    <li><strong>Chernoff, H.</strong> (1952). A measure of asymptotic efficiency for tests of a hypothesis based on the sum of observations. <em>Annals of Mathematical Statistics</em>.</li>
+    <li><strong>Hoeffding, W.</strong> (1963). Probability inequalities for sums of bounded random variables. <em>Journal of the American Statistical Association</em>.</li>
+    <li><strong>Howard, S. R., et al.</strong> (2021). Time-uniform, nonparametric, nonasymptotic confidence sequences. <em>Annals of Statistics</em>.</li>
+    <li><strong>Dwork, C., & Roth, A.</strong> (2014). The algorithmic foundations of differential privacy. <em>Foundations and Trends in Theoretical Computer Science</em>.</li>
+    <li><strong>McMahan, B., et al.</strong> (2017). Communication-efficient learning of deep networks from decentralized data. <em>AISTATS</em>.</li>
+    <li><strong>Rabin, M. O.</strong> (2005). Hyper-encryption and everlasting security. <em>STACS</em>.</li>
+    <li><strong>Lynch, N. A.</strong> (1996). <em>Distributed Algorithms</em>. Morgan Kaufmann.</li>
+    <li><strong>Robert, C. P., & Casella, G.</strong> (2004). <em>Monte Carlo Statistical Methods</em>. Springer.</li>
+  </ol>
+</div>
+
+<script src="../theme-sync.js"></script>
+</body>
+</html>

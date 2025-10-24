@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Private Information Retrieval: Query Without Revealing What You're Querying | Rohan Vinaik</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --text: #e0e0e0;
+      --text-secondary: #a0a0a0;
+      --accent: #00ffff;
+      --border: #333;
+      --code-bg: #1a1a1a;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'JetBrains Mono', monospace;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 20px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    h1 {
+      color: var(--accent);
+      font-size: 1.5rem;
+      margin-bottom: 8px;
+      letter-spacing: 0.02em;
+    }
+    h2 {
+      color: var(--accent);
+      font-size: 1.1rem;
+      margin-top: 32px;
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    h3 {
+      color: var(--accent);
+      font-size: 0.95rem;
+      margin-top: 24px;
+      margin-bottom: 12px;
+    }
+    h4 {
+      color: var(--text);
+      font-size: 0.85rem;
+      margin-top: 20px;
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+    p { margin-bottom: 16px; font-size: 0.85rem; }
+    a {
+      color: var(--accent);
+      text-decoration: none;
+      border-bottom: 1px dotted var(--accent);
+    }
+    a:hover { border-bottom-style: solid; }
+    .back-link {
+      display: inline-block;
+      margin-bottom: 24px;
+      font-size: 0.85rem;
+    }
+    .paper-meta {
+      color: var(--text-secondary);
+      font-size: 0.75rem;
+      margin-bottom: 24px;
+    }
+    .abstract {
+      background: var(--code-bg);
+      padding: 20px;
+      border-left: 3px solid var(--accent);
+      margin-bottom: 32px;
+      font-size: 0.85rem;
+    }
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 32px;
+    }
+    .tag {
+      background: var(--code-bg);
+      padding: 4px 12px;
+      border: 1px solid var(--border);
+      font-size: 0.7rem;
+      color: var(--accent);
+      text-decoration: none;
+      border-bottom: none;
+    }
+    .tag:hover {
+      background: var(--accent);
+      color: var(--bg);
+      border-color: var(--accent);
+    }
+    .quick-nav {
+      background: var(--code-bg);
+      padding: 16px;
+      margin-bottom: 32px;
+      border: 1px solid var(--border);
+    }
+    .quick-nav h3 {
+      margin-top: 0;
+      font-size: 0.85rem;
+    }
+    .quick-nav ul {
+      list-style: none;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .quick-nav a {
+      font-size: 0.75rem;
+      border-bottom: none;
+      padding: 4px 0;
+      display: block;
+    }
+    .quick-nav a:hover { color: var(--bg); background: var(--accent); padding-left: 8px; }
+    pre {
+      background: var(--code-bg);
+      padding: 16px;
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      overflow-x: auto;
+      font-size: 0.75rem;
+      margin: 16px 0;
+      line-height: 1.4;
+    }
+    code {
+      font-family: 'JetBrains Mono', monospace;
+      background: var(--code-bg);
+      padding: 2px 6px;
+      border: 1px solid var(--border);
+      font-size: 0.8em;
+    }
+    pre code {
+      border: none;
+      padding: 0;
+    }
+    ul, ol {
+      margin-left: 24px;
+      margin-bottom: 16px;
+    }
+    li {
+      margin-bottom: 8px;
+      font-size: 0.85rem;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      font-size: 0.75rem;
+    }
+    th, td {
+      border: 1px solid var(--border);
+      padding: 12px;
+      text-align: left;
+    }
+    th {
+      background: var(--code-bg);
+      color: var(--accent);
+      font-weight: 600;
+    }
+    .references {
+      font-size: 0.75rem;
+      margin-top: 32px;
+    }
+    .references ol {
+      padding-left: 20px;
+    }
+    .references li {
+      margin-bottom: 12px;
+      line-height: 1.5;
+    }
+    @media (max-width: 768px) {
+      body { padding: 12px; }
+      h1 { font-size: 1.2rem; }
+      h2 { font-size: 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<a href="../index.html#reference" class="back-link">← Back to Reference</a>
+
+<h1>Private Information Retrieval: Query Without Revealing What You're Querying</h1>
+<div class="paper-meta">January 2025 · TECHNICAL REFERENCE</div>
+
+<div class="tags">
+  <a href="../index.html?filter=PRIVATE-INFORMATION-RETRIEVAL" class="tag">[PRIVATE-INFORMATION-RETRIEVAL]</a>
+  <a href="../index.html?filter=CRYPTOGRAPHY" class="tag">[CRYPTOGRAPHY]</a>
+  <a href="../index.html?filter=PRIVACY-PRESERVING" class="tag">[PRIVACY-PRESERVING]</a>
+  <a href="../index.html?filter=HOMOMORPHIC-ENCRYPTION" class="tag">[HOMOMORPHIC-ENCRYPTION]</a>
+  <a href="../index.html?filter=INFORMATION-THEORETIC" class="tag">[INFORMATION-THEORETIC]</a>
+  <a href="../index.html?filter=GENOMICS" class="tag">[GENOMICS]</a>
+  <a href="../index.html?filter=SECURE-COMPUTATION" class="tag">[SECURE-COMPUTATION]</a>
+  <a href="../index.html?filter=DATABASE-PRIVACY" class="tag">[DATABASE-PRIVACY]</a>
+  <a href="../index.html?filter=COMMUNICATION-COMPLEXITY" class="tag">[COMMUNICATION-COMPLEXITY]</a>
+</div>
+
+<div class="abstract">
+  <strong>Abstract:</strong> Private Information Retrieval (PIR) enables a client to query a database without revealing which item was requested. The server learns absolutely nothing about the query (zero bits of information in information-theoretic PIR), while the client retrieves the desired item. This cryptographic primitive addresses fundamental privacy concerns in database access, genomic queries, private search, and secure computation. This document covers information-theoretic foundations, computational approaches, single-server vs multi-server schemes, homomorphic encryption techniques, communication overhead analysis, and applications in privacy-sensitive domains.
+</div>
+
+<div class="quick-nav">
+  <h3>Quick Navigation</h3>
+  <ul>
+    <li><a href="#core-principles">1. Core Principles</a></li>
+    <li><a href="#information-theoretic-pir">2. Information-Theoretic PIR</a></li>
+    <li><a href="#computational-pir">3. Computational PIR</a></li>
+    <li><a href="#homomorphic-techniques">4. Homomorphic Techniques</a></li>
+    <li><a href="#trade-offs-analysis">5. Trade-offs Analysis</a></li>
+    <li><a href="#applications">6. Applications</a></li>
+    <li><a href="#references">References</a></li>
+  </ul>
+</div>
+
+<h2 id="core-principles">1. Core Principles</h2>
+
+<h3>1.1 The PIR Problem</h3>
+
+<p><strong>Definition:</strong> A client wants to retrieve database element x<sub>i</sub> without the server learning the index i.</p>
+
+<pre><code>Database: D = (x₁, x₂, ..., xₙ)
+Client knows: index i
+Client wants: xᵢ
+Server must not learn: i</code></pre>
+
+<p><strong>Trivial Solution:</strong> Download entire database.</p>
+<ul>
+  <li>Perfect privacy: Server learns nothing</li>
+  <li>Communication: O(n) for database of size n</li>
+  <li>Goal: Achieve sublinear communication O(n<sup>c</sup>) where c < 1</li>
+</ul>
+
+<h3>1.2 Security Definitions</h3>
+
+<h4>Information-Theoretic Privacy</h4>
+<p><strong>Definition:</strong> Server with unbounded computational power learns zero bits about query.</p>
+
+<pre><code>For any two queries i, j:
+  P(Query | observe server's view) is identical
+
+Shannon entropy: H(i | server's view) = H(i)</code></pre>
+
+<p>Server's view is completely independent of query index.</p>
+
+<h4>Computational Privacy</h4>
+<p><strong>Definition:</strong> Computationally bounded server cannot distinguish between queries.</p>
+
+<pre><code>For any PPT (probabilistic polynomial-time) adversary A:
+  |P(A distinguishes i from j)| ≤ negl(λ)
+
+where λ is security parameter</code></pre>
+
+<p>Privacy relies on computational hardness assumptions.</p>
+
+<h3>1.3 Correctness</h3>
+
+<p><strong>Requirement:</strong> Client always retrieves correct element.</p>
+
+<pre><code>Query(D, i) → xᵢ with probability 1</code></pre>
+
+<h2 id="information-theoretic-pir">2. Information-Theoretic PIR</h2>
+
+<h3>2.1 Multi-Server PIR</h3>
+
+<p><strong>Setting:</strong> Database replicated across k non-colluding servers.</p>
+
+<p><strong>Key Insight:</strong> Split query across servers such that no individual server learns anything, but combined responses reveal x<sub>i</sub>.</p>
+
+<h4>Two-Server Example</h4>
+
+<pre><code>Database: D = (x₁, x₂, ..., xₙ) on both servers
+Want: xᵢ
+
+Protocol:
+1. Client generates random vector r = (r₁, ..., rₙ)
+2. Constructs query vector q where qⱼ = rⱼ if j ≠ i, qᵢ = rᵢ + 1
+
+3. Send to Server 1: q
+   Send to Server 2: r
+
+4. Server 1 computes: a₁ = Σⱼ qⱼ·xⱼ = Σⱼ rⱼ·xⱼ + xᵢ
+   Server 2 computes: a₂ = Σⱼ rⱼ·xⱼ
+
+5. Client recovers: xᵢ = a₁ - a₂</code></pre>
+
+<p><strong>Privacy Analysis:</strong></p>
+<ul>
+  <li>Server 1 sees: Random vector q (uniformly random)</li>
+  <li>Server 2 sees: Random vector r (uniformly random)</li>
+  <li>Neither learns i (information-theoretic guarantee)</li>
+</ul>
+
+<h4>Communication Complexity</h4>
+
+<pre><code>Query size: O(n) bits per server
+Response size: O(log |xᵢ|) bits per server
+Total: O(n) communication
+
+Better schemes: O(n^(1/k)) for k servers</code></pre>
+
+<h3>2.2 Optimal Multi-Server Schemes</h3>
+
+<p><strong>Recursive Structure:</strong> Treat database as k-dimensional hypercube.</p>
+
+<pre><code>Database: n = n₁ × n₂ × ... × nₖ
+Query complexity: O(k · n^(1/k))
+
+For k = 2 servers: O(2√n)
+For k = 3 servers: O(3 ∛n)</code></pre>
+
+<h4>Example: 2-Server Recursive PIR</h4>
+
+<pre><code>Database: Arrange as √n × √n matrix
+Want: Element at position (i₁, i₂)
+
+Round 1:
+  - Query row i₁ from servers using basic PIR
+  - Get entire row: (x_{i₁,1}, x_{i₁,2}, ..., x_{i₁,√n})
+
+Round 2:
+  - Query column i₂ from this row
+  - Get xᵢ
+
+Communication: 2√n + 2√n = 4√n</code></pre>
+
+<h3>2.3 Non-Collusion Assumption</h3>
+
+<p><strong>Critical Requirement:</strong> Servers must not share information.</p>
+
+<pre><code>If servers collude:
+  - Compare queries
+  - Identify differences
+  - Recover index i
+
+Privacy breaks completely under collusion</code></pre>
+
+<p><strong>Practical Enforcement:</strong></p>
+<ul>
+  <li>Geographically distributed servers</li>
+  <li>Different administrative domains</li>
+  <li>Legal separation</li>
+  <li>Reputation-based trust</li>
+</ul>
+
+<h2 id="computational-pir">3. Computational PIR</h2>
+
+<h3>3.1 Single-Server PIR</h3>
+
+<p><strong>Goal:</strong> Achieve PIR with one server using cryptographic assumptions.</p>
+
+<p><strong>Key Insight:</strong> Use homomorphic encryption to query without decryption.</p>
+
+<h4>Basic Construction</h4>
+
+<pre><code>Setup:
+  - Database D = (x₁, x₂, ..., xₙ)
+  - Client has public/private key pair (pk, sk)
+
+Query:
+1. Client creates encrypted query vector:
+   E(q) = (E(q₁), E(q₂), ..., E(qₙ))
+   where qᵢ = 1, qⱼ = 0 for j ≠ i
+
+2. Server computes homomorphically:
+   E(result) = E(Σⱼ qⱼ·xⱼ) = E(xᵢ)
+
+3. Client decrypts to get xᵢ</code></pre>
+
+<h4>Security</h4>
+
+<pre><code>Privacy: Based on semantic security of encryption
+- Server sees E(q) which reveals nothing about i
+- Computational assumption (e.g., LWE, Paillier)
+
+Correctness: Homomorphic property ensures:
+  Decrypt(E(Σ qⱼ·xⱼ)) = xᵢ</code></pre>
+
+<h3>3.2 Lattice-Based PIR</h3>
+
+<p><strong>Construction:</strong> Use Learning With Errors (LWE) assumption.</p>
+
+<pre><code>LWE Encryption:
+  - Public: Matrix A ∈ Zₑⁿˣᵐ, vector b = As + e
+  - Secret: Vector s
+  - Encrypt(m): c = (u, v) where u = Aᵗr, v = bᵗr + m
+
+Homomorphic Addition:
+  E(m₁) + E(m₂) = E(m₁ + m₂)
+
+PIR Query:
+  - Encrypt indicator vector: (E(0), ..., E(1), ..., E(0))
+  - Server computes: E(Σ qⱼ·xⱼ) = E(xᵢ)
+  - Communication: O(√n) with recursive structure</code></pre>
+
+<h4>Advantages</h4>
+<ul>
+  <li>Post-quantum secure</li>
+  <li>Single server (no collusion concern)</li>
+  <li>Efficient with batch queries</li>
+</ul>
+
+<h3>3.3 Paillier-Based PIR</h3>
+
+<p><strong>Paillier Encryption:</strong> Additively homomorphic over integers.</p>
+
+<pre><code>Properties:
+  - E(m₁) · E(m₂) = E(m₁ + m₂)
+  - E(m)ᵏ = E(k·m)
+
+PIR Construction:
+1. Query: E(q) = (E(q₁), ..., E(qₙ))
+
+2. Server computes:
+   E(result) = ∏ⱼ E(qⱼ)^xⱼ = E(Σⱼ qⱼ·xⱼ)
+
+3. Client decrypts: xᵢ
+
+Communication: O(n) query, O(1) response</code></pre>
+
+<h2 id="homomorphic-techniques">4. Homomorphic Techniques</h2>
+
+<h3>4.1 Fully Homomorphic Encryption (FHE)</h3>
+
+<p><strong>Capability:</strong> Arbitrary computation on encrypted data.</p>
+
+<pre><code>For any function f:
+  Eval(E(x), f) = E(f(x))
+
+PIR Application:
+  - Encrypt database index
+  - Server evaluates "select element i" circuit
+  - Returns encrypted result</code></pre>
+
+<h4>FHE-Based PIR Performance</h4>
+
+<pre><code>Advantages:
+  + Maximum flexibility (arbitrary queries)
+  + Composable with other protocols
+  + Strong security guarantees
+
+Disadvantages:
+  - High computational cost
+  - Large ciphertext expansion
+  - Deep circuits require bootstrapping</code></pre>
+
+<h3>4.2 Somewhat Homomorphic Encryption (SHE)</h3>
+
+<p><strong>Trade-off:</strong> Limited computation depth for better performance.</p>
+
+<pre><code>Multiplicative Depth: d
+Noise Growth: Exponential in depth
+
+PIR Design:
+  - Flatten query circuit
+  - Minimize depth (e.g., O(log n))
+  - Avoid expensive operations</code></pre>
+
+<h4>Optimized PIR Circuit</h4>
+
+<pre><code>Database: Arranged as tree structure
+Query: Path from root to leaf
+
+Circuit Depth: O(log n)
+1. Compare index bits with tree level
+2. Select child node (homomorphic selection)
+3. Recurse to leaf
+
+Total computation: O(n) server, O(log n) depth</code></pre>
+
+<h3>4.3 Ciphertext Packing</h3>
+
+<p><strong>Technique:</strong> Encode multiple elements in single ciphertext.</p>
+
+<pre><code>SIMD Encoding:
+  - Plaintext space: Polynomial ring
+  - Encode vector: (m₁, ..., mₖ) → polynomial
+  - Operations work component-wise
+
+PIR Benefit:
+  Query multiple indices: O(√n) ciphertexts
+  Retrieve O(√n) elements: O(1) response
+  Amortized: O(1) per query</code></pre>
+
+<h2 id="trade-offs-analysis">5. Trade-offs Analysis</h2>
+
+<h3>5.1 Communication vs Security</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Approach</th>
+      <th>Security Model</th>
+      <th>Query Size</th>
+      <th>Response Size</th>
+      <th>Servers</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Information-Theoretic</td>
+      <td>Perfect</td>
+      <td>O(n<sup>1/k</sup>)</td>
+      <td>O(log|x|)</td>
+      <td>k ≥ 2</td>
+    </tr>
+    <tr>
+      <td>Computational (basic)</td>
+      <td>Cryptographic</td>
+      <td>O(n)</td>
+      <td>O(1)</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td>Computational (optimized)</td>
+      <td>Cryptographic</td>
+      <td>O(√n)</td>
+      <td>O(√n)</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td>FHE-based</td>
+      <td>Cryptographic</td>
+      <td>O(log n)</td>
+      <td>O(1)</td>
+      <td>1</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>5.2 Server Computation Scaling</h3>
+
+<p><strong>Computational Cost per Query:</strong></p>
+
+<pre><code>Information-Theoretic PIR:
+  - Server work: O(n) field operations
+  - Lightweight (dot product)
+  - Parallelizable
+
+Computational PIR:
+  - Server work: O(n) homomorphic operations
+  - Heavy (modular exponentiation)
+  - Parallelizable but slower per operation
+
+FHE PIR:
+  - Server work: O(n log n) FHE operations
+  - Very heavy (bootstrapping may be needed)
+  - Amortization helps with batching</code></pre>
+
+<h4>Throughput Comparison</h4>
+
+<pre><code>IT-PIR (2 servers):     ~10,000 queries/sec
+Paillier PIR:          ~100 queries/sec
+LWE PIR:               ~500 queries/sec
+FHE PIR:               ~10 queries/sec
+
+(Approximate, varies by implementation and hardware)</code></pre>
+
+<h3>5.3 Storage and Preprocessing</h3>
+
+<p><strong>Preprocessing Schemes:</strong> Amortize cost over multiple queries.</p>
+
+<pre><code>Offline Phase:
+  - Server precomputes structure
+  - Client receives hints
+  - Cost: O(n) computation, O(√n) storage
+
+Online Phase:
+  - Query: O(√n) communication
+  - Response: O(1) communication
+  - Amortization: Cost divided over many queries</code></pre>
+
+<h2 id="applications">6. Applications</h2>
+
+<h3>6.1 Genomic Queries</h3>
+
+<p><strong>Problem:</strong> Query genetic variant database without revealing which variants you're checking.</p>
+
+<pre><code>Use Case:
+  - Patient genome: Check for disease markers
+  - Privacy: Don't reveal which diseases suspected
+  - Database: Millions of variants
+
+Solution:
+  - PIR on variant database
+  - Batch queries for efficiency
+  - Multi-server deployment for perfect privacy</code></pre>
+
+<h4>GenomeVault Integration</h4>
+
+<pre><code>Architecture:
+  1. Hypervector-encoded genomes
+  2. PIR layer for query privacy
+  3. Multi-server setup across institutions
+  4. O(√n) communication per variant
+
+Performance:
+  - Database: 10⁶ variants
+  - Query time: ~1000 queries/sec
+  - Communication: ~1 KB per query</code></pre>
+
+<h3>6.2 Private Search</h3>
+
+<p><strong>Scenario:</strong> Search engine without revealing search terms.</p>
+
+<pre><code>Challenges:
+  - Keyword space: Billions of terms
+  - Ranking: Need top-k results
+  - Freshness: Index updates
+
+Approach:
+  - PIR on inverted index
+  - Oblivious RAM for access pattern hiding
+  - Differential privacy for result ranking</code></pre>
+
+<h3>6.3 Certificate Transparency</h3>
+
+<p><strong>Application:</strong> Check certificate revocation privately.</p>
+
+<pre><code>Standard: Download entire CRL (Certificate Revocation List)
+  - Privacy: Perfect (get everything)
+  - Cost: ~10 MB download
+
+PIR Approach:
+  - Query specific certificate status
+  - Privacy: Server doesn't learn which cert
+  - Cost: ~1 KB query + response
+
+Trade-off: Privacy vs communication efficiency</code></pre>
+
+<h3>6.4 Location-Based Services</h3>
+
+<p><strong>Private Proximity:</strong> Query nearby services without revealing location.</p>
+
+<pre><code>Protocol:
+1. Grid-based location encoding
+2. PIR queries for grid cells
+3. Client-side filtering of results
+
+Privacy:
+  - Server learns: Set of queried cells (obfuscated)
+  - Server doesn't learn: Exact location or intent</code></pre>
+
+<h3>6.5 Secure Computation Integration</h3>
+
+<p><strong>MPC + PIR:</strong> Private input selection for multi-party computation.</p>
+
+<pre><code>Scenario:
+  - Joint computation on private databases
+  - Each party selects inputs without revealing selection
+  - PIR ensures input selection privacy
+  - MPC ensures computation privacy
+
+Example: Private set intersection with private element selection</code></pre>
+
+<div class="references">
+  <h2 id="references">References</h2>
+  <ol>
+    <li><strong>Chor, B., Goldreich, O., Kushilevitz, E., & Sudan, M.</strong> (1995). Private information retrieval. <em>Proceedings of 36th Annual Symposium on Foundations of Computer Science</em>, 41-50.</li>
+    <li><strong>Kushilevitz, E., & Ostrovsky, R.</strong> (1997). Replication is not needed: Single database, computationally-private information retrieval. <em>Proceedings of 38th Annual Symposium on Foundations of Computer Science</em>, 364-373.</li>
+    <li><strong>Lipmaa, H.</strong> (2005). An oblivious transfer protocol with log-squared communication. <em>Information Security Conference</em>, 314-328.</li>
+    <li><strong>Gentry, C., & Ramzan, Z.</strong> (2005). Single-database private information retrieval with constant communication rate. <em>ICALP</em>, 803-815.</li>
+    <li><strong>Aguilar-Melchor, C., & Gaborit, P.</strong> (2007). A lattice-based computationally-efficient private information retrieval protocol. <em>Western European Workshop on Research in Cryptology</em>.</li>
+    <li><strong>Devet, C., Goldberg, I., & Heninger, N.</strong> (2012). Optimally robust private information retrieval. <em>USENIX Security Symposium</em>.</li>
+    <li><strong>Angel, S., Chen, H., Laine, K., & Setty, S.</strong> (2018). PIR with compressed queries and amortized query processing. <em>IEEE Symposium on Security and Privacy</em>.</li>
+    <li><strong>Mughees, M. H., Chen, H., & Ren, L.</strong> (2023). OnionPIR: Response efficient single-server PIR. <em>ACM CCS</em>.</li>
+  </ol>
+</div>
+
+<script src="../theme-sync.js"></script>
+</body>
+</html>

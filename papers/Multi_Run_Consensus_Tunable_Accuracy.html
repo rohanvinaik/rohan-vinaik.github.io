@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Multi-Run Consensus: Tunable Accuracy | Rohan Vinaik</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --text: #e0e0e0;
+      --text-secondary: #a0a0a0;
+      --accent: #00ffff;
+      --border: #333;
+      --code-bg: #1a1a1a;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'JetBrains Mono', monospace;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 20px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    h1 {
+      color: var(--accent);
+      font-size: 1.5rem;
+      margin-bottom: 8px;
+      letter-spacing: 0.02em;
+    }
+    h2 {
+      color: var(--accent);
+      font-size: 1.1rem;
+      margin-top: 32px;
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    h3 {
+      color: var(--accent);
+      font-size: 0.95rem;
+      margin-top: 24px;
+      margin-bottom: 12px;
+    }
+    h4 {
+      color: var(--text);
+      font-size: 0.85rem;
+      margin-top: 20px;
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+    p { margin-bottom: 16px; font-size: 0.85rem; }
+    a {
+      color: var(--accent);
+      text-decoration: none;
+      border-bottom: 1px dotted var(--accent);
+    }
+    a:hover { border-bottom-style: solid; }
+    .back-link {
+      display: inline-block;
+      margin-bottom: 24px;
+      font-size: 0.85rem;
+    }
+    .paper-meta {
+      color: var(--text-secondary);
+      font-size: 0.75rem;
+      margin-bottom: 24px;
+    }
+    .abstract {
+      background: var(--code-bg);
+      padding: 20px;
+      border-left: 3px solid var(--accent);
+      margin-bottom: 32px;
+      font-size: 0.85rem;
+    }
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 32px;
+    }
+    .tag {
+      background: var(--code-bg);
+      padding: 4px 12px;
+      border: 1px solid var(--border);
+      font-size: 0.7rem;
+      color: var(--accent);
+      text-decoration: none;
+      border-bottom: none;
+    }
+    .tag:hover {
+      background: var(--accent);
+      color: var(--bg);
+      border-color: var(--accent);
+    }
+    .quick-nav {
+      background: var(--code-bg);
+      padding: 16px;
+      margin-bottom: 32px;
+      border: 1px solid var(--border);
+    }
+    .quick-nav h3 {
+      margin-top: 0;
+      font-size: 0.85rem;
+    }
+    .quick-nav ul {
+      list-style: none;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .quick-nav a {
+      font-size: 0.75rem;
+      border-bottom: none;
+      padding: 4px 0;
+      display: block;
+    }
+    .quick-nav a:hover { color: var(--bg); background: var(--accent); padding-left: 8px; }
+    pre {
+      background: var(--code-bg);
+      padding: 16px;
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      overflow-x: auto;
+      font-size: 0.75rem;
+      margin: 16px 0;
+      line-height: 1.4;
+    }
+    code {
+      font-family: 'JetBrains Mono', monospace;
+      background: var(--code-bg);
+      padding: 2px 6px;
+      border: 1px solid var(--border);
+      font-size: 0.8em;
+    }
+    pre code {
+      border: none;
+      padding: 0;
+    }
+    ul, ol {
+      margin-left: 24px;
+      margin-bottom: 16px;
+    }
+    li {
+      margin-bottom: 8px;
+      font-size: 0.85rem;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      font-size: 0.75rem;
+    }
+    th, td {
+      border: 1px solid var(--border);
+      padding: 12px;
+      text-align: left;
+    }
+    th {
+      background: var(--code-bg);
+      color: var(--accent);
+      font-weight: 600;
+    }
+    .references {
+      font-size: 0.75rem;
+      margin-top: 32px;
+    }
+    .references ol {
+      padding-left: 20px;
+    }
+    .references li {
+      margin-bottom: 12px;
+      line-height: 1.5;
+    }
+    @media (max-width: 768px) {
+      body { padding: 12px; }
+      h1 { font-size: 1.2rem; }
+      h2 { font-size: 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<a href="../index.html#reference" class="back-link">← Back to Reference</a>
+
+<h1>Multi-Run Consensus: Tunable Accuracy</h1>
+<div class="paper-meta">January 2025 · Technical Reference</div>
+
+<div class="tags">
+  <a href="../index.html?filter=CONSENSUS" class="tag">CONSENSUS</a>
+  <a href="../index.html?filter=MAJORITY-VOTING" class="tag">MAJORITY-VOTING</a>
+  <a href="../index.html?filter=PROBABILISTIC-SYSTEMS" class="tag">PROBABILISTIC-SYSTEMS</a>
+  <a href="../index.html?filter=ACCURACY-TUNING" class="tag">ACCURACY-TUNING</a>
+  <a href="../index.html?filter=VERIFICATION" class="tag">VERIFICATION</a>
+  <a href="../index.html?filter=CLINICAL-GENOMICS" class="tag">CLINICAL-GENOMICS</a>
+  <a href="../index.html?filter=PARALLEL-COMPUTING" class="tag">PARALLEL-COMPUTING</a>
+  <a href="../index.html?filter=STATISTICAL-METHODS" class="tag">STATISTICAL-METHODS</a>
+</div>
+
+<div class="abstract">
+  <strong>Abstract:</strong> Multi-run consensus transforms inherent uncertainty in probabilistic systems into a tunable engineering parameter through majority voting across independent runs. By executing the same computation multiple times with identical inputs and taking the majority result, systems can achieve arbitrarily high accuracy levels without algorithmic changes. This approach converts single-run 95% accuracy to 99.3% with 3 runs, 99.9% with 5 runs, and 99.98% with 7 runs. The technique is particularly powerful for clinical applications requiring different confidence thresholds (research queries, screening, diagnostics, forensic analysis) and enables parallel execution strategies that maintain real-time performance while dramatically reducing error rates. Multi-run consensus reframes uncertainty not as a limitation but as a strategic resource for building systems with tunable reliability guarantees.
+</div>
+
+<div class="quick-nav">
+  <h3>Quick Navigation</h3>
+  <ul>
+    <li><a href="#core-principle">1. Core Principle</a></li>
+    <li><a href="#mathematical-model">2. Mathematical Model</a></li>
+    <li><a href="#accuracy-scaling">3. Accuracy Scaling</a></li>
+    <li><a href="#clinical-applications">4. Clinical Applications</a></li>
+    <li><a href="#parallel-execution">5. Parallel Execution Strategies</a></li>
+    <li><a href="#strategic-uncertainty">6. Strategic Uncertainty</a></li>
+    <li><a href="#implementation">7. Implementation Considerations</a></li>
+    <li><a href="#references">References</a></li>
+  </ul>
+</div>
+
+<h2 id="core-principle">1. Core Principle</h2>
+
+<h3>1.1 Majority Voting Across Independent Runs</h3>
+
+<p><strong>Fundamental Concept:</strong> Execute identical computation N times, aggregate results via majority vote.</p>
+
+<pre><code>Single-run system:
+  Input → Probabilistic Computation → Output
+  Accuracy: p (e.g., 95%)
+
+Multi-run consensus:
+  Input → [Run 1, Run 2, ..., Run N] → Majority Vote → Output
+  Accuracy: 1 - P(consensus error)
+</code></pre>
+
+<p><strong>Key Requirements:</strong></p>
+<ul>
+  <li><strong>Independence:</strong> Each run must be statistically independent</li>
+  <li><strong>Identical inputs:</strong> All runs receive same input data</li>
+  <li><strong>Odd N:</strong> Prevents ties in majority voting</li>
+  <li><strong>Deterministic aggregation:</strong> Majority rule applied consistently</li>
+</ul>
+
+<h3>1.2 When to Apply Multi-Run Consensus</h3>
+
+<p><strong>Suitable Systems:</strong></p>
+<ul>
+  <li>Probabilistic algorithms with known error rates</li>
+  <li>Machine learning models with confidence scores</li>
+  <li>Heuristic search algorithms</li>
+  <li>Monte Carlo simulations</li>
+  <li>Randomized alignment algorithms</li>
+</ul>
+
+<p><strong>Unsuitable Systems:</strong></p>
+<ul>
+  <li>Deterministic algorithms (no improvement possible)</li>
+  <li>Correlated errors (violates independence assumption)</li>
+  <li>Real-time systems with strict latency constraints</li>
+  <li>Systems where errors are systematic rather than random</li>
+</ul>
+
+<h3>1.3 Independence Assumption</h3>
+
+<p>The effectiveness of multi-run consensus depends critically on run independence:</p>
+
+<pre><code>Ensuring Independence:
+  - Different random seeds per run
+  - Separate process isolation
+  - Independent data access patterns
+  - No shared mutable state
+  - Temporal separation (if time-dependent)
+
+Violations to Avoid:
+  - Shared cache effects
+  - Correlated random number generation
+  - Common failure modes (hardware faults)
+  - Systematic biases in input data
+</code></pre>
+
+<h2 id="mathematical-model">2. Mathematical Model</h2>
+
+<h3>2.1 Binomial Error Probability</h3>
+
+<p>For N independent runs with per-run error probability p, consensus error occurs when majority of runs are incorrect.</p>
+
+<p><strong>Probability of Consensus Error:</strong></p>
+
+\[
+P(\text{consensus error}) = \sum_{k=\lceil N/2 \rceil}^{N} \binom{N}{k} p^k (1-p)^{N-k}
+\]
+
+<p>Where:</p>
+<ul>
+  <li>\( N \) = total number of runs (odd)</li>
+  <li>\( p \) = per-run error probability</li>
+  <li>\( \lceil N/2 \rceil \) = minimum errors needed for consensus failure</li>
+  <li>\( \binom{N}{k} \) = binomial coefficient "N choose k"</li>
+</ul>
+
+<h3>2.2 Consensus Accuracy</h3>
+
+<p><strong>Consensus Accuracy Formula:</strong></p>
+
+\[
+A_{\text{consensus}}(N, p) = 1 - \sum_{k=\lceil N/2 \rceil}^{N} \binom{N}{k} p^k (1-p)^{N-k}
+\]
+
+<p><strong>Example Calculation (N=3, p=0.05):</strong></p>
+
+<pre><code>P(consensus error) = P(2 errors) + P(3 errors)
+                   = C(3,2)·p²·(1-p) + C(3,3)·p³
+                   = 3·(0.05)²·(0.95) + 1·(0.05)³
+                   = 3·0.0025·0.95 + 0.000125
+                   = 0.007125 + 0.000125
+                   = 0.007250
+
+Consensus accuracy = 1 - 0.007250 = 0.9928 (99.28%)
+</code></pre>
+
+<h3>2.3 Asymptotic Behavior</h3>
+
+<p>As N increases, consensus error probability decreases exponentially:</p>
+
+\[
+P(\text{consensus error}) \approx \exp\left(-\frac{N \cdot D_{\text{KL}}(0.5 \parallel p)}{2}\right)
+\]
+
+<p>Where \( D_{\text{KL}} \) is the Kullback-Leibler divergence. For \( p < 0.5 \), error drops exponentially with N.</p>
+
+<h2 id="accuracy-scaling">3. Accuracy Scaling</h2>
+
+<h3>3.1 Accuracy Scaling Table</h3>
+
+<p><strong>Starting from 95% single-run accuracy (p = 0.05):</strong></p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Runs (N)</th>
+      <th>Consensus Accuracy</th>
+      <th>Error Rate</th>
+      <th>Error Reduction</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>95.00%</td>
+      <td>5.00%</td>
+      <td>Baseline</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>99.28%</td>
+      <td>0.72%</td>
+      <td>6.9× reduction</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>99.88%</td>
+      <td>0.12%</td>
+      <td>41.7× reduction</td>
+    </tr>
+    <tr>
+      <td>7</td>
+      <td>99.98%</td>
+      <td>0.02%</td>
+      <td>250× reduction</td>
+    </tr>
+    <tr>
+      <td>9</td>
+      <td>99.997%</td>
+      <td>0.003%</td>
+      <td>1667× reduction</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>3.2 Different Starting Accuracies</h3>
+
+<p><strong>Effect of N=5 runs across different base accuracies:</strong></p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Base Accuracy</th>
+      <th>Base Error (p)</th>
+      <th>5-Run Consensus</th>
+      <th>Improvement</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>90%</td>
+      <td>0.10</td>
+      <td>99.14%</td>
+      <td>+9.14%</td>
+    </tr>
+    <tr>
+      <td>95%</td>
+      <td>0.05</td>
+      <td>99.88%</td>
+      <td>+4.88%</td>
+    </tr>
+    <tr>
+      <td>98%</td>
+      <td>0.02</td>
+      <td>99.998%</td>
+      <td>+1.998%</td>
+    </tr>
+    <tr>
+      <td>99%</td>
+      <td>0.01</td>
+      <td>99.9999%</td>
+      <td>+0.9999%</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>Insight:</strong> Multi-run consensus provides larger absolute gains for lower base accuracies, but larger relative error reductions for higher base accuracies.</p>
+
+<h3>3.3 Diminishing Returns</h3>
+
+<p>Marginal accuracy improvement decreases with additional runs:</p>
+
+<pre><code>N=1 → N=3:  +4.28% accuracy  (largest gain)
+N=3 → N=5:  +0.60% accuracy
+N=5 → N=7:  +0.10% accuracy
+N=7 → N=9:  +0.017% accuracy (diminishing)
+</code></pre>
+
+<p><strong>Optimal N selection:</strong> Balance accuracy requirements against computational cost. Most applications find N=3 or N=5 optimal.</p>
+
+<h2 id="clinical-applications">4. Clinical Applications</h2>
+
+<h3>4.1 Tiered Accuracy Requirements</h3>
+
+<p>Different clinical contexts require different confidence thresholds:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Application</th>
+      <th>Required Accuracy</th>
+      <th>Recommended Runs</th>
+      <th>Rationale</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Research queries</td>
+      <td>95%</td>
+      <td>N=1</td>
+      <td>Exploratory, false positives acceptable</td>
+    </tr>
+    <tr>
+      <td>Screening</td>
+      <td>99%+</td>
+      <td>N=3</td>
+      <td>Filter candidates, follow-up verification</td>
+    </tr>
+    <tr>
+      <td>Diagnostics</td>
+      <td>99.9%+</td>
+      <td>N=5</td>
+      <td>Treatment decisions, minimize errors</td>
+    </tr>
+    <tr>
+      <td>Forensic</td>
+      <td>99.98%+</td>
+      <td>N=7</td>
+      <td>Legal evidence, extreme confidence needed</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>4.2 Clinical Genomics Example</h3>
+
+<p><strong>Scenario:</strong> Variant calling for cancer diagnosis</p>
+
+<pre><code>Base System:
+  - Single-run alignment accuracy: 95%
+  - Clinical requirement: 99.9% confidence
+
+Solution:
+  - Deploy 5-run consensus
+  - Parallel execution: 5× alignments in parallel
+  - Majority vote on variant calls
+  - Achieved accuracy: 99.88% (meets requirement)
+
+Clinical Workflow:
+  1. Patient sample sequenced
+  2. Reads aligned 5× independently (parallel)
+  3. Variant calls from each alignment
+  4. Consensus variants reported
+  5. Low-confidence variants flagged for manual review
+</code></pre>
+
+<h3>4.3 Error Cost Analysis</h3>
+
+<p><strong>Cost-Benefit Framework:</strong></p>
+
+<pre><code>Cost of error:
+  - False positive: Unnecessary follow-up, patient anxiety
+  - False negative: Missed diagnosis, delayed treatment
+
+Cost of additional runs:
+  - Computational: N× processing time
+  - Storage: N× intermediate results
+  - Latency: Depends on parallelization
+
+Optimization:
+  Minimize: (Error_Cost × P(error)) + (Run_Cost × N)
+  Subject to: Accuracy ≥ Required_Threshold
+</code></pre>
+
+<h2 id="parallel-execution">5. Parallel Execution Strategies</h2>
+
+<h3>5.1 Embarrassingly Parallel</h3>
+
+<p>Multi-run consensus is inherently parallelizable:</p>
+
+<pre><code>Sequential Execution:
+  Total time = N × Single_Run_Time
+  Example: 5 runs × 10 min = 50 min
+
+Parallel Execution (N cores):
+  Total time = Single_Run_Time + Aggregation_Overhead
+  Example: 10 min + 1 min = 11 min
+  Speedup: 4.5× (near-linear scaling)
+</code></pre>
+
+<h3>5.2 Hardware Mapping</h3>
+
+<p><strong>Multi-Core CPU:</strong></p>
+<pre><code>Strategy: Assign each run to separate core
+Efficiency: High (minimal communication)
+Example: 8-core CPU → 7 runs simultaneously (1 core for OS)
+</code></pre>
+
+<p><strong>GPU Acceleration:</strong></p>
+<pre><code>Strategy: Different runs on different GPU streams
+Efficiency: Excellent for data-parallel tasks
+Example: CUDA streams for parallel alignment
+</code></pre>
+
+<p><strong>Distributed Systems:</strong></p>
+<pre><code>Strategy: Different runs on different nodes
+Efficiency: Perfect for cloud deployment
+Example: Lambda functions for serverless consensus
+</code></pre>
+
+<h3>5.3 Real-Time Performance</h3>
+
+<p><strong>Latency Analysis:</strong></p>
+
+<pre><code>Single-run latency: T
+N-run consensus latency (parallel): T + ε
+where ε = aggregation overhead (typically < 5% of T)
+
+Example (Genomic Alignment):
+  Single run: 2.15 seconds
+  5-run consensus: 2.15 + 0.08 = 2.23 seconds
+  Accuracy gain: 95% → 99.88%
+  Time overhead: 3.7%
+</code></pre>
+
+<p><strong>Throughput Scaling:</strong></p>
+
+<pre><code>Single-run throughput: R samples/hour
+N-run consensus: R/N samples/hour (sequential)
+                 R samples/hour (parallel, sufficient cores)
+</code></pre>
+
+<h2 id="strategic-uncertainty">6. Strategic Uncertainty</h2>
+
+<h3>6.1 Uncertainty as Engineering Parameter</h3>
+
+<p>Multi-run consensus reframes uncertainty:</p>
+
+<pre><code>Traditional View:
+  Uncertainty = Problem to eliminate
+  Goal: Perfect accuracy (often unattainable)
+
+Multi-Run Consensus View:
+  Uncertainty = Tunable resource
+  Goal: Dial accuracy to requirement (always achievable)
+</code></pre>
+
+<p><strong>Engineering Benefits:</strong></p>
+<ul>
+  <li><strong>Predictable reliability:</strong> Accuracy scales mathematically with N</li>
+  <li><strong>Graceful degradation:</strong> Reduce N when resources constrained</li>
+  <li><strong>Application-specific tuning:</strong> Match accuracy to use case</li>
+  <li><strong>Future-proof:</strong> Improve accuracy without algorithm changes</li>
+</ul>
+
+<h3>6.2 Design Philosophy</h3>
+
+<p><strong>Accept imperfection, engineer reliability:</strong></p>
+
+<pre><code>Instead of:
+  "Our algorithm must achieve 99.9% accuracy"
+  → May require years of R&D
+  → May be fundamentally impossible
+
+Apply:
+  "Our 95% algorithm becomes 99.9% with 5 runs"
+  → Immediately deployable
+  → Mathematically guaranteed
+</code></pre>
+
+<h3>6.3 Strategic Advantages</h3>
+
+<p><strong>1. Rapid Development:</strong> Ship imperfect systems, tune in production</p>
+<p><strong>2. Cost Optimization:</strong> Trade compute for accuracy as needed</p>
+<p><strong>3. Regulatory Compliance:</strong> Meet certification thresholds post-hoc</p>
+<p><strong>4. Competitive Differentiation:</strong> Offer tiered accuracy services</p>
+
+<h2 id="implementation">7. Implementation Considerations</h2>
+
+<h3>7.1 Practical Implementation Pattern</h3>
+
+<pre><code>function multi_run_consensus(input, N):
+  results = []
+
+  # Execute N independent runs
+  for i in 1 to N:
+    seed = generate_independent_seed(i)
+    result = probabilistic_computation(input, seed)
+    results.append(result)
+
+  # Majority voting
+  consensus = majority_vote(results)
+
+  # Optional: Attach confidence score
+  vote_fraction = count(consensus) / N
+
+  return consensus, vote_fraction
+
+function majority_vote(results):
+  counts = count_occurrences(results)
+  return argmax(counts)
+</code></pre>
+
+<h3>7.2 Handling Ties</h3>
+
+<p><strong>Problem:</strong> Even N can produce ties in voting.</p>
+
+<p><strong>Solutions:</strong></p>
+<ul>
+  <li><strong>Always use odd N:</strong> Simplest, prevents ties mathematically</li>
+  <li><strong>Tiebreaker run:</strong> If tie detected, execute N+1 run</li>
+  <li><strong>Weighted voting:</strong> Assign confidence scores to each run</li>
+  <li><strong>Conservative default:</strong> Return "uncertain" rather than guess</li>
+</ul>
+
+<h3>7.3 Monitoring and Validation</h3>
+
+<p><strong>Runtime Checks:</strong></p>
+<pre><code>- Verify run independence (correlation tests)
+- Monitor vote distributions (unanimous vs split)
+- Track consensus error rates on validation sets
+- Alert on unexpected disagreement patterns
+</code></pre>
+
+<p><strong>Quality Metrics:</strong></p>
+<pre><code>- Consensus strength: Fraction voting for majority
+- Run variance: Spread of results across runs
+- Outlier detection: Identify anomalous runs
+- Calibration: Compare predicted vs actual error rates
+</code></pre>
+
+<h3>7.4 Limitations and Caveats</h3>
+
+<p><strong>Does Not Address:</strong></p>
+<ul>
+  <li><strong>Systematic errors:</strong> Biases affect all runs equally</li>
+  <li><strong>Input errors:</strong> Garbage in, consensus garbage out</li>
+  <li><strong>Correlated failures:</strong> Common mode failures (e.g., hardware)</li>
+  <li><strong>Adversarial inputs:</strong> Deliberately crafted to fool system</li>
+</ul>
+
+<p><strong>Computational Cost:</strong></p>
+<ul>
+  <li>N× computational resources required</li>
+  <li>Parallel execution requires N cores/GPUs</li>
+  <li>Storage for N× intermediate results</li>
+  <li>Energy consumption scales linearly with N</li>
+</ul>
+
+<h3>7.5 Optimization Techniques</h3>
+
+<p><strong>Early Termination:</strong></p>
+<pre><code>If majority achieved before N runs complete:
+  - Stop remaining runs
+  - Return consensus immediately
+  - Example: 3/5 runs agree → stop after 5th run
+</code></pre>
+
+<p><strong>Adaptive N Selection:</strong></p>
+<pre><code>Adjust N based on input characteristics:
+  - High-confidence inputs: N=1 (fast path)
+  - Uncertain inputs: N=5 (thorough)
+  - Critical inputs: N=7 (maximum confidence)
+</code></pre>
+
+<p><strong>Hierarchical Consensus:</strong></p>
+<pre><code>Cascade from low to high N:
+  1. Run N=1 first
+  2. If confidence low, run N=3 consensus
+  3. If still uncertain, escalate to N=5
+  Average case: Faster than always using N=5
+</code></pre>
+
+<div class="references">
+  <h2 id="references">References</h2>
+  <ol>
+    <li><strong>Hoeffding, W.</strong> (1963). Probability inequalities for sums of bounded random variables. <em>Journal of the American Statistical Association</em>, 58(301), 13-30.</li>
+    <li><strong>Littlestone, N., & Warmuth, M. K.</strong> (1994). The weighted majority algorithm. <em>Information and Computation</em>, 108(2), 212-261.</li>
+    <li><strong>Schapire, R. E.</strong> (1990). The strength of weak learnability. <em>Machine Learning</em>, 5(2), 197-227.</li>
+    <li><strong>Condorcet, M. de.</strong> (1785). Essay on the Application of Analysis to the Probability of Majority Decisions. <em>Paris: Imprimerie Royale</em>.</li>
+    <li><strong>Lam, L., & Suen, C. Y.</strong> (1997). Application of majority voting to pattern recognition. <em>IEEE Transactions on Systems, Man, and Cybernetics</em>, 27(5), 553-568.</li>
+  </ol>
+</div>
+
+<script src="../theme-sync.js"></script>
+</body>
+</html>

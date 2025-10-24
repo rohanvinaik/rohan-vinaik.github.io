@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>k-Anonymity Guarantees: Privacy Through Indistinguishability | Rohan Vinaik</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --text: #e0e0e0;
+      --text-secondary: #a0a0a0;
+      --accent: #00ffff;
+      --border: #333;
+      --code-bg: #1a1a1a;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'JetBrains Mono', monospace;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 20px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    h1 {
+      color: var(--accent);
+      font-size: 1.5rem;
+      margin-bottom: 8px;
+      letter-spacing: 0.02em;
+    }
+    h2 {
+      color: var(--accent);
+      font-size: 1.1rem;
+      margin-top: 32px;
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    h3 {
+      color: var(--accent);
+      font-size: 0.95rem;
+      margin-top: 24px;
+      margin-bottom: 12px;
+    }
+    h4 {
+      color: var(--text);
+      font-size: 0.85rem;
+      margin-top: 20px;
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+    p { margin-bottom: 16px; font-size: 0.85rem; }
+    a {
+      color: var(--accent);
+      text-decoration: none;
+      border-bottom: 1px dotted var(--accent);
+    }
+    a:hover { border-bottom-style: solid; }
+    .back-link {
+      display: inline-block;
+      margin-bottom: 24px;
+      font-size: 0.85rem;
+    }
+    .paper-meta {
+      color: var(--text-secondary);
+      font-size: 0.75rem;
+      margin-bottom: 24px;
+    }
+    .abstract {
+      background: var(--code-bg);
+      padding: 20px;
+      border-left: 3px solid var(--accent);
+      margin-bottom: 32px;
+      font-size: 0.85rem;
+    }
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 32px;
+    }
+    .tag {
+      background: var(--code-bg);
+      padding: 4px 12px;
+      border: 1px solid var(--border);
+      font-size: 0.7rem;
+      color: var(--accent);
+      text-decoration: none;
+      border-bottom: none;
+    }
+    .tag:hover {
+      background: var(--accent);
+      color: var(--bg);
+      border-color: var(--accent);
+    }
+    .quick-nav {
+      background: var(--code-bg);
+      padding: 16px;
+      margin-bottom: 32px;
+      border: 1px solid var(--border);
+    }
+    .quick-nav h3 {
+      margin-top: 0;
+      font-size: 0.85rem;
+    }
+    .quick-nav ul {
+      list-style: none;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .quick-nav a {
+      font-size: 0.75rem;
+      border-bottom: none;
+      padding: 4px 0;
+      display: block;
+    }
+    .quick-nav a:hover { color: var(--bg); background: var(--accent); padding-left: 8px; }
+    pre {
+      background: var(--code-bg);
+      padding: 16px;
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      overflow-x: auto;
+      font-size: 0.75rem;
+      margin: 16px 0;
+      line-height: 1.4;
+    }
+    code {
+      font-family: 'JetBrains Mono', monospace;
+      background: var(--code-bg);
+      padding: 2px 6px;
+      border: 1px solid var(--border);
+      font-size: 0.8em;
+    }
+    pre code {
+      border: none;
+      padding: 0;
+    }
+    ul, ol {
+      margin-left: 24px;
+      margin-bottom: 16px;
+    }
+    li {
+      margin-bottom: 8px;
+      font-size: 0.85rem;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      font-size: 0.75rem;
+    }
+    th, td {
+      border: 1px solid var(--border);
+      padding: 12px;
+      text-align: left;
+    }
+    th {
+      background: var(--code-bg);
+      color: var(--accent);
+      font-weight: 600;
+    }
+    .references {
+      font-size: 0.75rem;
+      margin-top: 32px;
+    }
+    .references ol {
+      padding-left: 20px;
+    }
+    .references li {
+      margin-bottom: 12px;
+      line-height: 1.5;
+    }
+    @media (max-width: 768px) {
+      body { padding: 12px; }
+      h1 { font-size: 1.2rem; }
+      h2 { font-size: 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<a href="../index.html#reference" class="back-link">← Back to Reference</a>
+
+<h1>k-Anonymity Guarantees: Privacy Through Indistinguishability</h1>
+<div class="paper-meta">January 2025 · TECHNICAL REFERENCE</div>
+
+<div class="tags">
+  <a href="../index.html?filter=K-ANONYMITY" class="tag">[K-ANONYMITY]</a>
+  <a href="../index.html?filter=PRIVACY-PRESERVING" class="tag">[PRIVACY-PRESERVING]</a>
+  <a href="../index.html?filter=DATA-ANONYMIZATION" class="tag">[DATA-ANONYMIZATION]</a>
+  <a href="../index.html?filter=RE-IDENTIFICATION" class="tag">[RE-IDENTIFICATION]</a>
+  <a href="../index.html?filter=GENOMICS" class="tag">[GENOMICS]</a>
+  <a href="../index.html?filter=MEDICAL-RECORDS" class="tag">[MEDICAL-RECORDS]</a>
+  <a href="../index.html?filter=L-DIVERSITY" class="tag">[L-DIVERSITY]</a>
+  <a href="../index.html?filter=T-CLOSENESS" class="tag">[T-CLOSENESS]</a>
+  <a href="../index.html?filter=QUASI-IDENTIFIERS" class="tag">[QUASI-IDENTIFIERS]</a>
+  <a href="../index.html?filter=INFORMATION-LEAKAGE" class="tag">[INFORMATION-LEAKAGE]</a>
+</div>
+
+<div class="abstract">
+  <strong>Abstract:</strong> k-Anonymity is a privacy property ensuring that each record in a dataset is indistinguishable from at least k-1 other records with respect to quasi-identifiers (attributes that could be linked to external data). This creates equivalence classes of size ≥k, limiting re-identification risk to 1/k. Information leakage is bounded by log₂(C(N,k)) bits. While foundational for privacy-preserving data release, k-anonymity faces limitations: vulnerability to homogeneity attacks, background knowledge exploitation, and composition degradation. Extensions like l-diversity and t-closeness address these weaknesses. This document covers mathematical foundations, attack resistance, implementation trade-offs, and applications in genomic and medical data.
+</div>
+
+<div class="quick-nav">
+  <h3>Quick Navigation</h3>
+  <ul>
+    <li><a href="#core-definition">1. Core Definition</a></li>
+    <li><a href="#mathematical-foundations">2. Mathematical Foundations</a></li>
+    <li><a href="#attack-resistance">3. Attack Resistance</a></li>
+    <li><a href="#implementation">4. Implementation</a></li>
+    <li><a href="#applications">5. Applications</a></li>
+    <li><a href="#limitations-extensions">6. Limitations & Extensions</a></li>
+    <li><a href="#references">References</a></li>
+  </ul>
+</div>
+
+<h2 id="core-definition">1. Core Definition</h2>
+
+<h3>1.1 The k-Anonymity Property</h3>
+
+<p><strong>Definition:</strong> A dataset is k-anonymous if every record is indistinguishable from at least k-1 other records with respect to quasi-identifiers.</p>
+
+<pre><code>For any record r in dataset D:
+  |{r' ∈ D : QI(r') = QI(r)}| ≥ k
+
+where QI(·) = quasi-identifier attributes</code></pre>
+
+<p><strong>Equivalence Classes:</strong> Records with identical quasi-identifier values form an equivalence class.</p>
+
+<pre><code>Equivalence class EC_i:
+  EC_i = {r ∈ D : QI(r) = qi_value}
+
+k-Anonymity requires:
+  ∀i: |EC_i| ≥ k</code></pre>
+
+<h3>1.2 Quasi-Identifiers</h3>
+
+<p><strong>Definition:</strong> Attributes that, when combined, may uniquely identify individuals through linkage to external data.</p>
+
+<p><strong>Common Examples:</strong></p>
+<ul>
+  <li><strong>Medical Records:</strong> ZIP code, birth date, gender</li>
+  <li><strong>Genomic Data:</strong> Age, ethnicity, geographic region, phenotype</li>
+  <li><strong>Network Logs:</strong> Timestamp, IP prefix, user agent</li>
+  <li><strong>Census Data:</strong> Location, occupation, household size</li>
+</ul>
+
+<p><strong>Selection Criteria:</strong></p>
+<pre><code>Attribute is quasi-identifier if:
+  1. Available in external datasets (linkage risk)
+  2. Combination with other attributes increases uniqueness
+  3. Not directly identifying alone (else explicit identifier)
+  4. Not purely sensitive (else sensitive attribute)</code></pre>
+
+<h3>1.3 Minimum k Values</h3>
+
+<p><strong>Research Settings:</strong> k = 3 (demonstrates concept, minimal protection)</p>
+<p><strong>Production Systems:</strong> k ≥ 10 (industry standard)</p>
+<p><strong>High-Sensitivity Data:</strong> k ≥ 100 (genomics, healthcare)</p>
+
+<p><strong>Re-identification Risk:</strong></p>
+<pre><code>Upper bound on re-identification probability:
+  P(re-identification | record r) ≤ 1/k
+
+Assumes:
+  - Attacker knows record exists in dataset
+  - No background knowledge beyond quasi-identifiers
+  - Uniform distribution within equivalence class</code></pre>
+
+<h2 id="mathematical-foundations">2. Mathematical Foundations</h2>
+
+<h3>2.1 Information Leakage Bound</h3>
+
+<p><strong>Combinatorial Information:</strong></p>
+
+<pre><code>For dataset with N records and k-anonymity:
+  Number of possible equivalence classes: C(N, k)
+
+Information leakage (bits):
+  I(k, N) = log₂(C(N, k))
+         = log₂(N!/(k!(N-k)!))
+
+Approximation (large N):
+  I(k, N) ≈ N·H(k/N)
+
+where H(p) = -p log₂(p) - (1-p)log₂(1-p) (entropy)</code></pre>
+
+<p><strong>Example:</strong></p>
+<pre><code>Dataset: N = 10,000 records, k = 100
+  C(10000, 100) ≈ 10^233
+  Information leakage ≈ 775 bits
+
+Interpretation: Attacker needs ~775 bits of additional information
+to uniquely identify a specific record</code></pre>
+
+<h3>2.2 Generalization and Suppression</h3>
+
+<p><strong>Generalization:</strong> Replace specific values with broader categories.</p>
+
+<pre><code>Example:
+  Age 27 → Age 25-30 → Age 20-40
+  ZIP 02139 → ZIP 021** → ZIP 02***
+
+Hierarchy depth affects utility:
+  Minimal generalization → High utility, low k
+  Maximal generalization → Low utility, high k</code></pre>
+
+<p><strong>Suppression:</strong> Remove or mask outlier records to achieve k-anonymity.</p>
+
+<pre><code>Suppression rate = |suppressed records| / |total records|
+
+Typical acceptable rate: &lt;5%
+Trade-off: Suppressing outliers reduces dataset completeness</code></pre>
+
+<h3>2.3 Information Loss Metrics</h3>
+
+<p><strong>Discernibility Metric:</strong></p>
+<pre><code>DM(D*) = Σᵢ |EC_i|²
+
+Measures total penalty for indistinguishability
+Lower DM → Better utility (smaller equivalence classes)</code></pre>
+
+<p><strong>Normalized Certainty Penalty:</strong></p>
+<pre><code>NCP = (generalized_range / total_range)
+
+For each attribute:
+  NCP_age = (30 - 25) / (100 - 0) = 0.05
+  NCP_zip = 100 / 100000 = 0.001
+
+Total NCP = Σ NCP_attribute</code></pre>
+
+<h2 id="attack-resistance">3. Attack Resistance</h2>
+
+<h3>3.1 Linkage Attacks</h3>
+
+<p><strong>Attack Model:</strong> Adversary links anonymized data to external dataset using quasi-identifiers.</p>
+
+<pre><code>Example:
+  Anonymized medical records: {Age, ZIP, Gender, Diagnosis}
+  Voter registration: {Name, Age, ZIP, Gender}
+
+Attack:
+  Find records where (Age, ZIP, Gender) match
+  If match unique → Re-identification successful</code></pre>
+
+<p><strong>k-Anonymity Defense:</strong></p>
+<pre><code>With k-anonymity:
+  Each (Age, ZIP, Gender) tuple appears ≥k times
+  Attacker narrows to k candidates
+  Re-identification probability ≤ 1/k</code></pre>
+
+<p><strong>Limitations:</strong></p>
+<ul>
+  <li>Assumes no auxiliary information beyond quasi-identifiers</li>
+  <li>Does not protect if all k records share sensitive attribute</li>
+  <li>Vulnerable if attacker knows record characteristics</li>
+</ul>
+
+<h3>3.2 Homogeneity Attack</h3>
+
+<p><strong>Attack Scenario:</strong> All records in equivalence class have same sensitive value.</p>
+
+<pre><code>Equivalence Class (k=10):
+  {Age:30-40, ZIP:021**, Gender:M} → Diagnosis: HIV+
+  {Age:30-40, ZIP:021**, Gender:M} → Diagnosis: HIV+
+  ...
+  {Age:30-40, ZIP:021**, Gender:M} → Diagnosis: HIV+
+
+Result: Even without re-identification, attacker learns sensitive
+        information with certainty</code></pre>
+
+<p><strong>k-Anonymity Failure:</strong> Provides no protection against attribute disclosure when diversity is low.</p>
+
+<h3>3.3 Background Knowledge Attack</h3>
+
+<p><strong>Attack Model:</strong> Adversary uses external knowledge to narrow equivalence class.</p>
+
+<pre><code>Equivalence Class (k=5):
+  {Age:25-30, ZIP:021**, Gender:F} → {Condition A, B, C, D, E}
+
+Background knowledge:
+  "Person X lives in wealthy neighborhood"
+
+Inference:
+  Conditions A, C prevalent in wealthy areas
+  → Narrow to 2 candidates
+  → Effective k reduced from 5 to 2</code></pre>
+
+<h3>3.4 Composition Attack</h3>
+
+<p><strong>Sequential Release Vulnerability:</strong></p>
+
+<pre><code>Release 1 (k=10):
+  Anonymized dataset D₁
+
+Release 2 (k=10):
+  Updated dataset D₂ with new records
+
+Attack:
+  Intersect equivalence classes from D₁ and D₂
+  Effective k can degrade to k_effective &lt; 10</code></pre>
+
+<p><strong>Defense Requirements:</strong></p>
+<ul>
+  <li>Consistent quasi-identifier selection across releases</li>
+  <li>Ensure k-anonymity holds for intersection</li>
+  <li>Consider temporal correlation attacks</li>
+</ul>
+
+<h2 id="implementation">4. Implementation</h2>
+
+<h3>4.1 Algorithms</h3>
+
+<h4>Mondrian Multidimensional K-Anonymity</h4>
+<pre><code>Algorithm:
+  1. Partition data recursively along attributes
+  2. Split at median to balance partition sizes
+  3. Stop when partition size &lt; 2k
+  4. Generalize all records in partition to same value
+
+Complexity: O(N log N)
+Guarantees: Ensures k-anonymity with minimal information loss</code></pre>
+
+<h4>Incognito Algorithm</h4>
+<pre><code>Algorithm:
+  1. Enumerate all quasi-identifier subsets
+  2. Check k-anonymity for each subset
+  3. Use lattice traversal to prune search space
+  4. Find minimal generalization satisfying k
+
+Complexity: O(2^|QI| × N)
+Advantage: Finds optimal generalization hierarchy</code></pre>
+
+<h3>4.2 Trade-offs</h3>
+
+<p><strong>Privacy vs. Utility:</strong></p>
+
+<table>
+  <thead>
+    <tr>
+      <th>k Value</th>
+      <th>Privacy Protection</th>
+      <th>Data Utility</th>
+      <th>Information Loss</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>k = 3</td>
+      <td>Minimal</td>
+      <td>High</td>
+      <td>~10-20%</td>
+    </tr>
+    <tr>
+      <td>k = 10</td>
+      <td>Moderate</td>
+      <td>Medium-High</td>
+      <td>~20-40%</td>
+    </tr>
+    <tr>
+      <td>k = 100</td>
+      <td>Strong</td>
+      <td>Medium</td>
+      <td>~40-60%</td>
+    </tr>
+    <tr>
+      <td>k = 1000</td>
+      <td>Very Strong</td>
+      <td>Low</td>
+      <td>~60-80%</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>Group Size Considerations:</strong></p>
+<pre><code>Optimal k selection:
+  k ≈ √N  (rough heuristic for balanced trade-off)
+
+For N = 10,000:
+  k ≈ 100 provides reasonable balance
+
+For N = 1,000,000:
+  k ≈ 1000 may be appropriate</code></pre>
+
+<h3>4.3 Computational Complexity</h3>
+
+<p><strong>NP-Hard Problem:</strong> Finding optimal k-anonymous generalization is NP-hard.</p>
+
+<pre><code>Exact optimization:
+  Complexity: Exponential in |QI| and generalization levels
+  Practical limit: |QI| ≤ 10-15 attributes
+
+Heuristic approaches:
+  Greedy algorithms: O(N log N)
+  Genetic algorithms: Configurable, typically O(N × generations)
+  Clustering-based: O(N² / k) to O(N log N)</code></pre>
+
+<h2 id="applications">5. Applications</h2>
+
+<h3>5.1 Genomic Data</h3>
+
+<p><strong>Challenge:</strong> Genomic data is highly identifying (unique identifiers in SNP combinations).</p>
+
+<p><strong>Quasi-Identifiers in Genomics:</strong></p>
+<ul>
+  <li>Age, ethnicity, geographic ancestry</li>
+  <li>Phenotypic traits (height, eye color)</li>
+  <li>Family structure (number of siblings)</li>
+  <li>Environmental exposures</li>
+</ul>
+
+<p><strong>Implementation:</strong></p>
+<pre><code>Approach 1: Coarsen metadata
+  Age 34 → Age 30-40
+  Ancestry: "Italian" → "Southern European"
+  Location: "Boston" → "Northeastern US"
+
+Approach 2: Synthetic data generation
+  Generate k-1 synthetic records matching quasi-identifiers
+  Preserve statistical properties of sensitive genomic variants
+
+Typical k values: 100-1000 for GWAS data release</code></pre>
+
+<h3>5.2 Medical Records</h3>
+
+<p><strong>HIPAA Safe Harbor vs. k-Anonymity:</strong></p>
+
+<pre><code>HIPAA Safe Harbor:
+  Remove 18 identifiers (name, SSN, dates, etc.)
+  Generalize ZIP codes (first 3 digits only)
+
+k-Anonymity Enhancement:
+  Verify each (ZIP, Age, Gender) tuple appears ≥k times
+  Additional generalization if needed
+  Typical k = 10-50 for medical record release</code></pre>
+
+<p><strong>Case Study: Hospital Discharge Data</strong></p>
+<pre><code>Dataset: 100,000 records
+Quasi-identifiers: {ZIP, Age, Gender, Admission Date}
+Target: k = 50
+
+Generalizations applied:
+  - ZIP: 5 digits → 3 digits (reduces specificity)
+  - Age: Exact → 5-year bins
+  - Admission Date: Exact → Month
+
+Result:
+  Information loss: 32%
+  Re-identification risk: ≤2% (vs. 87% without anonymization)</code></pre>
+
+<h3>5.3 Location Data</h3>
+
+<p><strong>Challenge:</strong> Trajectories are highly unique (4 points typically identify individual).</p>
+
+<p><strong>Spatial k-Anonymity:</strong></p>
+<pre><code>Approach:
+  1. Cluster nearby trajectories
+  2. Generalize locations to cloaking regions
+  3. Ensure ≥k trajectories per region
+
+Trade-off:
+  Larger k → Less precise location data
+  Smaller regions → Higher utility but lower k</code></pre>
+
+<h2 id="limitations-extensions">6. Limitations & Extensions</h2>
+
+<h3>6.1 Fundamental Limitations</h3>
+
+<p><strong>1. No Protection Against Attribute Disclosure</strong></p>
+<pre><code>If all k records share sensitive value → No privacy gain</code></pre>
+
+<p><strong>2. Assumes Independence</strong></p>
+<pre><code>Multiple releases, temporal correlation → k degrades</code></pre>
+
+<p><strong>3. Static Adversary Model</strong></p>
+<pre><code>Does not account for:
+  - Machine learning-based re-identification
+  - Evolving auxiliary information
+  - Sophisticated inference attacks</code></pre>
+
+<p><strong>4. Curse of Dimensionality</strong></p>
+<pre><code>As |QI| increases:
+  - Equivalence classes become smaller
+  - More generalization needed
+  - Utility degrades exponentially</code></pre>
+
+<h3>6.2 l-Diversity</h3>
+
+<p><strong>Definition:</strong> Each equivalence class must have ≥l "well-represented" values for sensitive attributes.</p>
+
+<pre><code>Distinct l-Diversity:
+  Each EC must have ≥l distinct sensitive values
+
+Entropy l-Diversity:
+  Entropy of sensitive values in EC ≥ log(l)
+
+Recursive (c,l)-Diversity:
+  Most frequent value appears ≤c times least frequent</code></pre>
+
+<p><strong>Example:</strong></p>
+<pre><code>k-Anonymity (k=4):
+  EC: {HIV+, HIV+, HIV+, HIV+} ✗ Homogeneous
+
+(k=4, l=2)-Diverse:
+  EC: {HIV+, HIV-, HIV+, HIV-} ✓ At least 2 distinct values</code></pre>
+
+<h3>6.3 t-Closeness</h3>
+
+<p><strong>Definition:</strong> Distribution of sensitive values in each equivalence class is close to overall distribution.</p>
+
+<pre><code>For each equivalence class EC:
+  D(P_EC || P_overall) ≤ t
+
+where D = distance metric (typically Earth Mover's Distance)
+      t = closeness threshold (e.g., t = 0.2)</code></pre>
+
+<p><strong>Advantage:</strong> Prevents attribute disclosure even when diversity exists but is skewed.</p>
+
+<p><strong>Example:</strong></p>
+<pre><code>Overall distribution:
+  50% Condition A, 30% Condition B, 20% Condition C
+
+l-Diverse EC (l=3):
+  80% Condition A, 10% Condition B, 10% Condition C
+  ✗ Reveals likelihood of Condition A
+
+t-Close EC (t=0.2):
+  55% Condition A, 25% Condition B, 20% Condition C
+  ✓ Close to overall distribution</code></pre>
+
+<h3>6.4 Differential Privacy Integration</h3>
+
+<p><strong>Hybrid Approach:</strong> Combine k-anonymity with differential privacy for stronger guarantees.</p>
+
+<pre><code>Algorithm:
+  1. Apply k-anonymity to create equivalence classes
+  2. Add Laplace noise to aggregate statistics
+  3. Release noisy aggregates with (ε,δ)-DP guarantee
+
+Benefits:
+  - k-anonymity limits re-identification
+  - DP provides formal privacy guarantee
+  - Noise addition masked by equivalence classes</code></pre>
+
+<div class="references">
+  <h2 id="references">References</h2>
+  <ol>
+    <li><strong>Samarati, P., & Sweeney, L.</strong> (1998). Protecting privacy when disclosing information: k-anonymity and its enforcement through generalization and suppression. <em>Technical Report, SRI International</em>.</li>
+    <li><strong>Sweeney, L.</strong> (2002). k-anonymity: A model for protecting privacy. <em>International Journal of Uncertainty, Fuzziness and Knowledge-Based Systems</em>, 10(05), 557-570.</li>
+    <li><strong>Machanavajjhala, A., Kifer, D., Gehrke, J., & Venkitasubramaniam, M.</strong> (2007). l-diversity: Privacy beyond k-anonymity. <em>ACM Transactions on Knowledge Discovery from Data</em>, 1(1), 3.</li>
+    <li><strong>Li, N., Li, T., & Venkatasubramanian, S.</strong> (2007). t-closeness: Privacy beyond k-anonymity and l-diversity. <em>IEEE 23rd International Conference on Data Engineering</em>, 106-115.</li>
+    <li><strong>El Emam, K., et al.</strong> (2011). A systematic review of re-identification attacks on health data. <em>PLoS ONE</em>, 6(12), e28071.</li>
+    <li><strong>Gymrek, M., et al.</strong> (2013). Identifying personal genomes by surname inference. <em>Science</em>, 339(6117), 321-324.</li>
+    <li><strong>LeFevre, K., DeWitt, D. J., & Ramakrishnan, R.</strong> (2006). Mondrian multidimensional k-anonymity. <em>22nd International Conference on Data Engineering</em>.</li>
+  </ol>
+</div>
+
+<script src="../theme-sync.js"></script>
+</body>
+</html>

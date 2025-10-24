@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Genomic Data Marketplace Tokenomics | Rohan Vinaik</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --text: #e0e0e0;
+      --text-secondary: #a0a0a0;
+      --accent: #00ff00;
+      --border: #333;
+      --code-bg: #1a1a1a;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'JetBrains Mono', monospace;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 20px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    h1 {
+      color: var(--accent);
+      font-size: 1.5rem;
+      margin-bottom: 8px;
+      letter-spacing: 0.02em;
+    }
+    h2 {
+      color: var(--accent);
+      font-size: 1.1rem;
+      margin-top: 32px;
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    h3 {
+      color: var(--accent);
+      font-size: 0.95rem;
+      margin-top: 24px;
+      margin-bottom: 12px;
+    }
+    p { margin-bottom: 16px; font-size: 0.85rem; }
+    a {
+      color: var(--accent);
+      text-decoration: none;
+      border-bottom: 1px dotted var(--accent);
+    }
+    a:hover { border-bottom-style: solid; }
+    .back-link {
+      display: inline-block;
+      margin-bottom: 24px;
+      font-size: 0.85rem;
+    }
+    .paper-meta {
+      color: var(--text-secondary);
+      font-size: 0.75rem;
+      margin-bottom: 24px;
+    }
+    .abstract {
+      background: var(--code-bg);
+      padding: 20px;
+      border-left: 3px solid var(--accent);
+      margin-bottom: 32px;
+      font-size: 0.85rem;
+    }
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 32px;
+    }
+    .tag {
+      background: var(--code-bg);
+      padding: 4px 12px;
+      border: 1px solid var(--border);
+      font-size: 0.7rem;
+      color: var(--accent);
+      text-decoration: none;
+      border-bottom: none;
+    }
+    .tag:hover {
+      background: var(--accent);
+      color: var(--bg);
+      border-color: var(--accent);
+    }
+    .quick-nav {
+      background: var(--code-bg);
+      padding: 16px;
+      margin-bottom: 32px;
+      border: 1px solid var(--border);
+    }
+    .quick-nav h3 {
+      margin-top: 0;
+      font-size: 0.85rem;
+    }
+    .quick-nav ul {
+      list-style: none;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .quick-nav a {
+      font-size: 0.75rem;
+      border-bottom: none;
+      padding: 4px 0;
+      display: block;
+    }
+    .quick-nav a:hover { color: var(--bg); background: var(--accent); padding-left: 8px; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      font-size: 0.75rem;
+    }
+    th, td {
+      border: 1px solid var(--border);
+      padding: 12px;
+      text-align: left;
+    }
+    th {
+      background: var(--code-bg);
+      color: var(--accent);
+      font-weight: 600;
+    }
+    ul, ol {
+      margin-bottom: 16px;
+      padding-left: 24px;
+    }
+    li {
+      margin-bottom: 8px;
+      font-size: 0.85rem;
+    }
+    .equation-block {
+      background: var(--code-bg);
+      padding: 16px;
+      margin: 20px 0;
+      border-left: 3px solid var(--accent);
+      overflow-x: auto;
+    }
+    code {
+      background: var(--code-bg);
+      padding: 2px 6px;
+      font-size: 0.8rem;
+      color: var(--accent);
+    }
+    @media (max-width: 768px) {
+      body { padding: 12px; }
+      h1 { font-size: 1.2rem; }
+      h2 { font-size: 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<a href="../index.html#papers" class="back-link">← Back to Papers</a>
+
+<h1>Genomic Data Marketplace Tokenomics</h1>
+<div class="paper-meta">2025 · TECHNICAL REFERENCE</div>
+
+<div class="tags">
+  <a href="../index.html?filter=GENOMICS" class="tag">GENOMICS</a>
+  <a href="../index.html?filter=CRYPTOGRAPHY" class="tag">CRYPTOGRAPHY</a>
+  <a href="../index.html?filter=MECHANISM-DESIGN" class="tag">MECHANISM-DESIGN</a>
+  <a href="../index.html?filter=PRIVACY" class="tag">PRIVACY</a>
+  <a href="../index.html?filter=DISTRIBUTED" class="tag">DISTRIBUTED</a>
+  <a href="../index.html?filter=GAME-THEORY" class="tag">GAME-THEORY</a>
+  <a href="../index.html?filter=INCENTIVE-SYSTEMS" class="tag">INCENTIVE-SYSTEMS</a>
+  <a href="../index.html?filter=TOKENOMICS" class="tag">TOKENOMICS</a>
+</div>
+
+<div class="abstract">
+  <strong>Abstract:</strong> This technical reference document describes the tokenomics design for decentralized genomic data marketplaces. The framework addresses market structure, token utility, incentive mechanisms for quality and diversity, economic security against common attacks, equilibrium modeling, and mechanism design for truthful reporting. The system enables privacy-preserving genomic data exchange while aligning economic incentives with data quality, diversity, and participant protection.
+</div>
+
+<div class="quick-nav">
+  <h3>Quick Navigation</h3>
+  <ul>
+    <li><a href="#market-structure">Market Structure</a></li>
+    <li><a href="#token-design">Token Design</a></li>
+    <li><a href="#incentive-mechanisms">Incentive Mechanisms</a></li>
+    <li><a href="#economic-security">Economic Security</a></li>
+    <li><a href="#equilibrium">Market Equilibrium</a></li>
+    <li><a href="#mechanism-design">Mechanism Design</a></li>
+  </ul>
+</div>
+
+<h2 id="market-structure">Market Structure</h2>
+
+<p>The genomic data marketplace operates as a three-sided platform with distinct participant roles and economic relationships.</p>
+
+<h3>Market Participants</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Role</th>
+      <th>Function</th>
+      <th>Economic Incentive</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Data Providers</td>
+      <td>Contribute genomic data and metadata</td>
+      <td>Token rewards proportional to data quality and usage</td>
+    </tr>
+    <tr>
+      <td>Data Consumers</td>
+      <td>Query and analyze genomic datasets</td>
+      <td>Access to diverse, high-quality data for research</td>
+    </tr>
+    <tr>
+      <td>Platform Operators</td>
+      <td>Maintain infrastructure, validate contributions</td>
+      <td>Transaction fees and staking rewards</td>
+    </tr>
+    <tr>
+      <td>Validators</td>
+      <td>Verify data quality and provenance</td>
+      <td>Validation rewards and slashing penalties</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>Market Flows</h3>
+
+<p>The marketplace enables multiple value flows:</p>
+
+<ul>
+  <li><strong>Data Flow:</strong> Providers → Platform → Consumers (via privacy-preserving protocols)</li>
+  <li><strong>Token Flow:</strong> Consumers → Platform → Providers (payment for data access)</li>
+  <li><strong>Validation Flow:</strong> Validators → Platform (stake) → Validators (rewards)</li>
+  <li><strong>Governance Flow:</strong> Token holders → Platform decisions (voting)</li>
+</ul>
+
+<h2 id="token-design">Token Design</h2>
+
+<h3>Utility Token Properties</h3>
+
+<p>The marketplace token (GMToken) serves multiple functions within the ecosystem:</p>
+
+<ul>
+  <li><strong>Medium of Exchange:</strong> Payment for data access and queries</li>
+  <li><strong>Staking Collateral:</strong> Validators and operators stake tokens as security</li>
+  <li><strong>Governance Rights:</strong> Token-weighted voting on protocol parameters</li>
+  <li><strong>Reward Distribution:</strong> Incentive payments to data providers and validators</li>
+</ul>
+
+<h3>Token Supply Model</h3>
+
+<p>Total supply follows a controlled emission schedule with multiple mechanisms:</p>
+
+<div class="equation-block">
+\[
+S(t) = S_0 + \int_0^t \left( E(\tau) - B(\tau) \right) d\tau
+\]
+</div>
+
+<p>Where:</p>
+<ul>
+  <li>\(S_0\) = Initial token supply (genesis allocation)</li>
+  <li>\(E(t)\) = Emission rate at time \(t\) (rewards to providers and validators)</li>
+  <li>\(B(t)\) = Burn rate at time \(t\) (transaction fees and slashing)</li>
+</ul>
+
+<h3>Emission Schedule</h3>
+
+<p>Token emission follows a decaying curve to ensure long-term sustainability:</p>
+
+<div class="equation-block">
+\[
+E(t) = E_0 \cdot e^{-\lambda t} + E_{\infty}
+\]
+</div>
+
+<p>Where:</p>
+<ul>
+  <li>\(E_0\) = Initial emission rate (high to bootstrap network)</li>
+  <li>\(\lambda\) = Decay constant (controls emission decrease)</li>
+  <li>\(E_{\infty}\) = Terminal emission rate (minimum sustainable inflation)</li>
+</ul>
+
+<p>Typical parameters: \(E_0 = 10^6\) tokens/year, \(\lambda = 0.1\) year\(^{-1}\), \(E_{\infty} = 10^4\) tokens/year</p>
+
+<h3>Burn Mechanisms</h3>
+
+<p>Token burning creates deflationary pressure and aligns long-term incentives:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Mechanism</th>
+      <th>Burn Rate</th>
+      <th>Purpose</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Transaction Fees</td>
+      <td>50% of platform fees</td>
+      <td>Reduce supply proportional to usage</td>
+    </tr>
+    <tr>
+      <td>Slashing Penalties</td>
+      <td>100% of slashed stake</td>
+      <td>Remove tokens from malicious actors</td>
+    </tr>
+    <tr>
+      <td>Quality Violations</td>
+      <td>Proportional to severity</td>
+      <td>Penalize low-quality contributions</td>
+    </tr>
+    <tr>
+      <td>Privacy Breaches</td>
+      <td>Complete stake forfeiture</td>
+      <td>Maximum deterrent for privacy violations</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>Staking Mechanisms</h3>
+
+<p>Participants stake tokens to demonstrate commitment and enable security:</p>
+
+<div class="equation-block">
+\[
+\text{Required Stake} = k \cdot \text{Expected Revenue} \cdot \text{Risk Factor}
+\]
+</div>
+
+<p>Validator staking requirements scale with network value:</p>
+
+<ul>
+  <li><strong>Minimum Stake:</strong> \(S_{\min} = 10^4\) tokens (entry barrier)</li>
+  <li><strong>Optimal Stake:</strong> \(S_{\text{opt}} = 10^5\) tokens (maximizes rewards)</li>
+  <li><strong>Maximum Effective Stake:</strong> \(S_{\max} = 10^6\) tokens (prevents centralization)</li>
+</ul>
+
+<h2 id="incentive-mechanisms">Incentive Mechanisms</h2>
+
+<h3>Quality-Weighted Rewards</h3>
+
+<p>Data provider rewards scale non-linearly with quality metrics to incentivize high-quality contributions:</p>
+
+<div class="equation-block">
+\[
+R_i = \alpha \cdot Q_i^{\beta} \cdot U_i \cdot T
+\]
+</div>
+
+<p>Where:</p>
+<ul>
+  <li>\(R_i\) = Reward for provider \(i\)</li>
+  <li>\(Q_i\) = Quality score (0-1 normalized)</li>
+  <li>\(\beta > 1\) = Quality exponent (superlinear rewards, typically \(\beta = 1.5\))</li>
+  <li>\(U_i\) = Usage frequency (number of queries)</li>
+  <li>\(T\) = Token reward pool for epoch</li>
+  <li>\(\alpha\) = Normalization constant</li>
+</ul>
+
+<h3>Quality Score Components</h3>
+
+<p>Quality is computed from multiple weighted factors:</p>
+
+<div class="equation-block">
+\[
+Q_i = w_1 \cdot C_i + w_2 \cdot M_i + w_3 \cdot V_i + w_4 \cdot P_i
+\]
+</div>
+
+<p>Where:</p>
+<ul>
+  <li>\(C_i\) = Coverage completeness (% of genome sequenced)</li>
+  <li>\(M_i\) = Metadata richness (phenotype, ancestry, clinical data)</li>
+  <li>\(V_i\) = Validation score (independent verification)</li>
+  <li>\(P_i\) = Privacy compliance (differential privacy parameters)</li>
+  <li>\(\sum w_j = 1\) with typical values \(w = [0.3, 0.3, 0.2, 0.2]\)</li>
+</ul>
+
+<h3>Diversity Bonuses</h3>
+
+<p>The marketplace incentivizes diverse ancestries and rare phenotypes to prevent dataset homogeneity:</p>
+
+<div class="equation-block">
+\[
+D_i = 1 + \gamma \cdot \left( 1 - \frac{n_{\text{ancestry}_i}}{N_{\text{total}}} \right)
+\]
+</div>
+
+<p>Where:</p>
+<ul>
+  <li>\(D_i\) = Diversity multiplier for provider \(i\)</li>
+  <li>\(\gamma\) = Diversity bonus coefficient (typically 0.5)</li>
+  <li>\(n_{\text{ancestry}_i}\) = Number of samples from same ancestry group</li>
+  <li>\(N_{\text{total}}\) = Total samples in marketplace</li>
+</ul>
+
+<p>Final reward incorporates diversity: \(R_i' = R_i \cdot D_i\)</p>
+
+<h3>Privacy Contribution Incentives</h3>
+
+<p>Providers who enable stronger privacy guarantees receive bonus rewards:</p>
+
+<div class="equation-block">
+\[
+P_{\text{bonus}} = \delta \cdot \log\left(\frac{\epsilon_{\max}}{\epsilon_i}\right)
+\]
+</div>
+
+<p>Where:</p>
+<ul>
+  <li>\(\epsilon_i\) = Privacy budget consumed by provider \(i\)'s data</li>
+  <li>\(\epsilon_{\max}\) = Maximum allowed privacy budget</li>
+  <li>\(\delta\) = Privacy bonus weight (typically 0.2)</li>
+</ul>
+
+<p>Lower \(\epsilon_i\) (stronger privacy) yields higher rewards.</p>
+
+<h3>Long-Term Staking Bonuses</h3>
+
+<p>Providers who commit to long-term data availability receive time-weighted bonuses:</p>
+
+<div class="equation-block">
+\[
+L_i(t) = 1 + \eta \cdot \left(1 - e^{-\mu t}\right)
+\]
+</div>
+
+<p>Where:</p>
+<ul>
+  <li>\(L_i(t)\) = Long-term multiplier at time \(t\)</li>
+  <li>\(\eta\) = Maximum long-term bonus (typically 0.3)</li>
+  <li>\(\mu\) = Time constant (typically 0.1 month\(^{-1}\))</li>
+  <li>\(t\) = Months of continuous data availability</li>
+</ul>
+
+<h2 id="economic-security">Economic Security</h2>
+
+<h3>Sybil Attack Resistance</h3>
+
+<p>Sybil attacks attempt to gain disproportionate rewards by creating multiple false identities. The marketplace employs multiple defenses:</p>
+
+<p><strong>Stake Requirements:</strong> Minimum stake per data provider identity makes Sybil attacks expensive:</p>
+
+<div class="equation-block">
+\[
+\text{Cost}_{\text{Sybil}} = n \cdot S_{\min} > \text{Expected Rewards}
+\]
+</div>
+
+<p><strong>Identity Verification:</strong> Optional identity verification (without revealing PII) provides Sybil resistance bonus:</p>
+
+<div class="equation-block">
+\[
+V_{\text{bonus}} = \begin{cases}
+1.5 & \text{if verified} \\
+1.0 & \text{if anonymous}
+\end{cases}
+\]
+</div>
+
+<p><strong>Graph Analysis:</strong> Transaction and contribution patterns are analyzed for Sybil clusters using graph-based detection:</p>
+
+<ul>
+  <li>Providers with suspiciously similar contribution patterns flagged</li>
+  <li>Temporal correlation analysis of submission timing</li>
+  <li>Genetic similarity analysis (duplicate or related samples)</li>
+</ul>
+
+<h3>51% Attack Prevention</h3>
+
+<p>A 51% attack on validator nodes could compromise data integrity. Defenses include:</p>
+
+<p><strong>Distributed Validation:</strong> Minimum \(N_{\min} = 100\) validators required, with stake distribution limits:</p>
+
+<div class="equation-block">
+\[
+S_{\text{validator}_i} < 0.05 \cdot S_{\text{total}}
+\]
+</div>
+
+<p><strong>Quadratic Voting:</strong> Validator influence scales sublinearly with stake:</p>
+
+<div class="equation-block">
+\[
+V_i = \sqrt{S_i}
+\]
+</div>
+
+<p>This reduces the power of large validators while maintaining incentives.</p>
+
+<p><strong>Slashing Penalties:</strong> Validators caught in coordinated attacks lose entire stake:</p>
+
+<div class="equation-block">
+\[
+\text{Penalty}_{\text{coordination}} = S_i + \theta \cdot \sum_{j \in \text{colluders}} S_j
+\]
+</div>
+
+<p>Where \(\theta = 0.1\) implements collective punishment for colluders.</p>
+
+<h3>Collusion Resistance</h3>
+
+<p>Multiple mechanisms prevent collusion between data providers and consumers:</p>
+
+<p><strong>Commit-Reveal Schemes:</strong> Data quality scores are committed before usage statistics are revealed, preventing strategic quality manipulation.</p>
+
+<p><strong>Random Audits:</strong> Fraction \(f_{\text{audit}} = 0.1\) of transactions randomly audited by independent validators with enhanced rewards.</p>
+
+<p><strong>Reputation Systems:</strong> Long-term reputation tracking with exponential decay:</p>
+
+<div class="equation-block">
+\[
+\text{Rep}_i(t+1) = \lambda_r \cdot \text{Rep}_i(t) + (1 - \lambda_r) \cdot \text{Score}_i(t)
+\]
+</div>
+
+<p>Where \(\lambda_r = 0.9\) (reputation memory) and reputation below threshold triggers enhanced monitoring.</p>
+
+<h3>Data Poisoning Defenses</h3>
+
+<p>Malicious providers may attempt to poison datasets with false or low-quality data:</p>
+
+<ul>
+  <li><strong>Cross-Validation:</strong> Multiple validators independently assess data quality</li>
+  <li><strong>Statistical Outlier Detection:</strong> Samples with anomalous allele frequencies flagged</li>
+  <li><strong>Provenance Tracking:</strong> Cryptographic proofs of data origin and processing history</li>
+  <li><strong>Stake-at-Risk:</strong> Providers stake tokens proportional to data volume; stake slashed if poisoning detected</li>
+</ul>
+
+<div class="equation-block">
+\[
+\text{Slash}_{\text{poison}} = S_i \cdot \left(\frac{N_{\text{poisoned}}}{N_{\text{total}}}\right)^{0.5}
+\]
+</div>
+
+<h2 id="equilibrium">Market Equilibrium Modeling</h2>
+
+<h3>Supply-Demand Dynamics</h3>
+
+<p>The marketplace seeks equilibrium between data supply and demand through price discovery:</p>
+
+<div class="equation-block">
+\[
+P^* = \arg\min_P \left| S(P) - D(P) \right|
+\]
+</div>
+
+<p>Supply function (data providers):</p>
+
+<div class="equation-block">
+\[
+S(P) = S_0 + \alpha_s \cdot P^{\beta_s}
+\]
+</div>
+
+<p>Demand function (data consumers):</p>
+
+<div class="equation-block">
+\[
+D(P) = D_0 - \alpha_d \cdot P^{\beta_d}
+\]
+</div>
+
+<p>Where:</p>
+<ul>
+  <li>\(S_0, D_0\) = Base supply/demand (inelastic components)</li>
+  <li>\(\alpha_s, \alpha_d\) = Price sensitivity parameters</li>
+  <li>\(\beta_s > 1\) = Supply elasticity (superlinear response to price)</li>
+  <li>\(\beta_d < 1\) = Demand elasticity (sublinear response to price)</li>
+</ul>
+
+<h3>Multi-Sided Platform Equilibrium</h3>
+
+<p>Platform operators balance transaction fees to maximize platform value while maintaining participation:</p>
+
+<div class="equation-block">
+\[
+\max_{f_p, f_c} V = N_p(f_p) \cdot N_c(f_c) \cdot T(f_p, f_c)
+\]
+</div>
+
+<p>Subject to participation constraints:</p>
+
+<div class="equation-block">
+\[
+U_p(f_p) \geq U_p^{\text{outside}} \quad \text{and} \quad U_c(f_c) \geq U_c^{\text{outside}}
+\]
+</div>
+
+<p>Where:</p>
+<ul>
+  <li>\(N_p(f_p)\) = Number of providers (decreasing in provider fee \(f_p\))</li>
+  <li>\(N_c(f_c)\) = Number of consumers (decreasing in consumer fee \(f_c\))</li>
+  <li>\(T(f_p, f_c)\) = Transactions per participant pair</li>
+  <li>\(U_p, U_c\) = Utility for providers and consumers</li>
+  <li>\(U^{\text{outside}}\) = Outside option utility (other platforms or direct exchange)</li>
+</ul>
+
+<h3>Token Velocity and Value</h3>
+
+<p>Token value derives from transaction volume and holding incentives:</p>
+
+<div class="equation-block">
+\[
+V_{\text{token}} = \frac{T_{\text{volume}}}{v \cdot S_{\text{circulating}}}
+\]
+</div>
+
+<p>Where:</p>
+<ul>
+  <li>\(T_{\text{volume}}\) = Annual transaction volume (USD equivalent)</li>
+  <li>\(v\) = Token velocity (times per year token changes hands)</li>
+  <li>\(S_{\text{circulating}}\) = Circulating token supply</li>
+</ul>
+
+<p>Velocity reduction mechanisms increase token value:</p>
+<ul>
+  <li><strong>Staking Lockup:</strong> Reduces circulating supply and velocity</li>
+  <li><strong>Governance Rights:</strong> Creates holding incentive beyond transaction use</li>
+  <li><strong>Liquidity Mining:</strong> Rewards long-term liquidity provision</li>
+</ul>
+
+<h3>Nash Equilibrium Analysis</h3>
+
+<p>Multi-agent strategic behavior converges to Nash equilibrium where no participant can improve utility by unilateral deviation:</p>
+
+<div class="equation-block">
+\[
+u_i(s_i^*, s_{-i}^*) \geq u_i(s_i, s_{-i}^*) \quad \forall i, \forall s_i
+\]
+</div>
+
+<p>Key equilibrium properties:</p>
+<ul>
+  <li><strong>Truthful Reporting:</strong> Optimal strategy is accurate data quality reporting (incentive-compatible)</li>
+  <li><strong>Optimal Staking:</strong> Validators stake at \(S_{\text{opt}}\) to maximize risk-adjusted returns</li>
+  <li><strong>Data Pricing:</strong> Converges to marginal cost plus quality premium</li>
+</ul>
+
+<h2 id="mechanism-design">Mechanism Design for Truthful Reporting</h2>
+
+<h3>Incentive Compatibility</h3>
+
+<p>The mechanism is designed such that truthful reporting is a dominant strategy. For data quality reporting:</p>
+
+<div class="equation-block">
+\[
+u_i(q_i^{\text{true}}, q_{-i}) \geq u_i(q_i^{\text{false}}, q_{-i}) \quad \forall q_i^{\text{false}}, \forall q_{-i}
+\]
+</div>
+
+<p>This is achieved through proper scoring rules that maximize expected utility when reporting true quality:</p>
+
+<div class="equation-block">
+\[
+\mathbb{E}[R(q_i^{\text{report}}, q_i^{\text{true}})] \text{ maximized when } q_i^{\text{report}} = q_i^{\text{true}}
+\]
+</div>
+
+<h3>Vickrey-Clarke-Groves (VCG) Mechanism</h3>
+
+<p>For resource allocation (e.g., priority access to high-quality datasets), VCG ensures truthful bidding:</p>
+
+<div class="equation-block">
+\[
+p_i = \sum_{j \neq i} v_j(x^{-i}) - \sum_{j \neq i} v_j(x^*)
+\]
+</div>
+
+<p>Where:</p>
+<ul>
+  <li>\(p_i\) = Payment by agent \(i\)</li>
+  <li>\(v_j(x)\) = Valuation of agent \(j\) for allocation \(x\)</li>
+  <li>\(x^*\) = Optimal allocation with all agents</li>
+  <li>\(x^{-i}\) = Optimal allocation without agent \(i\)</li>
+</ul>
+
+<p>Agent \(i\) pays the externality imposed on others by their participation.</p>
+
+<h3>Proper Scoring Rules</h3>
+
+<p>Data quality predictions are rewarded using proper scoring rules (e.g., Brier score):</p>
+
+<div class="equation-block">
+\[
+S(p, o) = 1 - \frac{1}{K} \sum_{k=1}^K (p_k - o_k)^2
+\]
+</div>
+
+<p>Where:</p>
+<ul>
+  <li>\(p_k\) = Predicted probability for outcome \(k\)</li>
+  <li>\(o_k\) = Actual outcome (1 if occurred, 0 otherwise)</li>
+  <li>\(K\) = Number of possible outcomes</li>
+</ul>
+
+<p>Maximizing expected score requires reporting true beliefs: \(\arg\max_p \mathbb{E}[S(p, o)] = p_{\text{true}}\)</p>
+
+<h3>Peer Prediction Mechanisms</h3>
+
+<p>When ground truth is unavailable, peer prediction elicits truthful reports by rewarding consistency with other informed reporters:</p>
+
+<div class="equation-block">
+\[
+R_i = \alpha \cdot I(r_i; r_j | s) - \beta \cdot I(r_i; s)
+\]
+</div>
+
+<p>Where:</p>
+<ul>
+  <li>\(R_i\) = Reward for reporter \(i\)</li>
+  <li>\(I(X; Y | Z)\) = Conditional mutual information</li>
+  <li>\(r_i, r_j\) = Reports from agents \(i\) and \(j\)</li>
+  <li>\(s\) = Common signal (e.g., data sample)</li>
+  <li>\(\alpha, \beta\) = Tuning parameters</li>
+</ul>
+
+<p>Truthful reporting maximizes mutual information with other truthful reporters.</p>
+
+<h3>Reputation-Weighted Mechanisms</h3>
+
+<p>Long-term reputation modulates mechanism sensitivity to prevent exploitation:</p>
+
+<div class="equation-block">
+\[
+R_i^{\text{effective}} = R_i \cdot w(\text{Rep}_i)
+\]
+</div>
+
+<p>Where weight function:</p>
+
+<div class="equation-block">
+\[
+w(\text{Rep}) = \frac{1}{1 + e^{-k(\text{Rep} - \text{Rep}_0)}}
+\]
+</div>
+
+<p>Parameters: \(k = 10\) (sigmoid steepness), \(\text{Rep}_0 = 0.5\) (threshold)</p>
+
+<p>New participants start with lower weight; high reputation grants higher rewards and influence.</p>
+
+<h3>Budget Balance and Individual Rationality</h3>
+
+<p>The mechanism ensures:</p>
+
+<p><strong>Budget Balance (Weak):</strong></p>
+<div class="equation-block">
+\[
+\sum_i p_i \geq 0
+\]
+</div>
+
+<p>Platform does not run at a loss from mechanism payments.</p>
+
+<p><strong>Individual Rationality:</strong></p>
+<div class="equation-block">
+\[
+u_i(s_i^*, s_{-i}^*) \geq u_i(\text{not participate})
+\]
+</div>
+
+<p>All participants have non-negative utility from participation.</p>
+
+<h3>Mechanism Implementation</h3>
+
+<p>Smart contracts implement mechanisms with:</p>
+
+<ul>
+  <li><strong>Commit-Reveal Protocols:</strong> Two-phase reporting prevents strategic response to others' reports</li>
+  <li><strong>Time-Locked Escrow:</strong> Payments held in escrow until validation completes</li>
+  <li><strong>Automated Auditing:</strong> Cryptographic proofs enable efficient verification</li>
+  <li><strong>Dispute Resolution:</strong> Multi-signature arbitration for edge cases</li>
+</ul>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>The genomic data marketplace tokenomics framework provides a comprehensive economic structure for decentralized genomic data exchange. Key design principles include:</p>
+
+<ul>
+  <li><strong>Aligned Incentives:</strong> Quality, diversity, and privacy contributions are economically rewarded</li>
+  <li><strong>Security by Design:</strong> Multi-layered defenses against Sybil attacks, collusion, and data poisoning</li>
+  <li><strong>Sustainable Economics:</strong> Balanced emission and burn mechanisms support long-term token value</li>
+  <li><strong>Truthful Reporting:</strong> Mechanism design ensures dominant strategy is accurate representation</li>
+  <li><strong>Market Efficiency:</strong> Price discovery and equilibrium modeling enable optimal resource allocation</li>
+</ul>
+
+<p>This framework enables privacy-preserving genomic data markets that align economic incentives with data quality, participant protection, and long-term sustainability.</p>
+
+</body>
+</html>

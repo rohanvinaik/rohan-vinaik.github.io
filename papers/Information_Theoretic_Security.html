@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Information-Theoretic Security | Rohan Vinaik</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --text: #e0e0e0;
+      --text-secondary: #a0a0a0;
+      --accent: #00ffff;
+      --border: #333;
+      --code-bg: #1a1a1a;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'JetBrains Mono', monospace;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 20px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    h1 {
+      color: var(--accent);
+      font-size: 1.5rem;
+      margin-bottom: 8px;
+      letter-spacing: 0.02em;
+    }
+    h2 {
+      color: var(--accent);
+      font-size: 1.1rem;
+      margin-top: 32px;
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    h3 {
+      color: var(--accent);
+      font-size: 0.95rem;
+      margin-top: 24px;
+      margin-bottom: 12px;
+    }
+    h4 {
+      color: var(--text);
+      font-size: 0.85rem;
+      margin-top: 20px;
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+    p { margin-bottom: 16px; font-size: 0.85rem; }
+    a {
+      color: var(--accent);
+      text-decoration: none;
+      border-bottom: 1px dotted var(--accent);
+    }
+    a:hover { border-bottom-style: solid; }
+    .back-link {
+      display: inline-block;
+      margin-bottom: 24px;
+      font-size: 0.85rem;
+    }
+    .paper-meta {
+      color: var(--text-secondary);
+      font-size: 0.75rem;
+      margin-bottom: 24px;
+    }
+    .abstract {
+      background: var(--code-bg);
+      padding: 20px;
+      border-left: 3px solid var(--accent);
+      margin-bottom: 32px;
+      font-size: 0.85rem;
+    }
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 32px;
+    }
+    .tag {
+      background: var(--code-bg);
+      padding: 4px 12px;
+      border: 1px solid var(--border);
+      font-size: 0.7rem;
+      color: var(--accent);
+      text-decoration: none;
+      border-bottom: none;
+    }
+    .tag:hover {
+      background: var(--accent);
+      color: var(--bg);
+      border-color: var(--accent);
+    }
+    .quick-nav {
+      background: var(--code-bg);
+      padding: 16px;
+      margin-bottom: 32px;
+      border: 1px solid var(--border);
+    }
+    .quick-nav h3 {
+      margin-top: 0;
+      font-size: 0.85rem;
+    }
+    .quick-nav ul {
+      list-style: none;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .quick-nav a {
+      font-size: 0.75rem;
+      border-bottom: none;
+      padding: 4px 0;
+      display: block;
+    }
+    .quick-nav a:hover { color: var(--bg); background: var(--accent); padding-left: 8px; }
+    .code-block {
+      background: var(--code-bg);
+      padding: 16px;
+      border-left: 2px solid var(--accent);
+      margin: 20px 0;
+      font-size: 0.75rem;
+      overflow-x: auto;
+      white-space: pre;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .comparison-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      font-size: 0.75rem;
+    }
+    .comparison-table th,
+    .comparison-table td {
+      border: 1px solid var(--border);
+      padding: 12px;
+      text-align: left;
+    }
+    .comparison-table th {
+      background: var(--code-bg);
+      color: var(--accent);
+      font-weight: 600;
+    }
+    ul {
+      margin-bottom: 16px;
+      padding-left: 24px;
+      font-size: 0.85rem;
+    }
+    li {
+      margin-bottom: 8px;
+    }
+    strong {
+      color: var(--accent);
+      font-weight: 600;
+    }
+    .references {
+      font-size: 0.75rem;
+      margin-top: 32px;
+    }
+    .references ol {
+      padding-left: 20px;
+    }
+    .references li {
+      margin-bottom: 12px;
+      line-height: 1.5;
+    }
+    @media (max-width: 768px) {
+      body { padding: 12px; }
+      h1 { font-size: 1.2rem; }
+      h2 { font-size: 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<a href="../index.html#reference" class="back-link">← Back to Reference</a>
+
+<h1>Information-Theoretic Security</h1>
+<div class="paper-meta">January 2025 · Technical Reference · Version 1.0</div>
+
+<div class="tags">
+  <a href="../index.html?filter=INFORMATION-THEORY" class="tag">[INFORMATION-THEORY]</a>
+  <a href="../index.html?filter=CRYPTOGRAPHY" class="tag">[CRYPTOGRAPHY]</a>
+  <a href="../index.html?filter=PRIVACY" class="tag">[PRIVACY]</a>
+  <a href="../index.html?filter=QUANTUM-RESISTANT" class="tag">[QUANTUM-RESISTANT]</a>
+  <a href="../index.html?filter=SECURITY" class="tag">[SECURITY]</a>
+  <a href="../index.html?filter=PERFECT-SECRECY" class="tag">[PERFECT-SECRECY]</a>
+  <a href="../index.html?filter=GENOMICS" class="tag">[GENOMICS]</a>
+  <a href="../index.html?filter=HYPERDIMENSIONAL-COMPUTING" class="tag">[HYPERDIMENSIONAL-COMPUTING]</a>
+</div>
+
+<div class="abstract">
+  <strong>Abstract:</strong> Information-theoretic security provides cryptographic guarantees based on mathematical impossibility rather than computational hardness. Unlike computational security (which assumes certain problems are hard to solve), information-theoretic security proves that an attacker with unbounded computational power cannot break the system. This framework underpins provably secure systems including one-time pads, private information retrieval, and hyperdimensional genomic encodings with 2^800,000 possible interpretations. Security holds even against quantum computers and far-future computational advances.
+</div>
+
+<div class="quick-nav">
+  <h3>Quick Navigation</h3>
+  <ul>
+    <li><a href="#definition">1. Definition</a></li>
+    <li><a href="#fundamental-properties">2. Fundamental Properties</a></li>
+    <li><a href="#shannon-theory">3. Shannon's Theory</a></li>
+    <li><a href="#computational-vs-information">4. Computational vs Information-Theoretic</a></li>
+    <li><a href="#canonical-examples">5. Canonical Examples</a></li>
+    <li><a href="#genomic-applications">6. Genomic Applications</a></li>
+    <li><a href="#references">References</a></li>
+  </ul>
+</div>
+
+<h2 id="definition">1. Definition</h2>
+
+<p><strong>Information-theoretic security</strong> (also called <strong>unconditional security</strong> or <strong>perfect security</strong>) means that an adversary with unbounded computational resources and unlimited time cannot extract protected information from an observation, even in principle.</p>
+
+<h3>1.1 Formal Definition</h3>
+
+<div class="code-block">For plaintext M, ciphertext C, key K:
+
+Perfect Secrecy (Shannon, 1949):
+  I(M; C) = 0
+
+Equivalently:
+  P(M | C) = P(M)
+
+Meaning: observing ciphertext C provides
+zero information about plaintext M</div>
+
+<p>The security guarantee is <strong>unconditional</strong>: it holds regardless of:</p>
+<ul>
+  <li>Computational power available to adversary</li>
+  <li>Algorithmic advances or mathematical breakthroughs</li>
+  <li>Quantum computers or hypothetical future technologies</li>
+  <li>Time available for cryptanalysis</li>
+</ul>
+
+<h3>1.2 Mathematical Foundation</h3>
+
+<p>Security derives from <strong>information theory</strong> (Shannon, 1948), which quantifies information content and uncertainty:</p>
+
+<div class="code-block">Entropy H(X):
+  H(X) = -Σ P(x) log₂ P(x)
+  Measures uncertainty in random variable X
+
+Mutual Information I(X; Y):
+  I(X; Y) = H(X) - H(X|Y)
+  Measures information Y reveals about X
+
+Information-theoretic security:
+  I(M; C) = 0  ⟹  H(M|C) = H(M)
+  Observing C does not reduce uncertainty about M</div>
+
+<h2 id="fundamental-properties">2. Fundamental Properties</h2>
+
+<h3>2.1 No Assumptions About Attacker's Power</h3>
+
+<p>Unlike computational security, which assumes problems like integer factorization are hard, information-theoretic security makes <strong>no assumptions</strong> about:</p>
+
+<ul>
+  <li><strong>Computational complexity:</strong> P ≠ NP not required</li>
+  <li><strong>Algorithmic knowledge:</strong> Attacker may have optimal algorithms</li>
+  <li><strong>Hardware capabilities:</strong> Quantum, analog, or exotic computing allowed</li>
+  <li><strong>Side information:</strong> Security holds even with auxiliary knowledge (in some schemes)</li>
+</ul>
+
+<h3>2.2 Quantum-Resistant by Definition</h3>
+
+<p>Information-theoretic security is inherently quantum-resistant:</p>
+
+<div class="code-block">Quantum computing provides:
+  - Superposition and entanglement
+  - Grover's algorithm: √N speedup for search
+  - Shor's algorithm: Polynomial factoring
+
+But cannot violate:
+  - Fundamental information-theoretic limits
+  - Shannon's perfect secrecy theorem
+  - Holevo's bound on quantum information</div>
+
+<p><strong>Why quantum computers cannot break it:</strong> The security is not based on hardness of computation, but on <em>absence of information</em>. No amount of computational power can extract information that mathematically does not exist in the observation.</p>
+
+<h3>2.3 Mathematical Impossibility</h3>
+
+<p>Breaking information-theoretic security would require:</p>
+
+<ul>
+  <li><strong>Violating Shannon's Source Coding Theorem:</strong> Creating information from nothing</li>
+  <li><strong>Reversing irreversible functions:</strong> Inverting many-to-one mappings with no side information</li>
+  <li><strong>Violating Holevo's Bound:</strong> Extracting more information than physically encoded</li>
+</ul>
+
+<p>These are not computational challenges—they are <strong>mathematical impossibilities</strong> equivalent to creating a perpetual motion machine or violating the second law of thermodynamics.</p>
+
+<h2 id="shannon-theory">3. Shannon's Theory and Perfect Secrecy</h2>
+
+<h3>3.1 Shannon's Perfect Secrecy Theorem (1949)</h3>
+
+<p><strong>Theorem:</strong> A cipher has perfect secrecy if and only if:</p>
+
+<ol>
+  <li>For every plaintext m and ciphertext c: P(M=m | C=c) = P(M=m)</li>
+  <li>Equivalently: |K| ≥ |M| and keys are uniformly random and used only once</li>
+</ol>
+
+<div class="code-block">Perfect Secrecy Requirements:
+  1. Key space ≥ message space: |K| ≥ |M|
+  2. Each key equally probable: P(K=k) = 1/|K|
+  3. Single use: Each key used for exactly one message
+  4. For each (m,c) pair, ∃ unique k: E_k(m) = c
+
+Classic example: One-time pad (Vernam cipher, 1917)</div>
+
+<h3>3.2 One-Time Pad: The Gold Standard</h3>
+
+<div class="code-block">One-Time Pad Protocol:
+  Message: M ∈ {0,1}^n
+  Key:     K ∈ {0,1}^n  (random, uniform)
+  Encrypt: C = M ⊕ K
+  Decrypt: M = C ⊕ K
+
+Perfect Secrecy Proof:
+  For any message m and ciphertext c:
+    P(M=m | C=c) = P(K = m⊕c) = 1/2^n = P(M=m)
+
+  Therefore: I(M; C) = 0</div>
+
+<p><strong>Why it works:</strong> For any observed ciphertext c, <em>every possible message m is equally likely</em> because there exists exactly one key k = m ⊕ c that would produce c. Since keys are uniformly random, all messages have equal posterior probability.</p>
+
+<h3>3.3 Shannon's Impossibility Results</h3>
+
+<p><strong>Key Size Lower Bound:</strong> Perfect secrecy requires |K| ≥ |M|. Proof by contradiction:</p>
+
+<div class="code-block">Assume |K| < |M|:
+  Then ∃ message m₀, ciphertext c such that:
+    No key k satisfies E_k(m₀) = c
+
+  Therefore:
+    P(M=m₀ | C=c) = 0 ≠ P(M=m₀)
+
+  Violates perfect secrecy. ∎</div>
+
+<p><strong>Key Reuse Catastrophe:</strong> Reusing a one-time pad key completely breaks security:</p>
+
+<div class="code-block">Two messages with same key:
+  C₁ = M₁ ⊕ K
+  C₂ = M₂ ⊕ K
+
+  Attacker observes C₁ ⊕ C₂:
+    C₁ ⊕ C₂ = (M₁ ⊕ K) ⊕ (M₂ ⊕ K) = M₁ ⊕ M₂
+
+  Key cancels out → direct relationship between plaintexts
+  Statistical analysis breaks security immediately</div>
+
+<h2 id="computational-vs-information">4. Computational vs Information-Theoretic Security</h2>
+
+<table class="comparison-table">
+  <thead>
+    <tr>
+      <th>Property</th>
+      <th>Computational Security</th>
+      <th>Information-Theoretic Security</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Security Basis</strong></td>
+      <td>Hardness of computational problems (factoring, discrete log, etc.)</td>
+      <td>Mathematical impossibility / information theory</td>
+    </tr>
+    <tr>
+      <td><strong>Assumptions</strong></td>
+      <td>P ≠ NP, attacker computationally bounded, specific problems are hard</td>
+      <td>No assumptions about attacker's computational power</td>
+    </tr>
+    <tr>
+      <td><strong>Key Size</strong></td>
+      <td>Small keys (128-4096 bits)</td>
+      <td>Key size ≥ message size (Shannon's theorem)</td>
+    </tr>
+    <tr>
+      <td><strong>Quantum Resistance</strong></td>
+      <td>Vulnerable to quantum algorithms (Shor's, Grover's)</td>
+      <td>Inherently quantum-resistant</td>
+    </tr>
+    <tr>
+      <td><strong>Future-Proof</strong></td>
+      <td>May break with algorithmic advances</td>
+      <td>Provably secure forever</td>
+    </tr>
+    <tr>
+      <td><strong>Efficiency</strong></td>
+      <td>Efficient encryption/decryption, key reuse possible</td>
+      <td>May require large keys, typically single-use</td>
+    </tr>
+    <tr>
+      <td><strong>Examples</strong></td>
+      <td>RSA, AES, elliptic curve cryptography</td>
+      <td>One-time pad, quantum key distribution, PIR, HDC genomics</td>
+    </tr>
+    <tr>
+      <td><strong>Security Duration</strong></td>
+      <td>Until broken by sufficient computational power</td>
+      <td>Mathematically permanent</td>
+    </tr>
+    <tr>
+      <td><strong>Proof Type</strong></td>
+      <td>Reduction to unproven conjectures</td>
+      <td>Direct mathematical proof</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>4.1 When Each Is Appropriate</h3>
+
+<h4>Use Computational Security When:</h4>
+<ul>
+  <li>Key distribution is difficult or expensive</li>
+  <li>Multiple messages need encryption with same key</li>
+  <li>Efficiency is critical (speed, bandwidth)</li>
+  <li>Security needs are time-bounded (e.g., 20-50 years sufficient)</li>
+</ul>
+
+<h4>Use Information-Theoretic Security When:</h4>
+<ul>
+  <li>Data must remain secure indefinitely (genomic data, medical records)</li>
+  <li>Quantum computing threats are concern</li>
+  <li>Adversary may have unbounded resources (nation-states, far future)</li>
+  <li>Catastrophic failure consequences (nuclear codes, state secrets)</li>
+  <li>Mathematical guarantee required (compliance, regulatory)</li>
+</ul>
+
+<h2 id="canonical-examples">5. Canonical Examples</h2>
+
+<h3>5.1 One-Time Pad</h3>
+
+<div class="code-block">Implementation:
+  M = "HELLO" = [7, 4, 11, 11, 14]  (A=0...Z=25)
+  K = [23, 15, 9, 2, 17]  (random)
+  C = (M + K) mod 26 = [4, 19, 20, 13, 5] = "ETUNE"
+
+Perfect Secrecy:
+  Every 5-letter message equally likely
+  given observation "ETUNE"
+
+  "HELLO" → requires K=[23,15,9,2,17]  ✓
+  "WORLD" → requires K=[10,1,3,2,17]   ✓
+  "LATER" → requires K=[19,15,25,2,17] ✓
+
+  All keys equally probable → all messages equally probable</div>
+
+<p><strong>Historical Use:</strong> Moscow-Washington hotline (Cold War), high-value diplomatic communications.</p>
+
+<h3>5.2 Private Information Retrieval (PIR)</h3>
+
+<p>Information-theoretic PIR allows querying a database without revealing which item was retrieved:</p>
+
+<div class="code-block">Database: D = [d₀, d₁, d₂, d₃]
+Query: Retrieve dᵢ without revealing i
+
+Information-theoretic PIR (multiple servers):
+  - Split database across n non-colluding servers
+  - Query designed such that each server sees
+    uniformly random access pattern
+  - Reconstruct answer without any server knowing i
+
+Security: I(i; Q₁, Q₂, ..., Qₙ₋₁) = 0
+  Even with n-1 servers colluding</div>
+
+<p><strong>Applications:</strong> Private genomic queries, medical record access, patent searches.</p>
+
+<h3>5.3 Secret Sharing (Shamir, 1979)</h3>
+
+<div class="code-block">Shamir's (k,n) Threshold Scheme:
+  Secret s split into n shares
+  Any k shares can reconstruct s
+  Any k-1 shares reveal I(s; shares) = 0
+
+Construction (information-theoretic):
+  - Choose random polynomial p(x) of degree k-1
+    where p(0) = s
+  - Share i: (i, p(i))
+
+  k shares → reconstruct polynomial → recover s
+  k-1 shares → infinitely many possible polynomials
+               → s can be any value</div>
+
+<h3>5.4 Quantum Key Distribution (BB84)</h3>
+
+<div class="code-block">BB84 Protocol (Bennett & Brassard, 1984):
+  Security based on:
+    - No-cloning theorem (quantum mechanics)
+    - Measurement disturbs quantum states
+
+  Information-theoretic guarantee:
+    Eavesdropping detectably alters quantum states
+    Proven secure against any attack allowed by
+    quantum mechanics (no computational assumptions)</div>
+
+<h2 id="genomic-applications">6. Genomic Applications</h2>
+
+<h3>6.1 Hyperdimensional Genomic Encoding</h3>
+
+<p>Hyperdimensional computing provides information-theoretic privacy for genomic data through dimensionality reduction with irreversible many-to-one mapping:</p>
+
+<div class="code-block">Genomic Encoding:
+  Original genome: G ∈ {A,C,G,T}^(4×10⁹)
+  Hypervector: h ∈ {-1,+1}^10,000
+
+  Compression ratio: 800,000×
+
+Information-Theoretic Security:
+  Number of genomes mapping to h:
+    |G| / |H| = 2^(8×10⁹) / 2^10,000 = 2^(7,999,990,000)
+
+  ≈ 2^800,000 possible original genomes per hypervector</div>
+
+<h3>6.2 Mathematical Irreversibility</h3>
+
+<div class="code-block">Why reconstruction is impossible:
+
+1. Information Loss (Shannon):
+   H(G) ≈ 8×10⁹ bits (genome entropy)
+   H(h) = 10,000 bits (hypervector)
+
+   Lost information: 8×10⁹ - 10⁴ = 7,999,990,000 bits
+
+2. Many-to-One Mapping:
+   Multiple genomes → same hypervector
+   Without encoding matrix: cannot distinguish
+
+3. Preimage Space:
+   For observed h, search space of possible G:
+     |Preimage(h)| ≈ 2^(8×10⁹) / 2^10,000
+
+   Even at 1 exaFLOP (10^18 ops/sec):
+     Time to enumerate: 2^800,000 / 10^18 seconds
+                      ≈ 10^240,000 years
+     (Universe age: 10^10 years)</div>
+
+<h3>6.3 Similarity-Preserving Privacy</h3>
+
+<p>Critical property for genomic applications: can compare similarity without reconstruction:</p>
+
+<div class="code-block">Genomic Distance Queries:
+  Given: h₁ (patient), h₂ (database entry)
+  Compute: sim(h₁, h₂) = h₁ · h₂
+
+  Result: Approximate genomic similarity
+  Privacy: Neither genome reconstructed
+
+  Applications:
+    - Disease risk prediction
+    - Ancestry analysis
+    - Drug response matching
+    - Rare variant discovery
+
+All without exposing raw genetic information</div>
+
+<h3>6.4 Practical Genomic PIR</h3>
+
+<div class="code-block">Hypervector-Based Genomic Database Query:
+
+1. Database: {h₁, h₂, ..., hₙ} (hypervectors of genomes)
+2. Query: Patient hypervector h_query
+3. Compute: similarities sim(h_query, hᵢ) for all i
+4. Return: Top-k similar entries (disease risks, etc.)
+
+Information-Theoretic Properties:
+  - Database cannot reconstruct patient genome from h_query
+  - Patient cannot reconstruct database genomes from hᵢ
+  - Similarities accurate for clinical use
+  - Security holds even with full database access
+
+Threat Model:
+  ✓ Honest-but-curious database
+  ✓ Compromised database
+  ✓ Quantum adversary
+  ✓ Far-future cryptanalysis</div>
+
+<h3>6.5 Comparison: Computational vs Information-Theoretic Genomic Security</h3>
+
+<div class="code-block">Homomorphic Encryption (Computational):
+  Genome → Encrypt with HE → Ciphertext
+  Security: Based on RLWE hardness assumption
+  Key size: 10-100 MB
+  Query time: Minutes to hours
+  Quantum-resistant: Only if lattice assumption holds
+  Future-proof: May break with algorithm advances
+
+Hyperdimensional Encoding (Information-Theoretic):
+  Genome → Encode to hypervector → h
+  Security: 2^800,000 possible preimages
+  Key size: None (random projection is key, need not store)
+  Query time: Milliseconds
+  Quantum-resistant: Mathematical impossibility to reverse
+  Future-proof: Provably secure indefinitely</div>
+
+<h3>6.6 Regulatory and Ethical Implications</h3>
+
+<p>Information-theoretic security for genomics has profound implications:</p>
+
+<ul>
+  <li><strong>HIPAA Compliance:</strong> Mathematical proof of de-identification</li>
+  <li><strong>GDPR Right to Erasure:</strong> Cannot reconstruct → inherently anonymized</li>
+  <li><strong>Genetic Discrimination:</strong> Insurance/employers cannot extract genetic information</li>
+  <li><strong>Long-term Privacy:</strong> Genome remains private for patient's lifetime + descendants</li>
+  <li><strong>Research Ethics:</strong> Use genomic data for research without informed consent concerns about future re-identification</li>
+</ul>
+
+<div class="references">
+  <h2 id="references">References</h2>
+  <ol>
+    <li><strong>Shannon, C. E.</strong> (1948). A Mathematical Theory of Communication. <em>Bell System Technical Journal</em>, 27(3), 379-423.</li>
+    <li><strong>Shannon, C. E.</strong> (1949). Communication Theory of Secrecy Systems. <em>Bell System Technical Journal</em>, 28(4), 656-715.</li>
+    <li><strong>Vernam, G. S.</strong> (1926). Cipher Printing Telegraph Systems. <em>Journal of the AIEE</em>, 45, 109-115.</li>
+    <li><strong>Shamir, A.</strong> (1979). How to Share a Secret. <em>Communications of the ACM</em>, 22(11), 612-613.</li>
+    <li><strong>Bennett, C. H., & Brassard, G.</strong> (1984). Quantum Cryptography: Public Key Distribution and Coin Tossing. <em>Proceedings of IEEE International Conference on Computers, Systems and Signal Processing</em>, 175-179.</li>
+    <li><strong>Chor, B., et al.</strong> (1995). Private Information Retrieval. <em>Proceedings of the 36th Annual Symposium on Foundations of Computer Science</em>, 41-50.</li>
+    <li><strong>Kanerva, P.</strong> (2009). Hyperdimensional Computing: An Introduction to Computing in Distributed Representation with High-Dimensional Random Vectors. <em>Cognitive Computation</em>, 1(2), 139-159.</li>
+    <li><strong>Cover, T. M., & Thomas, J. A.</strong> (2006). <em>Elements of Information Theory</em> (2nd ed.). Wiley-Interscience.</li>
+    <li><strong>Holevo, A. S.</strong> (1973). Bounds for the Quantity of Information Transmitted by a Quantum Communication Channel. <em>Problems of Information Transmission</em>, 9(3), 177-183.</li>
+  </ol>
+</div>
+
+<script src="../theme-sync.js"></script>
+</body>
+</html>
