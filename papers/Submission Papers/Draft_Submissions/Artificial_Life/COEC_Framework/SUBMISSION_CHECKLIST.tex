@@ -1,0 +1,368 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{tikz}
+
+\definecolor{urgent}{RGB}{220,20,60}
+\definecolor{important}{RGB}{255,140,0}
+\definecolor{normal}{RGB}{34,139,34}
+
+\title{\textbf{Submission Checklist}\\
+\large COEC Framework → Artificial Life}
+\author{Pre-Submission Quality Control}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section*{Overview}
+
+This checklist ensures your COEC manuscript meets all requirements for submission to \textit{Artificial Life}. Complete all items before uploading to Manuscript Central.
+
+\textbf{Target Timeline:} 6 weeks from start to submission
+
+\section{Content Requirements}
+
+\subsection{Introduction \& Framing (\textcolor{urgent}{CRITICAL})}
+
+\begin{itemize}[label=$\square$]
+    \item Opening paragraph references Langton's ``life-as-it-could-be'' vision
+    \item Connection to ALife research explicitly stated in introduction
+    \item Biological examples precede technical definitions
+    \item Problem statement: why traditional models fail for biological computation
+    \item Clear thesis: COEC as constraint-oriented alternative
+    \item Citations to key ALife papers: Langton (1989), Kauffman, Wolfram, etc.
+\end{itemize}
+
+\subsection{Abstract Revision (\textcolor{urgent}{CRITICAL})}
+
+\begin{itemize}[label=$\square$]
+    \item Opens with biological motivation (not technical definition)
+    \item Mentions ``life-as-it-could-be'' or similar ALife framing
+    \item Word count: 240-260 words
+    \item Structure: Problem → Solution → Contributions → Applications
+    \item Emphasizes emergence and self-organization
+    \item No citations in abstract
+\end{itemize}
+
+\subsection{Computational Examples (\textcolor{urgent}{CRITICAL})}
+
+\begin{itemize}[label=$\square$]
+    \item \textbf{Example 1:} Simple SS-COEC system (e.g., protein folding toy model)
+    \begin{itemize}[label=$\circ$]
+        \item Clear constraint definition
+        \item State space visualization
+        \item Entropy minimization demonstration
+        \item Connection to actual biology
+    \end{itemize}
+
+    \item \textbf{Example 2:} DS-COEC system (e.g., cellular automaton with COEC interpretation)
+    \begin{itemize}[label=$\circ$]
+        \item Discrete dynamics formulation
+        \item Emergent patterns shown
+        \item Comparison to traditional CA analysis
+    \end{itemize}
+
+    \item \textbf{Example 3 (Optional):} CT-COEC or FP-COEC system
+    \begin{itemize}[label=$\circ$]
+        \item Demonstrates higher computational class
+        \item Biological or synthetic biology relevance
+    \end{itemize}
+\end{itemize}
+
+\subsection{Biological Grounding (\textcolor{important}{HIGH PRIORITY})}
+
+\begin{itemize}[label=$\square$]
+    \item Each computational class has biological example
+    \item Molecular level: protein folding, molecular motors
+    \item Cellular level: gene regulatory networks, signaling pathways
+    \item Organismal level: neural dynamics, morphogenesis
+    \item Ecological level: collective behavior, ecosystem dynamics
+    \item Examples are concrete with specific systems named
+\end{itemize}
+
+\subsection{Theoretical Connections (\textcolor{normal}{IMPORTANT})}
+
+\begin{itemize}[label=$\square$]
+    \item Free Energy Principle connection explained clearly
+    \item Information theory integration (Shannon entropy, mutual information)
+    \item Thermodynamics (non-equilibrium systems, dissipative structures)
+    \item Complexity theory (emergence, self-organization)
+    \item Each connection has implications discussed
+\end{itemize}
+
+\subsection{Testable Predictions (\textcolor{important}{HIGH PRIORITY})}
+
+\begin{itemize}[label=$\square$]
+    \item Section on experimental validation
+    \item Specific predictions for at least 3 biological systems
+    \item Predictions are falsifiable and measurable
+    \item Experimental approaches suggested
+    \item Connection to current research programs
+\end{itemize}
+
+\subsection{Design Principles (\textcolor{normal}{IMPORTANT})}
+
+\begin{itemize}[label=$\square$]
+    \item Section on engineering applications
+    \item Guidelines for designing COEC systems
+    \item Examples in synthetic biology
+    \item Examples in neuromorphic computing
+    \item Examples in bio-inspired robotics
+    \item Connection to ``wet'' and ``hard'' ALife
+\end{itemize}
+
+\section{Writing \& Style}
+
+\subsection{Language \& Accessibility}
+
+\begin{itemize}[label=$\square$]
+    \item Technical terms defined on first use
+    \item Mathematical notation explained intuitively
+    \item Biological examples before mathematical formalism
+    \item Jargon minimized; concepts explained clearly
+    \item Active voice used where appropriate
+    \item Transitions between sections smooth
+\end{itemize}
+
+\subsection{ALife Vocabulary Integration}
+
+\begin{itemize}[label=$\square$]
+    \item Uses ``emergence'' and ``self-organization'' appropriately
+    \item References ``substrate-independence'' explicitly
+    \item Mentions ``life-as-it-could-be'' paradigm
+    \item Discusses ``soft''/``wet''/``hard'' ALife domains
+    \item Connects to ``bottom-up'' vs. ``top-down'' approaches
+\end{itemize}
+
+\section{Technical Requirements}
+
+\subsection{Manuscript Format}
+
+\begin{itemize}[label=$\square$]
+    \item Uses ALife Overleaf template or equivalent LaTeX format
+    \item Title: Clear and descriptive (60-100 characters)
+    \item Running head: Short title (max 40 characters)
+    \item Author information complete with ORCID
+    \item All sections properly numbered
+    \item Headers and footers correct
+\end{itemize}
+
+\subsection{Length \& Structure}
+
+\begin{itemize}[label=$\square$]
+    \item Total word count: 12,000-18,000 (Review Article)
+    \item Abstract: 240-260 words
+    \item Introduction: 1,500-2,000 words
+    \item Main content organized into clear sections
+    \item Conclusion: 500-800 words with clear take-aways
+\end{itemize}
+
+\subsection{Figures \& Tables}
+
+\begin{itemize}[label=$\square$]
+    \item All figures referenced in text
+    \item Figure captions descriptive and standalone
+    \item Figures high resolution (at least 300 DPI)
+    \item Color figures use colorblind-friendly palettes
+    \item Figure 1: Conceptual overview of COEC framework
+    \item Figure 2: Nine-class taxonomy visualization
+    \item Figures 3-5: Computational example demonstrations
+    \item Figure 6: Cross-scale applications diagram
+\end{itemize}
+
+\subsection{References \& Citations}
+
+\begin{itemize}[label=$\square$]
+    \item APA citation style used throughout
+    \item Bibliography: 60-100 references
+    \item \textbf{Key ALife citations included:}
+    \begin{itemize}[label=$\circ$]
+        \item Langton (1989) - Artificial Life definition
+        \item Kauffman (1993) - Origins of Order
+        \item Wolfram (2002) - A New Kind of Science
+        \item Holland (1992) - Emergence
+        \item Ray (1991) - Tierra
+        \item Adami et al. (2000) - Evolution of biological complexity
+    \end{itemize}
+    \item Recent ALife papers cited (2015-2024)
+    \item Free Energy Principle: Friston et al.
+    \item Information theory: Shannon, Jaynes
+    \item All URLs working and accessible
+\end{itemize}
+
+\subsection{Mathematical Content}
+
+\begin{itemize}[label=$\square$]
+    \item All equations numbered and referenced
+    \item Notation consistent throughout
+    \item Variables defined in text or notation table
+    \item Complex equations broken into components
+    \item Intuitive explanations accompany formal definitions
+\end{itemize}
+
+\section{Supplementary Materials}
+
+\subsection{Code \& Data}
+
+\begin{itemize}[label=$\square$]
+    \item Computational examples have code available
+    \item Code deposited in repository (GitHub, Zenodo)
+    \item Repository link included in manuscript
+    \item Code documented with README
+    \item License specified (prefer MIT or GPL)
+\end{itemize}
+
+\subsection{Additional Documentation}
+
+\begin{itemize}[label=$\square$]
+    \item Supplementary mathematical derivations (if needed)
+    \item Extended biological examples
+    \item Additional figures/visualizations
+    \item Video demonstrations of computational examples (optional)
+\end{itemize}
+
+\section{Pre-Submission Review}
+
+\subsection{Internal Review}
+
+\begin{itemize}[label=$\square$]
+    \item Manuscript reviewed by colleague/advisor
+    \item Feedback addressed comprehensively
+    \item Fresh-eyes read after 2-3 day break
+    \item All co-authors approved final version
+\end{itemize}
+
+\subsection{Proofreading}
+
+\begin{itemize}[label=$\square$]
+    \item Spell check completed
+    \item Grammar checked (Grammarly or similar)
+    \item Mathematical notation verified
+    \item All references formatted correctly
+    \item Figure numbering consistent
+    \item No placeholder text (e.g., ``TODO'', ``XXX'')
+\end{itemize}
+
+\subsection{Quality Checks}
+
+\begin{itemize}[label=$\square$]
+    \item Abstract compelling and accurate
+    \item Introduction hooks reader immediately
+    \item Figures tell story independently
+    \item Conclusion provides clear take-home messages
+    \item Paper flows logically from start to finish
+    \item Technical rigor balanced with accessibility
+\end{itemize}
+
+\section{Submission Process}
+
+\subsection{Before Upload}
+
+\begin{itemize}[label=$\square$]
+    \item Manuscript Central account created
+    \item ORCID iD obtained and linked
+    \item Suggested reviewers list prepared (4-6 names)
+    \item Excluded reviewers list prepared (if any)
+    \item Keywords selected (5-7 relevant terms)
+    \item Cover letter finalized
+\end{itemize}
+
+\subsection{Required Files}
+
+\begin{itemize}[label=$\square$]
+    \item Manuscript PDF (generated from LaTeX)
+    \item Source files (LaTeX .tex files)
+    \item All figures (individual high-res files)
+    \item Cover letter PDF
+    \item Supplementary materials (if applicable)
+\end{itemize}
+
+\subsection{Submission Metadata}
+
+\begin{itemize}[label=$\square$]
+    \item Article type: Review Article
+    \item Title matches manuscript
+    \item Abstract pasted into submission form
+    \item Keywords entered: \textit{(suggested)}
+    \begin{itemize}[label=$\circ$]
+        \item emergent computation
+        \item constraint-oriented systems
+        \item biological computation
+        \item substrate-independence
+        \item self-organization
+        \item Free Energy Principle
+        \item life-as-it-could-be
+    \end{itemize}
+    \item Funding information (if applicable)
+    \item Conflicts of interest statement
+\end{itemize}
+
+\subsection{Final Checks}
+
+\begin{itemize}[label=$\square$]
+    \item All files uploaded correctly
+    \item PDF renders properly in viewer
+    \item Figures display correctly
+    \item Metadata complete and accurate
+    \item Cover letter persuasive and professional
+    \item Optional: Note about 30th anniversary special issue
+\end{itemize}
+
+\section{Post-Submission}
+
+\subsection{Confirmation}
+
+\begin{itemize}[label=$\square$]
+    \item Submission confirmation email received
+    \item Manuscript ID number recorded
+    \item Submission date documented
+    \item Expected review timeline noted (3-5 months)
+\end{itemize}
+
+\subsection{Next Steps}
+
+\begin{itemize}[label=$\square$]
+    \item Begin work on next paper (Biocomputing → BioSystems)
+    \item Prepare presentation slides summarizing COEC
+    \item Draft blog post or accessible summary
+    \item Identify relevant conferences for presentation
+    \item Set calendar reminder to check submission status
+\end{itemize}
+
+\section*{Final Reminders}
+
+\textbf{Critical Success Factors:}
+\begin{enumerate}
+    \item \textcolor{urgent}{ALife framing} — Must connect explicitly to field
+    \item \textcolor{urgent}{Concrete examples} — 2-3 computational demonstrations required
+    \item \textcolor{urgent}{Biological grounding} — Not just abstract math
+\end{enumerate}
+
+\textbf{Common Pitfalls to Avoid:}
+\begin{enumerate}
+    \item Too abstract without concrete systems
+    \item Missing ALife context and citations
+    \item Unfalsifiable claims without testable predictions
+    \item Poor writing or unclear exposition
+    \item Wrong length (under 12k or over 20k words)
+\end{enumerate}
+
+\vspace{1em}
+\textbf{You're ready to submit when:}
+\begin{itemize}
+    \item All \textcolor{urgent}{CRITICAL} items completed
+    \item 90\%+ of checklist items checked
+    \item Manuscript reviewed by at least one other person
+    \item You feel confident (but okay to still be nervous!)
+\end{itemize}
+
+\vspace{2em}
+\hrule
+\vspace{0.5em}
+\textit{Good luck! Remember: Rejection is normal (75\% rejection rate). If rejected, revise and submit to backup venues. Keep going until published!}
+
+\end{document}
