@@ -192,6 +192,7 @@
 
     // Update UI
     renderStatusWidget();
+    refreshDashboard(); // Update dashboard if open
 
     console.log(`[OPS] ${config.name} logged (+${xpGain} XP)`);
   }
@@ -243,6 +244,8 @@
     }
 
     saveState();
+    renderStatusWidget();
+    refreshDashboard();
   }
 
   function calculatePenalties() {
@@ -448,6 +451,14 @@
 
     document.body.appendChild(overlay);
     setTimeout(() => overlay.classList.add('active'), 10);
+  }
+
+  function refreshDashboard() {
+    // If dashboard is open, refresh its content
+    const dashboardContent = document.querySelector('.ops-dashboard-content');
+    if (dashboardContent) {
+      dashboardContent.innerHTML = renderDashboardContent();
+    }
   }
 
   function renderDashboardContent() {
