@@ -3,7 +3,7 @@
  * Provides caching and offline functionality
  */
 
-const CACHE_NAME = 'rohan-portfolio-v2.2.6'; // Fixed terminal input blocked by dog sprite
+const CACHE_NAME = 'rohan-portfolio-v2.2.7'; // Added OPS system (badge-gated maintenance tracking)
 
 // Critical assets to cache on install
 const STATIC_ASSETS = [
@@ -11,7 +11,9 @@ const STATIC_ASSETS = [
   '/index.html',
   '/style.css',
   '/research-graph.css',
+  '/ops-styles.css',
   '/error-handler.js',
+  '/ops.js',
   '/terminal.js',
   '/theme-sync.js',
   '/skill-project-map.js',
