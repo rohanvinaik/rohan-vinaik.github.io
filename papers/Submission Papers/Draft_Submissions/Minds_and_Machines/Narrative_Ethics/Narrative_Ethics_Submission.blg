@@ -1,0 +1,130 @@
+This is BibTeX, Version 0.99d (TeX Live 2025)
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: Narrative_Ethics_Submission.aux
+The style file: apalike.bst
+I found no \bibdata command---while reading file Narrative_Ethics_Submission.aux
+Warning--I didn't find a database entry for "wallach2008moral"
+Warning--I didn't find a database entry for "anderson2011machine"
+Warning--I didn't find a database entry for "allen2005artificial"
+Warning--I didn't find a database entry for "moor2006nature"
+Warning--I didn't find a database entry for "gips1995towards"
+Warning--I didn't find a database entry for "anderson2008geneth"
+Warning--I didn't find a database entry for "abel2016reinforcement"
+Warning--I didn't find a database entry for "russell2019human"
+Warning--I didn't find a database entry for "howard2001computational"
+Warning--I didn't find a database entry for "vallor2016technology"
+Warning--I didn't find a database entry for "bryson2018patiency"
+Warning--I didn't find a database entry for "dennis2016formal"
+Warning--I didn't find a database entry for "bostrom2014superintelligence"
+Warning--I didn't find a database entry for "amodei2016concrete"
+Warning--I didn't find a database entry for "brown2020language"
+Warning--I didn't find a database entry for "openai2023gpt4"
+Warning--I didn't find a database entry for "christiano2017deep"
+Warning--I didn't find a database entry for "bai2022constitutional"
+Warning--I didn't find a database entry for "ouyang2022training"
+Warning--I didn't find a database entry for "nussbaum1990love"
+Warning--I didn't find a database entry for "johnson1993moral"
+Warning--I didn't find a database entry for "bruner1991narrative"
+Warning--I didn't find a database entry for "minsky1986society"
+Warning--I didn't find a database entry for "minsky2006emotion"
+Warning--I didn't find a database entry for "asimov1950robot"
+Warning--I didn't find a database entry for "clarke2009asimov"
+Warning--I didn't find a database entry for "berreby2015modelling"
+Warning--I didn't find a database entry for "etzioni2017incorporating"
+Warning--I didn't find a database entry for "beauchamp2001principles"
+Warning--I didn't find a database entry for "sutton2018reinforcement"
+Warning--I didn't find a database entry for "hadfield2016cooperative"
+Warning--I didn't find a database entry for "ng2000algorithms"
+Warning--I didn't find a database entry for "raman2022misalignment"
+Warning--I didn't find a database entry for "manheim2018categorizing"
+Warning--I didn't find a database entry for "rossi2018preferences"
+Warning--I didn't find a database entry for "aristotle350bce"
+Warning--I didn't find a database entry for "macintyre1981after"
+Warning--I didn't find a database entry for "berberich2015evolutionary"
+Warning--I didn't find a database entry for "coeckelbergh2010moral"
+Warning--I didn't find a database entry for "minsky1974framework"
+Warning--I didn't find a database entry for "schank1977scripts"
+Warning--I didn't find a database entry for "zwaan2004constructionist"
+Warning--I didn't find a database entry for "speer2009reading"
+Warning--I didn't find a database entry for "hasson2004intersubject"
+Warning--I didn't find a database entry for "mueller2003story"
+Warning--I didn't find a database entry for "reagan2016emotional"
+Warning--I didn't find a database entry for "chambers2008unsupervised"
+Warning--I didn't find a database entry for "regneri2010learning"
+Warning--I didn't find a database entry for "riedl2010narrative"
+Warning--I didn't find a database entry for "li2013story"
+Warning--I didn't find a database entry for "devlin2018bert"
+Warning--I didn't find a database entry for "sap2019socialiqa"
+Warning--I didn't find a database entry for "forbes2020social"
+Warning--I didn't find a database entry for "sosa2007apt"
+Warning--I didn't find a database entry for "greco2010achievements"
+Warning--I didn't find a database entry for "dreyfus2000could"
+Warning--I didn't find a database entry for "ryle1949concept"
+Warning--I didn't find a database entry for "chase1973perception"
+Warning--I didn't find a database entry for "mitchell2021debate"
+Warning--I didn't find a database entry for "pearl2009causality"
+Warning--I didn't find a database entry for "cameron1991terminator"
+Warning--I didn't find a database entry for "sorensen1992thought"
+Warning--I didn't find a database entry for "lacan1949mirror"
+Warning--I didn't find a database entry for "foucault1975discipline"
+Warning--I didn't find a database entry for "bhagavad_gita"
+Warning--I didn't find a database entry for "kant1785groundwork"
+Warning--I didn't find a database entry for "levy2014consciousness"
+Warning--I didn't find a database entry for "shepherd2018consciousness"
+Warning--I didn't find a database entry for "carruthers2015conscious"
+Warning--I didn't find a database entry for "casper2023open"
+Warning--I didn't find a database entry for "brown1991human"
+Warning--I didn't find a database entry for "haidt2012righteous"
+Warning--I didn't find a database entry for "turiel1983development"
+Warning--I didn't find a database entry for "hendrycks2021unsolved"
+Warning--I didn't find a database entry for "hendrycks2021aligning"
+Warning--I didn't find a database entry for "mittelstadt2019explaining"
+Warning--I didn't find a database entry for "kenton2021alignment"
+Warning--I didn't find a database entry for "emelin2021moral"
+Warning--I didn't find a database entry for "garcez2019neurosymbolic"
+Warning--I didn't find a database entry for "scholkopf2021toward"
+Warning--I didn't find a database entry for "gentner1983structure"
+Warning--I didn't find a database entry for "webb2021emergent"
+Warning--I didn't find a database entry for "vaswani2017attention"
+You've used 0 entries,
+            1935 wiz_defined-function locations,
+            553 strings with 5255 characters,
+and the built_in function-call counts, 17 in all, are:
+= -- 0
+> -- 0
+< -- 0
++ -- 0
+- -- 0
+* -- 0
+:= -- 7
+add.period$ -- 0
+call.type$ -- 0
+change.case$ -- 0
+chr.to.int$ -- 0
+cite$ -- 0
+duplicate$ -- 0
+empty$ -- 1
+format.name$ -- 0
+if$ -- 1
+int.to.chr$ -- 1
+int.to.str$ -- 0
+missing$ -- 0
+newline$ -- 3
+num.names$ -- 0
+pop$ -- 0
+preamble$ -- 1
+purify$ -- 0
+quote$ -- 0
+skip$ -- 1
+stack$ -- 0
+substring$ -- 0
+swap$ -- 0
+text.length$ -- 0
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 0
+warning$ -- 0
+while$ -- 0
+width$ -- 0
+write$ -- 2
+(There was 1 error message)

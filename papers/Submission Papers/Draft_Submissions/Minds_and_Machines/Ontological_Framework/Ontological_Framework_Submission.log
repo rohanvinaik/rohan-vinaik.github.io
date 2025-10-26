@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025) (preloaded format=pdflatex 2025.3.8)  26 OCT 2025 11:51
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025) (preloaded format=pdflatex 2025.3.8)  26 OCT 2025 12:29
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -422,7 +422,6 @@ File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 [1
 
 {/usr/local/texlive/2025basic/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
-(./Ontological_Framework_Submission.toc
 
 [2
 
@@ -430,50 +429,36 @@ File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 
 [3]
 
-[4])
-\tf@toc=\write4
-\openout4 = `Ontological_Framework_Submission.toc'.
+[4]
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 107.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 107.
 
 
 
 [5]
 
-[6
-
-]
-
-[7]
-
-[8]
-
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 110.
+(hyperref)                removing `math shift' on input line 127.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 110.
+(hyperref)                removing `math shift' on input line 127.
 
 
-
-[9]
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 130.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 130.
-
-
-Overfull \hbox (18.38297pt too wide) in paragraph at lines 134--135
+Overfull \hbox (18.38297pt too wide) in paragraph at lines 131--132
 \OT1/cmr/m/n/12 rather than from a cen-tral con-troller|a per-spec-tive aligned
  with dis-tributed cog-ni-tion ([]Hutchins[],
  []
 
 
 
-[10]
-Overfull \hbox (24.20555pt too wide) in paragraph at lines 146--147
+[6]
+Overfull \hbox (24.20555pt too wide) in paragraph at lines 143--144
 []\OT1/cmr/m/n/12 When $\OML/cmm/m/it/12 T$ \OT1/cmr/m/n/12 pro-motes \OT1/cmr/
 bx/n/12 col-li-sion dy-nam-ics\OT1/cmr/m/n/12 |frequent, struc-tured en-coun-te
 rs among agents|local
@@ -481,133 +466,153 @@ rs among agents|local
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 148.
+(hyperref)                removing `math shift' on input line 145.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 148.
+(hyperref)                removing `math shift' on input line 145.
+
+
+
+[7]
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 177.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 177.
+
+
+
+[8]
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 193.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 193.
+
+
+Overfull \hbox (24.20555pt too wide) in paragraph at lines 197--198
+[]\OT1/cmr/m/n/12 When $\OML/cmm/m/it/12 T$ \OT1/cmr/m/n/12 pro-motes \OT1/cmr/
+bx/n/12 col-li-sion dy-nam-ics\OT1/cmr/m/n/12 |frequent, struc-tured en-coun-te
+rs among agents|local
+ []
+
+
+
+[9]
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 209.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 209.
+
+
+
+[10]
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 249.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 249.
 
 
 
 [11]
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 180.
+(hyperref)                removing `math shift' on input line 269.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 180.
-
-
-
-[12]
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 196.
+(hyperref)                removing `math shift' on input line 269.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 196.
-
-
-Overfull \hbox (24.20555pt too wide) in paragraph at lines 200--201
-[]\OT1/cmr/m/n/12 When $\OML/cmm/m/it/12 T$ \OT1/cmr/m/n/12 pro-motes \OT1/cmr/
-bx/n/12 col-li-sion dy-nam-ics\OT1/cmr/m/n/12 |frequent, struc-tured en-coun-te
-rs among agents|local
- []
-
-
-
-[13]
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 212.
+(hyperref)                removing `math shift' on input line 269.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 212.
+(hyperref)                removing `math shift' on input line 269.
 
 
-
-[14]
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 252.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 252.
-
-
-
-[15]
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 272.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 272.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 272.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 272.
-
-
-Overfull \hbox (34.8328pt too wide) in paragraph at lines 274--275
+Overfull \hbox (34.8328pt too wide) in paragraph at lines 271--272
 \OT1/cmr/m/n/12 Null and vam-piric regimes ex-hibit high sur-face rep-e-ti-tion
  with weak in-te-gra-tive re-la-tions|consistent
  []
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 287.
+(hyperref)                removing `math shift' on input line 284.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 287.
+(hyperref)                removing `math shift' on input line 284.
 
 
+
+[12]
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 302.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `subscript' on input line 302.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 302.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 313.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 313.
+
+
+
+[13]
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 330.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\Delta' on input line 330.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 330.
+
+
+
+[14]
+
+[15]
 
 [16]
 
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 305.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `subscript' on input line 305.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 305.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 316.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 316.
-
-
-
 [17]
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 333.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\Delta' on input line 333.
+Overfull \hbox (87.29575pt too wide) in paragraph at lines 451--462
+ [][] 
+ []
 
 
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 333.
+Overfull \hbox (52.38515pt too wide) in paragraph at lines 473--474
+[]\OT1/cmr/bx/n/12 Proposition 1 \OT1/cmr/m/n/12 (Pro-duc-tive--con-straint in-
+duc-tion of Mode I)\OT1/cmr/bx/n/12 . \OT1/cmr/m/it/12 In-ter-ven-tion: In-crea
+se strength/specificity
+ []
 
 
 
@@ -618,22 +623,27 @@ Package hyperref Warning: Token not allowed in a PDF string (Unicode):
 [20]
 
 [21]
-Overfull \hbox (87.29575pt too wide) in paragraph at lines 454--465
- [][] 
- []
-
-
-Overfull \hbox (52.38515pt too wide) in paragraph at lines 476--477
-[]\OT1/cmr/bx/n/12 Proposition 1 \OT1/cmr/m/n/12 (Pro-duc-tive--con-straint in-
-duc-tion of Mode I)\OT1/cmr/bx/n/12 . \OT1/cmr/m/it/12 In-ter-ven-tion: In-crea
-se strength/specificity
- []
-
-
 
 [22]
 
 [23]
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 621.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\langle' on input line 621.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\rangle' on input line 621.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 621.
+
+
 
 [24]
 
@@ -641,22 +651,20 @@ se strength/specificity
 
 [26]
 
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 712.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 712.
+
+
+
 [27]
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 624.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\langle' on input line 624.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\rangle' on input line 624.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 624.
+Overfull \hbox (1.47203pt too wide) in paragraph at lines 749--750
+[]\OT1/cmr/m/n/12 High $\OML/cmm/m/it/12 V$ \OT1/cmr/m/n/12 out-puts are flu-en
+t but hol-low|exactly the fail-ure mode crit-ics iden-tify in "stochas-
+ []
 
 
 
@@ -666,20 +674,22 @@ Package hyperref Warning: Token not allowed in a PDF string (Unicode):
 
 [30]
 
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 715.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 715.
-
-
-
 [31]
-Overfull \hbox (1.47203pt too wide) in paragraph at lines 752--753
-[]\OT1/cmr/m/n/12 High $\OML/cmm/m/it/12 V$ \OT1/cmr/m/n/12 out-puts are flu-en
-t but hol-low|exactly the fail-ure mode crit-ics iden-tify in "stochas-
- []
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 833.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\langle' on input line 833.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\rangle' on input line 833.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 833.
 
 
 
@@ -688,41 +698,30 @@ t but hol-low|exactly the fail-ure mode crit-ics iden-tify in "stochas-
 [33]
 
 [34]
-
-[35]
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 836.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\langle' on input line 836.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\rangle' on input line 836.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 836.
-
-
-
-[36]
-
-[37]
-
-[38]
-Overfull \hbox (22.97746pt too wide) in paragraph at lines 928--929
+Overfull \hbox (22.97746pt too wide) in paragraph at lines 925--926
 []\OT1/cmr/m/n/12 Test hy-poth-e-sis: ex-oge-nous fields (en-gage-ment al-go-ri
 thms, SEO) bias to-ward Null/Vampiric
  []
 
 
 
+[35]
+
+[36]
+
+[37]
+
+[38]
+
 [39]
 
 [40]
+Overfull \hbox (18.70935pt too wide) in paragraph at lines 1038--1039
+[]\OT1/cmr/m/n/12 Avoid me-chan-i-cal cou-pling: edges should rep-re-sent mean-
+ing-ful de-pen-den-cies, not template-
+ []
+
+
 
 [41]
 
@@ -731,18 +730,18 @@ thms, SEO) bias to-ward Null/Vampiric
 [43]
 
 [44]
-Overfull \hbox (18.70935pt too wide) in paragraph at lines 1041--1042
-[]\OT1/cmr/m/n/12 Avoid me-chan-i-cal cou-pling: edges should rep-re-sent mean-
-ing-ful de-pen-den-cies, not template-
- []
-
-
 
 [45]
 
 [46]
 
 [47]
+Overfull \hbox (2.45512pt too wide) in paragraph at lines 1207--1208
+[]\OT1/cmr/bx/n/12 Operationalization: \OT1/cmr/m/n/12 Met-rics trans-lat-ing q
+ual-i-ta-tive im-pres-sions into ob-serv-able quan-
+ []
+
+
 
 [48]
 
@@ -751,12 +750,6 @@ ing-ful de-pen-den-cies, not template-
 [50]
 
 [51]
-Overfull \hbox (2.45512pt too wide) in paragraph at lines 1210--1211
-[]\OT1/cmr/bx/n/12 Operationalization: \OT1/cmr/m/n/12 Met-rics trans-lat-ing q
-ual-i-ta-tive im-pres-sions into ob-serv-able quan-
- []
-
-
 
 [52]
 
@@ -764,32 +757,20 @@ ual-i-ta-tive im-pres-sions into ob-serv-able quan-
 
 [54]
 
-[55]
-
-[56]
-
-[57]
-
-[58]
-
-[59] (./Ontological_Framework_Submission.aux)
+[55] (./Ontological_Framework_Submission.aux)
  ***********
 LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2025-01-18>
  ***********
-
-
-LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
-
 Package rerunfilecheck Info: File `Ontological_Framework_Submission.out' has no
 t changed.
 (rerunfilecheck)             Checksum: 4D4DFA75D51A4570F061810C2DF80BAD;18851.
  ) 
 Here is how much of TeX's memory you used:
- 11288 strings out of 474662
- 174652 string characters out of 5751110
+ 11276 strings out of 474662
+ 174397 string characters out of 5751110
  570709 words of memory out of 5000000
- 33930 multiletter control sequences out of 15000+600000
+ 33926 multiletter control sequences out of 15000+600000
  572379 words of font info for 86 fonts, out of 8000000 for 9000
  319 hyphenation exceptions out of 8191
  75i,9n,79p,1369b,677s stack positions out of 10000i,1000n,20000p,200000b,200000s
@@ -811,11 +792,11 @@ live/2025basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb></usr/local
 /texlive/2025basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmti12.pfb></usr/l
 ocal/texlive/2025basic/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pf
 b>
-Output written on Ontological_Framework_Submission.pdf (59 pages, 318290 bytes)
+Output written on Ontological_Framework_Submission.pdf (55 pages, 310954 bytes)
 .
 PDF statistics:
- 1179 PDF objects out of 1200 (max. 8388607)
- 1076 compressed objects within 11 object streams
- 266 named destinations out of 1000 (max. 500000)
+ 1075 PDF objects out of 1200 (max. 8388607)
+ 977 compressed objects within 10 object streams
+ 261 named destinations out of 1000 (max. 500000)
  681 words of extra memory for PDF output out of 10000 (max. 10000000)
 
