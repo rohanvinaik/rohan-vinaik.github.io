@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025) (preloaded format=pdflatex 2025.3.8)  26 OCT 2025 12:29
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025) (preloaded format=pdflatex 2025.3.8)  26 OCT 2025 14:49
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -320,7 +320,11 @@ ef
 File: l3backend-pdftex.def 2024-05-08 L3 backend support: PDF output (pdfTeX)
 \l__color_backend_stack_int=\count300
 \l__pdf_internal_box=\box54
-) (./Ontological_Framework_Submission.aux)
+) (./Ontological_Framework_Submission.aux
+
+Package natbib Warning: Citation `christian2020alignment' multiply defined.
+
+)
 \openout1 = `Ontological_Framework_Submission.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 27.
@@ -428,6 +432,14 @@ File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 ]
 
 [3]
+
+LaTeX Warning: Reference `sec:vignettes' on page 4 undefined on input line 87.
+
+
+LaTeX Warning: Reference `sec:limitations' on page 4 undefined on input line 87
+.
+
+
 
 [4]
 
@@ -674,6 +686,11 @@ t but hol-low|exactly the fail-ure mode crit-ics iden-tify in "stochas-
 
 [30]
 
+Package natbib Warning: Citation `cameron1991terminator' on page 31 undefined o
+n input line 811.
+
+
+
 [31]
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
@@ -757,23 +774,49 @@ ual-i-ta-tive im-pres-sions into ob-serv-able quan-
 
 [54]
 
-[55] (./Ontological_Framework_Submission.aux)
+Package natbib Warning: There were undefined citations.
+
+
+Package natbib Warning: There were multiply defined citations.
+
+
+
+[55] (./Ontological_Framework_Submission.aux
+
+Package natbib Warning: Citation(s) may have changed.
+(natbib)                Rerun to get citations correct.
+
+)
  ***********
 LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2025-01-18>
  ***********
-Package rerunfilecheck Info: File `Ontological_Framework_Submission.out' has no
-t changed.
-(rerunfilecheck)             Checksum: 4D4DFA75D51A4570F061810C2DF80BAD;18851.
+
+
+LaTeX Warning: There were undefined references.
+
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
+
+Package rerunfilecheck Warning: File `Ontological_Framework_Submission.out' has
+ changed.
+(rerunfilecheck)                Rerun to get outlines right
+(rerunfilecheck)                or use package `bookmark'.
+
+Package rerunfilecheck Info: Checksums for `Ontological_Framework_Submission.ou
+t':
+(rerunfilecheck)             Before: B0F0C4AF50FE09D21D218090A80DB6FA;5423
+(rerunfilecheck)             After:  4D4DFA75D51A4570F061810C2DF80BAD;18851.
  ) 
 Here is how much of TeX's memory you used:
- 11276 strings out of 474662
- 174397 string characters out of 5751110
- 570709 words of memory out of 5000000
- 33926 multiletter control sequences out of 15000+600000
+ 11219 strings out of 474662
+ 173466 string characters out of 5751110
+ 570473 words of memory out of 5000000
+ 33869 multiletter control sequences out of 15000+600000
  572379 words of font info for 86 fonts, out of 8000000 for 9000
  319 hyphenation exceptions out of 8191
- 75i,9n,79p,1369b,677s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 75i,9n,79p,1369b,679s stack positions out of 10000i,1000n,20000p,200000b,200000s
  </Users/rohanvinaik/Library/texlive/2025basic/texmf-var/fonts/pk/ljfour/jkna
 ppen/ec/tcrm1200.600pk></usr/local/texlive/2025basic/texmf-dist/fonts/type1/pub
 lic/amsfonts/cm/cmbx10.pfb></usr/local/texlive/2025basic/texmf-dist/fonts/type1
@@ -792,11 +835,11 @@ live/2025basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb></usr/local
 /texlive/2025basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmti12.pfb></usr/l
 ocal/texlive/2025basic/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pf
 b>
-Output written on Ontological_Framework_Submission.pdf (55 pages, 310954 bytes)
+Output written on Ontological_Framework_Submission.pdf (55 pages, 306616 bytes)
 .
 PDF statistics:
- 1075 PDF objects out of 1200 (max. 8388607)
- 977 compressed objects within 10 object streams
+ 899 PDF objects out of 1000 (max. 8388607)
+ 802 compressed objects within 9 object streams
  261 named destinations out of 1000 (max. 500000)
- 681 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 225 words of extra memory for PDF output out of 10000 (max. 10000000)
 
