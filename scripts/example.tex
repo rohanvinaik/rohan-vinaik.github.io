@@ -1,0 +1,162 @@
+\documentclass{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{hyperref}
+
+\title{Example Paper: LaTeX to Website Conversion}
+\author{Rohan Vinaik}
+\date{January 2025}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+This is an example paper demonstrating the LaTeX to website conversion pipeline. The pipeline uses LaTeXML to convert LaTeX documents to HTML with a custom terminal aesthetic. This abstract showcases the conversion of basic LaTeX elements including text formatting, mathematical equations, figures, tables, and references.
+\end{abstract}
+
+\section{Introduction}
+
+This document demonstrates the conversion of LaTeX papers to HTML using the automated pipeline. The system leverages \textbf{LaTeXML}, the same tool used by arXiv for generating accessible HTML versions of research papers.
+
+Key features of the conversion pipeline:
+\begin{itemize}
+    \item Automated LaTeX to HTML5 conversion
+    \item Custom terminal aesthetic styling
+    \item MathML support for mathematical content
+    \item Figure and table handling
+    \item Integration with website infrastructure
+\end{itemize}
+
+\section{Mathematical Content}
+
+The pipeline properly handles both inline math like $E = mc^2$ and display equations:
+
+\begin{equation}
+\int_{-\infty}^{\infty} e^{-x^2} dx = \sqrt{\pi}
+\label{eq:gaussian}
+\end{equation}
+
+More complex mathematics is also supported. For example, the Fourier transform:
+
+\begin{equation}
+\hat{f}(\omega) = \int_{-\infty}^{\infty} f(t) e^{-i\omega t} dt
+\end{equation}
+
+Matrix equations work as well:
+
+\begin{equation}
+\mathbf{A}\mathbf{x} = \mathbf{b}
+\quad \Rightarrow \quad
+\mathbf{x} = \mathbf{A}^{-1}\mathbf{b}
+\end{equation}
+
+\section{Theorems and Proofs}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{definition}{Definition}
+
+\begin{definition}[Vector Space]
+A vector space $V$ over a field $F$ is a set equipped with two operations (addition and scalar multiplication) satisfying eight axioms.
+\end{definition}
+
+\begin{theorem}[Pythagorean Theorem]
+In a right triangle, the square of the hypotenuse equals the sum of squares of the other two sides:
+\begin{equation}
+a^2 + b^2 = c^2
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+This is a placeholder for a proof. In the actual conversion, this would be styled with the terminal aesthetic.
+\end{proof}
+
+\section{Tables}
+
+Tables are converted to HTML table elements with proper styling:
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|l|c|r|}
+\hline
+\textbf{Method} & \textbf{Accuracy} & \textbf{Speed} \\
+\hline
+LaTeXML & 95\% & Fast \\
+Manual & 100\% & Slow \\
+Hybrid & 98\% & Medium \\
+\hline
+\end{tabular}
+\caption{Comparison of conversion methods}
+\label{tab:methods}
+\end{table}
+
+As shown in Table~\ref{tab:methods}, LaTeXML provides a good balance of accuracy and speed.
+
+\section{Lists and Formatting}
+
+The pipeline handles various list types:
+
+\begin{enumerate}
+    \item First item with \textit{italic text}
+    \item Second item with \textbf{bold text}
+    \item Third item with \texttt{monospace text}
+    \begin{enumerate}
+        \item Nested item 1
+        \item Nested item 2
+    \end{enumerate}
+\end{enumerate}
+
+\section{Code and Verbatim}
+
+Code blocks are styled with the terminal aesthetic:
+
+\begin{verbatim}
+def convert_latex(input_file):
+    """Convert LaTeX to HTML."""
+    subprocess.run(['latexmlc', input_file])
+    return True
+\end{verbatim}
+
+\section{Cross-References}
+
+The system preserves cross-references. For example, we can reference Equation~\ref{eq:gaussian} or Table~\ref{tab:methods}.
+
+\section{Conclusion}
+
+This example demonstrates the key features of the LaTeX to website conversion pipeline:
+
+\begin{itemize}
+    \item \textbf{Automated conversion}: Single command converts entire papers
+    \item \textbf{Semantic preservation}: Mathematical content, structure, and references maintained
+    \item \textbf{Custom styling}: Terminal aesthetic applied consistently
+    \item \textbf{Integration ready}: Output formatted for direct website integration
+\end{itemize}
+
+The pipeline significantly streamlines the process of adding research papers to the website while maintaining high quality and consistent styling.
+
+\section*{Acknowledgments}
+
+This pipeline builds on LaTeXML, developed by the team at NIST and used by arXiv for accessible HTML conversion.
+
+\begin{thebibliography}{9}
+
+\bibitem{latexml}
+Miller, B. R.
+\textit{LaTeXML: A LaTeX to XML/HTML/MathML Converter}.
+NIST, \url{https://dlmf.nist.gov/LaTeXML/}
+
+\bibitem{arxiv}
+arXiv.org
+\textit{Accessible HTML Papers on arXiv}.
+\url{https://info.arxiv.org/about/accessible_HTML.html}
+
+\bibitem{mathjax}
+MathJax Consortium
+\textit{MathJax: Beautiful and accessible math in all browsers}.
+\url{https://www.mathjax.org/}
+
+\end{thebibliography}
+
+\end{document}

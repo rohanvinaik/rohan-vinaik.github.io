@@ -1,0 +1,391 @@
+/* LaTeXML Terminal Aesthetic CSS
+ * Matches rohanv.me terminal color scheme
+ * For use with: latexmlc --css=latexml-terminal.css
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+:root {
+  --bg: #0a0a0a;
+  --text: #e0e0e0;
+  --text-secondary: #a0a0a0;
+  --accent: #00ff00;
+  --border: #333;
+  --code-bg: #1a1a1a;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'JetBrains Mono', monospace;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  padding: 20px;
+  max-width: 900px;
+  margin: 0 auto;
+  font-size: 0.85rem;
+}
+
+/* Headers */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--accent);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+h1 {
+  font-size: 1.5rem;
+  margin-bottom: 8px;
+  margin-top: 24px;
+}
+
+h2 {
+  font-size: 1.1rem;
+  margin-top: 32px;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+h3 {
+  font-size: 0.95rem;
+  margin-top: 24px;
+  margin-bottom: 12px;
+}
+
+h4, h5, h6 {
+  font-size: 0.85rem;
+  margin-top: 20px;
+  margin-bottom: 10px;
+}
+
+/* Paragraphs */
+p {
+  margin-bottom: 16px;
+  font-size: 0.85rem;
+}
+
+/* Links */
+a {
+  color: var(--accent);
+  text-decoration: none;
+  border-bottom: 1px dotted var(--accent);
+}
+
+a:hover {
+  border-bottom-style: solid;
+}
+
+/* Abstract/Summary */
+.ltx_abstract {
+  background: var(--code-bg);
+  padding: 20px;
+  border-left: 3px solid var(--accent);
+  margin: 32px 0;
+  font-size: 0.85rem;
+}
+
+.ltx_abstract .ltx_title {
+  color: var(--accent);
+  font-weight: 700;
+  margin-bottom: 12px;
+  display: block;
+}
+
+/* Tables */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  font-size: 0.75rem;
+  background: var(--bg);
+}
+
+th, td {
+  border: 1px solid var(--border);
+  padding: 12px;
+  text-align: left;
+}
+
+th {
+  background: var(--code-bg);
+  color: var(--accent);
+  font-weight: 600;
+}
+
+tr:nth-child(even) {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+/* Figures */
+figure, .ltx_figure {
+  margin: 32px 0;
+  text-align: center;
+}
+
+figure img, .ltx_figure img {
+  max-width: 100%;
+  border: 1px solid var(--border);
+  background: var(--code-bg);
+}
+
+figcaption, .ltx_caption {
+  margin-top: 12px;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+.ltx_caption .ltx_tag {
+  color: var(--accent);
+  font-weight: 600;
+  font-style: normal;
+}
+
+/* Math */
+.ltx_Math {
+  color: var(--text);
+}
+
+.ltx_equation, .ltx_equationgroup {
+  margin: 20px 0;
+  overflow-x: auto;
+}
+
+/* Display math */
+.ltx_eqn_table {
+  margin: 20px auto;
+}
+
+/* Code and preformatted text */
+code, pre, .ltx_verbatim, .ltx_lstlisting {
+  font-family: 'JetBrains Mono', monospace;
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  font-size: 0.75rem;
+}
+
+code {
+  padding: 2px 6px;
+}
+
+pre, .ltx_verbatim, .ltx_lstlisting {
+  padding: 16px;
+  margin: 16px 0;
+  overflow-x: auto;
+  line-height: 1.5;
+}
+
+/* Lists */
+ul, ol {
+  margin: 16px 0;
+  padding-left: 32px;
+}
+
+li {
+  margin-bottom: 8px;
+  font-size: 0.85rem;
+}
+
+ul ul, ol ol, ul ol, ol ul {
+  margin: 8px 0;
+}
+
+/* Bibliography/References */
+.ltx_bibliography {
+  font-size: 0.75rem;
+  margin-top: 32px;
+}
+
+.ltx_bibliography .ltx_title {
+  color: var(--accent);
+  font-size: 1.1rem;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+.ltx_biblist {
+  list-style: none;
+  padding-left: 0;
+}
+
+.ltx_bibitem {
+  margin-bottom: 12px;
+  line-height: 1.5;
+  padding-left: 32px;
+  position: relative;
+}
+
+.ltx_bibitem .ltx_tag {
+  position: absolute;
+  left: 0;
+  color: var(--accent);
+  font-weight: 600;
+}
+
+/* Table of Contents */
+.ltx_TOC {
+  background: var(--code-bg);
+  padding: 16px;
+  margin: 32px 0;
+  border: 1px solid var(--border);
+}
+
+.ltx_TOC .ltx_title {
+  color: var(--accent);
+  font-size: 0.85rem;
+  margin-bottom: 12px;
+}
+
+.ltx_TOC ul {
+  list-style: none;
+  padding-left: 16px;
+}
+
+.ltx_TOC a {
+  font-size: 0.75rem;
+  border-bottom: none;
+  padding: 4px 0;
+  display: block;
+}
+
+.ltx_TOC a:hover {
+  color: var(--bg);
+  background: var(--accent);
+  padding-left: 8px;
+}
+
+/* Theorem-like environments */
+.ltx_theorem, .ltx_proof, .ltx_definition, .ltx_lemma, .ltx_proposition {
+  margin: 20px 0;
+  padding: 16px;
+  background: var(--code-bg);
+  border-left: 3px solid var(--accent);
+}
+
+.ltx_theorem .ltx_title, .ltx_proof .ltx_title,
+.ltx_definition .ltx_title, .ltx_lemma .ltx_title,
+.ltx_proposition .ltx_title {
+  color: var(--accent);
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+/* Footnotes */
+.ltx_note {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  margin-top: 8px;
+}
+
+.ltx_note_mark {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+/* Cross-references */
+.ltx_ref {
+  color: var(--accent);
+  border-bottom: 1px dotted var(--accent);
+}
+
+.ltx_ref:hover {
+  border-bottom-style: solid;
+}
+
+/* Sections */
+section {
+  margin: 32px 0;
+}
+
+.ltx_section {
+  margin: 32px 0;
+}
+
+/* Title page elements */
+.ltx_title_document {
+  color: var(--accent);
+  font-size: 1.8rem;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.ltx_authors {
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+.ltx_dates {
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+/* Special classes */
+.ltx_align_center {
+  text-align: center;
+}
+
+.ltx_align_right {
+  text-align: right;
+}
+
+.ltx_framed {
+  border: 1px solid var(--border);
+  padding: 16px;
+  margin: 16px 0;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  body {
+    padding: 12px;
+    font-size: 0.8rem;
+  }
+
+  h1 {
+    font-size: 1.2rem;
+  }
+
+  h2 {
+    font-size: 1rem;
+  }
+
+  h3 {
+    font-size: 0.9rem;
+  }
+
+  table {
+    font-size: 0.7rem;
+  }
+
+  th, td {
+    padding: 8px;
+  }
+}
+
+/* Print styles */
+@media print {
+  body {
+    background: white;
+    color: black;
+  }
+
+  a {
+    color: black;
+    border-bottom: none;
+  }
+
+  .ltx_abstract, .ltx_theorem, .ltx_proof {
+    border-left-color: black;
+  }
+}
