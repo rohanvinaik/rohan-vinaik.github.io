@@ -1,0 +1,515 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{listings}
+\usepackage{tcolorbox}
+
+\definecolor{edit}{RGB}{220,20,60}
+\definecolor{add}{RGB}{34,139,34}
+\definecolor{keep}{RGB}{70,130,180}
+
+\title{\textbf{COEC → Artificial Life:\\Detailed Editing Instructions}}
+\author{Section-by-Section Prose Changes}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\tableofcontents
+\newpage
+
+\section{Quick Start Checklist}
+
+\subsection{Before You Begin}
+\begin{itemize}[label=$\square$]
+    \item Download ALife Overleaf template: \url{https://www.overleaf.com/latex/templates/artificial-life-journal-submission-template/zhhhjdgvhryt}
+    \item Read 2-3 recent ALife papers to absorb the style
+    \item Have your current COEC HTML open for reference
+    \item Block out 12-15 hours over the next 2 weeks
+\end{itemize}
+
+\subsection{Priority Edits (Must Do)}
+\begin{itemize}[label=$\square$]
+    \item Rewrite introduction with ALife framing (Section \ref{sec:intro})
+    \item Add computational toy examples (Section \ref{sec:examples})
+    \item Strengthen ALife connections (Section \ref{sec:connections})
+    \item Revise abstract (Section \ref{sec:abstract})
+    \item Add implications paragraph to conclusion (Section \ref{sec:conclusion})
+\end{itemize}
+
+\subsection{Secondary Edits (Should Do)}
+\begin{itemize}[label=$\square$]
+    \item Expand biological examples in classification
+    \item Add more citations to ALife papers
+    \item Create simple figures for toy examples
+    \item Polish prose throughout
+\end{itemize}
+
+\section{Title and Abstract} \label{sec:abstract}
+
+\subsection{Current Title}
+\textcolor{edit}{Constraint-Oriented Emergent Computation: A Formal Framework for Biological and Artificial Systems}
+
+\subsection{Suggested Alternative Titles}
+
+\textbf{Option 1 (Preferred):}\\
+\textcolor{add}{Constraint-Oriented Emergent Computation: A Unifying Framework for Life-as-it-Could-Be}
+
+\textbf{Rationale:} Directly references Langton's ``life-as-it-could-be'' concept, immediately signaling ALife relevance.
+
+\textbf{Option 2:}\\
+\textcolor{add}{From Constraints to Computation: A Formal Framework for Understanding Emergent Processes in Living and Artificial Systems}
+
+\textbf{Option 3 (Current is fine):}\\
+\textcolor{keep}{Keep your current title—it's clear and accurate}
+
+\subsection{Abstract Revision}
+
+\textbf{Current First Sentence:}
+\begin{quote}
+``We present Constraint-Oriented Emergent Computation (COEC), a substrate-independent framework describing computation as the trajectory of physical or biological systems through constrained state spaces.''
+\end{quote}
+
+\textbf{Revised First Sentence:}
+\begin{tcolorbox}[colback=add!10,colframe=add]
+\textcolor{add}{Living systems perform sophisticated computations without centralized control or symbolic logic—from protein folding to neural dynamics, from cellular differentiation to ecosystem organization. We present Constraint-Oriented Emergent Computation (COEC), a substrate-independent framework that formalizes this ubiquitous form of computation as the natural trajectory of physical systems through constrained state spaces, guided by entropy minimization and information preservation.}
+\end{tcolorbox}
+
+\textbf{Why this change:}
+\begin{itemize}
+    \item Opens with biological grounding (ALife loves this)
+    \item Establishes relevance immediately
+    \item Sets up the problem before presenting solution
+\end{itemize}
+
+\subsection{Full Abstract Template}
+
+\begin{tcolorbox}[colback=add!10,colframe=add,title=New Abstract Structure]
+\textbf{[Problem Statement - 2 sentences]}\\
+Living systems perform sophisticated computations without centralized control or symbolic logic—from protein folding to neural dynamics, from cellular differentiation to ecosystem organization. Understanding this form of computation requires moving beyond traditional discrete logic models toward frameworks that capture the physical, distributed, and emergent nature of biological information processing.
+
+\textbf{[Solution - 2 sentences]}\\
+We present Constraint-Oriented Emergent Computation (COEC), a substrate-independent mathematical framework that formalizes computation as the trajectory of physical systems through constrained state spaces, guided by entropy minimization and information preservation. Unlike traditional computational models based on symbolic manipulation, COEC conceptualizes computation as arising from systems minimizing surprise through constraint-guided physical evolution.
+
+\textbf{[Key Contributions - 2-3 sentences]}\\
+The framework establishes formal connections between computational substrates and thermodynamic, informational, and variational principles, providing a unified language for understanding processes from molecular self-assembly to collective behavior. We introduce a taxonomy of nine computational classes (SS-COEC through Sheaf-COEC) spanning Sub-Turing to Hyper-Turing capabilities, each characterized by distinct constraint dynamics and residual functions. Through integration with the Free Energy Principle and information theory, COEC bridges scales from quantum to ecological phenomena.
+
+\textbf{[Applications \& Implications - 2 sentences]}\\
+We demonstrate applications in synthetic biology, neuromorphic computing, and distributed systems, showing how COEC principles enable novel design approaches and explain biological computation across scales. The framework provides testable predictions for experimental validation and offers design principles for engineering life-like computational systems, extending artificial life research into new domains of ``life-as-it-could-be.''
+\end{tcolorbox}
+
+\textbf{Word count target:} 240-260 words
+
+\section{Introduction Rewrite} \label{sec:intro}
+
+\subsection{Current Introduction Problems}
+
+\textcolor{edit}{Issues to fix:}
+\begin{enumerate}
+    \item Jumps too quickly to technical details
+    \item Doesn't establish ALife context
+    \item Missing ``life-as-it-could-be'' framing
+    \item No explicit connection to emergence or self-organization
+\end{enumerate}
+
+\subsection{New Introduction Structure}
+
+\subsubsection{Section 1.1: Opening Hook (250 words)}
+
+\begin{tcolorbox}[colback=add!10,colframe=add,title=NEW Opening Paragraph]
+In 1987, Christopher Langton convened the first Artificial Life conference with an audacious goal: to extend biological research ``beyond life-as-we-know-it and into the domain of life-as-it-could-be'' \cite{langton1989artificial}. This vision recognized that understanding life requires more than studying Earth's particular instantiation—it demands identifying the fundamental principles that could manifest in radically different substrates. Three decades later, this quest has produced remarkable insights through cellular automata \cite{wolfram2002new}, evolutionary algorithms \cite{holland1992adaptation}, and artificial chemistries \cite{dittrich2001artificial}. Yet a key question remains open: \textit{How do we formalize computation as it actually occurs in living systems—not through explicit algorithms or centralized control, but through the physical dynamics of constrained matter?}
+
+Biological systems perform sophisticated computations without the symbolic manipulation paradigm underlying traditional computer science. Proteins fold into functional configurations by minimizing free energy \cite{anfinsen1973principles}. Cellular networks process environmental signals through distributed biochemical interactions \cite{alon2006introduction}. Embryos develop into complex organisms through self-organizing pattern formation \cite{turing1952chemical}. In each case, computation emerges not from executing programmed instructions but from physical systems evolving through constrained state spaces, guided by thermodynamic and informational principles.
+\end{tcolorbox}
+
+\textbf{Why this works:}
+\begin{itemize}
+    \item Opens with Langton (establishes ALife credentials)
+    \item Cites key ALife concepts
+    \item Frames biological computation as open problem
+    \item Sets up your solution naturally
+\end{itemize}
+
+\subsubsection{Section 1.2: The COEC Insight (200 words)}
+
+\begin{tcolorbox}[colback=add!10,colframe=add]
+We present Constraint-Oriented Emergent Computation (COEC), a framework that formalizes this ubiquitous form of physical computation. The core insight is deceptively simple: \textit{computation is the trajectory of a system through a constrained state space, driven by entropy minimization and information preservation}. From this foundation emerges a rich mathematical structure connecting thermodynamics, information theory, and computational theory.
+
+COEC shifts the computational perspective from ``what algorithm is executing?'' to ``what constraints shape system evolution?'' This reframing aligns naturally with how living systems actually process information. A protein doesn't ``execute'' a folding algorithm—it explores conformational space under physicochemical constraints until reaching a stable configuration. A brain doesn't ``run'' a perception program—neural dynamics minimize prediction error under architectural and metabolic constraints \cite{friston2010free}. COEC makes this constraint-oriented view mathematically precise and computationally tractable.
+\end{tcolorbox}
+
+\subsubsection{Section 1.3: Add ALife Context (150 words)}
+
+\begin{tcolorbox}[colback=add!10,colframe=add,title=ADD This New Subsection]
+\textbf{1.3 Connection to Artificial Life Research}
+
+COEC builds on and extends several core themes in artificial life research. The emphasis on self-organization echoes Kauffman's work on spontaneous order \cite{kauffman1993origins} and connects to active inference frameworks \cite{friston2010free}. The substrate-independence principle aligns with strong ALife's position that ``life is a process which can be abstracted away from any particular medium'' \cite{langton1989artificial}. By formalizing how constraints shape emergence, COEC provides tools for both analyzing natural biological computation and synthesizing novel computational substrates—addressing both the descriptive and synthetic goals of artificial life.
+
+The framework's scope spans from molecular self-assembly (``soft'' ALife) through engineered biological circuits (``wet'' ALife) to neuromorphic hardware (``hard'' ALife), offering a unified language across ALife's traditional domains. This breadth positions COEC as a potentially unifying theoretical framework for understanding computation across all forms of life—actual, artificial, and possible.
+\end{tcolorbox}
+
+\subsection{Keep Most of Your Current Introduction}
+
+\textcolor{keep}{After adding the above, KEEP most of your existing sections:}
+\begin{itemize}
+    \item 1.2 Core Insight (but rename to 1.4)
+    \item 1.3 Contributions (rename to 1.5)
+    \item 1.4 Scope and Organization (rename to 1.6)
+\end{itemize}
+
+Just add connective tissue to flow from new opening.
+
+\section{Adding Computational Examples} \label{sec:examples}
+
+\subsection{Where to Add Examples}
+
+\textcolor{add}{INSERT new Section 3.6: ``Computational Demonstrations''} \\
+(Between current Section 3 and Section 4)
+
+\subsection{Example 1: Simple SS-COEC (Lattice Protein Folding)}
+
+\begin{tcolorbox}[colback=add!10,colframe=add]
+\textbf{3.6.1 Toy Example: 2D Lattice Protein Folding}
+
+We demonstrate SS-COEC principles with a minimal 2D lattice protein model. Consider a 10-residue sequence with two residue types: H (hydrophobic) and P (polar).
+
+\textbf{Substrate $S$:} Sequence HPPHPPHHPH on 2D square lattice
+
+\textbf{Constraints $C$:}
+\begin{itemize}
+    \item $c_1$: Chain connectivity (adjacent residues must occupy adjacent lattice sites)
+    \item $c_2$: Self-avoidance (no two residues occupy same site)  
+    \item $c_3$: Hydrophobic interaction (H-H contacts contribute $-\epsilon$ to energy)
+\end{itemize}
+
+\textbf{Energy Landscape $E$:}
+$$E(\omega) = -n_{HH} \cdot \epsilon + \beta \cdot n_{\text{violations}}$$
+where $n_{HH}$ counts H-H contacts and $n_{\text{violations}}$ counts constraint violations.
+
+\textbf{Evolution $\Phi$:} Monte Carlo dynamics with Metropolis acceptance criterion
+
+\textbf{Residual $R$:} Lowest energy configuration (typically a compact structure with H residues in core)
+
+\textbf{Result:} Starting from random configuration, system converges to compact structure in $\sim$1000 steps, demonstrating how physical constraints guide computation without explicit instructions.
+
+[Include simple figure showing: initial random configuration → intermediate states → final folded structure]
+\end{tcolorbox}
+
+\textbf{Implementation note:} This takes 2-3 hours to code in Python. If you don't want to code it, you can describe it as above and say ``this toy model captures the essence of SS-COEC...''
+
+\subsection{Example 2: DB-COEC (Oscillator Network)}
+
+\begin{tcolorbox}[colback=add!10,colframe=add]
+\textbf{3.6.2 Toy Example: Constraint-Coupled Oscillators}
+
+A minimal DB-COEC system using coupled oscillators:
+
+\textbf{Substrate:} Three coupled oscillators with states $(x_1, x_2, x_3)$
+
+\textbf{Constraints:}
+\begin{itemize}
+    \item $c_1$: Phase coupling (oscillators prefer 120° phase offset)
+    \item $c_2$: Amplitude bounds ($|x_i| < 1$)
+\end{itemize}
+
+\textbf{Dynamics:}
+$$\frac{dx_i}{dt} = \omega_i + K\sum_j \sin(x_j - x_i - \phi_{target})$$
+
+\textbf{Residual:} Stable 120° phase-locked limit cycle
+
+This demonstrates DB-COEC: the residual is not a static structure but an ongoing temporal pattern maintained by constraint satisfaction.
+
+[Include figure showing phase portrait and time series]
+\end{tcolorbox}
+
+\subsection{Example 3: PP-COEC (Simple Predictive System)}
+
+\begin{tcolorbox}[colback=add!10,colframe=add]
+\textbf{3.6.3 Toy Example: Prediction Error Minimization}
+
+Minimal PP-COEC system tracking a moving target:
+
+\textbf{Substrate:} Internal model state $m(t)$ predicting external signal $s(t)$
+
+\textbf{Constraints:}
+\begin{itemize}
+    \item $c_1$: Prediction accuracy (minimize $|m(t) - s(t)|$)
+    \item $c_2$: Model complexity (regularization term)
+\end{itemize}
+
+\textbf{Free Energy:}
+$$F = \mathbb{E}[(s - m)^2] + \lambda \|m\|^2$$
+
+\textbf{Dynamics:} Gradient descent on $F$
+
+\textbf{Result:} System learns to track signal by minimizing prediction error, embodying active inference principles within COEC framework.
+\end{tcolorbox}
+
+\subsection{Why These Examples Matter}
+
+These toy examples:
+\begin{enumerate}
+    \item Demonstrate COEC principles concretely
+    \item Show substrate-independence (different physical systems)
+    \item Are simple enough to understand quickly
+    \item Can be implemented by reviewers to verify
+    \item Make your framework tangible, not just abstract
+\end{enumerate}
+
+\section{Strengthening ALife Connections} \label{sec:connections}
+
+\subsection{Add These Citations Throughout}
+
+\textcolor{add}{Sprinkle these into your existing text:}
+
+\textbf{In introduction:}
+\begin{itemize}
+    \item Langton, C. (1989). \textit{Artificial life}. Addison-Wesley.
+    \item Bedau, M. A. (2003). Artificial life: organization, adaptation and complexity from the bottom up. \textit{Trends in cognitive sciences}.
+\end{itemize}
+
+\textbf{In sections on emergence:}
+\begin{itemize}
+    \item Kauffman, S. A. (1993). \textit{The origins of order}. Oxford University Press.
+    \item Wolfram, S. (2002). \textit{A new kind of science}. Wolfram media.
+\end{itemize}
+
+\textbf{In sections on self-organization:}
+\begin{itemize}
+    \item Heylighen, F. (2001). The science of self-organization and adaptivity. \textit{The encyclopedia of life support systems}.
+    \item Prigogine, I., \& Stengers, I. (1984). \textit{Order out of chaos}. Bantam books.
+\end{itemize}
+
+\textbf{In active inference sections:}
+\begin{itemize}
+    \item Friston, K. (2010). The free-energy principle: a unified brain theory? \textit{Nature reviews neuroscience}.
+    \item Ramstead, M. J., et al. (2018). Answering Schrödinger's question. \textit{Physics of life reviews}.
+\end{itemize}
+
+\subsection{Add Comparison Paragraph}
+
+\begin{tcolorbox}[colback=add!10,colframe=add,title=ADD to Section 10 (Discussion)]
+\textbf{10.1 Relationship to Existing ALife Frameworks}
+
+COEC complements and extends existing artificial life frameworks in several ways. Where cellular automata (Conway's Game of Life \cite{gardner1970life}, Wolfram's elementary CAs \cite{wolfram2002new}) explore computation through discrete local rules, COEC provides a continuous, thermodynamically-grounded alternative that naturally handles hybrid discrete-continuous systems. Where evolutionary algorithms \cite{holland1992adaptation} focus on population-level dynamics, COEC formalizes individual system trajectories through constrained spaces—though evolutionary constraint satisfaction represents an interesting DM-COEC instantiation.
+
+Most significantly, COEC aligns with and formalizes active inference and the Free Energy Principle \cite{friston2010free}, extending these frameworks beyond neural systems to arbitrary physical substrates. Where FEP emphasizes prediction error minimization, COEC provides the broader constraint-satisfaction architecture within which such minimization occurs. Similarly, COEC connects to autopoiesis \cite{maturana1991autopoiesis} by formalizing how constraints maintain system organization, and to artificial chemistries \cite{dittrich2001artificial} by providing a mathematical language for their emergent computation.
+
+The key innovation is substrate-independence: COEC applies equally to chemical systems, neural dynamics, social networks, and abstract computational structures, providing ALife research with a unifying mathematical language across its traditional soft/hard/wet divisions.
+\end{tcolorbox}
+
+\section{Conclusion Enhancements} \label{sec:conclusion}
+
+\subsection{Add Implications for ALife}
+
+\begin{tcolorbox}[colback=add!10,colframe=add,title=ADD before final paragraph of Conclusion]
+\textbf{Implications for Artificial Life Research}
+
+COEC offers artificial life research several concrete contributions. First, it provides a formal language for analyzing emergent computation in existing ALife systems—from Tierra's digital evolution \cite{ray1991evolution} to robotic swarms \cite{bonabeau1999swarm}—enabling systematic comparison across platforms. Second, it suggests new design principles: rather than programming behaviors explicitly, engineers can shape constraint landscapes to make desired outcomes energetically favorable. Third, it connects ALife to broader developments in physics (non-equilibrium thermodynamics), neuroscience (predictive processing), and machine learning (energy-based models), positioning the field within larger scientific conversations.
+
+Perhaps most importantly, COEC embodies Langton's vision of studying ``life-as-it-could-be'' by providing mathematical tools for exploring the space of possible living and life-like systems. By formalizing what makes a system computational without requiring specific substrates or architectures, COEC helps chart the broader landscape of possible minds, organisms, and emergent phenomena—the ultimate goal of artificial life research.
+\end{tcolorbox}
+
+\section{Formatting for ALife Template}
+
+\subsection{Overleaf Template Setup}
+
+\begin{enumerate}
+    \item Go to: \url{https://www.overleaf.com/latex/templates/artificial-life-journal-submission-template/zhhhjdgvhryt}
+    \item Click ``Open as Template''
+    \item Replace template content with your paper
+\end{enumerate}
+
+\subsection{Key Template Elements}
+
+\textbf{Front matter:}
+\begin{lstlisting}[language=TeX]
+\title{Your Title Here}
+\author{Your Name\\
+Your Institution\\
+Email: your.email@example.com}
+
+\abstract{Your abstract here (250 words max)}
+
+\keywords{constraint satisfaction, emergent computation, 
+artificial life, biological computing, thermodynamics}
+\end{lstlisting}
+
+\textbf{Citation style:} APA format
+\begin{itemize}
+    \item Use \verb|\citep{}| for (Author, Year)
+    \item Use \verb|\citet{}| for Author (Year)
+\end{itemize}
+
+\subsection{Section Headers}
+
+Keep your current structure but ensure:
+\begin{itemize}
+    \item Level 1: \verb|\section{Title}|
+    \item Level 2: \verb|\subsection{Title}|
+    \item Level 3: \verb|\subsubsection{Title}|
+\end{itemize}
+
+\section{Week-by-Week Editing Schedule}
+
+\subsection{Week 1: Core Edits (8 hours)}
+
+\textbf{Monday (3 hours):}
+\begin{itemize}[label=$\square$]
+    \item Rewrite abstract using template (1 hour)
+    \item Rewrite introduction sections 1.1-1.3 (2 hours)
+\end{itemize}
+
+\textbf{Wednesday (3 hours):}
+\begin{itemize}[label=$\square$]
+    \item Add ALife connection section (1.3) (1 hour)
+    \item Add citations throughout (2 hours)
+\end{itemize}
+
+\textbf{Friday (2 hours):}
+\begin{itemize}[label=$\square$]
+    \item Add comparison paragraph to discussion (1 hour)
+    \item Add implications paragraph to conclusion (1 hour)
+\end{itemize}
+
+\subsection{Week 2: Examples \& Polish (6 hours)}
+
+\textbf{Monday-Tuesday (4 hours):}
+\begin{itemize}[label=$\square$]
+    \item Write 3 toy examples (Section 3.6) (3 hours)
+    \item Create simple figures if possible (1 hour)
+\end{itemize}
+
+\textbf{Wednesday-Thursday (2 hours):}
+\begin{itemize}[label=$\square$]
+    \item Proofread entire paper (1 hour)
+    \item Check all citations and formatting (1 hour)
+\end{itemize}
+
+\subsection{Week 3: Template \& Submission (3 hours)}
+
+\textbf{Monday (2 hours):}
+\begin{itemize}[label=$\square$]
+    \item Port to Overleaf template (1 hour)
+    \item Format citations to APA (1 hour)
+\end{itemize}
+
+\textbf{Wednesday (1 hour):}
+\begin{itemize}[label=$\square$]
+    \item Generate final PDF
+    \item Write cover letter
+    \item Submit!
+\end{itemize}
+
+\section{Common Pitfalls to Avoid}
+
+\subsection{Writing Style}
+
+\textcolor{edit}{AVOID:}
+\begin{itemize}
+    \item Excessive jargon without explanation
+    \item Overly abstract prose
+    \item Mathematical notation dumps
+    \item Defensive hedging (``perhaps'', ``might'', ``possibly'')
+\end{itemize}
+
+\textcolor{add}{DO:}
+\begin{itemize}
+    \item Lead with intuition, then formalism
+    \item Use concrete biological examples
+    \item Explain notation clearly
+    \item Make confident claims (backed by evidence)
+\end{itemize}
+
+\subsection{Content Balance}
+
+Your paper should be:
+\begin{itemize}
+    \item 30\% motivation and context
+    \item 40\% framework and formalism
+    \item 20\% examples and applications
+    \item 10\% implications and future work
+\end{itemize}
+
+\subsection{Citation Density}
+
+\textbf{Target:} 60-80 citations total
+\begin{itemize}
+    \item 15-20 ALife papers (essential!)
+    \item 15-20 neuroscience/cognitive science
+    \item 10-15 theoretical biology
+    \item 10-15 physics/thermodynamics
+    \item 5-10 computer science
+    \item 5-10 mathematics
+\end{itemize}
+
+\section{Final Checklist Before Submission}
+
+\subsection{Content}
+\begin{itemize}[label=$\square$]
+    \item Abstract mentions ``life-as-it-could-be'' or similar ALife framing
+    \item Introduction establishes ALife context in first 2 paragraphs
+    \item At least 15 citations to ALife papers
+    \item 2-3 computational toy examples included
+    \item Discussion explicitly connects to ALife frameworks
+    \item Conclusion includes implications for ALife research
+    \item All math notation clearly defined
+    \item All biological examples explained
+\end{itemize}
+
+\subsection{Format}
+\begin{itemize}[label=$\square$]
+    \item Paper uses ALife Overleaf template
+    \item Length: 12,000-15,000 words
+    \item Citations in APA format
+    \item All figures have captions
+    \item Keywords include ``artificial life''
+    \item Abstract $<$250 words
+\end{itemize}
+
+\subsection{Polish}
+\begin{itemize}[label=$\square$]
+    \item Proofread for typos
+    \item Consistent terminology throughout
+    \item No broken citations
+    \item PDF generates without errors
+    \item Cover letter written
+    \item 30th anniversary flag noted
+\end{itemize}
+
+\section{Cover Letter Template}
+
+\begin{tcolorbox}[colback=blue!10,colframe=blue]
+See page 8 of MASTER\_PUBLICATION\_ROADMAP.tex for full cover letter template.
+
+Key points to include:
+\begin{itemize}
+    \item Clear statement of contribution
+    \item Connection to ALife mission
+    \item Note about 30th anniversary
+    \item Brief mention of key results
+    \item 3-4 suggested reviewers (optional)
+\end{itemize}
+\end{tcolorbox}
+
+\section{Post-Submission}
+
+Once submitted:
+\begin{enumerate}
+    \item Expect initial decision in 2-4 weeks (desk rejection or sent to review)
+    \item Full review takes 3-5 months
+    \item Be prepared for revisions (normal!)
+    \item Response time for revisions: typically 2-3 months
+\end{enumerate}
+
+\vspace{2em}
+\hrule
+\vspace{1em}
+
+\textbf{You've got this!} Your framework is solid. These edits are about presentation, not substance. Follow this guide, work steadily for 2-3 weeks, and you'll have a submission-ready manuscript.
+
+\textit{Now stop reading and start editing!}
+
+\end{document}

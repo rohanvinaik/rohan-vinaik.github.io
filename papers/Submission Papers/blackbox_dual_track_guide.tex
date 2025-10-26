@@ -1,0 +1,471 @@
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{setspace}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{xcolor}
+
+\doublespacing
+
+\title{\textbf{Submission Guide: Shaking the Black Box}\\
+\large Dual-Track Strategy for Minds and Machines \& AI and Society}
+
+\author{Rohan Vinaik}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section*{Executive Summary}
+
+\textbf{Paper Title:} Shaking the Black Box: Behavioral Holography and Variance-Mediated Structural Inference for Large Language Models
+
+\textbf{Primary Target:} \textit{Minds and Machines} (philosophical framing)
+
+\textbf{Alternative Target:} \textit{AI \& Society} (governance/auditing framing)
+
+\textbf{Fit Assessment:} \textcolor{orange}{\textbf{MODERATE-to-GOOD}} for both journals (depends on framing)
+
+\textbf{Publication Potential:} \textcolor{orange}{\textbf{MODERATE}} - Strong technical work, but needs more philosophical depth for M\&M or more social implications for AI\&S
+
+\textbf{Key Challenge:} Paper is currently quite technical; needs significant reframing for either journal
+
+\section{Strategic Decision: Which Journal?}
+
+\subsection{Option A: Minds and Machines (Recommended)}
+
+\textbf{Pros:}
+\begin{itemize}[leftmargin=*]
+\item Epistemology of AI understanding fits M\&M's scope perfectly
+\item ``Behavioral holography'' as metaphor for knowledge without internal access
+\item Philosophical questions about what can be known about systems
+\item Connects to interpretability debates in philosophy of AI
+\end{itemize}
+
+\textbf{Cons:}
+\begin{itemize}[leftmargin=*]
+\item Very technical as currently written
+\item Needs substantial reframing around epistemological issues
+\item May be too applied/engineering-focused for M\&M
+\end{itemize}
+
+\textbf{Reframing Strategy:} Frame as paper about \textit{epistemology of opaque systems}—what can we know about AI behavior without internal access, and what does this tell us about the nature of intelligence and understanding?
+
+\subsection{Option B: AI \& Society}
+
+\textbf{Pros:}
+\begin{itemize}[leftmargin=*]
+\item Strong governance/auditing angle
+\item Privacy-preserving verification is societally important
+\item Addresses accountability without compromising proprietary information
+\item Practical implications for AI regulation
+\end{itemize}
+
+\textbf{Cons:}
+\begin{itemize}[leftmargin=*]
+\item Still quite technical
+\item Needs more discussion of social/policy implications
+\item AI\&S prefers less mathematical, more accessible writing
+\end{itemize}
+
+\textbf{Reframing Strategy:} Frame as paper about \textit{accountable AI in practice}—how to audit and verify AI systems without exposing proprietary information, enabling responsible governance.
+
+\section{Recommendation: Dual Preparation}
+
+\textbf{Suggested Approach:} Prepare two versions with different framings, decide which to submit first based on your goals.
+
+\textbf{If your goal is...}
+\begin{itemize}[leftmargin=*]
+\item \textbf{Academic/theoretical impact}: → Minds and Machines (epistemology framing)
+\item \textbf{Policy/practical impact}: → AI \& Society (governance framing)
+\item \textbf{Technical community}: → Consider \textit{Artificial Intelligence} journal instead
+\end{itemize}
+
+\textbf{My Recommendation:} Try Minds and Machines first with epistemological framing. If rejected, reframe for AI \& Society or technical journal.
+
+\section{Version 1: Minds and Machines Framing}
+
+\subsection{New Title}
+
+\textbf{Suggested:} ``Knowing Without Seeing: Epistemology of Black-Box Behavioral Analysis in Large Language Models''
+
+\textbf{Alternative:} ``Behavioral Holography and the Limits of External Knowledge: What Can We Know About Opaque AI Systems?''
+
+\subsection{Revised Abstract (M\&M Version)}
+
+\begin{quote}
+\textit{This paper addresses a fundamental epistemological challenge in the age of large-scale AI: what can we know about the internal structure and capabilities of systems to which we have only external, behavioral access? Drawing on the holographic principle—that high-dimensional structure can be reconstructed from lower-dimensional observations—we develop a framework for ``behavioral holography'' that extracts structural information from systematic probing of AI systems.}
+
+\textit{We argue that behavioral variance under perturbation is not noise but signal, revealing decision boundaries, capability transitions, and architectural constraints. Our framework demonstrates that outputs alone contain sufficient information for structural inference, validated through experiments achieving 95.8\% accuracy in detecting architectural modifications using only API access.}
+
+\textit{This work has implications for three philosophical debates: (1) the nature of understanding in AI systems—what it means to ``know'' a system externally versus internally; (2) the epistemology of complex systems—how indirect measurements can reveal hidden structure; and (3) the interpretability problem—whether meaningful understanding is possible without mechanistic access. We conclude that ``black boxes'' are not epistemologically opaque but rather require different methods of investigation, analogous to how astronomy infers dark matter through gravitational effects rather than direct observation.}
+\end{quote}
+
+\subsection{Required Restructuring for M\&M}
+
+\begin{enumerate}[leftmargin=*]
+\item \textbf{New Introduction (Philosophical Framing)}
+\begin{itemize}
+\item Start with epistemological question: ``What does it mean to know an AI system?''
+\item Discuss two paradigms: internal (mechanistic) vs. external (behavioral)
+\item Argue that external knowledge can be equally informative
+\item Frame technical work as operationalizing this epistemological approach
+\end{itemize}
+
+\item \textbf{Philosophical Framework Section (NEW)}
+\begin{itemize}
+\item Epistemology of indirect measurement
+\item Historical examples: dark matter, DNA structure from X-ray diffraction
+\item Philosophical positions on understanding without mechanism
+\item Functionalism and behaviorism in philosophy of mind
+\end{itemize}
+
+\item \textbf{Condense Technical Sections}
+\begin{itemize}
+\item Move detailed algorithms to appendix
+\item Keep high-level explanation in main text
+\item Focus on conceptual innovations over implementation
+\end{itemize}
+
+\item \textbf{Expand Interpretability Discussion}
+\begin{itemize}
+\item What does ``interpretable'' mean?
+\item Different kinds of understanding (mechanistic vs. behavioral)
+\item Limits of mechanistic interpretability
+\item Value of external behavioral analysis
+\end{itemize}
+
+\item \textbf{New Discussion Section}
+\begin{itemize}
+\item Implications for philosophy of AI
+\item Relationship to debates about AI understanding
+\item Epistemological lessons for complex systems generally
+\item Future of interpretability research
+\end{itemize}
+\end{enumerate}
+
+\subsection{Key Arguments for M\&M Version}
+
+\begin{enumerate}[leftmargin=*]
+\item \textbf{Epistemological Pluralism}: Multiple ways of knowing systems, each valuable
+\item \textbf{Indirect Knowledge}: Behavioral analysis provides genuine understanding
+\item \textbf{Holographic Principle}: Structure encoded in behavioral patterns
+\item \textbf{Variance as Information}: Systematic perturbation reveals organization
+\item \textbf{Practical Epistemology}: Method for knowing opaque systems
+\end{enumerate}
+
+\subsection{M\&M Cover Letter Template}
+
+\begin{quote}
+\textit{Dear Editor,}
+
+\textit{I submit ``Knowing Without Seeing: Epistemology of Black-Box Behavioral Analysis in Large Language Models'' for consideration in Minds and Machines.}
+
+\textit{This paper addresses a fundamental epistemological challenge: what can we know about AI systems to which we have only external, behavioral access? As AI systems become larger and more proprietary, internal access increasingly becomes unavailable. This raises the philosophical question: is external behavioral analysis sufficient for genuine understanding?}
+
+\textit{I argue that behavioral analysis provides a distinct but equally valid form of knowledge about AI systems. Drawing on the holographic principle—that high-dimensional structure can be reconstructed from systematic observations—I develop a framework for ``behavioral holography'' that extracts structural information from perturbation-based probing.}
+
+\textit{The paper makes three contributions to philosophy of AI:}
+
+\textit{1) \textbf{Epistemological Framework}: I develop an account of how indirect, behavioral measurements can provide genuine knowledge about system structure, challenging assumptions that internal access is necessary for understanding.}
+
+\textit{2) \textbf{Variance as Structure}: I demonstrate that response variance under systematic perturbation encodes architectural and functional organization, providing an information channel distinct from but complementary to mechanistic analysis.}
+
+\textit{3) \textbf{Empirical Validation}: I show this approach achieves 95.8\% accuracy in detecting structural modifications using only API access, proving behavioral analysis can rival internal inspection.}
+
+\textit{This work connects to debates about interpretability, understanding in AI systems, and the epistemology of complex systems. It suggests that ``black boxes'' are not epistemologically impenetrable but rather require different investigative methods, analogous to how astronomy studies dark matter through gravitational effects.}
+
+\textit{The paper includes technical content but frames it within philosophical questions about knowledge, understanding, and the limits of external observation. I believe it will interest Minds and Machines readers concerned with interpretability, AI understanding, and epistemology of complex systems.}
+
+\textit{Thank you for your consideration.}
+
+\textit{Sincerely,}\\
+\textit{Rohan Vinaik}
+\end{quote}
+
+\section{Version 2: AI \& Society Framing}
+
+\subsection{New Title}
+
+\textbf{Suggested:} ``Auditing AI Without Exposing Secrets: Privacy-Preserving Verification for Responsible Governance''
+
+\textbf{Alternative:} ``Black-Box Accountability: Verifying AI Systems Without Compromising Proprietary Information''
+
+\subsection{Revised Abstract (AI\&S Version)}
+
+\begin{quote}
+\textit{As AI systems become more powerful and pervasive, society demands accountability—but how can we verify and audit systems whose internals are proprietary? This tension between transparency demands and legitimate trade secrets creates a governance impasse.}
+
+\textit{We present a framework for ``privacy-preserving AI auditing'' that enables verification, capability assessment, and compliance checking using only external behavioral access. Our approach constructs unforgeable ``behavioral fingerprints'' that serve as certificates of identity and capability, while cryptographic commitments ensure no proprietary information is revealed.}
+
+\textit{We validate this approach on commercial AI APIs (GPT-4, Claude, Gemini), achieving 95.8\% accuracy in detecting unauthorized modifications while guaranteeing information leakage below $2^{-256}$. This demonstrates practical auditing without internal access—critical for regulation, consumer protection, and responsible AI deployment.}
+
+\textit{The framework addresses key governance challenges: verifying deployed systems match certified versions, detecting harmful modifications, measuring alignment, and predicting capabilities—all without exposing training data or model weights. We discuss implications for AI policy, regulatory frameworks, and balancing accountability with innovation.}
+\end{quote}
+
+\subsection{Required Restructuring for AI\&S}
+
+\begin{enumerate}[leftmargin=*]
+\item \textbf{New Introduction (Governance Framing)}
+\begin{itemize}
+\item Start with governance challenge: need for accountability vs. proprietary concerns
+\item Discuss regulatory landscape (EU AI Act, etc.)
+\item Frame technical work as solving practical governance problem
+\item Emphasize real-world validation on commercial systems
+\end{itemize}
+
+\item \textbf{Governance Challenges Section (NEW)}
+\begin{itemize}
+\item Transparency vs. trade secrets dilemma
+\item Current limitations of AI auditing
+\item Stakeholder concerns (regulators, companies, public)
+\item What ``accountability'' means in practice
+\end{itemize}
+
+\item \textbf{Dramatically Simplify Technical Content}
+\begin{itemize}
+\item Move all mathematics to appendix
+\item Use metaphors and plain language
+\item Focus on ``what'' and ``why,'' less on ``how''
+\item Emphasize practical utility over technical innovation
+\end{itemize}
+
+\item \textbf{Expand Applications Section}
+\begin{itemize}
+\item Regulatory compliance checking
+\item Consumer protection (verify what you're using)
+\item Auditing for bias and safety
+\item Supply chain verification
+\end{itemize}
+
+\item \textbf{New Policy Implications Section}
+\begin{itemize}
+\item Recommendations for regulators
+\item Standards and certification frameworks
+\item Industry best practices
+\item Multi-stakeholder governance
+\end{itemize}
+\end{enumerate}
+
+\subsection{Key Arguments for AI\&S Version}
+
+\begin{enumerate}[leftmargin=*]
+\item \textbf{Practical Governance}: Solves real regulatory challenge
+\item \textbf{Privacy-Preserving}: Protects legitimate proprietary interests
+\item \textbf{Validated on Commercial Systems}: Works in practice, not just theory
+\item \textbf{Multiple Stakeholder Benefits}: Helps regulators, companies, and public
+\item \textbf{Enables Responsible Innovation}: Accountability without stifling development
+\end{enumerate}
+
+\subsection{AI\&S Cover Letter Template}
+
+\begin{quote}
+\textit{Dear Editor,}
+
+\textit{I submit ``Auditing AI Without Exposing Secrets: Privacy-Preserving Verification for Responsible Governance'' for consideration in AI \& Society.}
+
+\textit{As AI systems become more powerful, society increasingly demands accountability and transparency. However, requiring full access to model internals creates a dilemma: how can we verify and audit systems without exposing proprietary information that represents legitimate competitive advantages? This tension threatens both responsible governance and continued innovation.}
+
+\textit{This paper presents a practical solution: ``privacy-preserving AI auditing'' that enables comprehensive verification using only external behavioral access. The framework creates unforgeable ``behavioral fingerprints'' that certify system identity and capabilities while cryptographically guaranteeing no proprietary information is revealed.}
+
+\textit{I validate this approach on commercial AI APIs where internal access is impossible, achieving 95.8\% accuracy in detecting unauthorized modifications. This demonstrates auditing can be both rigorous and privacy-preserving—a critical capability for effective AI governance.}
+
+\textit{The framework addresses key governance challenges:}
+\begin{itemize}
+\item \textit{Regulatory compliance checking without exposing training data}
+\item \textit{Consumer protection through system verification}
+\item \textit{Detecting harmful modifications or backdoors}
+\item \textit{Measuring safety alignment and bias}
+\item \textit{Capability assessment for risk management}
+\end{itemize}
+
+\textit{This work is timely given emerging AI regulations (EU AI Act, proposed U.S. frameworks) and growing concerns about AI accountability. It offers a practical path forward that respects both transparency needs and legitimate proprietary interests.}
+
+\textit{The paper includes technical content to demonstrate feasibility but emphasizes practical applications, policy implications, and governance frameworks. I believe it will interest AI \& Society readers concerned with responsible AI development, regulatory approaches, and balancing innovation with accountability.}
+
+\textit{Thank you for your consideration.}
+
+\textit{Sincerely,}\\
+\textit{Rohan Vinaik}
+\end{quote}
+
+\section{Comparison: Which Version to Pursue?}
+
+\begin{center}
+\begin{tabular}{|p{3cm}|p{5.5cm}|p{5.5cm}|}
+\hline
+\textbf{Criterion} & \textbf{M\&M Version} & \textbf{AI\&S Version} \\
+\hline
+\textbf{Effort Required} & HIGH - Major reframing, new philosophical sections & MODERATE - Simplify technical content, add policy discussion \\
+\hline
+\textbf{Fit} & MODERATE - Philosophical framing helps but still quite technical & GOOD - Governance angle fits well \\
+\hline
+\textbf{Acceptance Probability} & 40-50\% (depends on philosophical depth achieved) & 50-60\% (if technical content simplified enough) \\
+\hline
+\textbf{Impact} & Academic/theoretical community & Policy/practitioner community \\
+\hline
+\textbf{Timeline} & 8-12 months & 6-9 months \\
+\hline
+\textbf{Citation Potential} & HIGH in AI philosophy circles & MODERATE-HIGH in governance circles \\
+\hline
+\end{tabular}
+\end{center}
+
+\section{Alternative: Technical Journal Route}
+
+Given the paper's current technical depth, you might also consider:
+
+\subsection{Artificial Intelligence Journal}
+
+\textbf{Pros:}
+\begin{itemize}[leftmargin=*]
+\item Can keep most technical content
+\item Valued for methodological innovation
+\item High-impact journal (IF: 14.4)
+\item Already structured appropriately
+\end{itemize}
+
+\textbf{Cons:}
+\begin{itemize}[leftmargin=*]
+\item More competitive
+\item Requires stronger empirical validation
+\item May want comparisons to more baselines
+\end{itemize}
+
+\subsection{Journal of Artificial Intelligence Research (JAIR)}
+
+\textbf{Pros:}
+\begin{itemize}[leftmargin=*]
+\item Open access
+\item Technical depth appreciated
+\item Methodology papers valued
+\item Strong reputation
+\end{itemize}
+
+\textbf{Cons:}
+\begin{itemize}[leftmargin=*]
+\item Longer papers expected
+\item More extensive experiments required
+\end{itemize}
+
+\section{My Final Recommendation}
+
+\subsection{Recommended Strategy}
+
+\begin{enumerate}[leftmargin=*]
+\item \textbf{First Choice}: Submit to \textbf{Artificial Intelligence} journal or JAIR
+   \begin{itemize}
+   \item Paper is currently structured for technical audience
+   \item Minimizes rewriting effort
+   \item Best showcases technical contributions
+   \end{itemize}
+
+\item \textbf{If Rejected from Technical Journals}: Reframe for \textbf{AI \& Society}
+   \begin{itemize}
+   \item Governance framing is compelling
+   \item Commercial API validation is strong hook
+   \item Easier reframe than philosophical approach
+   \end{itemize}
+
+\item \textbf{Last Resort}: Try \textbf{Minds and Machines}
+   \begin{itemize}
+   \item Requires most substantial rewrite
+   \item Epistemological framing is interesting but challenging
+   \item May be better as separate paper building on technical work
+   \end{itemize}
+\end{enumerate}
+
+\subsection{Reasoning}
+
+The paper's strength is its technical innovation and empirical validation. The philosophical and governance implications are present but secondary to the methodology. Rather than hiding the technical sophistication, embrace it by targeting journals that value it. Then, if rejected, the reframing for AI\&S is relatively straightforward (simplify, add governance discussion). The M\&M philosophical reframe is hardest and risks losing the paper's core strength.
+
+\section{Pre-Submission Checklist (If Pursuing M\&M or AI\&S)}
+
+\subsection{For Minds and Machines Version}
+
+\begin{enumerate}[leftmargin=*]
+\item[$\square$] Write new philosophical introduction (2-3 pages)
+\item[$\square$] Add epistemological framework section (3-4 pages)
+\item[$\square$] Move detailed algorithms to appendix
+\item[$\square$] Expand interpretability philosophy discussion (2 pages)
+\item[$\square$] Write new philosophical discussion section (3-4 pages)
+\item[$\square$] Add examples from philosophy of science (indirect measurement)
+\item[$\square$] Engage with mechanistic interpretability debates
+\item[$\square$] Discuss relationship to functionalism in phil. of mind
+\item[$\square$] Reduce technical jargon throughout
+\item[$\square$] Add intuitive explanations for technical concepts
+\end{enumerate}
+
+\subsection{For AI \& Society Version}
+
+\begin{enumerate}[leftmargin=*]
+\item[$\square$] Write governance-focused introduction (2 pages)
+\item[$\square$] Add governance challenges section (2-3 pages)
+\item[$\square$] Move all mathematics to appendix
+\item[$\square$] Rewrite technical sections in plain language
+\item[$\square$] Expand applications to emphasize real-world impact
+\item[$\square$] Add policy recommendations section (2-3 pages)
+\item[$\square$] Discuss EU AI Act, regulatory landscape
+\item[$\square$] Add stakeholder analysis (regulators, companies, public)
+\item[$\square$] Include case studies of governance failures
+\item[$\square$] Emphasize commercial validation results
+\end{enumerate}
+
+\section{Timeline for Each Path}
+
+\subsection{Technical Journal Route (Recommended)}
+
+\begin{itemize}[leftmargin=*]
+\item \textbf{Preparation}: 1-2 weeks (minor revisions)
+\item \textbf{Initial Review}: 3-4 months
+\item \textbf{Revision}: 4-6 weeks
+\item \textbf{Final Decision}: 6-9 months total
+\end{itemize}
+
+\subsection{AI \& Society Route}
+
+\begin{itemize}[leftmargin=*]
+\item \textbf{Preparation}: 3-4 weeks (reframing, simplification)
+\item \textbf{Initial Review}: 2-3 months
+\item \textbf{Revision}: 3-4 weeks
+\item \textbf{Final Decision}: 6-9 months total
+\end{itemize}
+
+\subsection{Minds and Machines Route}
+
+\begin{itemize}[leftmargin=*]
+\item \textbf{Preparation}: 6-8 weeks (substantial rewrite)
+\item \textbf{Initial Review}: 3-4 months
+\item \textbf{Revision}: 6-8 weeks
+\item \textbf{Final Decision}: 10-14 months total
+\end{itemize}
+
+\section{Conclusion}
+
+\textbf{Summary Assessment}:
+\begin{itemize}[leftmargin=*]
+\item \textbf{Current Form}: Best suited for technical AI journals (Artificial Intelligence, JAIR)
+\item \textbf{With Governance Reframe}: Good fit for AI \& Society
+\item \textbf{With Philosophical Reframe}: Moderate fit for Minds and Machines (but requires substantial work)
+\end{itemize}
+
+\textbf{Recommended Path}:
+\begin{enumerate}
+\item Submit to technical journal first (AI or JAIR)
+\item If rejected, reframe for AI \& Society (governance angle)
+\item Only pursue M\&M if you want to write companion philosophical paper
+\end{enumerate}
+
+\textbf{Why This Strategy}:
+\begin{itemize}[leftmargin=*]
+\item Minimizes rewriting effort
+\item Plays to paper's strengths
+\item Maximizes citation potential
+\item Keeps options open for reframing if needed
+\end{itemize}
+
+The paper has strong technical merit. Don't dilute it by forcing philosophical framing unless you genuinely want to develop that angle. The governance story for AI\&S is more natural and compelling.
+
+\end{document}

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025) (preloaded format=pdflatex 2025.3.8)  26 OCT 2025 11:48
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025) (preloaded format=pdflatex 2025.3.8)  26 OCT 2025 15:07
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -688,23 +688,7 @@ ef
 File: l3backend-pdftex.def 2024-05-08 L3 backend support: PDF output (pdfTeX)
 \l__color_backend_stack_int=\count333
 \l__pdf_internal_box=\box67
-) (./COEC_Submission.aux
-
-! Package natbib Error: Bibliography not compatible with author-year citations.
-
-(natbib)                Press <return> to continue in numerical citation style.
-
-
-See the natbib package documentation for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.149 ...and\NAT@force@numbers{}\NAT@force@numbers
-                                                  
-Check the bibliography entries for non-compliant syntax,
-or select author-year BibTeX style, e.g. plainnat
-
-)
+) (./COEC_Submission.aux)
 \openout1 = `COEC_Submission.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 37.
@@ -850,9 +834,9 @@ pdfTeX warning (ext4): destination with the same identifier (name{table.1}) has
                                                   \__shipout_drop_firstpage_...
 l.319 \end{itemize}
                    ]
-Overfull \hbox (16.24667pt too wide) in paragraph at lines 345--346
+Overfull \hbox (14.008pt too wide) in paragraph at lines 345--346
 \OT1/cmr/m/it/10.95 antigen-presenting cells, co-stimulatory molecules, and cy-
-tokines ([]). The resid-ual func-tion|pathogen
+tokines [[]]. The resid-ual func-tion|pathogen
  []
 
 
@@ -946,10 +930,10 @@ Package rerunfilecheck Info: File `COEC_Submission.out' has not changed.
 (rerunfilecheck)             Checksum: 5910DE351B7D32EE3F7E6A01CEB42196;10544.
  ) 
 Here is how much of TeX's memory you used:
- 23032 strings out of 474662
- 428403 string characters out of 5751110
- 814150 words of memory out of 5000000
- 45468 multiletter control sequences out of 15000+600000
+ 23031 strings out of 474662
+ 428387 string characters out of 5751110
+ 814164 words of memory out of 5000000
+ 45467 multiletter control sequences out of 15000+600000
  570610 words of font info for 80 fonts, out of 8000000 for 9000
  319 hyphenation exceptions out of 8191
  84i,10n,87p,1910b,663s stack positions out of 10000i,1000n,20000p,200000b,200000s
@@ -972,7 +956,7 @@ xlive/2025basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/local
 ocal/texlive/2025basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmti8.pfb></us
 r/local/texlive/2025basic/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10
 .pfb>
-Output written on COEC_Submission.pdf (27 pages, 311947 bytes).
+Output written on COEC_Submission.pdf (27 pages, 312105 bytes).
 PDF statistics:
  723 PDF objects out of 1000 (max. 8388607)
  653 compressed objects within 7 object streams

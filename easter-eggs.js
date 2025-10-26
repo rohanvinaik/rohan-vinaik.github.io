@@ -231,6 +231,13 @@
 
     commandBuffer += e.key;
 
+    // Check for sudoku command
+    if (commandBuffer.includes('sudoku')) {
+      commandBuffer = '';
+      window.location.href = 'sudoku.html';
+      return;
+    }
+
     // Clear buffer if too long
     if (commandBuffer.length > 20) {
       commandBuffer = '';
@@ -248,6 +255,7 @@
     console.log('%c│                                                   │', 'color: #808080; font-family: monospace;');
     console.log('%c│  • Type "gooddog" - Make the dog happy           │', 'color: #808080; font-family: monospace;');
     console.log('%c│  • Type "trophy" - Spawn the physics trophy      │', 'color: #808080; font-family: monospace;');
+    console.log('%c│  • Type "sudoku" - Play a puzzle game            │', 'color: #808080; font-family: monospace;');
     console.log('%c│  • Click logo 10x fast - Unlock cheat mode       │', 'color: #808080; font-family: monospace;');
     console.log('%c│  • Shift+Ctrl+Click settings - Developer mode     │', 'color: #808080; font-family: monospace;');
     console.log('%c│  • Konami code - You know what to do             │', 'color: #808080; font-family: monospace;');

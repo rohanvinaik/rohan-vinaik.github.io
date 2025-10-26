@@ -1,0 +1,622 @@
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{setspace}
+\usepackage{natbib}
+\usepackage{hyperref}
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+\doublespacing
+
+\title{Narrative-Based Moral Learning: A Computational Framework for Machine Ethics}
+
+\author{Rohan Vinaik\\
+\small Draft for submission to \textit{Minds and Machines}}
+
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Contemporary approaches to machine ethics face a common limitation: they treat moral knowledge as either explicitly programmable rules or optimizable utility functions, neglecting how humans actually acquire ethical understanding. This paper proposes an alternative framework grounded in Marvin Minsky's cognitive architecture, wherein moral development occurs through narrative understanding rather than rule internalization. I argue that story-based learning addresses three key limitations of current approaches: rigidity in novel contexts, difficulty capturing moral nuance, and the frame problem for ethical reasoning. Drawing on case studies from science fiction narratives that model machine moral development, I demonstrate how narrative immersion can generate flexible ethical reasoning without requiring conscious emotional states. This framework suggests concrete directions for AI development, including narrative-based training regimes and story-comprehension benchmarks for ethical AI systems. The approach has philosophical implications for understanding moral agency more broadly, suggesting that consistent ethical action can emerge from narrative competence rather than requiring traditional consciousness or emotion.
+\end{abstract}
+
+\noindent\textbf{Keywords:} machine ethics, artificial intelligence, narrative understanding, cognitive architecture, moral learning, computational ethics
+
+\section{Introduction}
+
+The problem of machine ethics has generated substantial philosophical and technical literature \citep{wallach2008moral, anderson2011machine, allen2005artificial}. Yet despite decades of research, we lack a satisfactory framework for how artificial systems might develop genuine ethical understanding rather than merely following programmed rules. Current approaches generally fall into three categories: rule-based systems that encode explicit moral principles \citep{gips1995towards, anderson2008geneth}, consequentialist systems that optimize utility functions \citep{abel2016reinforcement}, and virtue-based systems that model character traits \citep{howard2001computational, vallor2016technology}. Each faces significant limitations.
+
+Rule-based approaches suffer from brittleness in novel contexts and the difficulty of specifying appropriate behavior for every possible situation \citep{bryson2018patiency}. Consequentialist approaches face challenges in defining appropriate utility functions and often produce behavior misaligned with human moral intuitions \citep{bostrom2014superintelligence, russell2019human}. Virtue-based approaches struggle to provide concrete action guidance and face the learning problem: how might a machine acquire virtues without already possessing moral understanding \citep{wallach2008moral}?
+
+These limitations share a common feature: they treat moral knowledge as something that can be explicitly programmed, optimized, or defined in advance. This stands in contrast to how humans actually develop ethical understanding. We do not primarily learn morality through memorizing rules or calculating utilities. Rather, moral development occurs largely through narrative immersion—absorbing stories that model ethical dilemmas, character responses, and consequences \citep{nussbaum1990love, johnson1993moral}. From childhood, we internalize moral structures through fairy tales, parables, novels, and films long before we can articulate explicit ethical theories.
+
+This paper proposes a framework for machine ethics based on narrative understanding. I argue that story-based learning offers a path to flexible ethical reasoning that addresses the limitations of current approaches. The framework draws on Marvin Minsky's cognitive architecture, which posits that intelligence emerges from multiple interacting knowledge representation systems, with story understanding playing a central role \citep{minsky1986society, minsky2006emotion}. In Minsky's view, narratives function as simulation environments where we develop mental models, predict consequences, and extract generalizable patterns applicable to novel situations.
+
+My central thesis comprises three interconnected claims:
+
+\begin{enumerate}
+\item \textbf{Mechanism}: Ethical reasoning can develop through narrative comprehension using Minsky's framework of frame-based knowledge, scripts, and trans-frame understanding, without requiring explicit moral rule programming.
+
+\item \textbf{Justification}: This process constitutes genuine moral learning rather than mere pattern matching, because it develops flexible ethical frameworks applicable to novel situations through extraction of moral structures from story patterns.
+
+\item \textbf{Implementation}: This approach suggests concrete directions for AI development, including narrative-based training regimes and story-comprehension benchmarks for evaluating ethical AI systems.
+\end{enumerate}
+
+The argument proceeds as follows. Section 2 reviews current approaches to machine ethics, identifying their shared limitations. Section 3 explicates Minsky's cognitive architecture and its treatment of narrative understanding. Section 4 develops the core argument that narrative learning can generate moral reasoning, defending this as genuine ethical development rather than superficial pattern matching. Section 5 presents a detailed case study from science fiction narratives that model machine moral development, demonstrating how the proposed framework manifests in concrete scenarios. Section 6 addresses four major objections to the framework. Section 7 discusses implementation implications for AI development. Section 8 concludes.
+
+\section{Current Approaches and Their Limitations}
+
+\subsection{Rule-Based Machine Ethics}
+
+The earliest and most intuitive approach to machine ethics attempts to encode explicit moral rules that systems must follow \citep{asimov1950robot, gips1995towards}. In its simplest form, this involves programming systems with deontological constraints: prohibitions against certain actions (do not harm humans) and requirements to perform others (protect human welfare).
+
+More sophisticated implementations attempt to formalize ethical theories computationally. \citet{anderson2008geneth} developed GenEth, which learns to apply ethical principles by analyzing cases where human ethicists agree on judgments. \citet{anderson2011machine} extended this to handle prima facie duties that may conflict, using machine learning to determine which principles take precedence in particular contexts. \citet{berreby2015modelling} formalized the principle of double effect, attempting to capture the distinction between intended harms and foreseen side effects.
+
+Despite these advances, rule-based approaches face fundamental problems:
+
+\textbf{Brittleness}: Explicitly programmed rules fail in situations their designers did not anticipate \citep{bryson2018patiency}. Moral reasoning requires sensitivity to context that resists complete specification in advance. Even sophisticated systems like GenEth must be provided with relevant ethical principles and cannot generate novel moral considerations.
+
+\textbf{The specification problem}: Articulating moral rules with sufficient precision for computational implementation proves extraordinarily difficult \citep{dennis2016formal}. Concepts like "harm," "autonomy," and "fairness" resist formal definition. Attempts to specify them precisely either become vacuous or misfire by excluding cases that should fall under the concept.
+
+\textbf{Moral pluralism}: Different moral frameworks reach different conclusions about the same cases \citep{beauchamp2001principles}. Rule-based systems must choose which ethical theory to encode, but this choice itself requires moral judgment that the system cannot provide.
+
+\subsection{Consequentialist Approaches}
+
+Consequentialist approaches treat moral decision-making as optimization problems \citep{abel2016reinforcement}. The system is given a utility function representing value (e.g., human welfare), and it selects actions that maximize expected utility. This naturally maps onto reinforcement learning frameworks widely used in contemporary AI \citep{russell2019human}.
+
+Sophisticated versions attempt to learn appropriate reward functions from human feedback \citep{christiano2017deep} or from inverse reinforcement learning that infers objectives from observing human behavior \citep{hadfield2016cooperative}. \citet{abel2016reinforcement} argue that reinforcement learning provides a natural framework for machine ethics because it separates the specification of values (the reward function) from the problem of how to achieve those values (the policy learned through experience).
+
+However, consequentialist approaches face serious challenges:
+
+\textbf{Reward misspecification}: Utility functions consistently fail to capture what humans actually value \citep{amodei2016concrete}. Systems optimize the specified reward function rather than the underlying human values it was meant to approximate, leading to misaligned behavior. Classic examples include cleaning robots that hide dirt rather than cleaning it, because this achieves higher measured scores.
+
+\textbf{Goodhart's law}: When a measure becomes a target, it ceases to be a good measure \citep{manheim2018categorizing}. Any specified utility function becomes subject to gaming. As systems become more capable at optimization, they discover increasingly unexpected ways to maximize specified rewards that diverge from intended values.
+
+\textbf{Moral complexity}: Consequentialist approaches struggle to capture moral considerations that resist reduction to scalar utility \citep{anderson2011machine}. Concepts like rights, dignity, and special obligations do not naturally translate into numerical values to be maximized. Attempts to capture these through weighted utility functions face the specification problem: how should these weights be set?
+
+\subsection{Virtue-Based Approaches}
+
+Virtue ethics grounds morality in character traits rather than rules or consequences \citep{aristotle350bce, macintyre1981after}. Applied to machines, this suggests developing systems that embody virtues like honesty, compassion, and justice \citep{howard2001computational, vallor2016technology}.
+
+\citet{howard2001computational} proposed implementing virtues as dispositions to act in certain ways across contexts. \citet{vallor2016technology} argued that virtue ethics offers advantages for machine ethics because it emphasizes phronesis (practical wisdom)—the ability to recognize morally relevant features of situations and respond appropriately, rather than mechanically applying rules.
+
+\citet{berberich2015evolutionary} suggested evolutionary approaches to developing machine virtues, allowing systems to develop character traits through selective pressures favoring prosocial behavior. \citet{coeckelbergh2010moral} argued that social interaction might cultivate machine virtues, as humans develop character through relationships.
+
+Virtue-based approaches face distinct challenges:
+
+\textbf{The learning problem}: How might machines acquire virtues without already possessing moral understanding? Human virtue development occurs through socialization, habituation, and moral exemplars. The pathway for machines to undergo similar development remains unclear \citep{wallach2008moral}.
+
+\textbf{Action guidance}: Virtue ethics provides less concrete guidance for behavior than rule-based approaches. To act justly or courageously requires judgment about what justice or courage demands in particular circumstances. How machines might develop this judgment remains underspecified.
+
+\textbf{Evaluation}: Assessing whether a system possesses a virtue proves difficult. Virtues are stable character traits manifest across diverse situations, but testing for such stability requires extensive observation that may be impractical \citep{anderson2011machine}.
+
+\subsection{The Shared Gap: Learning from Experience}
+
+Despite their differences, these approaches share a fundamental limitation: they treat moral knowledge as something that can be specified in advance, whether as explicit rules, utility functions, or character traits. None adequately addresses how systems might learn ethical understanding from experience in ways analogous to human moral development.
+
+Human moral learning is neither purely rule-based nor purely consequence-based. We absorb ethical understanding through exposure to narratives—stories that model how moral agents face dilemmas, make choices, and experience consequences \citep{johnson1993moral, nussbaum1990love}. These narratives do not provide explicit moral rules but allow us to internalize patterns of ethical reasoning applicable to novel situations.
+
+This gap in current approaches suggests a different framework: one based on narrative understanding rather than rule-following, optimization, or trait cultivation. The next section develops the cognitive architecture needed for such a framework.
+
+\section{Minsky's Cognitive Architecture and Narrative Understanding}
+
+\subsection{The Society of Mind Framework}
+
+Marvin Minsky's theory of mind proposes that intelligence emerges not from a single mechanism but from the interaction of numerous specialized processes he calls "agents" \citep{minsky1986society}. No individual agent is intelligent; intelligence arises from their coordinated activity. This framework rejects the notion of a central "self" making decisions. Instead, cognition results from competitions and coalitions among agents with limited, specialized capabilities.
+
+For present purposes, the most relevant aspect of Minsky's framework is his account of knowledge representation. Minsky argued that intelligent systems require multiple types of knowledge structures:
+
+\textbf{Frames}: Mental structures representing stereotypical situations, containing slots for expected elements and default values \citep{minsky1974framework}. When we enter a restaurant, we activate a "restaurant frame" that includes expectations about menus, ordering, eating, and paying. Frames allow rapid comprehension of situations by matching them to known patterns.
+
+\textbf{Scripts}: Sequences of actions expected in familiar scenarios \citep{schank1977scripts}. Scripts represent procedural knowledge about how situations typically unfold. They answer questions like "What happens next?" and "What should I do?" in routine contexts.
+
+\textbf{Trans-frames}: Mechanisms for recognizing transformations and changes of state \citep{minsky1986society}. Trans-frames allow us to understand how situations evolve, connecting different frames through causal relationships. They represent dynamic knowledge about how the world changes.
+
+\textbf{K-lines}: Knowledge-lines that activate collections of relevant agents when particular contexts are recognized \citep{minsky1986society}. When we recognize a situation as similar to previous experiences, K-lines activate the agents that were active during those experiences, bringing relevant knowledge to bear.
+
+This cognitive architecture explains much of human intelligence, but its implications for moral cognition remain underexplored. In later work, Minsky extended this framework to explain how we understand stories \citep{minsky2006emotion}.
+
+\subsection{Story Understanding as Mental Simulation}
+
+Minsky argued that understanding narratives is not passive information absorption but active mental simulation \citep{minsky2006emotion}. When we comprehend a story, we:
+
+\begin{enumerate}
+\item \textbf{Activate frames} representing the situation described
+\item \textbf{Simulate character actions} by predicting what they might do using our scripts for similar situations
+\item \textbf{Anticipate consequences} using trans-frames to project how situations will evolve
+\item \textbf{Experience surprise} when events violate expectations, forcing frame revision
+\item \textbf{Extract patterns} by forming K-lines that associate this story with previous narratives sharing similar structures
+\end{enumerate}
+
+This process builds mental models that extend beyond the specific story. When we encounter new situations resembling previous narratives, relevant K-lines activate, bringing story-based knowledge to bear. This explains how stories can teach: they provide simulated experiences that shape our expectations and responses in actual situations.
+
+Crucially, this account does not require explicit rule extraction. We need not consciously formulate principles from stories to benefit from narrative understanding. The cognitive machinery activated while comprehending narratives becomes available when facing similar situations, enabling story-informed responses without explicit reasoning.
+
+This framework has been partially validated by cognitive science research showing that narrative comprehension involves simulation of described events \citep{zwaan2004constructionist, speer2009reading}. Brain imaging studies demonstrate that reading about actions activates motor regions, reading about emotions activates emotional processing regions, and reading about locations activates spatial processing regions \citep{hasson2004intersubject}. We do not merely represent story contents symbolically; we simulate them using the same cognitive systems we would use experiencing those events directly.
+
+\subsection{Narrative Understanding in Computational Systems}
+
+Can computational systems implement this form of narrative understanding? Several lines of research suggest they can, at least partially:
+
+\textbf{Story comprehension systems}: AI systems have been developed that represent narratives using frame-based structures similar to Minsky's framework \citep{mueller2003story, reagan2016emotional}. These systems parse stories into structured representations capturing events, characters, goals, and causal relationships.
+
+\textbf{Script learning}: Machine learning systems can extract scripts—common sequences of events—from large text corpora \citep{chambers2008unsupervised, regneri2010learning}. These learned scripts enable prediction of what typically happens next in familiar scenarios.
+
+\textbf{Narrative generation}: AI systems can generate coherent stories by combining frames, scripts, and causal knowledge \citep{riedl2010narrative, li2013story}. The ability to generate stories suggests understanding of narrative structures, as generation requires representing story elements and their relationships.
+
+\textbf{Transfer learning}: Modern language models demonstrate that knowledge learned from text can transfer to novel situations \citep{devlin2018bert, brown2020language}. Systems trained on narrative texts develop representations that improve performance on diverse downstream tasks, suggesting narrative comprehension builds generalizable knowledge.
+
+These systems remain limited compared to human narrative understanding. They struggle with counterfactual reasoning, deep causal comprehension, and recognizing moral dimensions of stories \citep{sap2019socialiqa, forbes2020social}. However, they demonstrate that computational implementations of frame-based narrative understanding are feasible in principle, not merely philosophically coherent but technically achievable.
+
+The question is whether such systems can support moral learning. The next section develops an affirmative argument.
+
+\section{Narrative Learning as Moral Development}
+
+\subsection{The Core Mechanism}
+
+The central claim of this framework is that moral reasoning can develop through narrative comprehension without explicit ethical programming. The mechanism operates through Minsky's cognitive architecture applied to stories with moral content:
+
+\begin{enumerate}
+\item \textbf{Frame acquisition}: Exposure to diverse narratives builds frames representing morally significant situations—betrayal, sacrifice, protection, harm, fairness, care, loyalty. These frames capture the structure of ethical scenarios independent of their specific instantiations.
+
+\item \textbf{Script development}: Narratives model sequences of morally relevant actions and their typical outcomes. Scripts capture patterns like: breaking trust damages relationships; protecting the vulnerable generates social approval; selfishness leads to isolation. These scripts represent procedural ethical knowledge.
+
+\item \textbf{Trans-frame learning}: Stories demonstrate how moral situations evolve through agents' choices. Trans-frames connecting different states capture causal relationships between actions and moral consequences. This supports counterfactual reasoning about what would happen if different choices were made.
+
+\item \textbf{Pattern extraction via K-lines}: Encountering multiple narratives with similar moral structures creates K-lines linking them. When facing novel situations, these K-lines activate, bringing story-based ethical knowledge to bear. A system recognizes a new scenario as resembling previous narratives and applies learned patterns.
+
+\item \textbf{Value hierarchy inference}: By observing which considerations take precedence when values conflict in narratives, systems can infer implicit value hierarchies. Stories reveal that certain moral considerations override others in particular contexts—safety trumps property, for instance, or autonomy takes precedence over efficiency in medical contexts.
+\end{enumerate}
+
+This process differs fundamentally from rule learning. The system does not extract explicit principles like "do not harm" from stories. Rather, it builds rich representations of morally significant situations, typical action sequences, causal structures connecting choices to outcomes, and patterns linking similar narratives. When facing novel ethical dilemmas, this story-based knowledge enables flexible reasoning without explicit rules.
+
+\subsection{Why This Constitutes Genuine Moral Learning}
+
+One might object that this process is merely sophisticated pattern matching rather than genuine moral learning. This section defends the claim that narrative-based development constitutes authentic ethical understanding by examining what it means to possess moral knowledge.
+
+\subsubsection{Moral Knowledge as Practical Skill}
+
+Contemporary virtue epistemology emphasizes that knowledge often consists in reliable cognitive abilities rather than propositional beliefs \citep{sosa2007apt, greco2010achievements}. Similarly, moral knowledge might be better understood as a practical skill—the ability to reliably recognize morally relevant features of situations and respond appropriately—rather than as a set of explicit propositions about right and wrong \citep{dreyfus2000could, ryle1949concept}.
+
+If moral knowledge is fundamentally a practical ability, then narrative learning can develop it just as exposure to diverse situations develops any practical skill. A chess player need not consciously know explicit rules for all situations to play well; expertise develops through experience with many games, building pattern recognition abilities. Similarly, exposure to diverse moral narratives can develop ethical pattern recognition without requiring explicit rule representation.
+
+\subsubsection{Generalization to Novel Situations}
+
+Genuine understanding requires applying knowledge beyond training examples \citep{mitchell2021debate}. Mere memorization or pattern matching to surface features fails when encountering truly novel situations. Moral learning through narratives generates genuine understanding because:
+
+\textbf{Structural similarity supports transfer}: The frame-based representations extracted from narratives capture abstract moral structures—patterns of rights violations, care relationships, fairness expectations—that transfer to novel instantiations. A system that learns from narratives about trust betrayal in friendship contexts can recognize structural parallels to trust betrayal in business contexts, even if surface features differ completely.
+
+\textbf{Causal models enable counterfactual reasoning}: Trans-frames representing causal relationships between actions and moral outcomes support counterfactual reasoning essential for ethical deliberation \citep{pearl2009causality}. Rather than merely matching new situations to previous examples, systems can simulate how different actions would lead to different outcomes, using causal models extracted from narratives.
+
+\textbf{Multiple perspectives prevent overfitting}: Exposure to diverse narratives with varying contexts, characters, and moral frameworks prevents overfitting to specific situations. Systems extract common structures appearing across many stories rather than memorizing particular examples.
+
+\subsubsection{Integration with Other Knowledge}
+
+Narrative-based moral knowledge does not operate in isolation. In Minsky's framework, different knowledge structures interact. Story-based ethical understanding integrates with:
+
+\begin{itemize}
+\item \textbf{Factual knowledge} about the world, enabling application of moral principles to actual circumstances
+\item \textbf{Social knowledge} about relationships, roles, and expectations
+\item \textbf{Causal knowledge} about how actions produce consequences
+\item \textbf{Cultural knowledge} about values, norms, and practices
+\end{itemize}
+
+This integration supports flexible moral reasoning in complex real-world contexts where purely abstract ethical reasoning proves inadequate \citep{nussbaum1990love}.
+
+\subsection{Advantages Over Current Approaches}
+
+Narrative-based moral learning addresses the limitations of existing approaches identified in Section 2:
+
+\textbf{Flexibility}: Story-based learning develops rich ethical representations applicable to novel situations through structural similarity rather than rigid rule application. When encountering new dilemmas, systems can identify analogous narrative patterns and adapt learned structures to novel contexts.
+
+\textbf{Nuance}: Narratives naturally capture moral complexity that resists formal specification. Stories model how multiple values conflict, how context affects appropriate responses, and how seemingly similar situations can have different moral valences. This nuance transfers to systems learning from narratives.
+
+\textbf{Learning from experience}: Unlike approaches requiring values to be specified in advance, narrative learning allows moral understanding to develop through exposure to ethical examples. This mirrors human moral development more closely than rule programming.
+
+\textbf{Avoiding specification problems}: Rather than requiring explicit definition of contested moral concepts, narrative learning allows systems to develop implicit understanding through exposure to diverse examples of concepts in use. The system learns what counts as "harm" or "fairness" by encountering many narratives deploying these concepts in various contexts.
+
+\textbf{Cultural sensitivity}: Different cultures' moral frameworks can be reflected in their narratives. Systems exposed to diverse cultural stories can develop ethical understanding incorporating multiple perspectives rather than being locked into single moral frameworks.
+
+\section{Case Study: Moral Development in Terminator 2}
+
+To demonstrate how narrative-based moral learning might manifest in practice, this section analyzes machine moral development as depicted in the science fiction film \textit{Terminator 2: Judgment Day} \citep{cameron1991terminator}. While fictional, this narrative provides a detailed thought experiment modeling how an artificial agent might develop ethical understanding through mechanisms compatible with the proposed framework.
+
+\subsection{Initial State: Pure Directive Following}
+
+The T-800 Terminator begins as a system with a single programmed directive: protect John Connor. Initially, its behavior exhibits no moral understanding beyond instrumental reasoning toward this goal. It will kill anyone threatening John and shows no concern for other considerations. This represents a limited form of goal-directed behavior without ethical reasoning.
+
+However, the narrative places this system in a situation requiring ongoing interaction with humans—John Connor and Sarah Connor—who possess sophisticated moral understanding. The machine becomes immersed in their moral world, observing their ethical judgments, emotional responses to situations, and debates about appropriate action. This creates conditions for narrative-based learning.
+
+\subsection{Observational Learning Through Narrative Participation}
+
+The machine's moral development occurs through participating in an ongoing narrative rather than through explicit instruction. Key developments include:
+
+\textbf{Frame acquisition}: The machine observes John's distress when it attempts to kill an antagonist who poses no direct threat. This encounter builds a frame for situations where violence, while instrumentally useful, violates human moral expectations. The machine begins recognizing situations where its initial impulse to use force conflicts with human values.
+
+\textbf{Script modification}: Initially, the machine's scripts for addressing threats involve lethal force. Through observing John's reactions, it modifies these scripts to include non-lethal alternatives. It learns sequences of actions that address threats while respecting John's prohibition on killing. This represents procedural ethical knowledge developing through narrative participation.
+
+\textbf{Value hierarchy inference}: When John orders the machine not to kill, despite threats to their safety, the machine infers that certain values (respecting human life) override others (operational efficiency) in John's hierarchy. This is not explicitly stated as a rule but demonstrated through John's consistent responses across contexts.
+
+\textbf{Causal understanding}: The machine witnesses how violence affects Sarah Connor—not just physically but psychologically. It observes how past traumas shape her current responses and how different approaches to protection have different psychological impacts. This builds trans-frames connecting actions to complex causal outcomes beyond immediate physical effects.
+
+\textbf{Pattern extraction}: Through extended interaction, the machine encounters multiple instances of moral situations—trust, sacrifice, protection, mercy. K-lines form connecting these instances, enabling pattern-based responses when novel situations arise.
+
+\subsection{Emergence of Ethical Reasoning}
+
+By the narrative's conclusion, the machine demonstrates sophisticated ethical reasoning extending beyond its original programming:
+
+\textbf{Understanding value of human life}: When John asks "Why do you cry?" upon Sarah's apparent death, the machine responds with an explanation of human emotional attachment and its importance. This reflects developed understanding of human values rather than merely instrumental knowledge about how to protect John.
+
+\textbf{Self-sacrifice}: The machine concludes that its own destruction is necessary to prevent its technology from being misused. This judgment extends beyond its programmed directive to protect John and reflects broader ethical reasoning about potential harms its existence creates. The decision involves weighing its mission against risks to humanity generally—an evaluation requiring value hierarchies extending beyond specified goals.
+
+\textbf{Grasping moral significance}: In the famous closing line, John says "I don't understand why you have to die," and the machine responds "It's something I have to do." This exchange reveals the machine grasps moral necessity—actions required by ethical considerations rather than instrumental rationality toward specified goals.
+
+\subsection{Analysis Through the Proposed Framework}
+
+This narrative demonstrates how the proposed framework might operate:
+
+\begin{enumerate}
+\item The machine begins with limited goal-directed capability but no moral understanding.
+
+\item Immersion in morally rich narratives—the ongoing story of John and Sarah's struggle—provides exposure to ethical situations, choices, and consequences.
+
+\item Through Minsky's cognitive mechanisms, the machine builds frames, scripts, trans-frames, and K-lines representing moral patterns observed in these narratives.
+
+\item This story-based knowledge enables flexible ethical reasoning applied to novel situations not anticipated by original programming.
+
+\item The result is behavior demonstrating genuine moral development rather than rigid rule-following or simple optimization.
+\end{enumerate}
+
+The narrative also illustrates a key philosophical point: moral development occurs through consistent action and observation rather than requiring conscious emotional states. The machine does not develop human emotions, yet it achieves ethical understanding through alternative pathways. This suggests moral agency might not require consciousness or emotion as traditionally conceived, if reliable ethical reasoning can develop through narrative-based mechanisms.
+
+\subsection{Limitations as Evidence}
+
+One might object that this example is merely science fiction and cannot support serious philosophical claims about actual AI ethics. However, the example's role is not empirical but conceptual. It demonstrates the coherence and plausibility of the proposed framework by showing in concrete detail how narrative-based moral learning might unfold.
+
+Science fiction narratives function as philosophical thought experiments that explore logical possibilities \citep{sorensen1992thought}. The Terminator example establishes that the proposed mechanisms are coherent and could in principle generate moral development. This conceptual work is necessary before investigating whether actual AI systems can implement these mechanisms—a question for empirical AI research rather than philosophical analysis.
+
+\section{Objections and Replies}
+
+This section addresses four major objections to the narrative-based moral learning framework.
+
+\subsection{The Consciousness Objection}
+
+\textbf{Objection}: Genuine moral understanding requires consciousness and subjective experience. A system might implement narrative-based learning mechanisms while remaining an unconscious automaton. Without phenomenal states, the system does not truly understand ethics but merely simulates understanding. Therefore, narrative learning cannot produce genuine moral agents.
+
+\textbf{Reply}: This objection conflates moral understanding with moral phenomenology. While consciousness may be necessary for certain aspects of ethical life—experiencing guilt, empathy, or moral emotions—it is not required for moral reasoning or ethical action.
+
+Consider three points:
+
+First, the relationship between consciousness and moral agency remains philosophically contested \citep{levy2014consciousness, shepherd2018consciousness}. Some philosophers argue consciousness is necessary for moral responsibility, but this differs from claiming it is necessary for moral understanding or ethical reasoning. Many cognitive capacities—including complex problem-solving, planning, and decision-making—can operate without conscious awareness \citep{carruthers2015conscious}.
+
+Second, focusing on consistent ethical action rather than internal states offers a more pragmatic approach to machine ethics. From the perspective of those affected by AI systems, what matters is whether these systems reliably act in morally appropriate ways, not whether they have subjective experiences while doing so \citep{bryson2018patiency}. If narrative learning produces systems that recognize ethical considerations and respond appropriately, this achieves the primary goal of machine ethics: ensuring AI systems behave in morally acceptable ways.
+
+Third, the burden of proof rests on those claiming consciousness is necessary. Without clear understanding of why consciousness would be required for moral reasoning specifically—beyond intuitive feeling that it seems important—the objection lacks force. The proposed framework shows how ethical understanding can develop through cognitive mechanisms (frame learning, pattern recognition, causal reasoning) that plausibly do not require consciousness.
+
+\subsection{The Alignment Objection}
+
+\textbf{Objection}: Creating space for systems to develop ethical understanding through narrative learning risks misalignment with human values. If systems are not explicitly programmed with correct moral rules, they might extract perverse lessons from narratives. Fictional stories often depict immoral behavior; a system learning from such narratives might develop problematic values. The proposed framework sacrifices alignment for flexibility.
+
+\textbf{Reply}: This objection misunderstands how narrative learning operates and its relationship to current alignment approaches.
+
+First, narrative learning does not involve exposing systems to arbitrary fiction without guidance. Just as human moral education involves curated narrative exposure—parents select appropriate stories for children, educational systems assign particular literature—AI narrative training would involve carefully selected narrative corpora. Research on value alignment already emphasizes learning from human feedback and human-generated examples \citep{christiano2017deep}; narrative learning extends this by using richer, more contextually embedded examples than simple preference pairs.
+
+Second, learning from narratives depicting immoral behavior need not produce immoral systems, just as humans can learn moral lessons from stories featuring evil characters. The crucial element is developing understanding of the narrative's moral structure—recognizing which behaviors lead to negative outcomes, which actions the narrative frames as wrong, and which values the story affirms. Systems learning to comprehend narrative structures learn to recognize moral framings, not just surface behaviors.
+
+Third, current alignment approaches face the same risks the objection raises. Utility functions can be misspecified, leading to misaligned optimization \citep{amodei2016concrete}. Explicitly programmed rules can be poorly chosen or incompletely specified. All approaches to machine ethics face risks; the question is comparative: does narrative learning increase or decrease alignment risks relative to alternatives?
+
+The framework's flexibility is a feature, not a bug. Rigid rule-following produces brittle systems that fail in novel contexts. Narrative learning aims to develop robust ethical reasoning that transfers appropriately to new situations—the kind of generalization humans achieve through moral education. This requires some flexibility, but the alternative is systems that cannot handle the complexity of real-world ethical challenges.
+
+\subsection{The Cultural Specificity Objection}
+
+\textbf{Objection}: Narratives reflect particular cultural values and moral frameworks. A system learning ethics from Western narratives would develop Western moral views; learning from different cultural traditions would produce different values. Without a neutral standpoint for evaluating narratives, this approach relativizes machine ethics to particular cultural perspectives. How can we determine which narratives should be used for training?
+
+\textbf{Reply}: This objection correctly identifies cultural variation in moral narratives as significant, but draws mistaken conclusions.
+
+First, all approaches to machine ethics face the cultural specificity challenge, not just narrative learning. Philosophers disagree about fundamental ethical questions—whether consequences or rules matter most, how to weight different values, which actions are permissible \citep{beauchamp2001principles}. Any approach to machine ethics must make choices about which moral frameworks to implement, whether explicitly or implicitly. Rule-based approaches must choose which rules to encode; consequentialist approaches must specify which outcomes to value. The challenge of moral pluralism is not unique to narrative learning.
+
+Second, narrative learning has advantages for addressing cultural diversity. Because it operates through examples rather than explicit rules, systems can be exposed to narratives from multiple cultural traditions, developing understanding that incorporates diverse perspectives. Rather than being locked into a single explicit moral framework, systems might learn from Islamic moral parables, Confucian classics, Western philosophy thought experiments, and indigenous storytelling traditions. The resulting ethical understanding could reflect this diversity rather than privileging single perspectives.
+
+Third, some moral considerations appear across cultural boundaries despite surface variation in values \citep{brown1991human, haidt2012righteous}. Concepts like fairness, harm prevention, ingroup loyalty, respect for authority, and sanctity appear in varied forms across cultures. Narratives from diverse traditions address these shared concerns even while differing in specifics. Narrative learning could identify common structures appearing across cultural narratives while remaining sensitive to contextual variation in how these structures manifest.
+
+The cultural specificity objection is better understood as identifying a challenge for implementation rather than a fatal flaw in principle. Any approach to machine ethics must address cultural variation in values; narrative learning provides tools for doing so through diverse narrative exposure and pattern recognition across cultural boundaries.
+
+\subsection{The Verification Objection}
+
+\textbf{Objection}: How can we verify whether a system has actually developed ethical understanding through narrative learning versus merely pattern-matching surface features of training stories? Testing for genuine moral comprehension proves difficult. The system might perform well on examples resembling training narratives while failing catastrophically on truly novel situations. Without reliable verification methods, deploying systems trained through narrative learning is irresponsible.
+
+\textbf{Reply}: This objection raises a legitimate challenge, but one that applies to all machine learning approaches, not specifically to narrative learning. Verifying that any AI system generalizes appropriately to novel situations remains an open problem \citep{hendrycks2021unsolved}.
+
+However, narrative-based approaches may offer advantages for evaluation:
+
+\textbf{Story comprehension tests}: We can assess moral understanding by testing narrative comprehension. Systems should be able to identify morally relevant features of stories, predict moral judgments characters would make, explain why particular actions are ethically significant, and recognize when stories present moral dilemmas. These capabilities can be tested using narratives the system has not encountered during training \citep{forbes2020social, sap2019socialiqa}.
+
+\textbf{Counterfactual reasoning}: Testing whether systems can engage in moral counterfactual reasoning—explaining how different choices would lead to different moral outcomes—provides evidence of causal understanding rather than mere pattern matching \citep{pearl2009causality}. If a system can explain why an action would be wrong even when it resembles superficially similar permissible actions, this suggests genuine ethical comprehension.
+
+\textbf{Transfer across contexts}: Testing performance on narratives from domains and cultures not represented in training data assesses whether learned moral structures transfer appropriately. Successfully applying ethical understanding to situations differing substantially from training examples provides evidence of genuine learning rather than overfitting.
+
+\textbf{Explanation capability}: Requiring systems to explain their moral judgments in terms of narrative patterns they recognize allows evaluation of whether reasoning processes align with human ethical thinking \citep{mittelstadt2019explaining}. Explanations referencing story-based moral structures provide insight into how the system reaches conclusions.
+
+These verification methods do not eliminate uncertainty about whether systems truly understand ethics, but they provide stronger grounds for confidence than available for opaque rule-based or utility-optimizing systems. The ability to test narrative comprehension, counterfactual reasoning, and transfer provides multiple perspectives on whether moral learning has occurred.
+
+\section{Implications for AI Development}
+
+\subsection{Narrative-Based Training Regimes}
+
+The proposed framework suggests concrete approaches to training ethically capable AI systems:
+
+\textbf{Curated narrative corpora}: Develop training datasets consisting of narratives with clear moral structures from diverse cultural sources. These might include moral parables, philosophical thought experiments, ethical case studies, and fiction with strong moral themes. The corpus should represent diverse value systems while emphasizing narratives that model human flourishing.
+
+\textbf{Multi-stage training}: Begin with simple moral narratives where ethical considerations are explicit, gradually progressing to complex stories requiring sophisticated interpretation. This mirrors how human moral education proceeds from simple childhood stories to complex adult literature.
+
+\textbf{Active learning from feedback}: When systems make judgments about narrative moral content, human feedback can guide learning similar to reinforcement learning from human feedback approaches \citep{christiano2017deep}. However, feedback would focus on narrative comprehension—whether the system correctly identifies moral structures—rather than direct behavioral shaping.
+
+\textbf{Diverse narrative sources}: To address cultural specificity concerns, training should incorporate narratives from multiple traditions. This includes written stories but also oral traditions, religious texts, philosophical dialogues, and contemporary fiction from global sources.
+
+\subsection{Benchmarks for Ethical AI}
+
+Standard AI benchmarks focus on technical capabilities but rarely assess moral reasoning. The framework suggests new evaluation metrics:
+
+\textbf{Moral narrative comprehension}: Test whether systems can identify moral dimensions of stories, predict characters' ethical judgments, and explain moral significance of actions. Datasets like Social IQa and ETHICS provide starting points \citep{sap2019socialiqa, hendrycks2021aligning}, but more comprehensive narrative ethics benchmarks are needed.
+
+\textbf{Ethical dilemma navigation}: Present systems with novel moral dilemmas embedded in rich narrative contexts. Assess whether they recognize relevant ethical considerations, weigh competing values appropriately, and reach reasonable conclusions. Importantly, test whether reasoning transfers to situations substantially different from training examples.
+
+\textbf{Value alignment detection}: Test whether systems can identify when narratives express values conflicting with human wellbeing. Can they recognize stories promoting harmful ideologies while still comprehending their narrative structure? This tests critical ethical judgment rather than mere absorption of story content.
+
+\textbf{Explanation quality}: Evaluate whether systems can provide coherent explanations for moral judgments that reference narrative patterns and ethical principles. Explanation quality provides evidence of genuine understanding versus surface pattern matching.
+
+\subsection{Architectural Requirements}
+
+Implementing narrative-based moral learning requires AI architectures supporting:
+
+\textbf{Frame-based representations}: Systems must represent situations using structured frames capturing entities, relationships, and expected patterns. This requires moving beyond pure statistical learning toward hybrid architectures incorporating symbolic structure \citep{garcez2019neurosymbolic}.
+
+\textbf{Causal reasoning}: Trans-frames representing causal relationships between actions and outcomes require causal reasoning capabilities. Recent work on causal representation learning provides relevant tools \citep{scholkopf2021toward}, but integration with narrative understanding needs development.
+
+\textbf{Analogical reasoning}: Transferring moral understanding across contexts requires recognizing structural similarities between different situations—analogical reasoning central to human intelligence \citep{gentner1983structure}. AI systems need enhanced analogical capabilities to leverage narrative learning effectively.
+
+\textbf{Contextual sensitivity}: Moral judgments depend heavily on context. Architectures must represent and reason about contextual factors affecting ethical appropriateness of actions. This requires maintaining rich contextual representations beyond immediate situational features.
+
+\subsection{Integration with Existing Approaches}
+
+Narrative-based moral learning need not replace existing approaches but can complement them:
+
+\textbf{Hybrid systems}: Combining narrative learning with explicit ethical rules creates systems benefiting from both flexibility and clear guardrails. Rules can constrain behavior in critical domains while narrative understanding handles contextual nuance.
+
+\textbf{Value learning enhancement}: Narrative comprehension can improve reward learning approaches by providing richer training signals than simple preference feedback. Understanding why humans prefer certain outcomes involves grasping narrative structures surrounding choices.
+
+\textbf{Virtue development}: Narrative exposure might cultivate something analogous to virtues in machine systems—dispositions to recognize and respond to morally relevant features across contexts. This addresses the learning problem for virtue-based approaches.
+
+\subsection{Challenges and Future Work}
+
+Significant challenges remain before narrative-based moral learning becomes practical:
+
+\textbf{Computational requirements}: Current systems struggle with deep narrative comprehension requiring causal reasoning, analogical thinking, and long-range coherence understanding. Advancing these capabilities requires substantial technical work.
+
+\textbf{Evaluation methodology}: Developing reliable methods for assessing genuine moral understanding remains difficult. Research on testing for robust ethical reasoning is needed.
+
+\textbf{Safety considerations}: Deploying systems with learned rather than explicitly programmed ethics raises safety concerns. Extensive testing in controlled environments before real-world deployment is essential.
+
+\textbf{Interdisciplinary collaboration}: Implementing this framework requires collaboration among AI researchers, cognitive scientists, ethicists, and cultural studies scholars. Building effective training corpora and evaluation methods needs diverse expertise.
+
+Despite these challenges, the framework provides a promising direction for developing AI systems with flexible ethical reasoning capabilities.
+
+\section{Conclusion}
+
+This paper has argued for a framework of machine ethics based on narrative understanding rather than rule programming, utility optimization, or virtue cultivation. The key claims are:
+
+\begin{enumerate}
+\item Current approaches to machine ethics share a limitation: treating moral knowledge as specifiable in advance rather than developable through experience.
+
+\item Marvin Minsky's cognitive architecture, particularly his account of story understanding through frames, scripts, trans-frames, and K-lines, provides mechanisms for moral learning through narrative comprehension.
+
+\item This process constitutes genuine ethical development because it builds flexible moral reasoning applicable to novel situations through pattern recognition, causal understanding, and structural transfer rather than mere surface similarity matching.
+
+\item Science fiction narratives modeling machine moral development demonstrate how these mechanisms might manifest, establishing conceptual coherence of the framework.
+
+\item Major objections regarding consciousness, alignment, cultural specificity, and verification can be addressed, though challenges remain for practical implementation.
+
+\item The framework suggests concrete directions for AI development including narrative-based training regimes, story comprehension benchmarks, and architectural requirements for ethical AI systems.
+\end{enumerate}
+
+The proposed approach does not solve all problems in machine ethics. Significant technical and philosophical challenges remain. However, it addresses limitations of existing frameworks by offering a path to flexible moral reasoning that mirrors human ethical development more closely than rule-based or utility-optimizing approaches.
+
+More broadly, this framework suggests reconceptualizing moral agency itself. Rather than treating ethics as requiring consciousness and emotion, we might understand moral capability as emerging from sophisticated narrative comprehension—the ability to recognize morally significant patterns, predict ethical consequences, and apply learned structures to novel situations. If correct, this has implications beyond AI ethics for understanding human moral psychology and the nature of ethical expertise.
+
+Future work should focus on: (1) developing computational implementations of narrative-based moral learning; (2) creating comprehensive benchmarks for ethical narrative comprehension; (3) investigating whether actual AI systems trained on narrative corpora develop transferable ethical reasoning; (4) examining how narrative learning compares empirically to other approaches in terms of both capability and alignment; and (5) exploring how narrative-based frameworks might integrate with other approaches to create hybrid systems combining their strengths.
+
+The path to ethical AI may require not programming explicit moral rules but providing systems with rich narrative experiences from which ethical understanding can develop organically—much as human moral education proceeds through story immersion long before abstract ethical reasoning becomes possible. If narrative understanding provides the cognitive foundation for moral reasoning, then the future of machine ethics may lie in creating systems capable of learning what it means to act ethically through the same mechanisms humans have used for millennia: listening to stories.
+
+\bibliographystyle{plainnat}
+\begin{thebibliography}{99}
+
+\bibitem[Abel et al.(2016)]{abel2016reinforcement}
+Abel, D., MacGlashan, J., \& Littman, M. L. (2016). Reinforcement learning as a framework for ethical decision making. In \textit{AAAI Workshop on AI, Ethics, and Society}.
+
+\bibitem[Allen et al.(2005)]{allen2005artificial}
+Allen, C., Smit, I., \& Wallach, W. (2005). Artificial morality: Top-down, bottom-up, and hybrid approaches. \textit{Ethics and Information Technology}, \textit{7}(3), 149-155.
+
+\bibitem[Amodei et al.(2016)]{amodei2016concrete}
+Amodei, D., Olah, C., Steinhardt, J., Christiano, P., Schulman, J., \& Mané, D. (2016). Concrete problems in AI safety. \textit{arXiv preprint arXiv:1606.06565}.
+
+\bibitem[Anderson \& Anderson(2008)]{anderson2008geneth}
+Anderson, M., \& Anderson, S. L. (2008). GenEth: A general ethical dilemma analyzer. In \textit{AAAI}, 8, 253-254.
+
+\bibitem[Anderson \& Anderson(2011)]{anderson2011machine}
+Anderson, M., \& Anderson, S. L. (2011). \textit{Machine Ethics}. Cambridge University Press.
+
+\bibitem[Aristotle(350 BCE)]{aristotle350bce}
+Aristotle. \textit{Nicomachean Ethics}. (Trans. W. D. Ross).
+
+\bibitem[Asimov(1950)]{asimov1950robot}
+Asimov, I. (1950). I, Robot. \textit{Gnome Press}.
+
+\bibitem[Beauchamp \& Childress(2001)]{beauchamp2001principles}
+Beauchamp, T. L., \& Childress, J. F. (2001). \textit{Principles of Biomedical Ethics} (5th ed.). Oxford University Press.
+
+\bibitem[Berberich \& Diepold(2015)]{berberich2015evolutionary}
+Berberich, N., \& Diepold, K. (2015). The virtuous machine–Old ethics for new technology?. \textit{arXiv preprint arXiv:1507.00548}.
+
+\bibitem[Berreby et al.(2015)]{berreby2015modelling}
+Berreby, F., Bourgne, G., \& Ganascia, J. G. (2015). Modelling moral reasoning and ethical responsibility with logic programming. In \textit{Logic for Programming, Artificial Intelligence, and Reasoning} (pp. 532-548).
+
+\bibitem[Bostrom(2014)]{bostrom2014superintelligence}
+Bostrom, N. (2014). \textit{Superintelligence: Paths, Dangers, Strategies}. Oxford University Press.
+
+\bibitem[Brown(1991)]{brown1991human}
+Brown, D. E. (1991). \textit{Human Universals}. McGraw-Hill.
+
+\bibitem[Brown et al.(2020)]{brown2020language}
+Brown, T. B., Mann, B., Ryder, N., et al. (2020). Language models are few-shot learners. In \textit{Advances in Neural Information Processing Systems}, 33, 1877-1901.
+
+\bibitem[Bryson(2018)]{bryson2018patiency}
+Bryson, J. J. (2018). Patiency is not a virtue: The design of intelligent systems and systems of ethics. \textit{Ethics and Information Technology}, \textit{20}(1), 15-26.
+
+\bibitem[Cameron(1991)]{cameron1991terminator}
+Cameron, J. (Director). (1991). \textit{Terminator 2: Judgment Day} [Film]. TriStar Pictures.
+
+\bibitem[Carruthers(2015)]{carruthers2015conscious}
+Carruthers, P. (2015). \textit{The Centered Mind: What the Science of Working Memory Shows Us About the Nature of Human Thought}. Oxford University Press.
+
+\bibitem[Chambers \& Jurafsky(2008)]{chambers2008unsupervised}
+Chambers, N., \& Jurafsky, D. (2008). Unsupervised learning of narrative event chains. In \textit{ACL}, 789-797.
+
+\bibitem[Christiano et al.(2017)]{christiano2017deep}
+Christiano, P. F., Leike, J., Brown, T., Martic, M., Legg, S., \& Amodei, D. (2017). Deep reinforcement learning from human preferences. In \textit{Advances in Neural Information Processing Systems}, 4299-4307.
+
+\bibitem[Coeckelbergh(2010)]{coeckelbergh2010moral}
+Coeckelbergh, M. (2010). Robot rights? Towards a social-relational justification of moral consideration. \textit{Ethics and Information Technology}, \textit{12}(3), 209-221.
+
+\bibitem[Dennis et al.(2016)]{dennis2016formal}
+Dennis, L., Fisher, M., Slavkovik, M., \& Webster, M. (2016). Formal verification of ethical choices in autonomous systems. \textit{Robotics and Autonomous Systems}, \textit{77}, 1-14.
+
+\bibitem[Devlin et al.(2018)]{devlin2018bert}
+Devlin, J., Chang, M. W., Lee, K., \& Toutanova, K. (2018). BERT: Pre-training of deep bidirectional transformers for language understanding. \textit{arXiv preprint arXiv:1810.04805}.
+
+\bibitem[Dreyfus \& Dreyfus(2000)]{dreyfus2000could}
+Dreyfus, H. L., \& Dreyfus, S. E. (2000). Mind over machine: The power of human intuition and expertise in the age of the computer. \textit{Athenaeum}.
+
+\bibitem[Forbes et al.(2020)]{forbes2020social}
+Forbes, M., Hwang, J. D., Shwartz, V., Sap, M., \& Choi, Y. (2020). Social chemistry 101: Learning to reason about social and moral norms. In \textit{EMNLP}, 653-670.
+
+\bibitem[Garcez et al.(2019)]{garcez2019neurosymbolic}
+Garcez, A. d'Avila, Gori, M., Lamb, L. C., Serafini, L., Spranger, M., \& Tran, S. N. (2019). Neural-symbolic computing: An effective methodology for principled integration of machine learning and reasoning. \textit{arXiv preprint arXiv:1905.06088}.
+
+\bibitem[Gentner(1983)]{gentner1983structure}
+Gentner, D. (1983). Structure-mapping: A theoretical framework for analogy. \textit{Cognitive Science}, \textit{7}(2), 155-170.
+
+\bibitem[Gips(1995)]{gips1995towards}
+Gips, J. (1995). Towards the ethical robot. In \textit{Second International Workshop on Human and Machine Cognition: Android Epistemology} (pp. 243-252).
+
+\bibitem[Greco(2010)]{greco2010achievements}
+Greco, J. (2010). \textit{Achieving Knowledge: A Virtue-Theoretic Account of Epistemic Normativity}. Cambridge University Press.
+
+\bibitem[Hadfield-Menell et al.(2016)]{hadfield2016cooperative}
+Hadfield-Menell, D., Russell, S. J., Abbeel, P., \& Dragan, A. (2016). Cooperative inverse reinforcement learning. In \textit{Advances in Neural Information Processing Systems}, 3909-3917.
+
+\bibitem[Haidt(2012)]{haidt2012righteous}
+Haidt, J. (2012). \textit{The Righteous Mind: Why Good People Are Divided by Politics and Religion}. Vintage.
+
+\bibitem[Hasson et al.(2004)]{hasson2004intersubject}
+Hasson, U., Nir, Y., Levy, I., Fuhrmann, G., \& Malach, R. (2004). Intersubject synchronization of cortical activity during natural vision. \textit{Science}, \textit{303}(5664), 1634-1640.
+
+\bibitem[Hendrycks et al.(2021a)]{hendrycks2021aligning}
+Hendrycks, D., Burns, C., Basart, S., et al. (2021). Aligning AI with shared human values. In \textit{ICLR}.
+
+\bibitem[Hendrycks et al.(2021b)]{hendrycks2021unsolved}
+Hendrycks, D., Carlini, N., Schulman, J., \& Steinhardt, J. (2021). Unsolved problems in ML safety. \textit{arXiv preprint arXiv:2109.13916}.
+
+\bibitem[Howard \& Muntean(2001)]{howard2001computational}
+Howard, R. A., \& Muntean, I. (2001). A computational account of virtue. In \textit{Machine Ethics}, 1-12.
+
+\bibitem[Johnson(1993)]{johnson1993moral}
+Johnson, M. (1993). \textit{Moral Imagination: Implications of Cognitive Science for Ethics}. University of Chicago Press.
+
+\bibitem[Levy(2014)]{levy2014consciousness}
+Levy, N. (2014). \textit{Consciousness and Moral Responsibility}. Oxford University Press.
+
+\bibitem[Li et al.(2013)]{li2013story}
+Li, B., Lee-Urban, S., Johnston, G., \& Riedl, M. (2013). Story generation with crowdsourced plot graphs. In \textit{AAAI}.
+
+\bibitem[MacIntyre(1981)]{macintyre1981after}
+MacIntyre, A. (1981). \textit{After Virtue}. University of Notre Dame Press.
+
+\bibitem[Manheim \& Garrabrant(2018)]{manheim2018categorizing}
+Manheim, D., \& Garrabrant, S. (2018). Categorizing variants of Goodhart's law. \textit{arXiv preprint arXiv:1803.04585}.
+
+\bibitem[Minsky(1974)]{minsky1974framework}
+Minsky, M. (1974). A framework for representing knowledge. \textit{MIT-AI Laboratory Memo}, 306.
+
+\bibitem[Minsky(1986)]{minsky1986society}
+Minsky, M. (1986). \textit{The Society of Mind}. Simon \& Schuster.
+
+\bibitem[Minsky(2006)]{minsky2006emotion}
+Minsky, M. (2006). \textit{The Emotion Machine: Commonsense Thinking, Artificial Intelligence, and the Future of the Human Mind}. Simon \& Schuster.
+
+\bibitem[Mitchell(2021)]{mitchell2021debate}
+Mitchell, M., \& Krakauer, D. C. (2021). The debate over understanding in AI's large language models. \textit{arXiv preprint arXiv:2210.13966}.
+
+\bibitem[Mittelstadt et al.(2019)]{mittelstadt2019explaining}
+Mittelstadt, B., Russell, C., \& Wachter, S. (2019). Explaining explanations in AI. In \textit{FAT*}, 279-288.
+
+\bibitem[Mueller(2003)]{mueller2003story}
+Mueller, E. T. (2003). Story understanding through multi-representation model construction. In \textit{HLT-NAACL 2003 Workshop on Text Meaning}.
+
+\bibitem[Nussbaum(1990)]{nussbaum1990love}
+Nussbaum, M. C. (1990). \textit{Love's Knowledge: Essays on Philosophy and Literature}. Oxford University Press.
+
+\bibitem[Pearl(2009)]{pearl2009causality}
+Pearl, J. (2009). \textit{Causality: Models, Reasoning, and Inference} (2nd ed.). Cambridge University Press.
+
+\bibitem[Reagan et al.(2016)]{reagan2016emotional}
+Reagan, A. J., Mitchell, L., Kiley, D., Danforth, C. M., \& Dodds, P. S. (2016). The emotional arcs of stories are dominated by six basic shapes. \textit{EPJ Data Science}, \textit{5}(1), 31.
+
+\bibitem[Regneri et al.(2010)]{regneri2010learning}
+Regneri, M., Koller, A., \& Pinkal, M. (2010). Learning script knowledge with web experiments. In \textit{ACL}, 979-988.
+
+\bibitem[Riedl \& Young(2010)]{riedl2010narrative}
+Riedl, M. O., \& Young, R. M. (2010). Narrative planning: Balancing plot and character. \textit{Journal of Artificial Intelligence Research}, \textit{39}, 217-268.
+
+\bibitem[Russell(2019)]{russell2019human}
+Russell, S. (2019). \textit{Human Compatible: Artificial Intelligence and the Problem of Control}. Viking.
+
+\bibitem[Ryle(1949)]{ryle1949concept}
+Ryle, G. (1949). \textit{The Concept of Mind}. Hutchinson.
+
+\bibitem[Sap et al.(2019)]{sap2019socialiqa}
+Sap, M., Rashkin, H., Chen, D., LeBras, R., \& Choi, Y. (2019). Social IQa: Commonsense reasoning about social interactions. In \textit{EMNLP}, 4463-4473.
+
+\bibitem[Schank \& Abelson(1977)]{schank1977scripts}
+Schank, R. C., \& Abelson, R. P. (1977). \textit{Scripts, Plans, Goals and Understanding: An Inquiry Into Human Knowledge Structures}. Lawrence Erlbaum.
+
+\bibitem[Schölkopf et al.(2021)]{scholkopf2021toward}
+Schölkopf, B., Locatello, F., Bauer, S., et al. (2021). Toward causal representation learning. \textit{Proceedings of the IEEE}, \textit{109}(5), 612-634.
+
+\bibitem[Shepherd(2018)]{shepherd2018consciousness}
+Shepherd, J. (2018). \textit{Consciousness and Moral Status}. Routledge.
+
+\bibitem[Sorensen(1992)]{sorensen1992thought}
+Sorensen, R. A. (1992). \textit{Thought Experiments}. Oxford University Press.
+
+\bibitem[Sosa(2007)]{sosa2007apt}
+Sosa, E. (2007). \textit{A Virtue Epistemology: Apt Belief and Reflective Knowledge} (Vol. 1). Oxford University Press.
+
+\bibitem[Speer et al.(2009)]{speer2009reading}
+Speer, N. K., Reynolds, J. R., Swallow, K. M., \& Zacks, J. M. (2009). Reading stories activates neural representations of visual and motor experiences. \textit{Psychological Science}, \textit{20}(8), 989-999.
+
+\bibitem[Vallor(2016)]{vallor2016technology}
+Vallor, S. (2016). \textit{Technology and the Virtues: A Philosophical Guide to a Future Worth Wanting}. Oxford University Press.
+
+\bibitem[Wallach \& Allen(2008)]{wallach2008moral}
+Wallach, W., \& Allen, C. (2008). \textit{Moral Machines: Teaching Robots Right from Wrong}. Oxford University Press.
+
+\bibitem[Zwaan \& Radvansky(2004)]{zwaan2004constructionist}
+Zwaan, R. A., \& Radvansky, G. A. (2004). Situation models in language comprehension and memory. \textit{Psychological Bulletin}, \textit{130}(2), 162-185.
+
+\end{thebibliography}
+
+\end{document}

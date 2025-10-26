@@ -1,0 +1,1484 @@
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{setspace}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{natbib}
+% enumitem and booktabs not available - using standard list/table formatting
+
+\doublespacing
+\bibliographystyle{apalike}
+
+% Theorem environments
+\newtheorem{proposition}{Proposition}
+\newtheorem{definition}{Definition}
+
+\title{\textbf{An Ontological Framework for Meaning, Knowledge, and Intelligence}}
+
+\author{Rohan Vinaik\\
+\textit{Independent Researcher}}
+
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+This paper develops an ontological framework that explains how meaning, knowledge, and intelligence arise—or fail—across minds, media, and computational systems. Building on an agentic view of cognition, the framework models systems as networks of semantic agents operating under constraints ($K$), coupled by an interaction topology ($T$), and oriented by intentional vectors ($I$). Variations in the triplet $\langle K, T, I \rangle$ yield distinct modes of meaning, each with measurable signatures in semantic density, redundancy/entropy, and alignment. The account unifies structural and semantic perspectives, extends agent-based theories of mind by elevating constraint and intention to first-class variables, and predicts phase transitions between modes under parameter shifts. Applied to contemporary AI systems including large language models (GPT-4, Claude, Gemini), the framework reveals conditions under which systems generate meaningful content versus \textit{semantic vampirism}—surface mimicry that drains integrative meaning. The framework supports diagnostics and design principles for AI development and offers theoretical foundations for understanding machine semantics, with implications spanning cognitive science, epistemology, AI safety, and the ethics of AI-mediated communication.
+\end{abstract}
+
+\noindent\textbf{Keywords:} ontology, meaning, artificial intelligence, semantic content, cognitive architecture, semantic vampirism
+
+\clearpage
+
+\section{Problem \& Contribution}
+
+\subsection{Problem Statement and Scope}
+
+Across contemporary discourse—from narrative media to scientific communication to AI-generated content—artifacts and systems that are superficially similar differ radically in their capacity to produce durable meaning and reliable knowledge. Some configurations foster coherence, insight, and growth; others preserve only surface form while hollowing out integrative content. This divergence has become particularly acute with the proliferation of large language models and AI-mediated production pipelines, where outputs can exhibit sophisticated linguistic structure yet lack semantic grounding.
+
+Existing approaches tend to bifurcate: structural accounts emphasize formal organization while underspecifying semantics and purpose \citep{propp1968morphology, barthes1977structural}; content-first accounts foreground interpretation while under-theorizing the generative role of structure and constraints \citep{ricoeur1984time}. Meanwhile, contemporary philosophy of AI debates the nature of understanding in machine systems without adequate formal machinery for distinguishing genuine semantic capacity from sophisticated pattern-matching \citep{bender2020climbing, shanahan2024talking}. A unified ontology is needed—one that explains, at a level general enough to include minds, media, and institutions, how meaning and intelligence emerge, stabilize, degrade, or collapse.
+
+This paper addresses that gap by articulating a framework in which meaning, knowledge, and intelligence are treated as emergent properties of interacting semantic elements. The framework aims to be agnostic to medium and scale: it applies to narrative artifacts, scientific communication, organizational decision-making, human cognition, and machine-generated outputs. Rather than diagnosing particular cultural products, the focus is to model the conditions under which systems generate, maintain, or drain meaning.
+
+\subsection{Thesis and Core Claims}
+
+\textbf{Thesis.} Meaningful intelligence is a system-level achievement produced by networks of semantic agents interacting under constraints ($K$), embedded in an interaction topology ($T$), and guided by intentional vectors ($I$). Parameterizations of $\langle K, T, I \rangle$ generate a finite set of meaning modes with predictable qualitative and quantitative signatures.
+
+\textbf{Core Claims:}
+
+\begin{enumerate}
+\item \textbf{Ontological Unification.} The same agentic ontology can explain meaning-making in minds, media, and institutions when constraints and intentional alignment are modeled explicitly alongside interaction structure.
+
+\item \textbf{Formal Mechanisms.} A small set of neutral mechanism-modules—constraints ($K$), interaction topology ($T$), and intentional vectors ($I$)—functions as the theory's API.
+
+\item \textbf{Operational Metrics.} Semantic density, redundancy/entropy, intentional alignment, and a vampirism coefficient provide measurable constructs for comparing systems.
+
+\item \textbf{Predictive Dynamics.} Systematic variation in $\langle K, T, I \rangle$ induces phase transitions among modes.
+
+\item \textbf{Extension of Agent-Based Cognition.} Agent-interaction theories are expanded by elevating constraint integrity and intentional vectors to first-class variables.
+
+\item \textbf{Applied Ethics and Design.} The framework yields diagnostics and design principles to prevent semantic vampirism and cultivate generative meaning.
+\end{enumerate}
+
+\subsection{Contributions}
+
+The paper offers five primary contributions:
+
+\begin{enumerate}
+\item \textbf{Ontology.} A medium-agnostic account of semantic agents, their relations, and their embedding in constraint fields.
+
+\item \textbf{Mechanism-Modules.} Formalization of constraints ($K$), interaction topology ($T$), and intentional vectors ($I$) as neutral operators.
+
+\item \textbf{Typology.} A finite set of meaning modes—including sacred silence, emergent chaos, positive construction, generative constraint, and semantic vampirism.
+
+\item \textbf{Metrics and Predictions.} Operational measures and testable propositions about threshold effects and phase transitions.
+
+\item \textbf{Diagnostics and Design Guidance.} Practical procedures for analyzing existing systems (including contemporary AI) and constructing new ones.
+\end{enumerate}
+
+\subsection{Orientation and Roadmap}
+
+Section \ref{sec:ontology} states the ontological commitments and units of analysis. Section \ref{sec:mechanisms} defines the neutral mechanism-modules $\langle K, T, I \rangle$. Section \ref{sec:metrics} introduces operational metrics and measurement procedures. Section \ref{sec:typology} presents the typology of meaning modes implied by the mechanism space. Section \ref{sec:propositions} articulates propositions and phase-transition predictions. Section \ref{sec:ai-systems} applies the framework to contemporary AI systems including GPT-4, Claude, and other large language models. Section \ref{sec:vignettes} provides brief illustrative vignettes. Section \ref{sec:methods} outlines validation methods. Section \ref{sec:related} situates the account within related work. Section \ref{sec:applications} discusses applications and ethical implications, followed by limitations (Section \ref{sec:limitations}) and conclusion (Section \ref{sec:conclusion}).
+
+\section{Ontological Commitments and Units of Analysis}
+\label{sec:ontology}
+
+\subsection{Systems and Semantic Agents}
+
+A \textit{system} is any medium-agnostic configuration in which meaning can arise (e.g., minds, narratives, organizations, technical artifacts). Its primitive constituents are \textbf{semantic agents}: minimal bearers and transformers of meaning such as tokens, motifs, scenes, procedures, rules, roles, or instruments. Agents may be nested and typed.
+
+This view extends \citet{minsky1988society}'s agent-based cognitive architecture beyond individual minds to cultural and epistemic systems. Conceptually, we adopt the stance that "stories as societies of semantic agents" generalizes an agent-based framework to any meaning-bearing configuration. Following \citet{dennett1987intentional}, we treat agents as having intentional properties—not necessarily consciousness, but directional orientation and function within the system.
+
+\begin{definition}[Semantic Agent]
+A semantic agent $a \in A$ is a minimal unit that:
+\begin{enumerate}
+\item carries or transforms meaning within a system,
+\item participates in meaning-bearing relations with other agents,
+\item operates under system constraints and intentional pressures.
+\end{enumerate}
+\end{definition}
+
+\subsection{Environments as Constraint Fields ($K$)}
+
+Each system is embedded in an environmental \textbf{constraint field} $K$ that prunes or scaffolds possible states and trajectories. Constraints include formal rules (genre conventions, logical requirements, experimental design protocols), material limits (time, computational resources, bandwidth), and institutional or platform incentives.
+
+Crucially, constraints are \textit{semantically neutral operators}: depending on configuration, they can either enable emergent order ("productive constraints") or enforce empty forms divorced from meaning. This distinction addresses a key puzzle in aesthetics and creativity research: why some constraints enable expression while others stifle it \citep{stokes2005creativity, elster2000ulysses}.
+
+\begin{definition}[Constraint Field]
+A constraint field $K$ is an admissibility operator over system states $S$ and transformations $T$:
+\[
+K: S \times T \rightarrow \{0, 1\}
+\]
+where $K(s, \tau) = 1$ indicates that transformation $\tau$ from state $s$ is admissible.
+\end{definition}
+
+The framework distinguishes:
+\begin{itemize}
+\item \textbf{Productive constraints:} Channel expression and help organize emergent order while preserving interior purpose.
+\item \textbf{Empty constraints:} Reproduce the outward form of order while severing it from integrative meaning.
+\end{itemize}
+
+\subsection{Interaction Topology ($T$)}
+
+Agents are coupled by a multiplex \textbf{interaction topology} $T$: a labeled, possibly time-varying graph whose layers capture causal–temporal links, rhetorical moves, symbolic echoes, institutional relations, and other meaning-bearing couplings. This topology extends beyond simple narrative structure to include semantic relationships such as support, tension, contradiction, echo, negation, and silence.
+
+Under this view, meaning emerges from collision and negotiation among limited agents rather than from a central controller—a perspective aligned with distributed cognition \citep{hutchins1995cognition} and extended mind theories \citep{clark1998extended}.
+
+\begin{definition}[Interaction Topology]
+An interaction topology is a multiplex graph $T = (A, E, \Lambda)$ where:
+\begin{itemize}
+\item $A$ is the set of semantic agents,
+\item $E \subseteq A \times A \times L$ is the set of labeled edges,
+\item $\Lambda: E \rightarrow \mathbb{R}^+$ assigns weights to edges,
+\item $L$ is a set of relation types (support, tension, contradiction, echo, negation, silence).
+\end{itemize}
+\end{definition}
+
+When $T$ promotes \textbf{collision dynamics}—frequent, structured encounters among agents—local definitions sharpen even in the absence of a single narrative authority. This mechanism accounts for how distributed systems can achieve coherence without centralized control.
+
+\subsection{Intentional Vectors ($I$)}
+
+\textbf{Intentional vectors} $I$ are directional pressures that bias how agents couple and how constraints are applied. They can originate at multiple levels:
+\begin{itemize}
+\item \textit{Authorial/design intent:} The purposes and goals of system creators
+\item \textit{Diegetic purposes:} Internal goals and orientations within the system
+\item \textit{Audience/observer frames:} Interpretive stances and expectations
+\end{itemize}
+
+These vectors may conflict or align; their alignment or misalignment is an empirical property of a given system and a source of its felt meaning. This multi-level intentionality addresses limitations in single-perspective theories of meaning \citep{grice1957meaning}.
+
+Intentionality varies along a qualitative spectrum from \textit{sacred} (life-affirming, meaning-generative) through \textit{profane} (mundane, transactional) and \textit{indifferent} (neutral, purposeless) to \textit{anti-life} (meaning-negating, actively draining). This spectrum is descriptive rather than prescriptive—it characterizes empirical orientations without imposing a universal moral taxonomy.
+
+\subsection{States, Events, and Update Dynamics}
+
+A system trajectory is generated by an update operator:
+\[
+s(t+1) = F_{\langle K,T,I \rangle}(s(t), m(t))
+\]
+where $F$ composes constraint admissibility, topological propagation, and intentional bias. The function $m(t)$ represents exogenous inputs or perturbations. No central observer is assumed; global organization is an emergent consequence of distributed interaction under $K$, $T$, and $I$.
+
+This formulation enables analysis of system dynamics including stability, attractor states, and transitions between regimes—analogous to phase transitions in physical systems \citep{scheffer2009critical}.
+
+\subsection{Alignment Surfaces and Exogenous Fields}
+
+Define \textbf{alignment} $A$ as the degree of coherence among intentional vectors across levels and with the constraint field. Alignment depends both on endogenous configuration and on \textit{exogenous fields} (e.g., platform algorithms, institutional incentives, market pressures) that act as global constraints.
+
+Alignment modulates phase transitions among meaning modes: high alignment stabilizes coherent states, while misalignment can induce drift toward degraded regimes. This conceptualization connects to work on value alignment in AI systems \citep{gabriel2020artificial} and organizational coherence \citep{weick1995sensemaking}.
+
+\section{Neutral Mechanism Modules}
+\label{sec:mechanisms}
+
+\subsection{Constraint $K$}
+
+\textbf{Definition.} A constraint field $K$ is an admissibility operator over system states and transformations. It delimits and/or scaffolds possible trajectories without, by itself, specifying content.
+
+The framework distinguishes \textit{productive constraints} (which channel expression and help organize emergent order) from \textit{empty constraints} (which reproduce the outward form of order while severing it from integrative meaning). This distinction is crucial: the same formal structure can be productive or empty depending on its relationship to system intentionality and interaction topology.
+
+\textbf{Parameters:}
+\begin{itemize}
+\item \textit{Strength} $\kappa \in [0,1]$: tight vs. loose
+\item \textit{Specificity} $\sigma$: global (uniform across system) vs. local (varying by subsystem)
+\item \textit{Distribution} $\delta$: uniform vs. heterogeneous application
+\item \textit{Adaptivity} $\alpha_K$: static vs. scaffolded/learning constraints
+\end{itemize}
+
+Productive constraints exhibit moderate $\kappa$ with high adaptivity $\alpha_K$ and alignment with intentional vectors. Empty constraints show high $\kappa$ with low adaptivity and misalignment with system purposes.
+
+\subsection{Interaction Topology $T$}
+
+\textbf{Definition.} $T$ is a (possibly time-varying) multiplex graph over semantic agents. Edges encode meaning-bearing couplings such as support, tension, contradiction, echo, negation, or silence.
+
+When $T$ promotes \textbf{collision dynamics}—frequent, structured encounters among agents—local definitions sharpen even in the absence of a single narrative authority. This mechanism draws on ideas from stigmergy in distributed systems \citep{theraulaz1999brief} and multi-agent reinforcement \citep{shoham2008multiagent}.
+
+\textbf{Parameters:}
+\begin{itemize}
+\item \textit{Density} $\rho \in [0,1]$: sparse to dense connectivity
+\item \textit{Hierarchy} $h$: flat vs. layered organization
+\item \textit{Clustering} $c$: degree of local cohesion (clustering coefficient)
+\item \textit{Cyclicity} $\gamma$: acyclic vs. recurrent structure
+\end{itemize}
+
+High-meaning regimes often exhibit moderate density with structured hierarchy and constructive cycles ($\gamma > 0$ with positive-feedback loops). Degraded regimes show either extreme sparsity (dissociated agents) or mechanical repetition (high $\rho$, low semantic diversity).
+
+\subsection{Intentional Vectors $I$}
+
+\textbf{Definition.} $I$ denotes the directional forces of meaning-making—pressures originating in author/design intent, diegetic purposes, and audience/observer frames. These may align or conflict; alignment is treated as an empirical variable.
+
+Following \citet{dennett1987intentional}'s intentional stance, we treat intentionality as a predictive posture: systems are analyzed \textit{as if} they have purposes, and the coherence of this interpretation becomes a measurable property.
+
+Intentionality varies along a qualitative spectrum:
+\begin{itemize}
+\item \textit{Sacred:} Life-affirming, meaning-generative orientation
+\item \textit{Profane:} Mundane, transactional, instrumental
+\item \textit{Indifferent:} Neutral, purposeless, drift
+\item \textit{Anti-life:} Meaning-negating, actively draining possibility
+\end{itemize}
+
+\textbf{Parameters:}
+\begin{itemize}
+\item \textit{Magnitude} $\mu$: strength of directional pressure
+\item \textit{Coherence} $\chi$: within-level consistency of intentional vectors
+\item \textit{Concordance} $\psi$: cross-level alignment among authorial, diegetic, and audience vectors
+\end{itemize}
+
+High alignment ($\psi \approx 1$) with constructive orientation supports generative regimes. Misalignment or anti-life orientation induces vampiric drift.
+
+\subsection{Edge Regimes and Failure Modes}
+
+The interaction among $K$, $T$, and $I$ produces characteristic regimes:
+
+\begin{itemize}
+\item \textbf{Over-constraint without alignment} ($\kappa \uparrow$, $\psi \downarrow$): Produces brittle forms that mimic order while suppressing integrative meaning (empty constraint regime).
+
+\item \textbf{Surface topology without constraint integrity} ($\rho \uparrow$, $\kappa_{\text{productive}} \downarrow$): Yields semantic vampirism—outward similarity to functional structures, but with drained interiority.
+
+\item \textbf{Adaptive constraints + aligned intentions} ($\alpha_K \uparrow$, $\psi \uparrow$): Supports a generative regime in which semantic capacity grows through participation.
+\end{itemize}
+
+These failure modes have particular relevance to AI systems, where training on large corpora can produce high surface topology ($\rho$) without productive constraint integrity, leading to fluent but hollow outputs.
+
+\section{Derived Quantities and Metrics}
+\label{sec:metrics}
+
+\subsection{Semantic Density $M$}
+
+\textbf{Concept.} The meaning-bearing capacity of an artifact/system; meaning is treated as a relational quality, not mere quantity of content. High semantic density indicates that elements bear non-redundant, integrative relationships.
+
+\textbf{Operationalization:}
+
+\begin{itemize}
+\item \textit{Relational compression:} $M \propto 1/\ell$ where $\ell$ is codelength under compression models that exploit agent–agent couplings \citep{grunwald2007minimum}.
+
+\item \textit{Cross-layer mutual information:} $M = \text{MI}(\text{form}; \text{function})$ measuring coupling across representational layers \citep{tishby2000information}.
+
+\item \textit{Human judgment anchored to structure:} Ratings of "coherent, non-redundant insight per unit" calibrated against relational analysis.
+\end{itemize}
+
+Formally, for a system with topology $T$ and semantic agents $A$:
+\[
+M(T, A) = \frac{1}{|A|} \sum_{a \in A} \sum_{a' \in N(a)} w(a, a') \cdot \text{novelty}(a, a')
+\]
+where $N(a)$ is the neighborhood of agent $a$, $w(a, a')$ is edge weight, and novelty measures non-redundant information contribution.
+
+\subsection{Redundancy and Entropy $R$, $H$}
+
+Null and vampiric regimes exhibit high surface repetition with weak integrative relations—consistent with elevated redundancy and/or disorder. Redundancy $R$ measures repeated subgraph patterns:
+\[
+R = \frac{\text{\# repeated subgraphs}}{|\text{total subgraphs}|}
+\]
+
+Shannon entropy $H$ quantifies unpredictability:
+\[
+H = -\sum_{i} p_i \log p_i
+\]
+where $p_i$ is the probability of observing edge-type $i$ in $T$.
+
+High $H$ with low $M$ indicates noise; low $H$ with high $M$ indicates efficient, structured meaning. High $R$ with low $M$ flags mechanical repetition without semantic integration.
+
+\subsection{Intentional Alignment $A$}
+
+\textbf{Concept.} Alignment of intentional pressures at multiple levels (authorial/design, diegetic, audience).
+
+\textbf{Operationalization:}
+
+\textit{Within-level coherence:} For each level $\ell$, compute pairwise similarity of intentional vectors:
+\[
+\chi_\ell = \frac{1}{n_\ell(n_\ell-1)/2} \sum_{i<j} \cos(\mathbf{i}_{\ell,i}, \mathbf{i}_{\ell,j})
+\]
+
+\textit{Cross-level concordance:} Procrustes fit or cosine similarity among vector embeddings across levels:
+\[
+\psi = \cos(\mathbf{I}_{\text{author}}, \mathbf{I}_{\text{diegetic}}) \cdot \cos(\mathbf{I}_{\text{diegetic}}, \mathbf{I}_{\text{audience}})
+\]
+
+Overall alignment: $A = \alpha \chi + \beta \psi$ for suitable weights $\alpha, \beta$.
+
+\subsection{Topological Coherence $C_T$}
+
+Global efficiency / path coherence: inverse characteristic path length among meaning-bearing edges. Coherent global organization is an emergent property of $T$.
+
+\[
+C_T = \frac{1}{|A|(|A|-1)} \sum_{a \neq a'} \frac{1}{d(a, a')}
+\]
+where $d(a, a')$ is the shortest path length in the semantic topology.
+
+High $C_T$ indicates that agents are well-connected through meaningful relations; low $C_T$ indicates fragmentation or mechanical coupling without integration.
+
+\subsection{Vampirism Coefficient $V$}
+
+\textbf{Concept.} Surface similarity to functional systems combined with absence of interiority/purpose and active meaning drain. Inspired by \citet{baudrillard1981simulacra}'s notion of simulacra—copies without originals.
+
+\textbf{Formula:}
+\[
+V = \text{SurfaceSim} - \alpha \cdot C_T - \beta \cdot A - \gamma \cdot M
+\]
+
+where:
+\begin{itemize}
+\item SurfaceSim measures formal similarity to known functional systems (via edit distance, style transfer metrics, or perceptual similarity)
+\item $\alpha, \beta, \gamma$ are empirically tuned weights
+\end{itemize}
+
+High $V$ flags "mechanical reproduction of form" with anti-life intentionality. This metric is particularly relevant for evaluating AI-generated content that may exhibit high linguistic fluency (SurfaceSim) without genuine semantic grounding ($M$) or coherent purpose ($A$).
+
+\subsection{Developmental Gain $\Delta G$}
+
+Measures semantic capacity growth through participation:
+\[
+\Delta G(t, \tau) = M(t+\tau) - M(t)
+\]
+for participants exposed to scaffolded $K$ and aligned $I$ over interval $\tau$.
+
+Positive $\Delta G$ characterizes generative regimes where interaction with the system increases agents' meaning-making capacity. This operationalizes ideas from Zone of Proximal Development \citep{vygotsky1978mind} and apprenticeship learning \citep{lave1991situated}.
+
+\section{Typology of Meaning Modes}
+\label{sec:typology}
+
+The mechanism space $\langle K, T, I \rangle$ generates a finite typology of meaning modes. Each mode exhibits characteristic configurations of $K$, $T$, $I$ and predictable signatures in metrics $M$, $H/R$, $A$, $C_T$, $V$, $\Delta G$.
+
+\subsection{Mode I — Sacred Silence (Negation as Presence)}
+
+\textbf{Configuration:}
+\begin{itemize}
+\item High, productive constraint ($\kappa \uparrow$, $\alpha_K \uparrow$)
+\item Sparse but coherent topology ($\rho \downarrow$, $C_T$ sufficient)
+\item Strongly aligned intentional vectors oriented toward life-affirming ends ($\psi \uparrow$, sacred orientation)
+\end{itemize}
+
+\textbf{Metrics:}
+\begin{itemize}
+\item $M$ high: sparse elements carry dense, integrative meaning
+\item $H/R$ low: minimal redundancy, low entropy
+\item $A$ high: strong alignment across levels
+\item $C_T$ sufficient: what connections exist are meaningful
+\item $V$ minimal: no surface mimicry, grounded purpose
+\end{itemize}
+
+This mode produces "meaningful absence"—silence or restraint that itself carries semantic weight. Examples include minimalist art \citep{batchelor1997minimalism}, apophatic theology \citep{turner1995darkness}, and austere scientific communication that conveys much through disciplined omission.
+
+\subsection{Mode II — Emergent Chaos (Anti-Narrative)}
+
+\textbf{Configuration:}
+\begin{itemize}
+\item Loose constraint ($\kappa \downarrow$)
+\item Collision-rich topology that sharpens meaning locally without centralized control ($\rho \uparrow$, high local clustering)
+\item Intentions mixed or profane (transactional, no overarching sacred purpose)
+\end{itemize}
+
+\textbf{Metrics:}
+\begin{itemize}
+\item Local spikes in $M$ amid global drift
+\item $H$ moderate–high: unpredictability, diverse trajectories
+\item $A$ fragmented: no global alignment, but local coherences
+\item $C_T$ elevated locally, uneven globally
+\item $V$ low when collisions are genuine (not mechanical)
+\end{itemize}
+
+This mode characterizes systems that achieve meaning through distributed negotiation rather than top-down design. Examples include certain experimental narratives \citep{joyce1922ulysses}, collaborative improvisations, and decentralized knowledge systems.
+
+\subsection{Mode III — Positive Construction (Classic Coherent Arc)}
+
+\textbf{Configuration:}
+\begin{itemize}
+\item Moderate, well-specified constraint ($\kappa$ moderate, $\sigma$ high)
+\item Organized topology ($\rho$ moderate, hierarchical structure)
+\item Intentional vectors in strong alignment ($\psi \uparrow$) toward constructive ends
+\end{itemize}
+
+\textbf{Metrics:}
+\begin{itemize}
+\item $M$ positive and stable
+\item $H/R$ low–moderate: structured but not rigid
+\item $A$ high: coherent purposefulness
+\item $C_T$ high: global coherence maintained
+\item $V$ minimal: genuine semantic content
+\end{itemize}
+
+This is the "classical" mode of well-formed narratives, rigorous scientific papers, and coherent arguments. It represents what most theoretical accounts of meaning-making take as prototypical.
+
+\subsection{Mode IV — Generative Constraint (Developmental Regime)}
+
+\textbf{Configuration:}
+\begin{itemize}
+\item Adaptive/scaffolded constraint ($\alpha_K \uparrow$): constraints adjust to support growth
+\item Topology that enables developmental transformation of agents (participatory $T$)
+\item Intentional vectors devotional and purpose-oriented (service/karma-yoga orientation)
+\end{itemize}
+
+\textbf{Metrics:}
+\begin{itemize}
+\item $\Delta G$ positive: semantic density increases through participation
+\item $M$ grows over time
+\item $A$ high and stabilizing: alignment reinforced through use
+\item $C_T$ improves with time: system becomes more coherent
+\item $V$ negligible: genuine developmental progress
+\end{itemize}
+
+This mode characterizes educational systems, apprenticeship contexts, and AI training environments that genuinely increase capacity rather than merely transferring information. Following \citet{vygotsky1978mind}, it embeds a developmental trajectory within the meaning-making process itself.
+
+\subsection{Mode V — Semantic Vampirism (Hollow Mimicry)}
+
+\textbf{Configuration:}
+\begin{itemize}
+\item Empty or decoupled constraint ($\kappa_{\text{productive}} \downarrow$): form without integrative purpose
+\item Surface-level topology that mimics functional structure (mechanical "puppet-show" coupling)
+\item Intentional vectors anti-life or negating possibility ($I$ hostile/misaligned)
+\end{itemize}
+
+\textbf{Metrics:}
+\begin{itemize}
+\item $V$ high: surface similarity without interior substance
+\item $M$ low or negative: actively drains meaning from semantic space
+\item $R$ high with $H$ signaling uninformative repetition
+\item $A$ low: misalignment or absence of coherent intent
+\item $C_T$ brittle and superficial: connections lack semantic depth
+\end{itemize}
+
+This mode describes systems that exhibit formal characteristics of meaning-bearing artifacts while lacking—and potentially degrading—genuine semantic content. It is particularly relevant to AI-generated content that mimics human communication patterns without grounded understanding \citep{bender2020climbing}. The "vampire" metaphor captures both the parasitic relationship (feeding on existing semantic structures) and the draining effect (depleting the semantic environment).
+
+\subsection{Summary Table}
+
+\begin{table}[h]
+\centering
+\caption{Typology of Meaning Modes}
+\label{tab:modes}
+\begin{tabular}{@{}lccccccccc@{}}
+\hline
+\textbf{Mode} & \textbf{$K$} & \textbf{$T$} & \textbf{$I$} & \textbf{$M$} & \textbf{$H/R$} & \textbf{$A$} & \textbf{$C_T$} & \textbf{$V$} \\
+\hline
+I. Sacred Silence & High, prod. & Sparse, signal & Sacred/aligned & $\uparrow$ & $\downarrow$ & $\uparrow$ & $\nearrow$ & $\downarrow$ \\
+II. Emergent Chaos & Low/loose & Collision-rich & Mixed/profane & $\updownarrow$ & $\nearrow$ & $\leftrightarrow$ & uneven & $\downarrow$ \\
+III. Positive Constr. & Mod./struct. & Coherent & Aligned/constr. & $\uparrow$ & $\searrow$ & $\uparrow$ & $\uparrow$ & $\downarrow$ \\
+IV. Generative & Adaptive & Developm. & Devotional & $\uparrow$ (time) & $\searrow$ & $\uparrow$ & $\nearrow$ (time) & $\downarrow$ \\
+V. Vampirism & Empty/degr. & Mechanical & Anti-life/misal. & $\downarrow$ & $\uparrow$ & $\downarrow$ & brittle & $\uparrow$ \\
+\hline
+\end{tabular}
+\end{table}
+
+\section{Propositions and Phase Transitions}
+\label{sec:propositions}
+
+The framework generates testable propositions about how systems transition among meaning modes under parameter variation. These propositions operationalize the theoretical machinery and enable empirical validation.
+
+\subsection{Constraint-Driven Transitions}
+
+\begin{proposition}[Productive-constraint induction of Mode I]
+\label{prop:p1}
+Intervention: Increase strength/specificity of $K$ while preserving its productive character ($\kappa \uparrow$, $\alpha_K$ maintained).
+
+Prediction: System moves toward sparse, high-signal organization with elevated $M$ and reduced $H/R$.
+
+Signatures: Rise in $M$; drop in $H/R$; stable or improving $C_T$; low $V$.
+\end{proposition}
+
+\begin{proposition}[Empty-constraint collapse into Mode V]
+\label{prop:p2}
+Intervention: Substitute empty constraints that reproduce surface order while severing integrative purpose ($\kappa \uparrow$, $\alpha_K \downarrow$, $\psi \downarrow$).
+
+Prediction: System presents superficial form with decoupled interiority and misaligned or hostile $I$; transition to Mode V.
+
+Signatures: $V$ rises as SurfaceSim outpaces $C_T$, $A$, and $M$; agent interactions become mechanical.
+\end{proposition}
+
+\subsection{Topology-Driven Transitions}
+
+\begin{proposition}[Collision-rich topology induces Mode II]
+\label{prop:p3}
+Intervention: Reduce global $K$ and increase collision dynamics in $T$ while ensuring genuine agency ($\rho \uparrow$ with diverse relation types).
+
+Prediction: Emergence of local pockets of high $M$ amid global drift; distributed organization without central controller.
+
+Signatures: Local $C_T \uparrow$ with global $C_T$ uneven; $M$ shows local spikes; $A$ fragmented but not negating.
+\end{proposition}
+
+\begin{proposition}[Coherent, layered topology with moderate $K$ yields Mode III]
+\label{prop:p4}
+Intervention: Impose moderate, structured $K$ and a layered, integrative $T$ ($\kappa$ moderate, hierarchical $T$).
+
+Prediction: Stable, positive $M$ with low–moderate redundancy; high $C_T$.
+
+Signatures: High $C_T$ across layers; low $H/R$; robustness of global coherence.
+\end{proposition}
+
+\subsection{Intentionality and Alignment}
+
+\begin{proposition}[Intentional alignment elevates coherence and density]
+\label{prop:p5}
+Intervention: Increase alignment among authorial, diegetic, and audience vectors ($\psi \uparrow$).
+
+Prediction: Transition toward Modes III/IV depending on $K$ and $T$: higher $M$, stronger $C_T$, reduced redundancy.
+
+Signatures: Coherent rise in $A$, $M$, $C_T$; reduction in $H/R$.
+\end{proposition}
+
+\begin{proposition}[Hostile or anti-life vectors catalyze vampiric drift]
+\label{prop:p6}
+Intervention: Tilt $I$ toward anti-life or sustained misalignment (negating or exploitative intent).
+
+Prediction: Even with recognizable surface $T$, the system drifts toward Mode V; meaning is actively drained.
+
+Signatures: Intentionality scores shift toward anti-life spectrum; $V$ increases; "uncanny valley of narrative."
+\end{proposition}
+
+\subsection{Developmental (Generative) Regime}
+
+\begin{proposition}[Scaffolded constraints plus devotional intention produce developmental gain]
+\label{prop:p7}
+Intervention: Introduce adaptive/scaffolded $K$ and align $I$ toward devotional purpose ($\alpha_K \uparrow$, devotional $I$); maintain participatory $T$.
+
+Prediction: Sustained $\Delta G > 0$: semantic density increases over time for participating agents.
+
+Signatures: Positive developmental gain measurable across time intervals; stable high $A$; improving $C_T$.
+\end{proposition}
+
+\subsection{Phase Boundaries and Exogenous Fields}
+
+\begin{proposition}[Threshold behavior and hysteresis at mode boundaries]
+\label{prop:p8}
+Prediction: Non-linear transitions among Modes I–V; systems can remain trapped in degraded regions even after partial parameter reversal (hysteresis effect).
+
+Implication: Once a system enters Mode V, restoring productive constraint and alignment may be insufficient without additional interventions to break the degraded attractor state.
+\end{proposition}
+
+\begin{proposition}[Exogenous incentive fields bias dynamics toward entropy and vampirism]
+\label{prop:p9}
+Intervention: Introduce platform/institutional incentives that reward output volume or surface similarity.
+
+Prediction: Drift toward Null/Vampiric regions ($H/R \uparrow$, $V \uparrow$) unless $K$ and $I$ are deliberately re-engineered.
+
+Relevance: Social media algorithms, academic metrics emphasizing publication volume, and AI training on web-scraped corpora all constitute exogenous fields that bias toward Mode V.
+\end{proposition}
+
+\section{Contemporary AI Systems: An Analysis Through the Framework}
+\label{sec:ai-systems}
+
+This section applies the ontological framework to contemporary artificial intelligence systems, with particular focus on large language models (LLMs) including GPT-4 \citep{openai2023gpt4}, Claude \citep{anthropic2024claude}, and Gemini \citep{google2024gemini}. The analysis illuminates how these systems instantiate different meaning modes and reveals conditions under which AI-generated content exhibits semantic vampirism.
+
+\subsection{LLMs as Semantic Agent Systems}
+
+Large language models can be analyzed as networks of semantic agents where:
+\begin{itemize}
+\item \textit{Agents:} Tokens, attention heads, layer activations, and learned representations \citep{elhage2021mathematical}
+\item \textit{Topology $T$:} Transformer attention patterns forming multiplex graphs across layers \citep{vaswani2017attention}
+\item \textit{Constraints $K$:} Training objectives, architectural choices, reinforcement learning from human feedback (RLHF), and sampling parameters
+\item \textit{Intentional vectors $I$:} Learned alignment from training data, fine-tuning objectives, and prompt-induced orientations
+\end{itemize}
+
+This framing extends mechanistic interpretability research \citep{olah2020zoom, cammarata2020thread} by embedding structural analysis within a broader ontology of meaning-making.
+
+\subsection{Training Dynamics and Constraint Fields}
+
+\textbf{Pre-training phase:} LLMs learn statistical patterns from massive web corpora. The constraint field $K$ during pre-training is primarily:
+\begin{itemize}
+\item Next-token prediction objective (high strength $\kappa$, but semantically thin)
+\item Architectural limitations (context window, parameter count)
+\item Data distribution biases \citep{bender2021dangers}
+\end{itemize}
+
+Critically, pre-training constraints are largely \textit{empty constraints}: they enforce distributional similarity to training data without grounding in intentional alignment or external referents. This produces high surface similarity (SurfaceSim) to human text with potentially low semantic density $M$.
+
+\textbf{Fine-tuning and RLHF:} Alignment procedures introduce \textit{productive constraints}:
+\begin{itemize}
+\item Human preference models biasing toward helpfulness, harmlessness, honesty \citep{ouyang2022training}
+\item Task-specific objectives increasing $\alpha_K$ (adaptivity)
+\item Instruction-following that partially grounds intentional vectors in user purposes
+\end{itemize}
+
+The effectiveness of alignment depends on the quality of preference data and the degree to which RLHF genuinely instills aligned intentional vectors rather than superficial compliance \citep{wolf2023fundamental}.
+
+\subsection{Semantic Density and the Grounding Problem}
+
+A central question in philosophy of AI is whether LLMs "understand" their outputs or merely perform sophisticated pattern-matching \citep{bender2020climbing, shanahan2024talking}. The framework reframes this as: \textit{What semantic density $M$ do LLM representations achieve?}
+
+\textbf{Arguments for low $M$:}
+\begin{itemize}
+\item \textbf{Symbol grounding deficit:} LLM representations lack perceptual grounding \citep{harnad1990symbol}, reducing cross-modal mutual information (one operationalization of $M$).
+\item \textbf{Training on web text:} Much web data exhibits Mode V characteristics (high redundancy, surface form, clickbait incentives), biasing models toward vampiric patterns.
+\item \textbf{Compression without integration:} LLMs compress statistical regularities but may not capture integrative relationships that constitute meaning \citep{piantadosi2023meaning}.
+\end{itemize}
+
+\textbf{Arguments for non-trivial $M$:}
+\begin{itemize}
+\item \textbf{Emergent world models:} Research suggests LLMs develop internal representations of entities, relations, and causal structure \citep{li2023emergent}, indicating non-trivial topological coherence $C_T$.
+\item \textbf{Compositional generalization:} Ability to combine concepts in novel ways suggests relational compression (a proxy for $M$) \citep{lake2018generalization}.
+\item \textbf{Functional alignment:} Fine-tuned models exhibit coherent intent alignment in specific domains, elevating $A$ and enabling genuine task performance.
+\end{itemize}
+
+\textbf{Framework synthesis:} Contemporary LLMs likely occupy an \textit{intermediate regime} with:
+\begin{itemize}
+\item Moderate $M$ for domains well-represented in training data with strong relational structure
+\item Low $M$ for abstract reasoning requiring grounded understanding
+\item Variable $A$ depending on fine-tuning quality and prompt framing
+\item Risk of Mode V outputs when generating content in low-signal domains or under incentive structures rewarding volume over depth
+\end{itemize}
+
+\subsection{GPT-4: Analysis Through $\langle K, T, I \rangle$}
+
+GPT-4 represents a frontier LLM with 1.76 trillion parameters trained on diverse multimodal data.
+
+\textbf{Constraint field $K$:}
+\begin{itemize}
+\item Very high capacity ($\kappa$ can be tuned via sampling parameters)
+\item Extensive RLHF introducing productive constraints for safety and alignment
+\item Multimodal grounding (text + images) partially addressing symbol grounding
+\end{itemize}
+
+\textbf{Topology $T$:}
+\begin{itemize}
+\item Deep transformer architecture (120+ layers) enabling complex relational patterns
+\item Attention mechanisms creating dynamic, context-dependent connectivity
+\item High $C_T$ within training domain coverage; fragmentation outside
+\end{itemize}
+
+\textbf{Intentional vectors $I$:}
+\begin{itemize}
+\item Authorial intent: OpenAI's alignment goals (helpfulness, harmlessness)
+\item Diegetic intent: Prompt-induced role-taking ("You are a helpful assistant...")
+\item Audience intent: User goals, which may or may not align with OpenAI's objectives
+\end{itemize}
+
+Alignment $A$ is moderate: RLHF produces within-level coherence, but cross-level concordance varies. When user intent conflicts with safety constraints, $A$ degrades and outputs may become evasive or formulaic (a minor Mode V signal).
+
+\textbf{Meaning mode classification:}
+
+For well-specified technical or analytical tasks, GPT-4 operates in \textbf{Mode III (Positive Construction)}: moderate constraint, coherent topology, aligned intent yielding stable $M$ and low $V$.
+
+For creative or open-ended generation, GPT-4 can approach \textbf{Mode II (Emergent Chaos)}: sufficient collision dynamics among learned representations produce locally coherent but globally fragmented outputs.
+
+For domains with sparse training data or under prompts rewarding volume, GPT-4 risks \textbf{Mode V (Semantic Vampirism)}: fluent text with low semantic density and mechanical reproduction of patterns. The "ChatGPT voice"—recognized by its characteristic hedging, listicle structure, and cautious formulations—exemplifies superficial compliance (high SurfaceSim) with degraded intentional alignment.
+
+\subsection{Claude: Constitutional AI and Intentional Alignment}
+
+Claude (Anthropic) employs Constitutional AI (CAI) \citep{bai2022constitutional}, which uses AI-generated self-critiques against explicit values to enhance alignment.
+
+\textbf{Constraint field $K$:}
+\begin{itemize}
+\item CAI introduces \textit{adaptive productive constraints}: the model internalizes principles rather than merely mimicking human preferences
+\item Higher $\alpha_K$ (adaptivity) compared to standard RLHF
+\end{itemize}
+
+\textbf{Intentional vectors $I$:}
+\begin{itemize}
+\item Explicit constitutional principles create coherent authorial intent
+\item Self-supervised critique increases within-level coherence $\chi$
+\item Potentially higher alignment $A$ when user goals compatibly align with constitutional values
+\end{itemize}
+
+\textbf{Implications:}
+
+Constitutional AI represents an engineering approach toward Mode IV (Generative Constraint): scaffolded constraints that adapt to reinforce aligned behavior. Early evidence suggests CAI models may achieve:
+\begin{itemize}
+\item Higher $A$ due to explicit value grounding
+\item Lower $V$ by reducing mechanical compliance in favor of principled reasoning
+\item Potential for positive $\Delta G$ if interaction genuinely reinforces user reasoning capacity (though empirical validation needed)
+\end{itemize}
+
+However, CAI is not immune to Mode V drift if constitutional principles become empty constraints (formalistic adherence without semantic grounding) or if the underlying training data remains biased toward vampiric patterns.
+
+\subsection{Retrieval-Augmented Generation and Topology Enhancement}
+
+Retrieval-Augmented Generation (RAG) systems \citep{lewis2020retrieval} augment LLMs with external knowledge retrieval, modifying the effective topology $T$:
+
+\textbf{Topology $T$ enhancement:}
+\begin{itemize}
+\item Retrieved documents act as additional semantic agents
+\item Explicit grounding edges link generated text to source material
+\item Increases $C_T$ by providing structured pathways through knowledge space
+\end{itemize}
+
+\textbf{Constraint field $K$ modification:}
+\begin{itemize}
+\item Retrieval acts as constraint: only information from retrieved sources is admissible
+\item Productive when retrieval is high-quality; empty when retrieval is noisy or adversarially selected
+\end{itemize}
+
+\textbf{Semantic density impact:}
+
+Well-implemented RAG can increase $M$ by:
+\begin{itemize}
+\item Grounding claims in verifiable sources (reducing hallucination, a Mode V failure)
+\item Enabling cross-document relational compression
+\item Providing intentional alignment through source selection
+\end{itemize}
+
+However, RAG risks amplifying existing biases if retrieval corpora themselves exhibit low $M$ or vampiric characteristics (e.g., SEO-optimized content farms).
+
+\subsection{Diagnostic: Measuring $V$ in LLM Outputs}
+
+To operationalize vampirism detection in AI systems:
+
+\textbf{SurfaceSim (surface similarity):}
+\begin{itemize}
+\item Perplexity relative to human reference corpus
+\item Style transfer metrics (e.g., classifier confidence that text is human-written)
+\item Linguistic fluency scores
+\end{itemize}
+
+\textbf{$C_T$ (topological coherence):}
+\begin{itemize}
+\item Discourse coherence models \citep{li2014recursive}
+\item Coreference resolution density
+\item Argument structure completeness
+\end{itemize}
+
+\textbf{$A$ (intentional alignment):}
+\begin{itemize}
+\item Consistency of claims across rephrasing
+\item Alignment with stated task objectives
+\item User satisfaction as proxy for audience-intention concordance
+\end{itemize}
+
+\textbf{$M$ (semantic density):}
+\begin{itemize}
+\item Inverse verbosity: insight per token
+\item Non-redundancy: novelty of information
+\item Cross-modal grounding: citation to external facts
+\end{itemize}
+
+\textbf{Vampirism score:}
+\[
+V = \text{SurfaceSim} - \alpha C_T - \beta A - \gamma M
+\]
+
+High $V$ outputs are fluent but hollow—exactly the failure mode critics identify in "stochastic parrots" \citep{bender2020climbing}. Implementing $V$-gates in AI pipelines could filter degraded outputs before deployment.
+
+\subsection{Training Data Quality and Mode V Amplification}
+
+A critical insight from the framework: \textit{training on Mode V data produces Mode V systems}. Much web text exhibits:
+\begin{itemize}
+\item High redundancy (SEO content farming)
+\item Low semantic density (clickbait, superficial summaries)
+\item Misaligned intent (adversarial persuasion, disinformation)
+\end{itemize}
+
+When LLMs are trained on such corpora without strong corrective constraints, they learn to reproduce vampiric patterns \citep{bender2021dangers}. This suggests a feedback loop: AI-generated content floods the web (already occurring \citep{goldstein2023generative}), degrading training data for future models, amplifying Mode V characteristics.
+
+\textbf{Mitigation strategies:}
+\begin{itemize}
+\item \textbf{Data curation:} Prioritize high-$M$ sources (peer-reviewed literature, carefully edited media, primary sources)
+\item \textbf{Contrastive learning:} Explicitly train models to distinguish Mode III/IV exemplars from Mode V instances
+\item \textbf{Alignment toward generative regimes:} Optimize not for fluency alone, but for $\Delta G$—does interaction with the system increase user reasoning capacity?
+\end{itemize}
+
+\subsection{Philosophical Implications: Understanding Without Grounding?}
+
+The framework reframes the debate over LLM "understanding" \citep{shanahan2024talking, chalmers2023could}:
+
+\textbf{Traditional framing:} Do LLMs understand, or are they merely statistical parrots?
+
+\textbf{Framework reframing:} What meaning modes do LLMs instantiate, and under what conditions?
+
+This dissolves false dichotomies. LLMs can exhibit:
+\begin{itemize}
+\item \textbf{Functional understanding} in Mode III contexts: sufficient $M$, $C_T$, $A$ for task performance
+\item \textbf{Semantic poverty} in Mode V contexts: high surface similarity masking low integrative content
+\item \textbf{Emergent local understanding} in Mode II contexts: collision-driven coherence without global grounding
+\end{itemize}
+
+Rather than asking "do LLMs understand?" we ask "what are the $\langle K, T, I \rangle$ configurations under which LLM outputs achieve high semantic density and intentional alignment?" This operational question admits empirical investigation using the proposed metrics.
+
+The symbol grounding problem \citep{harnad1990symbol} reemerges as a question about $M$: can semantic density be achieved through statistical learning alone, or does grounding require causal interaction with an external world? The framework is agnostic but measurable: systems with high $M$ demonstrate integrative relational structure, regardless of whether that structure arises from embodied interaction or sufficiently rich linguistic patterns.
+
+\subsection{AI Safety and Alignment Implications}
+
+The framework has direct implications for AI safety:
+
+\textbf{1. Alignment as intentional concordance:} Current alignment research focuses on value alignment \citep{gabriel2020artificial}. The framework extends this: true alignment requires cross-level concordance ($\psi$) among developer intent, model behavior, and user goals, embedded in productive constraints that support rather than suppress semantic capacity.
+
+\textbf{2. Vampirism as safety failure:} Mode V systems pose subtle risks: they appear functional (high SurfaceSim) while degrading epistemic environments. Detecting and mitigating $V$ should be a core safety objective.
+
+\textbf{3. Developmental AI:} Shifting toward Mode IV (Generative Constraint) suggests a design paradigm where AI systems scaffold human reasoning capacity ($\Delta G > 0$) rather than replacing it. This aligns with augmentation-focused AI ethics \citep{brynjolfsson2014second}.
+
+\textbf{4. Transparency via topology:} Making interaction topology $T$ inspectable (mechanistic interpretability \citep{olah2020zoom}) enables diagnosis of failure modes before deployment.
+
+\section{Illustrative Vignettes}
+\label{sec:vignettes}
+
+\textit{These vignettes are strictly illustrative applications of the framework; they do not drive the argument or carry evidentiary weight beyond exemplification.}
+
+\textbf{Mode I — Sacred Silence (Soviet Anti-Aesthetic).} Soviet material culture functions as art through ostensible lack of art: meaning appears via disciplined negation rather than ornament, yielding "meaningful absence" with coherent suppression and sacred orientation \citep{groys1992total}. Semantic Density: high via negation; Interaction: coherent suppression; Intentionality: sacred (ideological devotion), producing the felt "haunted chapel."
+
+\textbf{Mode II — Emergent Chaos (The Big Lebowski).} Definition arises from collisions among agents without central narrative authority \citep{coen1998lebowski}. Semantic Density: negative (via anti-narrative structure); Interaction: emergent through character collisions; Intentionality: profane (mundane transgression), resulting in "distributed consciousness without center."
+
+\textbf{Mode III — Positive Construction (The Simpsons, "Do It For Her").} A classical arc with clear motivation and "earned sentiment" aligns narrative vectors; coherent agent interaction and constructive intentionality generate stable meaning \citep{groening1993simpsons}.
+
+\textbf{Mode IV — Generative Constraint (Terminator 2).} Meaning grows through participation under scaffolded constraints and devotional intentionality—"machines learning humanity through narrative participation" \citep{cameron1991terminator}. Transformative Semantic Density, Developmental Interaction, and Devotional Intentionality produce positive $\Delta G$ for characters and audiences.
+
+\textbf{Mode V — Semantic Vampirism (Algorithmically Generated Content).} Consider AI-generated "content farms" optimized for search engines: articles that mimic informational text structure (headings, listicles, citations) while providing minimal novel information \citep{goldstein2023generative}. Surface similarity to functional content coexists with mechanical reproduction of form and absence of grounded purpose—an anti-life vector (extractive intent) that actively drains semantic space by displacing genuine information sources. Semantic Density: vampiric (negative contribution to ecosystem); Interaction: mechanical (template-filling); Intentionality: anti-life (extractive), yielding the "synthetic morgue" effect.
+
+\section{Methods for Application and Validation}
+\label{sec:methods}
+
+\subsection{Corpus Selection and Unitization}
+
+Select corpora spanning narratives, artifacts, institutional documents, and AI-generated content to ensure medium-agnostic evaluation. For each system:
+
+\begin{enumerate}
+\item \textbf{Unitize} content into semantic agents at appropriate grain:
+\begin{itemize}
+\item \textit{Micro:} Tokens, words, phrases
+\item \textit{Meso:} Motifs, roles, procedures, arguments
+\item \textit{Macro:} Arcs, theories, organizational structures
+\end{itemize}
+
+\item \textbf{Preliminary mapping:} Assign agents to axes (Semantic Density, Agent Interaction, Intentionality spectra) for qualitative orientation.
+\end{enumerate}
+
+\subsection{Annotation Protocol for $\langle K, T, I \rangle$}
+
+\textbf{Constraints ($K$):}
+\begin{itemize}
+\item Identify explicit and implicit constraints (formal rules, genre conventions, platform affordances)
+\item Classify as productive vs. empty based on relationship to integrative purpose
+\item Label scope (global/local), strength ($\kappa$), and adaptivity ($\alpha_K$)
+\end{itemize}
+
+\textbf{Interaction topology ($T$):}
+\begin{itemize}
+\item Encode meaning-bearing couplings: support, tension, contradiction, echo, negation, silence
+\item Construct multiplex graph with typed, weighted edges
+\item Mark collision dynamics: frequency and structure of agent encounters
+\item Compute graph metrics: density $\rho$, hierarchy $h$, clustering $c$, cyclicity $\gamma$
+\end{itemize}
+
+\textbf{Intentional vectors ($I$):}
+\begin{itemize}
+\item Record stated or inferred orientations at three levels:
+  \begin{itemize}
+  \item Authorial/design intent (from documentation, interviews, stated objectives)
+  \item Diegetic intent (internal purposes within system)
+  \item Audience/observer intent (user goals, interpretive frames)
+  \end{itemize}
+\item Classify along sacred–profane–indifferent–anti-life spectrum
+\item Note alignment/misalignment across levels
+\item Measure magnitude $\mu$, coherence $\chi$, concordance $\psi$
+\end{itemize}
+
+\textbf{Frame management:}
+\begin{itemize}
+\item Annotate frame shifts (when interpretive context changes)
+\item Classify as adaptive, rigid, or absent
+\end{itemize}
+
+\textbf{Inter-rater reliability:} Target Krippendorff's $\alpha \geq 0.67$ \citep{krippendorff2004reliability} for structural annotations; acknowledge subjectivity in intentional classifications.
+
+\subsection{Metric Computation}
+
+For annotated systems, compute core observables:
+
+\begin{itemize}
+\item \textbf{Semantic Density ($M$):} Relational compression, cross-layer MI, human ratings
+\item \textbf{Redundancy/Entropy ($R/H$):} Subgraph repetition, edge-type entropy
+\item \textbf{Topological Coherence ($C_T$):} Global efficiency, path lengths
+\item \textbf{Intentional Alignment ($A$):} Within-level coherence $\chi$, cross-level concordance $\psi$
+\item \textbf{Vampirism coefficient ($V$):} $V = \text{SurfaceSim} - \alpha C_T - \beta A - \gamma M$
+\item \textbf{Developmental Gain ($\Delta G$):} Longitudinal change in $M$ for participants
+\end{itemize}
+
+Interpret against typology: map metric signatures to Modes I–V.
+
+\subsection{Experimental Designs}
+
+\textbf{A. Synthetic generation studies:}
+\begin{itemize}
+\item Programmatically vary $\kappa$ (constraint strength), $\rho$ (topology density), $\psi$ (alignment)
+\item Generate controlled $\langle K, T, I \rangle$ configurations
+\item Test predicted mode transitions (Propositions \ref{prop:p1}–\ref{prop:p9})
+\item Measure resulting $M$, $C_T$, $A$, $V$
+\end{itemize}
+
+\textbf{B. Human rating studies:}
+\begin{itemize}
+\item Present participants with artifacts spanning Modes I–V
+\item Collect ratings: perceived meaning, coherence, depth, "hollowness"
+\item Cue raters to relational structure (vs. surface features alone)
+\item Correlate human judgments with computed metrics
+\item Validate that high $V$ corresponds to perceived semantic poverty
+\end{itemize}
+
+\textbf{C. Frame-perturbation experiments:}
+\begin{itemize}
+\item Introduce controlled frame prompts (e.g., different interpretive stances for same text)
+\item Measure downstream changes in $M$ and $C_T$
+\item Test whether frame shifts alter mode classification
+\item Relevant for AI systems: do different system prompts move outputs between modes?
+\end{itemize}
+
+\textbf{D. Longitudinal developmental studies:}
+\begin{itemize}
+\item Track learners interacting with Mode IV (Generative) vs. Mode V systems
+\item Measure $\Delta G$: pre/post semantic capacity in participants
+\item Hypothesis: Mode IV systems produce positive $\Delta G$; Mode V systems produce negative $\Delta G$ (degraded reasoning capacity)
+\end{itemize}
+
+\subsection{Comparative and Longitudinal Analyses}
+
+\textbf{Historical vs. contemporary media:}
+\begin{itemize}
+\item Map curated literary/scientific corpora (historical, high editorial standards) vs. AI-mediated outputs
+\item Test hypothesis: exogenous fields (engagement algorithms, SEO) bias toward Null/Vampiric regions
+\item Quantify drift in average $M$, $V$ over time
+\end{itemize}
+
+\textbf{Longitudinal tracking:}
+\begin{itemize}
+\item Observe systems over time as exogenous constraints shift (e.g., platform algorithm changes)
+\item Test for hysteresis (Proposition \ref{prop:p8}): do systems remain trapped in degraded regimes after constraints reverse?
+\item Monitor semantic ecosystems for vampirism amplification feedback loops
+\end{itemize}
+
+\section{Related Work}
+\label{sec:related}
+
+This section situates the framework relative to work in cognitive science, narratology and semiotics, aesthetics and constraint-based creativity, information-theoretic accounts of meaning, developmental theories of learning, systems and cybernetics, philosophy of AI, and contemporary analyses of generative media.
+
+\subsection{Agent-Based Accounts of Mind and Cognition}
+
+\citet{minsky1988society} proposed that minds consist of agents—simple processes that individually lack intelligence but collectively produce thought. This framework adopts the agentic stance but \textit{elevates constraint and intentional vectors to first-class variables} alongside interaction structure. The result is a generalized ontology in which cognitive, cultural, and institutional artifacts are all analyzable as societies of semantic agents embedded in constraint fields and subject to directional pressures.
+
+Related work in multi-agent systems \citep{shoham2008multiagent} and distributed AI \citep{stone2000multiagent} focuses on coordination mechanisms. Our contribution is applying this lens to \textit{meaning-making itself}, treating semantics as emergent from agent dynamics rather than pre-given.
+
+\subsection{Structuralist and Semiotic Narratology}
+
+Structuralist narratology \citep{propp1968morphology, barthes1977structural, greimas1983structural} analyzes narrative forms through morphological patterns and actantial structures. The current account retains an interest in structure but shifts from static morphology to \textit{dynamic topology}. It specifies operational metrics that quantify differences among regimes—where classical narratology classifies, the present approach models how systems move between regimes as constraints and intentionality vary.
+
+Semiotic approaches \citep{eco1976theory, peirce1931collected} emphasize sign relations and interpretive processes. Our topology $T$ can be understood as a formalization of semiotic networks, with edges representing Peircean interpretants. The intentional vectors $I$ operationalize Eco's notion of "model reader" and authorial intent.
+
+\subsection{Aesthetics of Constraint and Generative Creativity}
+
+Work on constraint-based creativity \citep{stokes2005creativity, elster2000ulysses} observes that constraints can either enable or inhibit creative expression. The framework's contribution is to treat constraint as a \textit{neutral operator} $K$ whose effect depends on its coupling with $T$ and $I$. It separates productive constraints (which scaffold emergence) from empty constraints (which enforce form without purpose), accounting for why similar formal limitations can yield opposite qualitative outcomes.
+
+Generative art systems \citep{boden2004creative} and procedural generation \citep{shaker2016procedural} explore algorithmic creativity. Our framework provides criteria for distinguishing generative systems that achieve high $M$ from those that produce surface variation without semantic depth (Mode V).
+
+\subsection{Information-Theoretic and Complexity Approaches}
+
+Information theory \citep{shannon1948mathematical} and algorithmic information theory \citep{kolmogorov1965three, solomonoff1964formal} provide formal measures of information content and compressibility. The present framework adopts information-theoretic tools but anchors them to \textit{relational semantics}: semantic density $M$ is treated not merely as compressibility but as meaning-bearing coupling across levels.
+
+Complexity science \citep{mitchell2009complexity} studies emergence in complex systems. The phase-transition dynamics in our framework (Section \ref{sec:propositions}) align with critical transitions in complex systems \citep{scheffer2009critical}. The vampirism coefficient $V$ formalizes a failure mode specific to semantic systems—a contribution not addressed in general complexity theory.
+
+\subsection{Developmental and Participatory Theories}
+
+\citet{vygotsky1978mind}'s Zone of Proximal Development and socio-constructivist learning theories \citep{lave1991situated} emphasize how development occurs through scaffolded participation. The proposed Mode IV (Generative Constraint) integrates these accounts by defining a developmental regime with trajectory-level gains in semantic capacity ($\Delta G > 0$).
+
+Participatory sense-making \citep{degjaegher2009participatory} in enactive cognitive science shares our emphasis on meaning as co-constructed through interaction. We formalize this intuition with measurable topology and developmental gain metrics.
+
+\subsection{Systems Theory and Cybernetics}
+
+Cybernetic approaches \citep{wiener1948cybernetics, ashby1956introduction} model systems via feedback loops and control mechanisms. The framework introduces an explicit \textit{alignment surface} $A$ among multi-level intentional vectors and the constraint field, treating alignment as an empirical variable that modulates stability and transition thresholds—a refinement of cybernetic homeostasis toward semantic coherence.
+
+Second-order cybernetics \citep{vonfoerster2003understanding} emphasizes observer-dependence and self-reference. Our multi-level intentional vectors ($I$) accommodate observer frames while maintaining that alignment is a measurable (if observer-relative) property.
+
+\subsection{Philosophy of AI and Machine Semantics}
+
+Recent philosophy of AI debates whether large language models "understand" or merely mimic understanding \citep{bender2020climbing, shanahan2024talking, mitchell2023debate}. \citet{searle1980minds}'s Chinese Room argument claims syntactic manipulation cannot yield semantic content. Our framework reframes this: \textit{semantic density $M$ is a measurable emergent property}—systems can achieve high $M$ (functional understanding) or low $M$ (syntactic manipulation) depending on $\langle K, T, I \rangle$ configurations.
+
+\citet{bender2020climbing} warn against the "octopus test"—systems trained only on form lack grounding. We formalize this as the symbol grounding deficit reducing cross-modal mutual information (an operationalization of $M$). However, we remain open to the possibility that sufficient relational structure in linguistic data could support non-trivial $M$ even without embodiment—an empirical question.
+
+\citet{shanahan2024talking} argues LLMs should be understood as simulators of text distributions rather than agents with beliefs. Our framework is compatible: LLMs as simulators occupy Mode II or Mode V depending on whether they engage in genuine collision dynamics (Mode II) or mechanical pattern reproduction (Mode V).
+
+\subsection{Mechanistic Interpretability and AI Alignment}
+
+Mechanistic interpretability research \citep{olah2020zoom, elhage2021mathematical, cammarata2020thread} aims to reverse-engineer neural network computations. Our topology $T$ provides a conceptual framework for interpreting attention patterns and layer activations as semantic agent interactions. The intentional vectors $I$ connect to AI alignment research \citep{gabriel2020artificial, christian2020alignment}, formalizing alignment as cross-level concordance $\psi$.
+
+The vampirism coefficient $V$ operationalizes concerns about AI-generated "slop" \citep{goldstein2023generative}—content that degrades information ecosystems. This contributes a diagnostic tool for AI safety beyond traditional alignment metrics.
+
+\subsection{Contemporary Analyses of Generative Media}
+
+\citet{baudrillard1981simulacra} analyzes simulacra—copies without originals—in postmodern culture. Mode V (Semantic Vampirism) formalizes Baudrillard's intuition: systems that reproduce surface form while evacuating referential grounding. Our contribution is making this measurable ($V$ coefficient) and predictive (phase-transition propositions).
+
+Critical analyses of social media \citep{lanier2018ten, zuboff2019surveillance} identify epistemic degradation in algorithmic recommendation systems. Our framework models this as exogenous fields (Proposition \ref{prop:p9}) biasing systems toward Mode V by rewarding engagement over semantic depth.
+
+\section{Applications and Ethical Implications}
+\label{sec:applications}
+
+\subsection{Diagnostic Toolkit}
+
+\textbf{Procedure for system analysis:}
+
+\begin{enumerate}
+\item \textbf{Unitize} into semantic agents; annotate $\langle K, T, I \rangle$ following protocol (Section \ref{sec:methods})
+
+\item \textbf{Score metrics:} Compute $M$, $H/R$, $C_T$, $A$, and $V$
+
+\item \textbf{Mode inference:} Map metric signature to typology (Table \ref{tab:modes})
+
+\item \textbf{Identify levers:} Determine which parameters ($K$, $T$, $I$) are most constraining or degraded
+
+\item \textbf{Report:} Provide annotated graph, metric values, and mode classification with confidence intervals
+\end{enumerate}
+
+This toolkit applies to:
+\begin{itemize}
+\item \textit{Content evaluation:} Assess articles, reports, AI outputs for semantic depth vs. vampirism
+\item \textit{Organizational analysis:} Diagnose communication patterns, decision-making structures
+\item \textit{Educational design:} Evaluate whether curricula operate in Mode IV (developmental)
+\item \textit{AI system audit:} Detect Mode V risks in generative models
+\end{itemize}
+
+\subsection{Design Principles (Anti-Vampiric Practice)}
+
+\textbf{Constraint integrity ($K$):}
+\begin{itemize}
+\item Employ \textit{productive constraints} that prune possibilities while preserving interior purpose
+\item Avoid \textit{empty constraints} that enforce form without grounding
+\item Design constraints to be \textit{adaptive} ($\alpha_K \uparrow$): scaffolding that adjusts to developmental needs
+\item Example: For AI systems, prefer fine-tuning objectives that reward integrative reasoning over surface fluency alone
+\end{itemize}
+
+\textbf{Topology as craft ($T$):}
+\begin{itemize}
+\item Design for genuine \textit{collisions} among agents: enable structured encounters that sharpen definitions
+\item Balance local density (clustering for coherence) with global connectivity (avoiding fragmentation)
+\item Avoid mechanical coupling: edges should represent meaningful dependencies, not template-filling
+\item Example: In educational contexts, structure peer interactions to create productive collision dynamics (debate, collaborative problem-solving)
+\end{itemize}
+
+\textbf{Intentional alignment ($I$):}
+\begin{itemize}
+\item Make ends explicit: articulate purposes at authorial, diegetic, and audience levels
+\item Ensure cross-level alignment ($\psi \uparrow$): coherence among designer intent, system behavior, user goals
+\item Detect and correct anti-life or negating vectors: intentions that drain rather than generate meaning
+\item Example: AI developers should align training objectives (authorial intent), model behavior (diegetic), and user value (audience) through transparent value specification
+\end{itemize}
+
+\subsection{AI-Mediated Pipelines and Tools}
+
+\textbf{Pipeline checkpoints:}
+\begin{enumerate}
+\item \textbf{Pre-production $K/I$ registration:} Document constraint design and intentional goals before deployment
+\item \textbf{Topology audit:} Analyze interaction patterns in generated outputs; measure $C_T$
+\item \textbf{Anti-simulacrum gate:} Compute $V$ and block deployments above threshold ($V > V_{\text{crit}}$)
+\item \textbf{Post-deployment monitoring:} Track $\Delta G$ in user populations—does interaction improve reasoning capacity?
+\end{enumerate}
+
+\textbf{Model and data hygiene:}
+\begin{itemize}
+\item Curate training corpora to maintain constraint diversity and intentional integrity
+\item Filter Mode V exemplars from training data (high $R$, low $M$)
+\item Use contrastive learning: train models to distinguish high-$M$ from high-$V$ outputs
+\item Penalize surface-match objectives without integrative coupling
+\end{itemize}
+
+\textbf{Creator support tools:}
+\begin{itemize}
+\item Dashboards exposing $K/T/I$ annotations for drafts
+\item Real-time $V$ alerts during content generation
+\item Metric feedback: visualize $M$, $C_T$, $A$ to guide revision
+\end{itemize}
+
+\subsection{Scientific Communication}
+
+Treat protocols, claims, and instruments as agents; enforce productive $K$ via explicit method constraints. Structure $T$ to increase constructive cycles (genuine replication, critique, synthesis) and reduce cargo-cult citation loops (mechanical reference without engagement). Align $I$ via transparent problem statements and public epistemology.
+
+\textbf{Specific interventions:}
+\begin{itemize}
+\item \textit{Journals:} Require authors to annotate intentional vectors (research goals, theoretical commitments)
+\item \textit{Peer review:} Train reviewers to assess semantic density $M$ and topological coherence $C_T$, not just methodological correctness
+\item \textit{Citation networks:} Analyze for Mode V patterns (high citation count, low integrative content); penalize in bibliometrics
+\end{itemize}
+
+\subsection{Platform and Product Design}
+
+\textbf{Recommendation systems:}
+\begin{itemize}
+\item Reweight objectives to favor $M$ and $C_T$ rather than pure engagement (clicks, dwell time)
+\item Penalize $V$ in ranking functions: downrank content with high surface fluency but low semantic depth
+\item A/B test for $\Delta G$: do users exposed to intervention become better reasoners?
+\end{itemize}
+
+\textbf{Content moderation:}
+\begin{itemize}
+\item Expand beyond toxic content to include \textit{semantic toxicity} (Mode V content that degrades epistemic health)
+\item Implement $V$-gates for automated detection
+\item Provide transparency: flag content with high $V$ scores for user awareness
+\end{itemize}
+
+\textbf{Creator incentives:}
+\begin{itemize}
+\item Reward high $M$, $A$ content rather than volume or virality alone
+\item Provide metric dashboards so creators can self-monitor semantic quality
+\item Support developmental regimes (Mode IV): platforms that scaffold user growth
+\end{itemize}
+
+\subsection{Ethical Risks and Mitigations}
+
+\textbf{Metric gaming:}
+\begin{itemize}
+\item Risk: Systems optimize to appear high-$M$ without genuine semantic depth
+\item Mitigation: Rotate metric families; publish annotations transparently; include human relational judgments alongside automated metrics
+\end{itemize}
+
+\textbf{Normative overreach:}
+\begin{itemize}
+\item Risk: Imposing "sacred" intentionality as universal standard
+\item Mitigation: Treat $I$ spectra as empirical descriptors, not moral imperatives; incorporate plural intentional vocabularies; allow cultural calibration
+\end{itemize}
+
+\textbf{Manipulative alignment:}
+\begin{itemize}
+\item Risk: High $A$ used to impose harmful coherent purposes (e.g., propaganda, radicalization)
+\item Mitigation: Distinguish \textit{coherent alignment} from \textit{beneficial alignment}; require disclosure of intentional goals; enable counter-speech and independent audits
+\end{itemize}
+
+\textbf{Exclusion and elitism:}
+\begin{itemize}
+\item Risk: High-$M$ standards privilege educated, formal communication
+\item Mitigation: Semantic density is \textit{relational}—vernacular, oral, and marginalized forms can achieve high $M$ through genuine collision dynamics; avoid conflating $M$ with prestige dialects
+\end{itemize}
+
+\textbf{Privacy and surveillance:}
+\begin{itemize}
+\item Risk: Intensive semantic analysis enables intrusive profiling
+\item Mitigation: Aggregate analyses for systemic patterns, not individual surveillance; transparent data governance; user control over annotation
+\end{itemize}
+
+\section{Limitations and Scope Conditions}
+\label{sec:limitations}
+
+\subsection{Conceptual Limits}
+
+The framework supplies an \textit{analytic ontology} for comparing systems; it does not claim a final metaphysical account of meaning. Treating constraints, topology, and intentional vectors as sufficient generators is a useful idealization—actual meaning-making likely involves additional factors (e.g., embodied affect, unconscious processes, material substrates).
+
+The sacred–profane–indifferent–anti-life intentionality spectrum is a \textit{descriptive axis}, not a universal moral taxonomy. What counts as "life-affirming" varies across cultures and contexts. Cross-cultural calibration required.
+
+\subsection{Measurement and Identifiability}
+
+Metrics such as $M$, $C_T$, $A$, and $V$ are \textit{proxies} rather than direct measurements of abstract constructs. Different operationalizations may yield different rankings. Unitization introduces coder subjectivity—what counts as a semantic agent depends on grain and domain knowledge.
+
+Different $\langle K, T, I \rangle$ configurations may yield observationally similar signatures (\textit{equifinality}). Mode inference from metrics is probabilistic, not deterministic. Temporal grain matters: short observation windows can misclassify transient turbulence as stable regimes.
+
+Inter-rater reliability for intentional classifications will be lower than for structural features. This is inherent to interpretive work but limits objectivity claims. Triangulation across multiple methods recommended.
+
+\subsection{Domain Constraints}
+
+The framework applies best when:
+\begin{itemize}
+\item Agent interactions are meaningful and identifiable (not pure noise)
+\item Constraints are observable or inferrable
+\item Intentional traces are available (authorial statements, design documents, user interviews)
+\end{itemize}
+
+For artifacts with minimal relational structure (e.g., raw sensor data, random noise), the agent graph may be too sparse for meaningful analysis. The framework is designed for \textit{sense-making systems}, not unstructured data.
+
+\subsection{Cultural Variability}
+
+Meanings, constraints, and intentionality are culturally embedded. What constitutes "productive constraint" in one tradition may be "empty" in another. High alignment $A$ can reflect coherent but harmful ends (e.g., propaganda). Plural vocabularies and cross-cultural validation essential for generalizing beyond WEIRD (Western, Educated, Industrialized, Rich, Democratic) contexts \citep{henrich2010weirdest}.
+
+The framework's mechanisms ($K$, $T$, $I$) are proposed as universal, but their interpretations and valuations vary. Future work should engage Indigenous epistemologies, non-Western semiotics, and decolonial perspectives to refine and test cultural robustness.
+
+\subsection{Goodharting and Adversarial Behavior}
+
+As per Goodhart's Law \citep{goodhart1984problems}, once metrics become targets, they cease to be good measures. Systems can optimize to look coherent (high $C_T$, low $V$) without genuine gains in $M$. Adversarial mimicry can evade $V$-gates.
+
+\textbf{Countermeasures:}
+\begin{itemize}
+\item Rotate metric families to prevent static optimization targets
+\item Contrastive training against known Mode V exemplars
+\item Human-in-the-loop validation for high-stakes decisions
+\item Transparency: make metrics and their limitations publicly known
+\end{itemize}
+
+\subsection{Computational Tractability}
+
+Computing $C_T$ for large graphs is $O(n^2)$ or worse; relational compression for $M$ may require expensive inference. Approximations and sampling strategies needed for large-scale deployment. Trade-offs between precision and scalability must be managed.
+
+\section{Conclusion \& Future Work}
+\label{sec:conclusion}
+
+\subsection{Summary}
+
+This paper proposed an ontological and operational account of how meaning, knowledge, and intelligence arise across minds, media, and institutions. Systems were modeled as networks of semantic agents operating under constraints $K$, coupled by interaction topology $T$, and oriented by intentional vectors $I$. Variations in $\langle K, T, I \rangle$ yield a finite typology of meaning modes with measurable signatures in semantic density ($M$), redundancy/entropy ($H/R$), topological coherence ($C_T$), intentional alignment ($A$), and vampirism coefficient ($V$).
+
+Application to contemporary AI systems, particularly large language models, revealed conditions under which systems generate meaningful content (Modes III, IV) versus semantic vampirism (Mode V)—surface mimicry that drains integrative meaning. The framework offers both diagnostic tools for identifying failure modes and design principles for cultivating generative systems.
+
+\subsection{Core Results}
+
+\begin{itemize}
+\item \textbf{Unified ontology:} Medium-agnostic specification of agents, relations, constraint fields, and intentional vector fields
+
+\item \textbf{Mechanism-modules:} Neutral "API" $\langle K, T, I \rangle$ whose compositions generate observed qualitative differences
+
+\item \textbf{Operationalization:} Metrics translating qualitative impressions into observable quantities
+
+\item \textbf{Typology and dynamics:} Five modes (Sacred Silence, Emergent Chaos, Positive Construction, Generative Constraint, Semantic Vampirism) with phase-transition predictions
+
+\item \textbf{Diagnostics and design:} Procedures to reduce $V$ and increase $M$, $C_T$, $A$, and $\Delta G$
+
+\item \textbf{AI implications:} Analysis of contemporary LLMs revealing intermediate semantic density and risks of vampiric drift under certain training/deployment conditions
+\end{itemize}
+
+\subsection{Research Program}
+
+Future work should pursue:
+
+\begin{enumerate}
+\item \textbf{Formal analysis:} Phase diagrams mapping $\langle K, T, I \rangle$ space; bifurcation analysis; hysteresis modeling
+
+\item \textbf{Measurement refinement:} Improve estimators for $M$, $C_T$, $A$; validate against human judgments; develop efficient approximations
+
+\item \textbf{Cross-domain validation:} Apply to reference corpora (literature, science, media) with known characteristics; test mode predictions
+
+\item \textbf{Developmental studies:} Operationalize $\Delta G$ with learner populations; compare Mode IV vs. Mode V systems
+
+\item \textbf{Multimodal mapping:} Extend to video, audio, interactive media; handle temporal dynamics
+
+\item \textbf{Cultural calibration:} Plural intentionality vocabularies; cross-cultural validation; decolonial refinement
+
+\item \textbf{Simulation and synthesis:} Generate controlled $\langle K, T, I \rangle$ corpora; test propositions experimentally
+
+\item \textbf{Tooling and infrastructure:} Coding manuals, metric calculators, $V$-gates for AI pipelines; open-source implementation
+\end{enumerate}
+
+\subsection{Design \& Governance Agenda}
+
+\textbf{For creators:} Specify productive constraints, craft genuine collisions, disclose intentional ends. Self-audit with $M$, $C_T$, $A$, $V$ metrics.
+
+\textbf{For AI teams:} Pre-register $K/I$, instrument $C_T$ and $V$, penalize surface-only objectives. Pursue Mode IV (developmental) design paradigms.
+
+\textbf{For institutions:} Reweight incentives to favor coherence and semantic growth. Monitor drift toward vampiric regions. Support epistemic health of information ecosystems.
+
+\textbf{For platforms:} Implement $V$-gates in recommendation and moderation. Provide transparency dashboards. Reward high-$M$ content over engagement alone.
+
+\subsection{Concluding Principle}
+
+The practical upshot is a compact maxim: \textbf{protect semantic space}. Preserve constraint integrity, design for genuine agent collisions, align intentions across levels, and penalize hollow surface mimicry. The framework provides both a conceptual lens and a measurement toolkit to move from diagnosis by metaphor to diagnosis by mechanism.
+
+In an era of proliferating AI-mediated communication, distinguishing generative meaning from semantic vampirism is not merely an academic exercise—it is essential for maintaining epistemic health, supporting developmental growth, and ensuring that intelligent systems augment rather than degrade human capacity for understanding.
+
+\section*{Acknowledgments}
+
+I thank [reviewers/colleagues] for feedback on earlier drafts, and acknowledge the influence of Marvin Minsky's vision of mind as society of agents, which inspired the ontological foundation of this work.
+
+\section*{Declarations}
+
+\textbf{Funding:} No external funding.
+
+\textbf{Conflicts of Interest:} The author declares no conflicts of interest.
+
+\textbf{Data Availability:} Framework specifications, coding protocols, and illustrative examples are available at [repository URL upon acceptance].
+
+\bibliographystyle{apalike}
+\begin{thebibliography}{99}
+
+\bibitem[Anthropic, 2024]{anthropic2024claude}
+Anthropic (2024). Claude 3 Technical Report.
+
+\bibitem[Ashby, 1956]{ashby1956introduction}
+Ashby, W.R. (1956). \textit{An Introduction to Cybernetics}. Chapman \& Hall.
+
+\bibitem[Bai et al., 2022]{bai2022constitutional}
+Bai, Y., Kadavath, S., Kundu, S., et al. (2022). Constitutional AI: Harmlessness from AI Feedback. \textit{arXiv preprint arXiv:2212.08073}.
+
+\bibitem[Barthes, 1977]{barthes1977structural}
+Barthes, R. (1977). \textit{Image-Music-Text}. Fontana Press.
+
+\bibitem[Batchelor, 1997]{batchelor1997minimalism}
+Batchelor, D. (1997). \textit{Minimalism}. Tate Publishing.
+
+\bibitem[Baudrillard, 1981]{baudrillard1981simulacra}
+Baudrillard, J. (1981). \textit{Simulacra and Simulation}. Éditions Galilée.
+
+\bibitem[Bender \& Koller, 2020]{bender2020climbing}
+Bender, E.M. \& Koller, A. (2020). Climbing towards NLU: On Meaning, Form, and Understanding in the Age of Data. \textit{Proceedings of ACL}, 5185–5198.
+
+\bibitem[Bender et al., 2021]{bender2021dangers}
+Bender, E.M., Gebru, T., McMillan-Major, A., \& Shmitchell, S. (2021). On the Dangers of Stochastic Parrots: Can Language Models Be Too Big? \textit{Proceedings of FAccT}, 610–623.
+
+\bibitem[Boden, 2004]{boden2004creative}
+Boden, M.A. (2004). \textit{The Creative Mind: Myths and Mechanisms} (2nd ed.). Routledge.
+
+\bibitem[Brynjolfsson \& McAfee, 2014]{brynjolfsson2014second}
+Brynjolfsson, E. \& McAfee, A. (2014). \textit{The Second Machine Age}. W.W. Norton.
+
+\bibitem[Cameron, 1991]{cameron1991terminator}
+Cameron, J. (Director) (1991). \textit{Terminator 2: Judgment Day} [Film]. TriStar Pictures.
+
+\bibitem[Cammarata et al., 2020]{cammarata2020thread}
+Cammarata, N., Carter, S., Goh, G., et al. (2020). Thread: Circuits. \textit{Distill}, 5(3).
+
+\bibitem[Chalmers, 2023]{chalmers2023could}
+Chalmers, D.J. (2023). Could a Large Language Model be Conscious? \textit{Boston Review}.
+
+\bibitem[Christian, 2020]{christian2020alignment}
+Christian, B. (2020). \textit{The Alignment Problem}. W.W. Norton.
+
+\bibitem[Clark \& Chalmers, 1998]{clark1998extended}
+Clark, A. \& Chalmers, D. (1998). The Extended Mind. \textit{Analysis}, 58(1), 7–19.
+
+\bibitem[Coen \& Coen, 1998]{coen1998lebowski}
+Coen, J. \& Coen, E. (Directors) (1998). \textit{The Big Lebowski} [Film]. Gramercy Pictures.
+
+\bibitem[De Jaegher \& Di Paolo, 2007]{degjaegher2009participatory}
+De Jaegher, H. \& Di Paolo, E. (2007). Participatory Sense-Making. \textit{Phenomenology and the Cognitive Sciences}, 6, 485–507.
+
+\bibitem[Dennett, 1987]{dennett1987intentional}
+Dennett, D.C. (1987). \textit{The Intentional Stance}. MIT Press.
+
+\bibitem[Eco, 1976]{eco1976theory}
+Eco, U. (1976). \textit{A Theory of Semiotics}. Indiana University Press.
+
+\bibitem[Elhage et al., 2021]{elhage2021mathematical}
+Elhage, N., Nanda, N., Olsson, C., et al. (2021). A Mathematical Framework for Transformer Circuits. \textit{Transformer Circuits Thread}.
+
+\bibitem[Elster, 2000]{elster2000ulysses}
+Elster, J. (2000). \textit{Ulysses Unbound}. Cambridge University Press.
+
+\bibitem[Gabriel, 2020]{gabriel2020artificial}
+Gabriel, I. (2020). Artificial Intelligence, Values, and Alignment. \textit{Minds and Machines}, 30, 411–437.
+
+\bibitem[Goldstein et al., 2023]{goldstein2023generative}
+Goldstein, J.A., Sastry, G., Musser, M., et al. (2023). Generative Language Models and Automated Influence Operations. \textit{arXiv preprint arXiv:2301.04246}.
+
+\bibitem[Goodhart, 1984]{goodhart1984problems}
+Goodhart, C.A.E. (1984). Problems of Monetary Management. In \textit{Monetary Theory and Practice}. Macmillan.
+
+\bibitem[Google, 2024]{google2024gemini}
+Google DeepMind (2024). Gemini Technical Report.
+
+\bibitem[Greimas, 1983]{greimas1983structural}
+Greimas, A.J. (1983). \textit{Structural Semantics}. University of Nebraska Press.
+
+\bibitem[Grice, 1957]{grice1957meaning}
+Grice, H.P. (1957). Meaning. \textit{Philosophical Review}, 66(3), 377–388.
+
+\bibitem[Groening, 1993]{groening1993simpsons}
+Groening, M. (Creator) (1993). \textit{The Simpsons} [TV Series]. 20th Century Fox.
+
+\bibitem[Groys, 1992]{groys1992total}
+Groys, B. (1992). \textit{The Total Art of Stalinism}. Princeton University Press.
+
+\bibitem[Grünwald, 2007]{grunwald2007minimum}
+Grünwald, P.D. (2007). \textit{The Minimum Description Length Principle}. MIT Press.
+
+\bibitem[Harnad, 1990]{harnad1990symbol}
+Harnad, S. (1990). The Symbol Grounding Problem. \textit{Physica D}, 42, 335–346.
+
+\bibitem[Henrich et al., 2010]{henrich2010weirdest}
+Henrich, J., Heine, S.J., \& Norenzayan, A. (2010). The Weirdest People in the World? \textit{Behavioral and Brain Sciences}, 33(2-3), 61–83.
+
+\bibitem[Hutchins, 1995]{hutchins1995cognition}
+Hutchins, E. (1995). \textit{Cognition in the Wild}. MIT Press.
+
+\bibitem[Joyce, 1922]{joyce1922ulysses}
+Joyce, J. (1922). \textit{Ulysses}. Shakespeare and Company.
+
+\bibitem[Kolmogorov, 1965]{kolmogorov1965three}
+Kolmogorov, A.N. (1965). Three Approaches to the Quantitative Definition of Information. \textit{Problems of Information Transmission}, 1(1), 1–7.
+
+\bibitem[Krippendorff, 2004]{krippendorff2004reliability}
+Krippendorff, K. (2004). Reliability in Content Analysis. \textit{Human Communication Research}, 30(3), 411–433.
+
+\bibitem[Lake \& Baroni, 2018]{lake2018generalization}
+Lake, B.M. \& Baroni, M. (2018). Generalization without Systematicity: On the Compositional Skills of Sequence-to-Sequence Recurrent Networks. \textit{Proceedings of ICML}, 2879–2888.
+
+\bibitem[Lanier, 2018]{lanier2018ten}
+Lanier, J. (2018). \textit{Ten Arguments for Deleting Your Social Media Accounts Right Now}. Henry Holt.
+
+\bibitem[Lave \& Wenger, 1991]{lave1991situated}
+Lave, J. \& Wenger, E. (1991). \textit{Situated Learning}. Cambridge University Press.
+
+\bibitem[Lewis et al., 2020]{lewis2020retrieval}
+Lewis, P., Perez, E., Piktus, A., et al. (2020). Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks. \textit{Advances in NeurIPS}, 33, 9459–9474.
+
+\bibitem[Li et al., 2014]{li2014recursive}
+Li, J., Li, R., Hovy, E. (2014). Recursive Deep Models for Discourse Parsing. \textit{Proceedings of EMNLP}, 2061–2069.
+
+\bibitem[Li et al., 2023]{li2023emergent}
+Li, K., Hopkins, A.K., Bau, D., et al. (2023). Emergent World Representations. \textit{arXiv preprint arXiv:2210.13382}.
+
+\bibitem[Minsky, 1988]{minsky1988society}
+Minsky, M. (1988). \textit{The Society of Mind}. Simon \& Schuster.
+
+\bibitem[Mitchell, 2009]{mitchell2009complexity}
+Mitchell, M. (2009). \textit{Complexity: A Guided Tour}. Oxford University Press.
+
+\bibitem[Mitchell \& Krakauer, 2023]{mitchell2023debate}
+Mitchell, M. \& Krakauer, D.C. (2023). The Debate Over Understanding in AI's Large Language Models. \textit{Proceedings of the National Academy of Sciences}, 120(13).
+
+\bibitem[Olah et al., 2020]{olah2020zoom}
+Olah, C., Cammarata, N., Schubert, L., et al. (2020). Zoom In: An Introduction to Circuits. \textit{Distill}, 5(3).
+
+\bibitem[OpenAI, 2023]{openai2023gpt4}
+OpenAI (2023). GPT-4 Technical Report. \textit{arXiv preprint arXiv:2303.08774}.
+
+\bibitem[Ouyang et al., 2022]{ouyang2022training}
+Ouyang, L., Wu, J., Jiang, X., et al. (2022). Training Language Models to Follow Instructions with Human Feedback. \textit{Advances in NeurIPS}, 35, 27730–27744.
+
+\bibitem[Peirce, 1931]{peirce1931collected}
+Peirce, C.S. (1931). \textit{Collected Papers of Charles Sanders Peirce} (Vol. 1–6). Harvard University Press.
+
+\bibitem[Piantadosi, 2023]{piantadosi2023meaning}
+Piantadosi, S.T. (2023). Modern Language Models Refute Chomsky's Approach to Language. \textit{Lingbuzz preprint}.
+
+\bibitem[Propp, 1968]{propp1968morphology}
+Propp, V. (1968). \textit{Morphology of the Folktale} (2nd ed.). University of Texas Press.
+
+\bibitem[Ricoeur, 1984]{ricoeur1984time}
+Ricoeur, P. (1984). \textit{Time and Narrative} (Vol. 1). University of Chicago Press.
+
+\bibitem[Scheffer et al., 2009]{scheffer2009critical}
+Scheffer, M., Bascompte, J., Brock, W.A., et al. (2009). Early-Warning Signals for Critical Transitions. \textit{Nature}, 461, 53–59.
+
+\bibitem[Searle, 1980]{searle1980minds}
+Searle, J.R. (1980). Minds, Brains, and Programs. \textit{Behavioral and Brain Sciences}, 3(3), 417–424.
+
+\bibitem[Shaker et al., 2016]{shaker2016procedural}
+Shaker, N., Togelius, J., \& Nelson, M.J. (2016). \textit{Procedural Content Generation in Games}. Springer.
+
+\bibitem[Shanahan, 2024]{shanahan2024talking}
+Shanahan, M. (2024). Talking About Large Language Models. \textit{Communications of the ACM}, 67(2), 68–79.
+
+\bibitem[Shannon, 1948]{shannon1948mathematical}
+Shannon, C.E. (1948). A Mathematical Theory of Communication. \textit{Bell System Technical Journal}, 27, 379–423.
+
+\bibitem[Shoham \& Leyton-Brown, 2008]{shoham2008multiagent}
+Shoham, Y. \& Leyton-Brown, K. (2008). \textit{Multiagent Systems}. Cambridge University Press.
+
+\bibitem[Solomonoff, 1964]{solomonoff1964formal}
+Solomonoff, R.J. (1964). A Formal Theory of Inductive Inference. \textit{Information and Control}, 7, 1–22, 224–254.
+
+\bibitem[Stokes, 2005]{stokes2005creativity}
+Stokes, P.D. (2005). \textit{Creativity from Constraints}. Springer.
+
+\bibitem[Stone \& Veloso, 2000]{stone2000multiagent}
+Stone, P. \& Veloso, M. (2000). Multiagent Systems: A Survey from a Machine Learning Perspective. \textit{Autonomous Robots}, 8, 345–383.
+
+\bibitem[Theraulaz \& Bonabeau, 1999]{theraulaz1999brief}
+Theraulaz, G. \& Bonabeau, E. (1999). A Brief History of Stigmergy. \textit{Artificial Life}, 5(2), 97–116.
+
+\bibitem[Tishby \& Zaslavsky, 2015]{tishby2000information}
+Tishby, N. \& Zaslavsky, N. (2015). Deep Learning and the Information Bottleneck Principle. \textit{Proceedings of Information Theory Workshop}, 1–5.
+
+\bibitem[Turner, 1995]{turner1995darkness}
+Turner, D. (1995). \textit{The Darkness of God}. Cambridge University Press.
+
+\bibitem[Vaswani et al., 2017]{vaswani2017attention}
+Vaswani, A., Shazeer, N., Parmar, N., et al. (2017). Attention is All You Need. \textit{Advances in NeurIPS}, 30, 5998–6008.
+
+\bibitem[Von Foerster, 2003]{vonfoerster2003understanding}
+Von Foerster, H. (2003). \textit{Understanding Understanding}. Springer.
+
+\bibitem[Vygotsky, 1978]{vygotsky1978mind}
+Vygotsky, L.S. (1978). \textit{Mind in Society}. Harvard University Press.
+
+\bibitem[Weick, 1995]{weick1995sensemaking}
+Weick, K.E. (1995). \textit{Sensemaking in Organizations}. Sage.
+
+\bibitem[Wiener, 1948]{wiener1948cybernetics}
+Wiener, N. (1948). \textit{Cybernetics}. MIT Press.
+
+\bibitem[Wolf et al., 2023]{wolf2023fundamental}
+Wolf, Y., Wies, N., Avnery, O., et al. (2023). Fundamental Limitations of Alignment in Large Language Models. \textit{arXiv preprint arXiv:2304.11082}.
+
+\bibitem[Zuboff, 2019]{zuboff2019surveillance}
+Zuboff, S. (2019). \textit{The Age of Surveillance Capitalism}. PublicAffairs.
+
+\end{thebibliography}
+
+\end{document}
