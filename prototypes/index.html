@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Noise → Structure | Visual Prototype</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <!-- Theme -->
+  <link rel="stylesheet" href="lab-theme.css">
+
+  <style>
+    /* Prototype-specific styles */
+    .prototype-header {
+      padding: var(--space-md) var(--space-lg);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+    }
+
+    .prototype-header__title {
+      color: var(--text-muted);
+    }
+
+    .prototype-controls {
+      display: flex;
+      gap: var(--space-md);
+      align-items: center;
+    }
+
+    .pattern-select {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      padding: var(--space-xs) var(--space-sm);
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      color: var(--text-primary);
+      cursor: pointer;
+    }
+
+    .theme-toggle {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      padding: var(--space-xs) var(--space-sm);
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      color: var(--text-primary);
+      cursor: pointer;
+    }
+
+    .theme-toggle:hover,
+    .pattern-select:hover {
+      background: var(--bg-tertiary);
+    }
+
+    .hero-section {
+      min-height: 50vh;
+      display: flex;
+      flex-direction: column;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .hero-container {
+      flex: 1;
+      position: relative;
+    }
+
+    .hero-hint {
+      position: absolute;
+      bottom: var(--space-md);
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      opacity: 0.6;
+      transition: opacity var(--transition-medium);
+    }
+
+    .hero-hint.faded {
+      opacity: 0;
+    }
+
+    .coherence-display {
+      position: absolute;
+      top: var(--space-md);
+      right: var(--space-md);
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--text-muted);
+    }
+
+    .content-section {
+      padding: var(--space-xl) 0;
+    }
+
+    .content-section h2 {
+      margin-bottom: var(--space-lg);
+    }
+
+    .philosophy-item {
+      margin-bottom: var(--space-lg);
+      padding-left: var(--space-md);
+      border-left: 2px solid var(--border);
+    }
+
+    .philosophy-item h3 {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      color: var(--text-primary);
+      margin-bottom: var(--space-xs);
+    }
+
+    .philosophy-item p {
+      font-size: 0.9rem;
+      max-width: 60ch;
+    }
+
+    .sample-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: var(--space-md);
+      margin-top: var(--space-lg);
+    }
+
+    .footer {
+      padding: var(--space-lg);
+      text-align: center;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      border-top: 1px solid var(--border);
+    }
+
+    /* Scroll indicator */
+    .scroll-indicator {
+      position: fixed;
+      bottom: var(--space-md);
+      left: var(--space-md);
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      opacity: 0.5;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Prototype Header -->
+  <header class="prototype-header">
+    <span class="prototype-header__title">PROTOTYPE: Noise → Structure</span>
+    <div class="prototype-controls">
+      <select class="pattern-select" id="pattern-select">
+        <option value="encoding">Encoding (DNA)</option>
+        <option value="constraints">Constraints</option>
+        <option value="network">Network</option>
+        <option value="emergence">Emergence</option>
+      </select>
+      <button class="theme-toggle" id="theme-toggle">Dark Mode</button>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="hero-container">
+      <canvas id="hero-canvas" class="hero-canvas"></canvas>
+      <span class="hero-hint" id="hero-hint">hover to reveal • scroll for global coherence</span>
+      <span class="coherence-display" id="coherence-display">coherence: 0.00</span>
+    </div>
+  </section>
+
+  <!-- Content Section (for scroll testing) -->
+  <section class="content-section">
+    <div class="container container--narrow">
+      <h2>The Resolution Principle</h2>
+
+      <div class="philosophy-item">
+        <h3>1. Structure breathes</h3>
+        <p>The pattern begins organized but alive—dots holding formation with subtle, synchronized motion. Not static, not chaotic. A living structure that invites attention.</p>
+      </div>
+
+      <div class="philosophy-item">
+        <h3>2. Engagement deepens focus</h3>
+        <p>Mouse proximity tightens coherence locally. Scroll depth increases global stability. The viewer's attention literally shapes what they see—interaction reveals deeper order.</p>
+      </div>
+
+      <div class="philosophy-item">
+        <h3>3. Pattern transitions tell stories</h3>
+        <p>Switching patterns creates smooth morphing—particles flow from one structure to another. Each pattern represents a different encoding of the same underlying particles. The topology changes; the elements persist.</p>
+      </div>
+
+      <h2 style="margin-top: var(--space-xxl);">Sample Content</h2>
+
+      <div class="sample-cards">
+        <div class="card">
+          <span class="domain-indicator domain--biology"></span>
+          <h4 class="card__title">GenomeVault</h4>
+          <p class="card__meta mono">biology • encoding</p>
+          <p class="card__description">DNA storage that works like memory, not files. 40x compression with semantic query.</p>
+        </div>
+
+        <div class="card">
+          <span class="domain-indicator domain--ai"></span>
+          <h4 class="card__title">Proof of Training</h4>
+          <p class="card__meta mono">AI • verification</p>
+          <p class="card__description">Cryptographic model identity. Verify training without revealing weights.</p>
+        </div>
+
+        <div class="card">
+          <span class="domain-indicator domain--theory"></span>
+          <h4 class="card__title">COEC</h4>
+          <p class="card__meta mono">theory • constraints</p>
+          <p class="card__description">Biology doesn't optimize—it satisfies. Nature computes through constraints.</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- More content for scroll testing -->
+  <section class="content-section">
+    <div class="container container--narrow">
+      <h2>Typography Test</h2>
+
+      <p>This is body text in Inter. It should be readable and clean. The goal is clarity without sterility—a research document that rewards attention.</p>
+
+      <p>When we need to show <code>inline code</code> or technical terms, they appear in JetBrains Mono. The monospace isn't about "code"—it's about grid alignment.</p>
+
+      <pre>
+// Structured data as texture
+const pattern = {
+  coherence: 0.85,
+  particles: 800,
+  target: 'circles'
+};
+      </pre>
+
+      <p class="text-muted">Muted text for secondary information. Less prominent but still legible.</p>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    Prototype v1.0 — Lab Theme Visual Test
+  </footer>
+
+  <!-- Scroll indicator -->
+  <div class="scroll-indicator" id="scroll-indicator">scroll: 0%</div>
+
+  <!-- Scripts -->
+  <script src="hero.js"></script>
+  <script>
+    // Start in dark mode
+    document.documentElement.setAttribute('data-theme', 'dark');
+
+    // Initialize hero
+    const canvas = document.getElementById('hero-canvas');
+    const hero = new AsciiHero(canvas, {
+      // Background
+      starCount: 180,
+      starOpacity: 0.15,
+      // Motif particles
+      motifParticleCount: 1800,
+      particleSize: 1.6,
+      // The Resolution: engagement reveals structure
+      baseCoherence: 0.2,       // Start scattered
+      maxCoherence: 0.98,       // Near-perfect when focused
+      coherenceRadius: 180,     // Large influence area
+      breathingSpeed: 0.06,     // Subtle breathing
+      // Colors
+      dotColor: '#ffffff',
+      backgroundColor: '#0a0a0a'
+    });
+
+    // Pattern selector
+    document.getElementById('pattern-select').addEventListener('change', (e) => {
+      hero.setPattern(e.target.value);
+    });
+
+    // Theme toggle (starts in dark mode)
+    const themeToggle = document.getElementById('theme-toggle');
+    let isDark = true;
+    themeToggle.textContent = 'Light Mode';
+
+    themeToggle.addEventListener('click', () => {
+      isDark = !isDark;
+      document.documentElement.setAttribute('data-theme', isDark ? 'dark' : '');
+      themeToggle.textContent = isDark ? 'Light Mode' : 'Dark Mode';
+
+      // Update hero colors
+      hero.config.dotColor = isDark ? '#ffffff' : '#1a1a1a';
+      hero.config.backgroundColor = isDark ? '#0a0a0a' : '#ffffff';
+    });
+
+    // Coherence display update
+    const coherenceDisplay = document.getElementById('coherence-display');
+    setInterval(() => {
+      coherenceDisplay.textContent = `coherence: ${hero.getCoherence().toFixed(2)}`;
+    }, 100);
+
+    // Scroll indicator
+    const scrollIndicator = document.getElementById('scroll-indicator');
+    window.addEventListener('scroll', () => {
+      const scrollY = window.scrollY;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = Math.round((scrollY / Math.max(1, docHeight)) * 100);
+      scrollIndicator.textContent = `scroll: ${progress}%`;
+    });
+
+    // Fade hint after first interaction
+    const heroHint = document.getElementById('hero-hint');
+    canvas.addEventListener('mousemove', () => {
+      heroHint.classList.add('faded');
+    }, { once: true });
+  </script>
+
+</body>
+</html>

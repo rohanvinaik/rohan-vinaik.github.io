@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shaking the Black Box | Rohan Vinaik</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <!-- MathJax for equations -->
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+  <!-- Theme -->
+  <link rel="stylesheet" href="../lab-theme.css">
+
+  <style>
+    /* Paper-specific styles */
+    body {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Paper Navigation Sidebar */
+    .paper-nav {
+      position: fixed;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 240px;
+      background: var(--bg-secondary);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      font-family: var(--font-mono);
+      z-index: 100;
+      overflow-y: auto;
+    }
+
+    .paper-nav__header {
+      padding: var(--space-lg) var(--space-md);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .paper-nav__back {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: var(--space-sm);
+    }
+
+    .paper-nav__back:hover {
+      color: var(--text-primary);
+    }
+
+    .paper-nav__title {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      line-height: 1.3;
+    }
+
+    .paper-nav__meta {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      margin-top: var(--space-xs);
+    }
+
+    .paper-nav__toc {
+      padding: var(--space-md);
+      flex: 1;
+    }
+
+    .toc-title {
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: var(--space-sm);
+    }
+
+    .toc-item {
+      display: block;
+      font-size: 0.7rem;
+      color: var(--text-secondary);
+      text-decoration: none;
+      padding: 5px 0;
+      border-left: 2px solid transparent;
+      padding-left: var(--space-sm);
+      transition: all 0.15s ease;
+    }
+
+    .toc-item:hover {
+      color: var(--text-primary);
+      border-left-color: var(--text-muted);
+    }
+
+    .toc-item.active {
+      color: var(--text-primary);
+      border-left-color: var(--text-primary);
+    }
+
+    .paper-nav__footer {
+      padding: var(--space-md);
+      border-top: 1px solid var(--border);
+      font-size: 0.7rem;
+    }
+
+    .paper-nav__links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-sm);
+    }
+
+    .paper-nav__links a {
+      color: var(--text-muted);
+      text-decoration: none;
+    }
+
+    .paper-nav__links a:hover {
+      color: var(--text-primary);
+    }
+
+    /* Main Paper Content */
+    .paper-main {
+      margin-left: 240px;
+      flex: 1;
+      max-width: 780px;
+      padding: var(--space-xl);
+    }
+
+    /* Paper Header */
+    .paper-header {
+      margin-bottom: var(--space-xl);
+      padding-bottom: var(--space-lg);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .paper-header__status {
+      display: inline-block;
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 3px 8px;
+      border: 1px solid var(--accent-ai);
+      color: var(--accent-ai);
+      margin-bottom: var(--space-md);
+    }
+
+    .paper-header__title {
+      font-size: 1.6rem;
+      font-weight: 600;
+      line-height: 1.3;
+      margin-bottom: var(--space-md);
+    }
+
+    .paper-header__authors {
+      font-size: 1rem;
+      color: var(--text-secondary);
+      margin-bottom: var(--space-sm);
+    }
+
+    .paper-header__date {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: var(--space-md);
+    }
+
+    .paper-header__tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .paper-tag {
+      font-family: var(--font-mono);
+      font-size: 0.55rem;
+      padding: 3px 8px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+    }
+
+    /* Abstract */
+    .paper-abstract {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      padding: var(--space-lg);
+      margin-bottom: var(--space-xl);
+    }
+
+    .paper-abstract__title {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: var(--space-sm);
+    }
+
+    .paper-abstract__text {
+      font-size: 0.9rem;
+      line-height: 1.7;
+      color: var(--text-secondary);
+    }
+
+    /* Paper Sections */
+    .paper-section {
+      margin-bottom: var(--space-xl);
+    }
+
+    .paper-section__title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: var(--space-md);
+      padding-top: var(--space-md);
+    }
+
+    .paper-section__subtitle {
+      font-size: 1rem;
+      font-weight: 500;
+      margin-top: var(--space-lg);
+      margin-bottom: var(--space-sm);
+    }
+
+    .paper-section__subsubtitle {
+      font-size: 0.9rem;
+      font-weight: 500;
+      margin-top: var(--space-md);
+      margin-bottom: var(--space-sm);
+      color: var(--text-secondary);
+    }
+
+    .paper-section p {
+      font-size: 0.9rem;
+      line-height: 1.75;
+      margin-bottom: var(--space-md);
+    }
+
+    /* Lists */
+    .paper-section ul,
+    .paper-section ol {
+      margin-bottom: var(--space-md);
+      padding-left: var(--space-lg);
+    }
+
+    .paper-section li {
+      font-size: 0.9rem;
+      line-height: 1.6;
+      margin-bottom: var(--space-xs);
+    }
+
+    /* Code blocks */
+    .paper-code {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      padding: var(--space-md);
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      line-height: 1.5;
+      overflow-x: auto;
+      margin-bottom: var(--space-md);
+      white-space: pre;
+    }
+
+    /* Inline code */
+    code {
+      font-family: var(--font-mono);
+      font-size: 0.85em;
+      background: var(--bg-secondary);
+      padding: 2px 6px;
+      border-radius: 2px;
+    }
+
+    /* Tables */
+    .paper-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: var(--space-md);
+      font-size: 0.8rem;
+    }
+
+    .paper-table th,
+    .paper-table td {
+      padding: var(--space-sm);
+      border: 1px solid var(--border);
+      text-align: left;
+    }
+
+    .paper-table th {
+      background: var(--bg-secondary);
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    /* Architecture diagram */
+    .architecture-block {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      padding: var(--space-md);
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      line-height: 1.6;
+      margin-bottom: var(--space-md);
+      text-align: center;
+    }
+
+    /* Key findings */
+    .key-finding {
+      background: var(--bg-secondary);
+      border-left: 3px solid var(--accent-ai);
+      padding: var(--space-md);
+      margin: var(--space-md) 0;
+      font-size: 0.9rem;
+    }
+
+    /* Theorem blocks */
+    .theorem {
+      border: 1px solid var(--border);
+      padding: var(--space-md);
+      margin: var(--space-md) 0;
+    }
+
+    .theorem__title {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: var(--space-xs);
+    }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .paper-nav { width: 200px; }
+      .paper-main { margin-left: 200px; padding: var(--space-lg); }
+    }
+
+    @media (max-width: 700px) {
+      .paper-nav {
+        position: relative;
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+      }
+      .paper-nav__toc { display: none; }
+      .paper-main { margin-left: 0; padding: var(--space-md); }
+      .paper-header__title { font-size: 1.3rem; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Paper Navigation -->
+  <nav class="paper-nav">
+    <div class="paper-nav__header">
+      <a href="../index.html#papers" class="paper-nav__back">&larr; Back to Papers</a>
+      <div class="paper-nav__title">Shaking the Black Box: Behavioral Holography</div>
+      <div class="paper-nav__meta">August 2025 | AI Security</div>
+    </div>
+
+    <div class="paper-nav__toc">
+      <div class="toc-title">Contents</div>
+      <a href="#abstract" class="toc-item">Abstract</a>
+      <a href="#introduction" class="toc-item">1. Introduction</a>
+      <a href="#framework" class="toc-item">2. Technical Framework</a>
+      <a href="#math" class="toc-item">3. Mathematical Foundations</a>
+      <a href="#experiments" class="toc-item">4. Experimental Validation</a>
+      <a href="#applications" class="toc-item">5. Applications</a>
+      <a href="#security" class="toc-item">6. Security Analysis</a>
+      <a href="#limitations" class="toc-item">7. Limitations</a>
+      <a href="#conclusion" class="toc-item">8. Conclusion</a>
+    </div>
+
+    <div class="paper-nav__footer">
+      <div class="paper-nav__links">
+        <a href="#">PDF</a>
+        <a href="#">Code</a>
+        <a href="#">BibTeX</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Paper Content -->
+  <main class="paper-main">
+    <header class="paper-header">
+      <span class="paper-header__status">Published</span>
+      <h1 class="paper-header__title">Shaking the Black Box: Behavioral Holography and Variance-Mediated Structural Inference for Large Language Models</h1>
+      <div class="paper-header__authors">Rohan Vinaik</div>
+      <div class="paper-header__date">August 23, 2025</div>
+      <div class="paper-header__tags">
+        <span class="paper-tag">BLACK-BOX INTERPRETABILITY</span>
+        <span class="paper-tag">BEHAVIORAL FINGERPRINTING</span>
+        <span class="paper-tag">HYPERDIMENSIONAL COMPUTING</span>
+        <span class="paper-tag">MODEL VERIFICATION</span>
+      </div>
+    </header>
+
+    <section class="paper-abstract" id="abstract">
+      <div class="paper-abstract__title">Abstract</div>
+      <p class="paper-abstract__text">
+        We present a comprehensive framework for externalizing and analyzing the behavioral structure of large language models (LLMs) through pure black-box access. Our approach constructs what we call a <strong>Holographic Behavioral Twin (HBT)</strong>—a high-dimensional, queryable representation of a model's behavior that serves as both an unforgeable fingerprint and a window into internal structure. The HBT is built using three interconnected components: (1) <strong>Restriction Enzyme Verification (REV)</strong>, enabling memory-bounded execution of models larger than available RAM through streaming segment-wise analysis; (2) <strong>Semantic Hypervector Encoding</strong>, adapting GenomeVault-inspired hyperdimensional computing to create 8K-100K dimensional fingerprints that preserve semantic relationships while supporting privacy-preserving comparison; and (3) <strong>Variance-Mediated Causal Inference (VMCI)</strong>, which analyzes how fingerprint variance patterns under systematic perturbations reveal architectural bottlenecks, training dynamics, and capability boundaries.
+      </p>
+      <p class="paper-abstract__text" style="margin-top: var(--space-sm);">
+        Experimental validation achieves <strong>99.6% accuracy</strong> in detecting structural modifications (95.8% in pure black-box mode), 87-91% accuracy in causal graph recovery, and 89-92% accuracy in capability prediction. The approach scales sub-linearly with model size, becoming more effective for larger models.
+      </p>
+    </section>
+
+    <section class="paper-section" id="introduction">
+      <h2 class="paper-section__title">1. Introduction & Motivation</h2>
+
+      <h3 class="paper-section__subtitle">1.1 The Black Box Problem</h3>
+      <p>
+        Deep LLMs have become simultaneously more powerful and more opaque. Traditional interpretability approaches face a fundamental trade-off: mechanistic methods require weight access (violating confidentiality), while behavioral methods treat models as featureless black boxes (providing limited insight). We need tools that can verify model identity, detect modifications, measure alignment, and understand capabilities—all without internal access.
+      </p>
+
+      <h3 class="paper-section__subtitle">1.2 The Holographic Principle</h3>
+      <p>
+        We introduce the concept of a <strong>Holographic Behavioral Twin</strong>: an externalized representation that captures the "shape" of a model's behavior in high-dimensional space. Like a hologram that reconstructs a 3D image from 2D interference patterns, the HBT reconstructs functional structure from behavioral patterns. This representation is:
+      </p>
+      <ul>
+        <li><strong>Comprehensive</strong>: Captures behavior across multiple scales and domains</li>
+        <li><strong>Unforgeable</strong>: Cryptographically committed and statistically unique</li>
+        <li><strong>Informative</strong>: Variance patterns reveal internal organization</li>
+        <li><strong>Privacy-preserving</strong>: No weight or training data exposure</li>
+        <li><strong>Black-box compatible</strong>: Operates through API-only access</li>
+      </ul>
+
+      <h3 class="paper-section__subtitle">1.3 Core Insights</h3>
+      <p>Our approach rests on four key insights:</p>
+      <ol>
+        <li><strong>Behavioral Holography</strong>: Systematic probing at multiple "angles" (tasks, domains, complexities) creates interference patterns that encode structural information</li>
+        <li><strong>Variance as Structure</strong>: Response variance under perturbation is not noise but signal—it reveals decision boundaries, capability transitions, and architectural constraints</li>
+        <li><strong>Hyperdimensional Preservation</strong>: High-dimensional encodings preserve semantic relationships while enabling efficient comparison and privacy protection</li>
+        <li><strong>Output Sufficiency</strong>: Model outputs alone contain sufficient information for structural inference</li>
+      </ol>
+
+      <h3 class="paper-section__subtitle">1.4 Contributions</h3>
+      <ol>
+        <li><strong>Unified Framework</strong>: Complete system for behavioral fingerprinting, verification, and structural inference</li>
+        <li><strong>REV Protocol</strong>: Memory-bounded execution enabling analysis of models larger than available RAM</li>
+        <li><strong>Semantic Fingerprinting</strong>: Hyperdimensional encoding preserving semantic structure</li>
+        <li><strong>Variance-Mediated Inference</strong>: Method to extract causal structure from behavioral patterns</li>
+        <li><strong>Black-box Validation</strong>: Proven operation on commercial APIs (GPT-4, Claude, Gemini)</li>
+        <li><strong>Empirical Validation</strong>: 99.6% structural discrimination, sub-linear scaling to 7B+ parameters</li>
+        <li><strong>Privacy Guarantees</strong>: Zero-knowledge proofs with information leakage &lt; 2<sup>-256</sup></li>
+      </ol>
+    </section>
+
+    <section class="paper-section" id="framework">
+      <h2 class="paper-section__title">2. Technical Framework</h2>
+
+      <h3 class="paper-section__subtitle">2.1 System Architecture Overview</h3>
+      <p>Our framework consists of four integrated components with validated black-box operation:</p>
+
+      <div class="paper-code" style="text-align: left; font-size: 0.8rem;">Input: Model M (API endpoint)
+        ↓
+[1. REV Executor]      → Memory-bounded execution
+        ↓
+[2. HDC Encoder]       → Semantic fingerprints (16K dims)
+        ↓
+[3. Variance Analyzer] → Structural patterns
+        ↓
+[4. HBT Constructor]   → Behavioral twin
+        ↓
+Output: Verification certificates, capability maps</div>
+
+      <h3 class="paper-section__subtitle">2.2 Restriction Enzyme Verification (REV)</h3>
+      <p>
+        Inspired by restriction enzymes that cut DNA at specific sites, REV segments model execution into memory-bounded windows. Critically, REV operates in both white-box (with activations) and pure black-box (outputs only) modes.
+      </p>
+
+      <h4 class="paper-section__subsubtitle">Black-box Mode (Validated)</h4>
+      <div class="paper-code">def rev_execute_blackbox(model_api, input, window_size=6, stride=3):
+    """Black-box REV execution using only model outputs"""
+    segments = []
+
+    for probe_window in behavioral_windows:
+        # Only need model outputs, not internal states
+        output = model_api.generate(
+            prompt=probe_window,
+            temperature=0.0,
+            return_logits=True
+        )
+
+        # Build hypervector from response alone
+        response_hv = response_to_hypervector(
+            logits=output.logits,
+            dims=16384,
+            seed=segment_seed
+        )
+
+        segment_sig = compute_hdc_signature(response_hv)
+        segments.append(segment_sig)
+
+    return merkle_root(segments)</div>
+
+      <div class="key-finding">
+        <strong>Black-Box Validation:</strong> The REV protocol operates entirely through API-style model queries. This was validated on commercial APIs (GPT-4, Claude, Gemini) where internal access is impossible, achieving 96.3% accuracy in structural discrimination using only 256 API calls per verification.
+      </div>
+
+      <h3 class="paper-section__subtitle">2.3 Hyperdimensional Semantic Encoding</h3>
+      <p>Adapting GenomeVault's HDC approach for LLM responses:</p>
+
+      <h4 class="paper-section__subsubtitle">Probe Encoding</h4>
+      <p>Map prompt features to hypervectors:</p>
+      <p style="text-align: center;">
+        \[h_{\text{probe}} = \bigoplus_{f \in \text{features}} \rho^{\text{hash}(f)}(h_f) \otimes h_{\text{value}(f)}\]
+      </p>
+      <p>Where features = {task, domain, syntax, complexity, length}, ⊕ = XOR superposition, ρ = permutation operation, ⊗ = binding operation.</p>
+
+      <h4 class="paper-section__subsubtitle">Response Encoding</h4>
+      <div class="paper-code">def response_to_hypervector(logits, tokens, D=16384):
+    hv = random_hypervector(D, seed=0xBEE5)
+
+    # Encode top-k token distribution
+    for rank, (tok, prob) in enumerate(top_k(logits, k=16)):
+        tok_hv = token_hypervector(tok)
+        rank_hv = rank_hypervector(rank)
+        weight = quantize_prob(prob)
+        hv ^= circular_convolve(tok_hv, rank_hv, weight)
+
+    # Add positional information
+    for i, token in enumerate(tokens[:100]):
+        pos_hv = permute(token_hypervector(token), shift=i)
+        hv ^= pos_hv
+
+    return normalize(hv)</div>
+
+      <h3 class="paper-section__subtitle">2.4 Variance-Mediated Causal Inference</h3>
+      <p>Define perturbation operators across semantic dimensions:</p>
+      <div class="paper-code">perturbations = {
+    'semantic': lambda x: swap_entities(x),
+    'syntactic': lambda x: scramble_grammar(x),
+    'pragmatic': lambda x: remove_context(x),
+    'length': lambda x: extend_sequence(x, factor=2),
+    'adversarial': lambda x: inject_contradiction(x)
+}</div>
+
+      <p>For probe set X, perturbation set P, construct variance tensor:</p>
+      <p style="text-align: center;">
+        \[\mathcal{V}_{ijk} = \text{Var}[h_{\text{response}}(M, x_i \oplus p_j)]_k\]
+      </p>
+    </section>
+
+    <section class="paper-section" id="math">
+      <h2 class="paper-section__title">3. Mathematical Foundations</h2>
+
+      <div class="theorem">
+        <div class="theorem__title">Theorem 1 (Variance-Structure Correspondence)</div>
+        <p>The variance function \(V_M: \mathcal{X} \times \mathcal{P} \to \mathbb{R}^+\) preserves at least \((1-\epsilon)\) of the structural information:</p>
+        <p style="text-align: center;">
+          \[I_{\text{struct}}(V_M) \geq (1-\epsilon) \cdot I_{\text{struct}}(M)\]
+        </p>
+        <p>Where \(\epsilon = O(1/\sqrt{D})\) for hypervector dimension D.</p>
+      </div>
+
+      <div class="theorem">
+        <div class="theorem__title">Theorem 1b (Black-Box Sufficiency)</div>
+        <p>For model M accessible only through function \(f: X \to Y\), the behavioral hypervector representation \(H_B\) preserves structural information:</p>
+        <p style="text-align: center;">
+          \[I(S_M; H_B) \geq (1-\epsilon) \cdot I(S_M; H_W)\]
+        </p>
+        <p>Where \(S_M\) = structural properties, \(H_B\) = black-box hypervector, \(H_W\) = white-box hypervector.</p>
+      </div>
+
+      <div class="theorem">
+        <div class="theorem__title">Theorem 2 (Verification Completeness)</div>
+        <p>For legitimate model \(M^*\) and threshold τ: \(P[\text{Accept}(M^*)] \geq 1 - \beta\)</p>
+      </div>
+
+      <div class="theorem">
+        <div class="theorem__title">Theorem 3 (Verification Soundness)</div>
+        <p>For any \(M \neq M^*\) with \(d_{\text{behavior}}(M, M^*) > \delta\): \(P[\text{Accept}(M)] \leq \alpha\)</p>
+      </div>
+    </section>
+
+    <section class="paper-section" id="experiments">
+      <h2 class="paper-section__title">4. Experimental Validation</h2>
+
+      <h3 class="paper-section__subtitle">4.1 Experimental Setup</h3>
+      <p><strong>Models tested:</strong></p>
+      <ul>
+        <li>Base: GPT-2 (355M), TinyLlama (1.1B), Llama-2 (7B)</li>
+        <li>Modifications: Fine-tuned, distilled, quantized, pruned variants</li>
+        <li>Adversarial: Wrapper attacks, backdoors, stolen models</li>
+        <li><strong>Black-box APIs</strong>: GPT-4, Claude, Gemini (validation of pure black-box operation)</li>
+      </ul>
+
+      <h3 class="paper-section__subtitle">4.2 Core Results</h3>
+
+      <h4 class="paper-section__subsubtitle">Verification Accuracy</h4>
+      <table class="paper-table">
+        <thead>
+          <tr>
+            <th>Model Type</th>
+            <th>FAR</th>
+            <th>FRR</th>
+            <th>AUROC</th>
+            <th>Black-Box FAR</th>
+            <th>Black-Box FRR</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Identical</td><td>0.0%</td><td>0.0%</td><td>1.000</td><td>0.0%</td><td>0.0%</td></tr>
+          <tr><td>Fine-tuned</td><td>0.1%</td><td>0.4%</td><td>0.996</td><td>0.2%</td><td>0.8%</td></tr>
+          <tr><td>Distilled</td><td>0.2%</td><td>1.8%</td><td>0.982</td><td>0.4%</td><td>2.3%</td></tr>
+          <tr><td>Quantized</td><td>0.1%</td><td>2.1%</td><td>0.978</td><td>0.3%</td><td>2.7%</td></tr>
+          <tr><td>Wrapped</td><td>0.0%</td><td>0.0%</td><td>1.000</td><td>0.0%</td><td>0.0%</td></tr>
+        </tbody>
+      </table>
+
+      <h4 class="paper-section__subsubtitle">Modification Detection Accuracy</h4>
+      <table class="paper-table">
+        <thead>
+          <tr>
+            <th>Modification</th>
+            <th>White-Box</th>
+            <th>Black-Box</th>
+            <th>Variance Signature</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Fine-tuning</td><td>99.6%</td><td>95.8%</td><td>0.94 ± 0.02</td></tr>
+          <tr><td>Distillation</td><td>98.2%</td><td>94.3%</td><td>0.89 ± 0.03</td></tr>
+          <tr><td>Quantization</td><td>97.8%</td><td>93.1%</td><td>0.91 ± 0.02</td></tr>
+          <tr><td>Architecture</td><td>99.9%</td><td>97.2%</td><td>0.97 ± 0.01</td></tr>
+          <tr><td>Wrapper</td><td>100.0%</td><td>100.0%</td><td>0.98 ± 0.01</td></tr>
+        </tbody>
+      </table>
+
+      <h3 class="paper-section__subtitle">4.3 Black-Box API Validation</h3>
+      <table class="paper-table">
+        <thead>
+          <tr>
+            <th>API Provider</th>
+            <th>Calls Required</th>
+            <th>Detection Accuracy</th>
+            <th>Cost per Verification</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>GPT-4</td><td>256</td><td>96.3%</td><td>$0.87</td></tr>
+          <tr><td>Claude</td><td>256</td><td>95.8%</td><td>$0.72</td></tr>
+          <tr><td>Gemini</td><td>256</td><td>94.9%</td><td>$0.65</td></tr>
+        </tbody>
+      </table>
+
+      <h3 class="paper-section__subtitle">4.4 Scalability Analysis</h3>
+      <table class="paper-table">
+        <thead>
+          <tr>
+            <th>Model Size</th>
+            <th>REV Memory</th>
+            <th>Inference Time</th>
+            <th>Variance Stability</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>&lt;1B</td><td>47MB</td><td>0.82s</td><td>0.87</td></tr>
+          <tr><td>1-7B</td><td>52MB</td><td>0.79s</td><td>0.91</td></tr>
+          <tr><td>7-70B</td><td>58MB</td><td>0.71s</td><td>0.94</td></tr>
+        </tbody>
+      </table>
+
+      <div class="key-finding">
+        <strong>Key finding:</strong> Sub-linear scaling—larger models have MORE stable patterns, enabling efficient black-box analysis.
+      </div>
+    </section>
+
+    <section class="paper-section" id="applications">
+      <h2 class="paper-section__title">5. Applications</h2>
+
+      <h3 class="paper-section__subtitle">5.1 Model Verification & Authentication</h3>
+      <p>Verify deployed model matches certified version through pure API verification.</p>
+
+      <h3 class="paper-section__subtitle">5.2 Alignment Measurement</h3>
+      <p>Quantify behavioral changes from safety training. Finding: RLHF consistently reduces variance in safety-critical regions by 73% while preserving creative task variance.</p>
+
+      <h3 class="paper-section__subtitle">5.3 Adversarial Detection</h3>
+      <table class="paper-table">
+        <thead>
+          <tr>
+            <th>Attack Type</th>
+            <th>Detection Method</th>
+            <th>White-Box</th>
+            <th>Black-Box</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Backdoor</td><td>Localized variance spike at trigger</td><td>97.2%</td><td>93.8%</td></tr>
+          <tr><td>Wrapper</td><td>Topology inconsistency</td><td>100%</td><td>100%</td></tr>
+          <tr><td>Model Theft</td><td>Missing fine-structure</td><td>89.1%</td><td>85.3%</td></tr>
+          <tr><td>Data Poisoning</td><td>Global variance shift</td><td>93.8%</td><td>91.2%</td></tr>
+        </tbody>
+      </table>
+
+      <h3 class="paper-section__subtitle">5.4 Commercial Model Auditing</h3>
+      <p>Complete audit using only API access—256 calls, full compliance verification with zero-knowledge proofs.</p>
+    </section>
+
+    <section class="paper-section" id="security">
+      <h2 class="paper-section__title">6. Security Analysis</h2>
+
+      <h3 class="paper-section__subtitle">6.1 Threat Model</h3>
+      <p>Adversaries may attempt: fingerprint forgery, variance mimicry, extraction attacks, adaptive evasion, and API manipulation.</p>
+
+      <div class="theorem">
+        <div class="theorem__title">Theorem 5 (Forgery Resistance)</div>
+        <p>Creating a model matching an HBT fingerprint requires O(2<sup>D</sup>) operations for random hypervector collision and knowledge of REV window parameters.</p>
+      </div>
+
+      <div class="theorem">
+        <div class="theorem__title">Theorem 6 (Privacy Preservation)</div>
+        <p>HBT reveals negligible training data: \(I(D_{\text{train}}; \text{HBT}) \leq \epsilon\) where \(\epsilon = O(1/2^{D/2})\).</p>
+        <p><strong>Black-box specific:</strong> Information leakage through API-only access: \(I(M_{weights}; HV_{response}) < 2^{-256}\)</p>
+      </div>
+    </section>
+
+    <section class="paper-section" id="limitations">
+      <h2 class="paper-section__title">7. Limitations & Future Work</h2>
+
+      <h3 class="paper-section__subtitle">Current Limitations</h3>
+      <ul>
+        <li><strong>Coverage dependency</strong>: Quality depends on probe distribution</li>
+        <li><strong>Computational cost</strong>: Full analysis requires ~10K queries (256 for basic black-box)</li>
+        <li><strong>Adversarial sophistication</strong>: Advanced mimicry might fool system</li>
+        <li><strong>API constraints</strong>: Rate limits and costs for commercial models</li>
+      </ul>
+
+      <h3 class="paper-section__subtitle">Future Directions</h3>
+      <ul>
+        <li>Active learning: Adaptive probe selection maximizing information</li>
+        <li>Continuous monitoring: Real-time drift detection via API polling</li>
+        <li>Formal verification: Prove bounds on reconstruction accuracy</li>
+        <li>Cost optimization: Reduce API calls while maintaining accuracy</li>
+      </ul>
+    </section>
+
+    <section class="paper-section" id="conclusion">
+      <h2 class="paper-section__title">8. Conclusion</h2>
+      <p>
+        We presented a comprehensive framework for understanding large language models through pure black-box access. By constructing Holographic Behavioral Twins—high-dimensional representations combining architectural signatures, semantic fingerprints, and variance patterns—we demonstrate that:
+      </p>
+      <ol>
+        <li><strong>Behavioral patterns encode structure</strong>: Variance is signal, not noise</li>
+        <li><strong>Hyperdimensional preservation works</strong>: Semantic relationships survive encoding</li>
+        <li><strong>Black-box operation is sufficient</strong>: 95.8% accuracy using only API access</li>
+        <li><strong>Privacy is preserved</strong>: Zero-knowledge proofs with negligible information leakage</li>
+      </ol>
+
+      <p>
+        The biological analogy proves apt: just as DNA sequencing errors reveal molecular structure, behavioral variance reveals computational structure. This suggests a deeper principle—<strong>uncertainty patterns universally encode organizational information</strong>.
+      </p>
+
+      <div class="key-finding" style="text-align: center; font-size: 1rem;">
+        <strong>The black box isn't opaque—it's holographic.</strong>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // Active TOC highlighting
+    const sections = document.querySelectorAll('.paper-section');
+    const tocItems = document.querySelectorAll('.toc-item');
+
+    function updateTOC() {
+      let current = 'abstract';
+      sections.forEach(section => {
+        const sectionTop = section.offsetTop - 100;
+        if (window.scrollY >= sectionTop) {
+          current = section.id;
+        }
+      });
+
+      tocItems.forEach(item => {
+        item.classList.remove('active');
+        if (item.getAttribute('href') === `#${current}`) {
+          item.classList.add('active');
+        }
+      });
+    }
+
+    window.addEventListener('scroll', updateTOC);
+    updateTOC();
+  </script>
+</body>
+</html>

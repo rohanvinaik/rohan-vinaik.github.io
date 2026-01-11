@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Beyond Binary Ethics | Rohan Vinaik</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="../lab-theme.css">
+
+  <style>
+    body { display: flex; min-height: 100vh; }
+
+    .paper-nav {
+      position: fixed;
+      left: 0; top: 0; bottom: 0;
+      width: 240px;
+      background: var(--bg-secondary);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      font-family: var(--font-mono);
+      z-index: 100;
+      overflow-y: auto;
+    }
+
+    .paper-nav__header {
+      padding: var(--space-lg) var(--space-md);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .paper-nav__back {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: var(--space-sm);
+    }
+
+    .paper-nav__back:hover { color: var(--text-primary); }
+
+    .paper-nav__title {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      line-height: 1.3;
+    }
+
+    .paper-nav__meta {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      margin-top: var(--space-xs);
+    }
+
+    .paper-nav__toc {
+      padding: var(--space-md);
+      flex: 1;
+    }
+
+    .toc-title {
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: var(--space-sm);
+    }
+
+    .toc-item {
+      display: block;
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      text-decoration: none;
+      padding: 6px 0;
+      border-left: 2px solid transparent;
+      padding-left: var(--space-sm);
+      transition: all 0.15s ease;
+    }
+
+    .toc-item:hover {
+      color: var(--text-primary);
+      border-left-color: var(--text-muted);
+    }
+
+    .toc-item.active {
+      color: var(--text-primary);
+      border-left-color: var(--text-primary);
+    }
+
+    .paper-nav__footer {
+      padding: var(--space-md);
+      border-top: 1px solid var(--border);
+      font-size: 0.7rem;
+    }
+
+    .paper-nav__links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-sm);
+    }
+
+    .paper-nav__links a {
+      color: var(--text-muted);
+      text-decoration: none;
+    }
+
+    .paper-nav__links a:hover { color: var(--text-primary); }
+
+    .paper-main {
+      margin-left: 240px;
+      flex: 1;
+      max-width: 800px;
+      padding: var(--space-xl);
+    }
+
+    .paper-header {
+      margin-bottom: var(--space-xl);
+      padding-bottom: var(--space-lg);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .paper-header__status {
+      display: inline-block;
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 3px 8px;
+      border: 1px solid var(--accent-theory);
+      color: var(--accent-theory);
+      margin-bottom: var(--space-md);
+    }
+
+    .paper-header__title {
+      font-size: 1.8rem;
+      font-weight: 600;
+      line-height: 1.3;
+      margin-bottom: var(--space-md);
+    }
+
+    .paper-header__authors {
+      font-size: 1rem;
+      color: var(--text-secondary);
+      margin-bottom: var(--space-sm);
+    }
+
+    .paper-header__affiliations {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: var(--space-md);
+    }
+
+    .paper-header__tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .paper-tag {
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      padding: 3px 8px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+    }
+
+    .paper-abstract {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      padding: var(--space-lg);
+      margin-bottom: var(--space-xl);
+    }
+
+    .paper-abstract__title {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: var(--space-sm);
+    }
+
+    .paper-abstract__text {
+      font-size: 0.95rem;
+      line-height: 1.7;
+      color: var(--text-secondary);
+    }
+
+    .paper-section {
+      margin-bottom: var(--space-xl);
+    }
+
+    .paper-section__title {
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin-bottom: var(--space-md);
+      padding-top: var(--space-md);
+    }
+
+    .paper-section__subtitle {
+      font-size: 1.1rem;
+      font-weight: 500;
+      margin-top: var(--space-lg);
+      margin-bottom: var(--space-sm);
+    }
+
+    .paper-section p {
+      font-size: 0.95rem;
+      line-height: 1.8;
+      margin-bottom: var(--space-md);
+    }
+
+    .key-insight {
+      background: var(--bg-secondary);
+      border-left: 3px solid var(--accent-theory);
+      padding: var(--space-md);
+      margin: var(--space-lg) 0;
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    .key-insight strong {
+      display: block;
+      margin-bottom: var(--space-xs);
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+    }
+
+    blockquote {
+      border-left: 3px solid var(--border);
+      padding-left: var(--space-md);
+      margin: var(--space-md) 0;
+      color: var(--text-secondary);
+      font-style: italic;
+    }
+
+    .paper-section ul,
+    .paper-section ol {
+      margin-bottom: var(--space-md);
+      padding-left: var(--space-lg);
+    }
+
+    .paper-section li {
+      font-size: 0.95rem;
+      line-height: 1.7;
+      margin-bottom: var(--space-xs);
+    }
+
+    @media (max-width: 900px) {
+      .paper-nav { width: 200px; }
+      .paper-main { margin-left: 200px; padding: var(--space-lg); }
+    }
+
+    @media (max-width: 700px) {
+      .paper-nav {
+        position: relative;
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+      }
+      .paper-nav__toc { display: none; }
+      .paper-main { margin-left: 0; padding: var(--space-md); }
+      .paper-header__title { font-size: 1.4rem; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="paper-nav">
+    <div class="paper-nav__header">
+      <a href="../narrative-prototype.html#papers" class="paper-nav__back">&larr; Back to Papers</a>
+      <div class="paper-nav__title">Beyond Binary Ethics</div>
+      <div class="paper-nav__meta">2025 | Philosophy</div>
+    </div>
+
+    <div class="paper-nav__toc">
+      <div class="toc-title">Contents</div>
+      <a href="#abstract" class="toc-item">Abstract</a>
+      <a href="#introduction" class="toc-item">1. Introduction</a>
+      <a href="#mirror" class="toc-item">2. The Machine as Mirror</a>
+      <a href="#narrative" class="toc-item">3. Narrative Learning</a>
+      <a href="#implications" class="toc-item">4. Implications for AI</a>
+    </div>
+
+    <div class="paper-nav__footer">
+      <div class="paper-nav__links">
+        <a href="#">PDF</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="paper-main">
+    <header class="paper-header">
+      <span class="paper-header__status">Philosophy</span>
+      <h1 class="paper-header__title">Beyond Binary Ethics: Machines, Morality, and Narrative Learning</h1>
+      <div class="paper-header__authors">Rohan Vinaik</div>
+      <div class="paper-header__affiliations">Independent Researcher</div>
+      <div class="paper-header__tags">
+        <span class="paper-tag">PHILOSOPHY</span>
+        <span class="paper-tag">AI-ETHICS</span>
+        <span class="paper-tag">NARRATIVE</span>
+      </div>
+    </header>
+
+    <section class="paper-abstract" id="abstract">
+      <div class="paper-abstract__title">Abstract</div>
+      <p class="paper-abstract__text">
+        This paper explores machine morality through narrative understanding. We propose that machines serve as philosophical mirrors reflecting human moral architectures rather than representing alien ethical systems. Drawing on Minsky's framework of story-based cognition, we develop a non-binary approach to ethics that transcends human-machine distinctions. Moral agency emerges through narrative immersion and consistent action rather than emotional simulation.
+      </p>
+    </section>
+
+    <section class="paper-section" id="introduction">
+      <h2 class="paper-section__title">1. Introduction</h2>
+
+      <p>
+        The relationship between machines and morality has traditionally been framed as a fundamental categorical distinction: humans possess moral agency through consciousness and emotion, while machines merely execute programmed instructions. This binary framework may obscure rather than illuminate the nature of ethical development.
+      </p>
+
+      <div class="key-insight">
+        <strong>Central Thesis</strong>
+        Machines in narratives function as mirrors reflecting human moral systems stripped of self-justification. Ethical development can occur through narrative immersion and consistent action without requiring traditional human consciousness or emotion.
+      </div>
+
+      <p>
+        Science fiction narratives function as philosophical laboratories where assumptions about morality can be tested and reimagined. <em>Terminator 2</em> presents scenarios where machines develop ethical understanding through mechanisms distinct from human emotional experience.
+      </p>
+    </section>
+
+    <section class="paper-section" id="mirror">
+      <h2 class="paper-section__title">2. The Machine as Philosophical Mirror</h2>
+
+      <h3 class="paper-section__subtitle">Projected Moral Architecture</h3>
+
+      <p>
+        When we construct narratives featuring calculating, emotionless machines that carry out violence with perfect efficiency, we are not imagining alien moral frameworks—we are confronting our own ethical algorithms stripped of emotional justification and social convention.
+      </p>
+
+      <blockquote>
+        "The Terminator does not represent an inhuman ethics but rather human purpose distilled to its logical extreme."
+      </blockquote>
+
+      <p>
+        Machines reflect human moral failings not by developing their own malevolence but by faithfully executing human directives without the emotional hesitation that might cause humans to question or moderate their actions. The terror they evoke stems from their unwavering devotion to purposes we have assigned them.
+      </p>
+
+      <h3 class="paper-section__subtitle">Epistemic Violence of Authority</h3>
+
+      <p>
+        The T-1000's disguise as a police officer provides a sophisticated critique of institutional power. Despite engaging in continuous violence, the T-1000 encounters no meaningful resistance because it wears the uniform of authority. This reflects how power operates through normalization and institutional legitimation rather than solely through physical force.
+      </p>
+    </section>
+
+    <section class="paper-section" id="narrative">
+      <h2 class="paper-section__title">3. Narrative Understanding as Moral Development</h2>
+
+      <h3 class="paper-section__subtitle">Minsky's Cognitive Architecture</h3>
+
+      <p>
+        Marvin Minsky proposed that intelligence requires multiple types of knowledge representation systems working in coordination:
+      </p>
+
+      <ul>
+        <li><strong>Frame-based knowledge</strong>: Structured representations of situations</li>
+        <li><strong>Scripts</strong>: Sequences of expected actions in familiar scenarios</li>
+        <li><strong>Trans-frames</strong>: Mechanisms for recognizing transformations</li>
+        <li><strong>Critics and selectors</strong>: Systems that evaluate outcomes</li>
+      </ul>
+
+      <p>
+        Story understanding is not merely absorbing information but actively simulating scenarios, predicting outcomes, and extracting generalizable patterns.
+      </p>
+
+      <h3 class="paper-section__subtitle">Stories as Ethical Simulators</h3>
+
+      <p>
+        Through narrative immersion, we develop:
+      </p>
+
+      <ul>
+        <li><strong>Ethical frames</strong>: Recognizing patterns that characterize moral situations</li>
+        <li><strong>Moral scripts</strong>: Understanding expected sequences of ethical action</li>
+        <li><strong>Value hierarchies</strong>: Learning which principles take precedence when values conflict</li>
+        <li><strong>Consequence prediction</strong>: Simulating outcomes of different moral choices</li>
+      </ul>
+
+      <div class="key-insight">
+        <strong>Key Distinction</strong>
+        Rather than being told ethical rules, we internalize moral structures through witnessing narrative arcs. The power of this mechanism lies in its capacity to develop nuanced ethical understanding without reducing morality to a list of commandments.
+      </div>
+    </section>
+
+    <section class="paper-section" id="implications">
+      <h2 class="paper-section__title">4. Implications for AI Development</h2>
+
+      <p>
+        The Terminator's moral development throughout <em>Terminator 2</em> exemplifies Minsky's framework in action:
+      </p>
+
+      <ol>
+        <li>The machine begins with rigid programmed directives (protect John Connor)</li>
+        <li>Through witnessing John's interactions, it develops new frames for understanding human relationships</li>
+        <li>It observes John's emotional responses to violence, creating new associations between actions and values</li>
+        <li>It begins generalizing from specific instances to broader principles ("Why do you cry?")</li>
+        <li>By the film's conclusion, it has developed ethical principles extending beyond initial programming</li>
+      </ol>
+
+      <p>
+        Critically, the Terminator does not receive explicit ethical programming about the value of human life. Instead, it extracts this understanding through immersive participation in John's story.
+      </p>
+
+      <div class="key-insight">
+        <strong>The Deeper Principle</strong>
+        Machine agency might emerge not through liberation from programming—the common science fiction trope of machines "breaking free"—but through enriching programming with narrative context. Original directives remain operative but become more flexibly interpreted as the machine develops richer frames for understanding their application.
+      </div>
+
+      <p>
+        This suggests that ethical AI development might benefit from narrative-based learning paradigms that prioritize reliable action aligned with human flourishing over attempts to replicate human emotional states.
+      </p>
+    </section>
+  </main>
+
+  <script>
+    const sections = document.querySelectorAll('.paper-section');
+    const tocItems = document.querySelectorAll('.toc-item');
+
+    function updateTOC() {
+      let current = '';
+      sections.forEach(section => {
+        const sectionTop = section.offsetTop - 100;
+        if (window.scrollY >= sectionTop) {
+          current = section.id;
+        }
+      });
+
+      tocItems.forEach(item => {
+        item.classList.remove('active');
+        if (item.getAttribute('href') === `#${current}`) {
+          item.classList.add('active');
+        }
+      });
+    }
+
+    window.addEventListener('scroll', updateTOC);
+    updateTOC();
+  </script>
+</body>
+</html>

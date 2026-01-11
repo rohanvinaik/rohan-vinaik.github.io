@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Paper Title | Rohan Vinaik</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <!-- Theme -->
+  <link rel="stylesheet" href="lab-theme.css">
+
+  <style>
+    /* Paper-specific styles */
+    body {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Paper Navigation Sidebar */
+    .paper-nav {
+      position: fixed;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 240px;
+      background: var(--bg-secondary);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      font-family: var(--font-mono);
+      z-index: 100;
+      overflow-y: auto;
+    }
+
+    .paper-nav__header {
+      padding: var(--space-lg) var(--space-md);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .paper-nav__back {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: var(--space-sm);
+    }
+
+    .paper-nav__back:hover {
+      color: var(--text-primary);
+    }
+
+    .paper-nav__title {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      line-height: 1.3;
+    }
+
+    .paper-nav__meta {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      margin-top: var(--space-xs);
+    }
+
+    .paper-nav__toc {
+      padding: var(--space-md);
+      flex: 1;
+    }
+
+    .toc-title {
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: var(--space-sm);
+    }
+
+    .toc-item {
+      display: block;
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      text-decoration: none;
+      padding: 6px 0;
+      border-left: 2px solid transparent;
+      padding-left: var(--space-sm);
+      transition: all 0.15s ease;
+    }
+
+    .toc-item:hover {
+      color: var(--text-primary);
+      border-left-color: var(--text-muted);
+    }
+
+    .toc-item.active {
+      color: var(--text-primary);
+      border-left-color: var(--text-primary);
+    }
+
+    .toc-item--sub {
+      padding-left: var(--space-md);
+      font-size: 0.7rem;
+    }
+
+    .paper-nav__footer {
+      padding: var(--space-md);
+      border-top: 1px solid var(--border);
+      font-size: 0.7rem;
+    }
+
+    .paper-nav__links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-sm);
+    }
+
+    .paper-nav__links a {
+      color: var(--text-muted);
+      text-decoration: none;
+    }
+
+    .paper-nav__links a:hover {
+      color: var(--text-primary);
+    }
+
+    /* Main Paper Content */
+    .paper-main {
+      margin-left: 240px;
+      flex: 1;
+      max-width: 800px;
+      padding: var(--space-xl);
+    }
+
+    /* Paper Header */
+    .paper-header {
+      margin-bottom: var(--space-xl);
+      padding-bottom: var(--space-lg);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .paper-header__status {
+      display: inline-block;
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 3px 8px;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      margin-bottom: var(--space-md);
+    }
+
+    .paper-header__status--published {
+      border-color: var(--accent-biology);
+      color: var(--accent-biology);
+    }
+
+    .paper-header__status--preprint {
+      border-color: var(--accent-ai);
+      color: var(--accent-ai);
+    }
+
+    .paper-header__title {
+      font-size: 1.8rem;
+      font-weight: 600;
+      line-height: 1.3;
+      margin-bottom: var(--space-md);
+    }
+
+    .paper-header__authors {
+      font-size: 1rem;
+      color: var(--text-secondary);
+      margin-bottom: var(--space-sm);
+    }
+
+    .paper-header__affiliations {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: var(--space-md);
+    }
+
+    .paper-header__tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .paper-tag {
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      padding: 3px 8px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+    }
+
+    /* Abstract */
+    .paper-abstract {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      padding: var(--space-lg);
+      margin-bottom: var(--space-xl);
+    }
+
+    .paper-abstract__title {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: var(--space-sm);
+    }
+
+    .paper-abstract__text {
+      font-size: 0.95rem;
+      line-height: 1.7;
+      color: var(--text-secondary);
+    }
+
+    /* Paper Sections */
+    .paper-section {
+      margin-bottom: var(--space-xl);
+    }
+
+    .paper-section__title {
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin-bottom: var(--space-md);
+      padding-top: var(--space-md);
+    }
+
+    .paper-section__subtitle {
+      font-size: 1.1rem;
+      font-weight: 500;
+      margin-top: var(--space-lg);
+      margin-bottom: var(--space-sm);
+    }
+
+    .paper-section p {
+      font-size: 0.95rem;
+      line-height: 1.8;
+      margin-bottom: var(--space-md);
+    }
+
+    /* Lists */
+    .paper-section ul,
+    .paper-section ol {
+      margin-bottom: var(--space-md);
+      padding-left: var(--space-lg);
+    }
+
+    .paper-section li {
+      font-size: 0.95rem;
+      line-height: 1.7;
+      margin-bottom: var(--space-xs);
+    }
+
+    /* Code blocks */
+    .paper-code {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      padding: var(--space-md);
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      line-height: 1.5;
+      overflow-x: auto;
+      margin-bottom: var(--space-md);
+    }
+
+    /* Inline code */
+    code {
+      font-family: var(--font-mono);
+      font-size: 0.85em;
+      background: var(--bg-secondary);
+      padding: 2px 6px;
+      border-radius: 2px;
+    }
+
+    /* Math blocks (placeholder - would need MathJax/KaTeX) */
+    .paper-math {
+      text-align: center;
+      padding: var(--space-md);
+      font-family: var(--font-mono);
+      font-size: 0.9rem;
+      margin-bottom: var(--space-md);
+    }
+
+    /* Figures */
+    .paper-figure {
+      margin: var(--space-lg) 0;
+      text-align: center;
+    }
+
+    .paper-figure img {
+      max-width: 100%;
+      border: 1px solid var(--border);
+    }
+
+    .paper-figure__caption {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: var(--space-sm);
+      text-align: left;
+    }
+
+    /* Tables */
+    .paper-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: var(--space-md);
+      font-size: 0.85rem;
+    }
+
+    .paper-table th,
+    .paper-table td {
+      padding: var(--space-sm);
+      border: 1px solid var(--border);
+      text-align: left;
+    }
+
+    .paper-table th {
+      background: var(--bg-secondary);
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    /* Blockquotes */
+    blockquote {
+      border-left: 3px solid var(--border);
+      padding-left: var(--space-md);
+      margin: var(--space-md) 0;
+      color: var(--text-secondary);
+      font-style: italic;
+    }
+
+    /* References */
+    .paper-references {
+      font-size: 0.85rem;
+    }
+
+    .paper-references__item {
+      margin-bottom: var(--space-sm);
+      padding-left: var(--space-md);
+      text-indent: -var(--space-md);
+    }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .paper-nav {
+        width: 200px;
+      }
+      .paper-main {
+        margin-left: 200px;
+        padding: var(--space-lg);
+      }
+    }
+
+    @media (max-width: 700px) {
+      .paper-nav {
+        position: relative;
+        width: 100%;
+        max-height: none;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+      }
+      .paper-nav__toc {
+        display: none;
+      }
+      .paper-main {
+        margin-left: 0;
+        padding: var(--space-md);
+      }
+      .paper-header__title {
+        font-size: 1.4rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Paper Navigation -->
+  <nav class="paper-nav">
+    <div class="paper-nav__header">
+      <a href="narrative-prototype.html#papers" class="paper-nav__back">&larr; Back to Papers</a>
+      <div class="paper-nav__title">Paper Title Goes Here</div>
+      <div class="paper-nav__meta">2025 | AI Security</div>
+    </div>
+
+    <div class="paper-nav__toc">
+      <div class="toc-title">Contents</div>
+      <a href="#abstract" class="toc-item">Abstract</a>
+      <a href="#introduction" class="toc-item">1. Introduction</a>
+      <a href="#background" class="toc-item">2. Background</a>
+      <a href="#methods" class="toc-item">3. Methods</a>
+      <a href="#results" class="toc-item">4. Results</a>
+      <a href="#discussion" class="toc-item">5. Discussion</a>
+      <a href="#conclusion" class="toc-item">6. Conclusion</a>
+      <a href="#references" class="toc-item">References</a>
+    </div>
+
+    <div class="paper-nav__footer">
+      <div class="paper-nav__links">
+        <a href="#">PDF</a>
+        <a href="#">Code</a>
+        <a href="#">BibTeX</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Paper Content -->
+  <main class="paper-main">
+    <header class="paper-header">
+      <span class="paper-header__status paper-header__status--published">Published</span>
+      <h1 class="paper-header__title">Full Paper Title: Subtitle and Extended Description</h1>
+      <div class="paper-header__authors">Rohan Vinaik</div>
+      <div class="paper-header__affiliations">Independent Researcher</div>
+      <div class="paper-header__tags">
+        <span class="paper-tag">HYPERDIMENSIONAL</span>
+        <span class="paper-tag">AI-SECURITY</span>
+        <span class="paper-tag">VERIFICATION</span>
+      </div>
+    </header>
+
+    <section class="paper-abstract" id="abstract">
+      <div class="paper-abstract__title">Abstract</div>
+      <p class="paper-abstract__text">
+        Abstract text goes here. This should be a concise summary of the paper's contributions,
+        methodology, and key findings. Typically 150-300 words.
+      </p>
+    </section>
+
+    <section class="paper-section" id="introduction">
+      <h2 class="paper-section__title">1. Introduction</h2>
+      <p>
+        Introduction paragraph text. This section establishes the problem context,
+        motivation, and outlines the paper's contributions.
+      </p>
+      <p>
+        Additional paragraphs as needed. The style is designed for readability
+        with generous line height and appropriate font sizing.
+      </p>
+    </section>
+
+    <section class="paper-section" id="background">
+      <h2 class="paper-section__title">2. Background</h2>
+      <p>
+        Background and related work section. Provides necessary context for understanding
+        the technical contributions.
+      </p>
+
+      <h3 class="paper-section__subtitle">2.1 Subsection Title</h3>
+      <p>
+        Subsection content with more specific technical details.
+      </p>
+
+      <div class="paper-math">
+        f(x) = &sum; w<sub>i</sub> &middot; x<sub>i</sub> + b
+      </div>
+    </section>
+
+    <section class="paper-section" id="methods">
+      <h2 class="paper-section__title">3. Methods</h2>
+      <p>
+        Technical methodology description.
+      </p>
+
+      <pre class="paper-code">
+// Example code block
+function encode(input) {
+  return hypervector.bind(input, basis);
+}
+      </pre>
+    </section>
+
+    <section class="paper-section" id="results">
+      <h2 class="paper-section__title">4. Results</h2>
+      <p>
+        Experimental results and findings.
+      </p>
+
+      <table class="paper-table">
+        <thead>
+          <tr>
+            <th>Method</th>
+            <th>Accuracy</th>
+            <th>Speed</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Baseline</td>
+            <td>85.2%</td>
+            <td>1.0x</td>
+          </tr>
+          <tr>
+            <td>Our Method</td>
+            <td>95.8%</td>
+            <td>30x</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="paper-section" id="discussion">
+      <h2 class="paper-section__title">5. Discussion</h2>
+      <p>
+        Discussion of results, implications, and limitations.
+      </p>
+    </section>
+
+    <section class="paper-section" id="conclusion">
+      <h2 class="paper-section__title">6. Conclusion</h2>
+      <p>
+        Summary of contributions and future directions.
+      </p>
+    </section>
+
+    <section class="paper-section paper-references" id="references">
+      <h2 class="paper-section__title">References</h2>
+      <div class="paper-references__item">
+        [1] Author, A. (2024). "Paper Title." Journal Name, 12(3), 45-67.
+      </div>
+      <div class="paper-references__item">
+        [2] Author, B. & Author, C. (2023). "Another Paper." Conference Proceedings.
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // Active TOC highlighting based on scroll
+    const sections = document.querySelectorAll('.paper-section');
+    const tocItems = document.querySelectorAll('.toc-item');
+
+    function updateTOC() {
+      let current = '';
+      sections.forEach(section => {
+        const sectionTop = section.offsetTop - 100;
+        if (window.scrollY >= sectionTop) {
+          current = section.id;
+        }
+      });
+
+      tocItems.forEach(item => {
+        item.classList.remove('active');
+        if (item.getAttribute('href') === `#${current}`) {
+          item.classList.add('active');
+        }
+      });
+    }
+
+    window.addEventListener('scroll', updateTOC);
+    updateTOC();
+  </script>
+</body>
+</html>

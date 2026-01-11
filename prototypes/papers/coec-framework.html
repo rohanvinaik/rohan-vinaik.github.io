@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>COEC Framework | Rohan Vinaik</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <!-- MathJax for equations -->
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+  <!-- Theme -->
+  <link rel="stylesheet" href="../lab-theme.css">
+
+  <style>
+    body { display: flex; min-height: 100vh; }
+
+    .paper-nav {
+      position: fixed;
+      left: 0; top: 0; bottom: 0;
+      width: 240px;
+      background: var(--bg-secondary);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      font-family: var(--font-mono);
+      z-index: 100;
+      overflow-y: auto;
+    }
+
+    .paper-nav__header {
+      padding: var(--space-lg) var(--space-md);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .paper-nav__back {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: var(--space-sm);
+    }
+
+    .paper-nav__back:hover { color: var(--text-primary); }
+
+    .paper-nav__title {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      line-height: 1.3;
+    }
+
+    .paper-nav__meta {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      margin-top: var(--space-xs);
+    }
+
+    .paper-nav__toc {
+      padding: var(--space-md);
+      flex: 1;
+    }
+
+    .toc-title {
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: var(--space-sm);
+    }
+
+    .toc-item {
+      display: block;
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      text-decoration: none;
+      padding: 6px 0;
+      border-left: 2px solid transparent;
+      padding-left: var(--space-sm);
+      transition: all 0.15s ease;
+    }
+
+    .toc-item:hover {
+      color: var(--text-primary);
+      border-left-color: var(--text-muted);
+    }
+
+    .toc-item.active {
+      color: var(--text-primary);
+      border-left-color: var(--text-primary);
+    }
+
+    .paper-nav__footer {
+      padding: var(--space-md);
+      border-top: 1px solid var(--border);
+      font-size: 0.7rem;
+    }
+
+    .paper-nav__links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-sm);
+    }
+
+    .paper-nav__links a {
+      color: var(--text-muted);
+      text-decoration: none;
+    }
+
+    .paper-nav__links a:hover { color: var(--text-primary); }
+
+    .paper-main {
+      margin-left: 240px;
+      flex: 1;
+      max-width: 800px;
+      padding: var(--space-xl);
+    }
+
+    .paper-header {
+      margin-bottom: var(--space-xl);
+      padding-bottom: var(--space-lg);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .paper-header__status {
+      display: inline-block;
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 3px 8px;
+      border: 1px solid var(--accent-theory);
+      color: var(--accent-theory);
+      margin-bottom: var(--space-md);
+    }
+
+    .paper-header__title {
+      font-size: 1.8rem;
+      font-weight: 600;
+      line-height: 1.3;
+      margin-bottom: var(--space-md);
+    }
+
+    .paper-header__authors {
+      font-size: 1rem;
+      color: var(--text-secondary);
+      margin-bottom: var(--space-sm);
+    }
+
+    .paper-header__affiliations {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: var(--space-md);
+    }
+
+    .paper-header__tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .paper-tag {
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      padding: 3px 8px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+    }
+
+    .paper-abstract {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      padding: var(--space-lg);
+      margin-bottom: var(--space-xl);
+    }
+
+    .paper-abstract__title {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: var(--space-sm);
+    }
+
+    .paper-abstract__text {
+      font-size: 0.95rem;
+      line-height: 1.7;
+      color: var(--text-secondary);
+    }
+
+    .paper-section {
+      margin-bottom: var(--space-xl);
+    }
+
+    .paper-section__title {
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin-bottom: var(--space-md);
+      padding-top: var(--space-md);
+    }
+
+    .paper-section__subtitle {
+      font-size: 1.1rem;
+      font-weight: 500;
+      margin-top: var(--space-lg);
+      margin-bottom: var(--space-sm);
+    }
+
+    .paper-section p {
+      font-size: 0.95rem;
+      line-height: 1.8;
+      margin-bottom: var(--space-md);
+    }
+
+    .key-insight {
+      background: var(--bg-secondary);
+      border-left: 3px solid var(--accent-theory);
+      padding: var(--space-md);
+      margin: var(--space-lg) 0;
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    .key-insight strong {
+      display: block;
+      margin-bottom: var(--space-xs);
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+    }
+
+    .paper-code {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      padding: var(--space-md);
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      line-height: 1.5;
+      overflow-x: auto;
+      margin-bottom: var(--space-md);
+    }
+
+    code {
+      font-family: var(--font-mono);
+      font-size: 0.85em;
+      background: var(--bg-secondary);
+      padding: 2px 6px;
+      border-radius: 2px;
+    }
+
+    .paper-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: var(--space-md);
+      font-size: 0.85rem;
+    }
+
+    .paper-table th,
+    .paper-table td {
+      padding: var(--space-sm);
+      border: 1px solid var(--border);
+      text-align: left;
+    }
+
+    .paper-table th {
+      background: var(--bg-secondary);
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .paper-section ul,
+    .paper-section ol {
+      margin-bottom: var(--space-md);
+      padding-left: var(--space-lg);
+    }
+
+    .paper-section li {
+      font-size: 0.95rem;
+      line-height: 1.7;
+      margin-bottom: var(--space-xs);
+    }
+
+    .definition {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      padding: var(--space-md);
+      margin: var(--space-md) 0;
+    }
+
+    .definition__label {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: var(--space-xs);
+    }
+
+    @media (max-width: 900px) {
+      .paper-nav { width: 200px; }
+      .paper-main { margin-left: 200px; padding: var(--space-lg); }
+    }
+
+    @media (max-width: 700px) {
+      .paper-nav {
+        position: relative;
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+      }
+      .paper-nav__toc { display: none; }
+      .paper-main { margin-left: 0; padding: var(--space-md); }
+      .paper-header__title { font-size: 1.4rem; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="paper-nav">
+    <div class="paper-nav__header">
+      <a href="../narrative-prototype.html#papers" class="paper-nav__back">&larr; Back to Papers</a>
+      <div class="paper-nav__title">COEC Framework</div>
+      <div class="paper-nav__meta">2025 | Theory</div>
+    </div>
+
+    <div class="paper-nav__toc">
+      <div class="toc-title">Contents</div>
+      <a href="#abstract" class="toc-item">Abstract</a>
+      <a href="#introduction" class="toc-item">1. Introduction</a>
+      <a href="#ontology" class="toc-item">2. Formal Ontology</a>
+      <a href="#taxonomy" class="toc-item">3. Computational Taxonomy</a>
+      <a href="#applications" class="toc-item">4. Applications</a>
+      <a href="#implications" class="toc-item">5. Implications</a>
+    </div>
+
+    <div class="paper-nav__footer">
+      <div class="paper-nav__links">
+        <a href="#">PDF</a>
+        <a href="#">Code</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="paper-main">
+    <header class="paper-header">
+      <span class="paper-header__status">Theory</span>
+      <h1 class="paper-header__title">Constraint-Oriented Emergent Computation: A Formal Framework for Biological and Artificial Systems</h1>
+      <div class="paper-header__authors">Rohan Vinaik</div>
+      <div class="paper-header__affiliations">Independent Researcher</div>
+      <div class="paper-header__tags">
+        <span class="paper-tag">THEORY</span>
+        <span class="paper-tag">CONSTRAINTS</span>
+        <span class="paper-tag">EMERGENCE</span>
+      </div>
+    </header>
+
+    <section class="paper-abstract" id="abstract">
+      <div class="paper-abstract__title">Abstract</div>
+      <p class="paper-abstract__text">
+        We present Constraint-Oriented Emergent Computation (COEC), a substrate-independent framework describing computation as the trajectory of physical or biological systems through constrained state spaces. Unlike traditional computational models based on discrete logic, COEC formalizes computation as the evolution of systems under entropy-driven transitions within boundary conditions. The framework introduces a taxonomy of nine computational classes, each characterized by distinct properties of their residual functions and constraint dynamics.
+      </p>
+    </section>
+
+    <section class="paper-section" id="introduction">
+      <h2 class="paper-section__title">1. Introduction</h2>
+
+      <p>
+        Biological systems demonstrate sophisticated computational behavior without reliance on symbolic logic or centralized control. Proteins fold into functional configurations, cellular networks process environmental signals, and embryos develop into complex organisms—all without explicit algorithms.
+      </p>
+
+      <div class="key-insight">
+        <strong>Core Insight</strong>
+        Computation is the consequence of systems minimizing surprise through constraint-guided physical evolution. Systems navigate constraints while optimizing information flow—this constitutes computation in the COEC framework.
+      </div>
+
+      <p>
+        Traditional computational frameworks (Turing machines, cellular automata, Boolean networks) rely on discrete state transitions governed by explicit rules. COEC conceptualizes computation as the natural trajectory of a physical system through its state space, shaped by physical constraints and information-theoretic principles.
+      </p>
+    </section>
+
+    <section class="paper-section" id="ontology">
+      <h2 class="paper-section__title">2. Formal Ontology</h2>
+
+      <div class="definition">
+        <div class="definition__label">Definition (COEC System)</div>
+        <p>A Constraint-Oriented Emergent Computation system is a tuple \((S, C, E, \Phi, R, I, P)\) where:</p>
+        <ul>
+          <li>\(S\): Computational substrate with configuration space \(\Omega_S\)</li>
+          <li>\(C\): Constraint set imposing conditions on \(S\)</li>
+          <li>\(E\): Energy-information landscape</li>
+          <li>\(\Phi\): System evolution operator</li>
+          <li>\(R\): Residual function (output, attractor, or terminal configuration)</li>
+          <li>\(I\): Information structure</li>
+          <li>\(P\): Precision weighting</li>
+        </ul>
+      </div>
+
+      <p>
+        Computation emerges from the evolution of substrate \(S\) under constraints \(C\) within the energy-information landscape \(E\). Formally:
+      </p>
+
+      <p style="text-align: center;">
+        \[R = \Phi(S \,||\, C, E, I, P)\]
+      </p>
+
+      <h3 class="paper-section__subtitle">Example: Protein Folding</h3>
+
+      <table class="paper-table">
+        <tr><th>Component</th><th>Protein Folding</th></tr>
+        <tr><td>\(S\)</td><td>Unfolded polypeptide chain</td></tr>
+        <tr><td>\(C\)</td><td>Chemical bonds, hydrophobic effects, steric hindrance</td></tr>
+        <tr><td>\(E\)</td><td>Free energy landscape</td></tr>
+        <tr><td>\(\Phi\)</td><td>Molecular dynamics evolution</td></tr>
+        <tr><td>\(R\)</td><td>Final folded configuration</td></tr>
+      </table>
+
+      <h3 class="paper-section__subtitle">Information-Theoretic Principles</h3>
+
+      <p>
+        COEC systems are characterized by their management of uncertainty:
+      </p>
+
+      <p style="text-align: center;">
+        \[\Delta I(S, C) = H(S) - H(S|C)\]
+      </p>
+
+      <p>
+        This quantity reflects the reduction in uncertainty resulting from constraint application—quantifying the computational work performed.
+      </p>
+    </section>
+
+    <section class="paper-section" id="taxonomy">
+      <h2 class="paper-section__title">3. Computational Taxonomy</h2>
+
+      <p>
+        The framework introduces nine computational classes spanning Sub-Turing to Hyper-Turing capabilities:
+      </p>
+
+      <table class="paper-table">
+        <thead>
+          <tr>
+            <th>Class</th>
+            <th>Constraints</th>
+            <th>Example</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>SS-COEC</td>
+            <td>Static, simple</td>
+            <td>Crystal formation</td>
+          </tr>
+          <tr>
+            <td>SD-COEC</td>
+            <td>Static, complex</td>
+            <td>Protein folding</td>
+          </tr>
+          <tr>
+            <td>DS-COEC</td>
+            <td>Dynamic, simple</td>
+            <td>Cellular automata</td>
+          </tr>
+          <tr>
+            <td>DD-COEC</td>
+            <td>Dynamic, complex</td>
+            <td>Neural networks</td>
+          </tr>
+          <tr>
+            <td>Meta-COEC</td>
+            <td>Self-modifying</td>
+            <td>Learning systems</td>
+          </tr>
+          <tr>
+            <td>Hyper-COEC</td>
+            <td>Hierarchical</td>
+            <td>Developmental biology</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="key-insight">
+        <strong>Key Distinction</strong>
+        Traditional computation: explicit rules operating on symbols. COEC: constraint satisfaction through physical evolution. The computation happens because of constraints, not despite them.
+      </div>
+    </section>
+
+    <section class="paper-section" id="applications">
+      <h2 class="paper-section__title">4. Applications</h2>
+
+      <h3 class="paper-section__subtitle">Synthetic Biology</h3>
+      <p>
+        COEC principles enable design of biological circuits that compute through molecular constraint satisfaction rather than genetic logic gates.
+      </p>
+
+      <h3 class="paper-section__subtitle">Neuromorphic Computing</h3>
+      <p>
+        Neural dynamics as COEC: spike patterns emerge from energy minimization under synaptic constraints.
+      </p>
+
+      <h3 class="paper-section__subtitle">Distributed Systems</h3>
+      <p>
+        Consensus protocols as constraint-oriented computation: agreement emerges from local constraint satisfaction.
+      </p>
+    </section>
+
+    <section class="paper-section" id="implications">
+      <h2 class="paper-section__title">5. Implications</h2>
+
+      <p>
+        COEC provides a unified mathematical language for understanding computational processes from protein folding to neural dynamics. The framework suggests that biological systems don't "run algorithms"—they satisfy constraints, and computation emerges from the satisfaction process.
+      </p>
+
+      <div class="key-insight">
+        <strong>The Deeper Principle</strong>
+        Biology doesn't optimize; it satisfies. Systems that find valid regions within constraint landscapes outperform those chasing global optima. This is computation through constraint, not despite it.
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const sections = document.querySelectorAll('.paper-section');
+    const tocItems = document.querySelectorAll('.toc-item');
+
+    function updateTOC() {
+      let current = '';
+      sections.forEach(section => {
+        const sectionTop = section.offsetTop - 100;
+        if (window.scrollY >= sectionTop) {
+          current = section.id;
+        }
+      });
+
+      tocItems.forEach(item => {
+        item.classList.remove('active');
+        if (item.getAttribute('href') === `#${current}`) {
+          item.classList.add('active');
+        }
+      });
+    }
+
+    window.addEventListener('scroll', updateTOC);
+    updateTOC();
+  </script>
+</body>
+</html>
