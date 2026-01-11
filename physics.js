@@ -297,17 +297,33 @@
   // ============================================
   // LOAD SAVED STATE
   // ============================================
+
+  // Export disable function for funMode toggle
+  window.disableTrophy = disableTrophy;
+
   window.addEventListener('DOMContentLoaded', () => {
     const settings = JSON.parse(localStorage.getItem('dashboard-settings') || '{}');
-    if (settings.physicsTrophy) {
+
+    // Only enable if funMode is on AND trophy is enabled
+    const funModeEnabled = settings.funMode === true;
+    const shouldEnable = funModeEnabled && settings.physicsTrophy;
+
+    if (shouldEnable) {
       enableTrophy();
     }
 
     // Settings toggle handler
     const trophyToggle = document.getElementById('enable-trophy');
     if (trophyToggle) {
-      trophyToggle.checked = settings.physicsTrophy || false;
+      trophyToggle.checked = shouldEnable || false;
       trophyToggle.addEventListener('change', (e) => {
+        // Check if funMode is enabled before allowing toggle
+        const currentSettings = JSON.parse(localStorage.getItem('dashboard-settings') || '{}');
+        if (!currentSettings.funMode) {
+          e.target.checked = false;
+          return;
+        }
+
         if (e.target.checked) {
           enableTrophy();
         } else {
@@ -315,8 +331,8 @@
         }
 
         // Save to settings
-        settings.physicsTrophy = e.target.checked;
-        localStorage.setItem('dashboard-settings', JSON.stringify(settings));
+        currentSettings.physicsTrophy = e.target.checked;
+        localStorage.setItem('dashboard-settings', JSON.stringify(currentSettings));
       });
     }
   });

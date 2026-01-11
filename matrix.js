@@ -184,17 +184,33 @@
   // ============================================
   // LOAD SAVED STATE
   // ============================================
+
+  // Export disable function for funMode toggle
+  window.disableMatrix = disableMatrix;
+
   window.addEventListener('DOMContentLoaded', () => {
     const settings = JSON.parse(localStorage.getItem('dashboard-settings') || '{}');
-    if (settings.matrixRain) {
+
+    // Only enable if funMode is on AND matrix is enabled
+    const funModeEnabled = settings.funMode === true;
+    const shouldEnable = funModeEnabled && settings.matrixRain;
+
+    if (shouldEnable) {
       enableMatrix();
     }
 
     // Settings toggle handler
     const matrixToggle = document.getElementById('enable-matrix');
     if (matrixToggle) {
-      matrixToggle.checked = settings.matrixRain || false;
+      matrixToggle.checked = shouldEnable || false;
       matrixToggle.addEventListener('change', (e) => {
+        // Check if funMode is enabled before allowing toggle
+        const currentSettings = JSON.parse(localStorage.getItem('dashboard-settings') || '{}');
+        if (!currentSettings.funMode) {
+          e.target.checked = false;
+          return;
+        }
+
         if (e.target.checked) {
           enableMatrix();
         } else {
@@ -202,8 +218,8 @@
         }
 
         // Save to settings
-        settings.matrixRain = e.target.checked;
-        localStorage.setItem('dashboard-settings', JSON.stringify(settings));
+        currentSettings.matrixRain = e.target.checked;
+        localStorage.setItem('dashboard-settings', JSON.stringify(currentSettings));
       });
     }
   });

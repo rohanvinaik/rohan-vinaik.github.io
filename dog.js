@@ -2757,10 +2757,17 @@
   // LOAD SAVED STATE
   // ===========================================
 
+  // Export disable function for funMode toggle
+  window.disableDog = disableDog;
+
   window.addEventListener('DOMContentLoaded', () => {
     const settings = JSON.parse(localStorage.getItem('dashboard-settings') || '{}');
 
-    const shouldEnable = settings.asciiDog !== false;
+    // Only enable if funMode is on AND dog is enabled
+    const funModeEnabled = settings.funMode === true;
+    const dogEnabled = settings.asciiDog !== false;
+    const shouldEnable = funModeEnabled && dogEnabled;
+
     if (shouldEnable) {
       enableDog();
     }
@@ -2769,14 +2776,21 @@
     if (dogToggle) {
       dogToggle.checked = shouldEnable;
       dogToggle.addEventListener('change', (e) => {
+        // Check if funMode is enabled before allowing toggle
+        const currentSettings = JSON.parse(localStorage.getItem('dashboard-settings') || '{}');
+        if (!currentSettings.funMode) {
+          e.target.checked = false;
+          return;
+        }
+
         if (e.target.checked) {
           enableDog();
         } else {
           disableDog();
         }
 
-        settings.asciiDog = e.target.checked;
-        localStorage.setItem('dashboard-settings', JSON.stringify(settings));
+        currentSettings.asciiDog = e.target.checked;
+        localStorage.setItem('dashboard-settings', JSON.stringify(currentSettings));
       });
     }
   });

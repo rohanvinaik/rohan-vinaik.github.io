@@ -1125,7 +1125,9 @@
     volume: 80,
     accent: 'cyan', // Default to cyan (blue/teal) to match HTML
     background: 'black',
-    language: 'standard'
+    language: 'standard',
+    funMode: false,  // Easter eggs off by default for professional presentation
+    themeMode: 'terminal'  // 'terminal' (dark) or 'clinical' (light)
   };
 
   // ============================================
@@ -1154,22 +1156,36 @@
   // APPLY SETTINGS
   // ============================================
   function applySettings() {
-    // Apply accent color
     const root = document.documentElement;
-    const accentColors = {
-      green: '#00ff00',
-      amber: '#ffb000',
-      cyan: '#00ffff'
-    };
-    root.style.setProperty('--accent', accentColors[settings.accent] || accentColors.green);
 
-    // Apply background color
-    const bgColors = {
-      black: '#0a0a0a',
-      gray: '#1a1a1a',
-      navy: '#0a0a1a'
-    };
-    root.style.setProperty('--bg-primary', bgColors[settings.background] || bgColors.black);
+    // Apply theme mode (terminal/clinical)
+    if (settings.themeMode === 'clinical') {
+      root.setAttribute('data-theme', 'clinical');
+    } else {
+      root.removeAttribute('data-theme');
+    }
+
+    // Apply accent color (only in terminal mode)
+    if (settings.themeMode !== 'clinical') {
+      const accentColors = {
+        green: '#00ff00',
+        amber: '#ffb000',
+        cyan: '#00ffff'
+      };
+      root.style.setProperty('--accent', accentColors[settings.accent] || accentColors.green);
+
+      // Apply background color
+      const bgColors = {
+        black: '#0a0a0a',
+        gray: '#1a1a1a',
+        navy: '#0a0a1a'
+      };
+      root.style.setProperty('--bg-primary', bgColors[settings.background] || bgColors.black);
+    } else {
+      // Clinical mode uses its own colors from CSS
+      root.style.removeProperty('--accent');
+      root.style.removeProperty('--bg-primary');
+    }
 
     // Apply translations
     applyTranslations();
@@ -1198,6 +1214,12 @@
   // UPDATE SETTINGS UI
   // ============================================
   function updateSettingsUI() {
+    // Theme mode radio buttons
+    const themeModeRadios = document.querySelectorAll('input[name="theme-mode"]');
+    themeModeRadios.forEach(radio => {
+      radio.checked = radio.value === settings.themeMode;
+    });
+
     // Volume slider
     const volumeSlider = document.getElementById('volume-slider');
     const volumeValue = document.getElementById('volume-value');
@@ -1373,6 +1395,18 @@
       }
     });
 
+    // Theme mode radio buttons
+    const themeModeRadios = document.querySelectorAll('input[name="theme-mode"]');
+    themeModeRadios.forEach(radio => {
+      radio.addEventListener('change', (e) => {
+        if (e.target.checked) {
+          settings.themeMode = e.target.value;
+          applySettings();
+          saveSettings();
+        }
+      });
+    });
+
     // Volume slider
     const volumeSlider = document.getElementById('volume-slider');
     const volumeValue = document.getElementById('volume-value');
@@ -1414,6 +1448,44 @@
       });
     }
 
+    // Fun Mode toggle
+    const funModeToggle = document.getElementById('enable-fun-mode');
+    const funStuffOptions = document.getElementById('fun-stuff-options');
+    if (funModeToggle) {
+      // Initialize state from settings
+      funModeToggle.checked = settings.funMode || false;
+      if (funStuffOptions) {
+        funStuffOptions.style.display = settings.funMode ? 'block' : 'none';
+        funStuffOptions.style.opacity = settings.funMode ? '1' : '0.5';
+      }
+
+      funModeToggle.addEventListener('change', (e) => {
+        settings.funMode = e.target.checked;
+        if (funStuffOptions) {
+          funStuffOptions.style.display = e.target.checked ? 'block' : 'none';
+          funStuffOptions.style.opacity = e.target.checked ? '1' : '0.5';
+        }
+
+        // If turning off fun mode, disable all easter eggs
+        if (!e.target.checked) {
+          // Dispatch events to disable easter eggs
+          if (window.disableDog) window.disableDog();
+          if (window.disableMatrix) window.disableMatrix();
+          if (window.disableTrophy) window.disableTrophy();
+
+          // Uncheck the individual toggles
+          const dogToggle = document.getElementById('enable-dog');
+          const matrixToggle = document.getElementById('enable-matrix');
+          const trophyToggle = document.getElementById('enable-trophy');
+          if (dogToggle) dogToggle.checked = false;
+          if (matrixToggle) matrixToggle.checked = false;
+          if (trophyToggle) trophyToggle.checked = false;
+        }
+
+        saveSettings();
+      });
+    }
+
     // Apply button
     if (applyBtn) {
       applyBtn.addEventListener('click', () => {
@@ -1427,10 +1499,31 @@
       resetBtn.addEventListener('click', () => {
         settings = {
           volume: 80,
-          accent: 'green',
-          background: 'gray',
-          language: 'standard'
+          accent: 'cyan',
+          background: 'black',
+          language: 'standard',
+          funMode: false,
+          themeMode: 'terminal'
         };
+
+        // Disable all easter eggs on reset
+        if (window.disableDog) window.disableDog();
+        if (window.disableMatrix) window.disableMatrix();
+        if (window.disableTrophy) window.disableTrophy();
+
+        // Update UI
+        if (funModeToggle) funModeToggle.checked = false;
+        if (funStuffOptions) {
+          funStuffOptions.style.display = 'none';
+          funStuffOptions.style.opacity = '0.5';
+        }
+        const dogToggle = document.getElementById('enable-dog');
+        const matrixToggle = document.getElementById('enable-matrix');
+        const trophyToggle = document.getElementById('enable-trophy');
+        if (dogToggle) dogToggle.checked = false;
+        if (matrixToggle) matrixToggle.checked = false;
+        if (trophyToggle) trophyToggle.checked = false;
+
         applySettings();
         saveSettings();
       });
