@@ -19,7 +19,7 @@ class ResearchGraphV2 {
 
     // Layout configuration
     this.config = {
-      nodeWidth: 160,
+      nodeWidth: 180,
       nodeHeight: 48,
       tierGap: 100,
       nodeGap: 16,

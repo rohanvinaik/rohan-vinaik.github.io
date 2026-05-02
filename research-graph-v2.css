@@ -6,7 +6,16 @@
   min-height: 500px;
   background: var(--bg-primary);
   border: 1px solid var(--border);
-  overflow: hidden;
+  /* Let the graph scroll horizontally inside its container when the layout
+     is wider than available space, so the rest of the page can still wrap. */
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+/* Inner layout container — at least as wide as the graph layout calculates */
+.graph-v2__svg,
+.graph-v2__nodes {
+  min-width: 1140px;
 }
 
 /* SVG Layer */
@@ -58,6 +67,8 @@
   transition: all 0.15s ease;
   transform: translateX(-50%);
   white-space: nowrap;
+  overflow: hidden;
+  box-sizing: border-box;
 }
 
 .graph-v2__node:hover {
@@ -87,6 +98,11 @@
   font-weight: 500;
   color: var(--text-primary);
   letter-spacing: 0.03em;
+  /* Truncate long titles with ellipsis instead of overflowing the node box. */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
 }
 
 /* Detail Panel */
