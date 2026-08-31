@@ -594,20 +594,20 @@
 
       <div class="metrics-grid">
         <div class="metric-card">
-          <div class="metric-value">29,657</div>
+          <div class="metric-value">~51K</div>
           <div class="metric-label"><strong>ModelAtlas</strong> — semantic search over HuggingFace, &lt;100ms, no GPU.</div>
         </div>
         <div class="metric-card">
-          <div class="metric-value">63%</div>
-          <div class="metric-label"><strong>Wayfinder</strong> — random Mathlib sample, single pass, 22M-param encoder, on a laptop.</div>
+          <div class="metric-value">1,277/2,000</div>
+          <div class="metric-label"><strong>Wayfinder</strong> — frozen Mathlib split, raw, one neural pass per proof state, on a laptop.</div>
         </div>
         <div class="metric-card">
           <div class="metric-value">100%</div>
-          <div class="metric-label"><strong>LintGate</strong> — mutation kill on a 30K-model codebase. DO-178C Level A. 118 tools.</div>
+          <div class="metric-label"><strong>LintGate</strong> — mutation kill rate (824/824) on a 30K-model codebase. MC/DC verified.</div>
         </div>
         <div class="metric-card">
-          <div class="metric-value">100–500&times;</div>
-          <div class="metric-label"><strong>Wesker</strong> — faster than mutmut / cosmic-ray. 1,770 lines, zero deps.</div>
+          <div class="metric-value">1.00</div>
+          <div class="metric-label"><strong>Wesker</strong> — mutants per behavioral question: one per question, not forty. Zero dependencies.</div>
         </div>
       </div>
     </section>
@@ -659,7 +659,7 @@
           <span class="project-card__domain project-card__domain--ai"></span>
           <h3 class="project-card__title">ModelAtlas</h3>
           <div class="project-card__meta">ml-model-search // semantic anchors // no gpu</div>
-          <p class="project-card__description">Google for HuggingFace's 800K models. 29,657 indexed, 166 semantic anchors, &lt;100ms queries on a SQLite file — zero neural inference at query time.</p>
+          <p class="project-card__description">Google for open-source AI models. ~51K indexed, 192 semantic anchors, &lt;100ms queries on a SQLite file — zero neural inference at query time.</p>
           <div class="project-card__papers">
             <a href="https://github.com/rohanvinaik/ModelAtlas" target="_blank" rel="noopener">github</a>
           </div>
@@ -669,7 +669,7 @@
           <span class="project-card__domain project-card__domain--ai"></span>
           <h3 class="project-card__title">Wayfinder</h3>
           <div class="project-card__meta">lean 4 // proof compiler // 22m params</div>
-          <p class="project-card__description">Proof compiler for Lean 4. 63% of a 2,000-theorem random Mathlib sample in one pass on commodity hardware; 28% requires no trained model at all. Matches DeepSeek-Prover-V2 (671B, datacenter) on AIME-from-MiniF2F-test, on a laptop.</p>
+          <p class="project-card__description">Proof search as navigation for Lean 4. 1,277 of a frozen 2,000-theorem Mathlib split — raw, no assist — with one neural pass per proof state; the deterministic majority requires no trained model at all.</p>
           <div class="project-card__papers">
             <a href="https://github.com/rohanvinaik/Wayfinder" target="_blank" rel="noopener">github</a>
           </div>
@@ -689,7 +689,7 @@
           <span class="project-card__domain project-card__domain--theory"></span>
           <h3 class="project-card__title">Wesker</h3>
           <div class="project-card__meta">mutation testing // python ast // zero deps</div>
-          <p class="project-card__description">In-process AST mutation testing for Python — 100–500x faster than mutmut or cosmic-ray. ~1,770 lines, zero dependencies. Mutation testing has been "too expensive to use" for 48 years; Wesker restructures the computation.</p>
+          <p class="project-card__description">In-process AST mutation testing for Python — one mutant per behavioral dimension instead of forty phrasings of the same question, with the greedy selection bound machine-checked in Lean. Zero dependencies. Mutation testing has been "too expensive to use" for 48 years; Wesker restructures the computation.</p>
           <div class="project-card__papers">
             <a href="https://github.com/rohanvinaik/Wesker" target="_blank" rel="noopener">github</a>
           </div>
@@ -730,7 +730,7 @@
           <div class="approach-item__description">
             <a href="https://github.com/rohanvinaik/ShortcutForge" target="_blank" rel="noopener">ShortcutForge</a> · natural-language compiler for Apple Shortcuts; LLM output as untrusted intermediate code.
             <a href="https://github.com/rohanvinaik/GenomeVault" target="_blank" rel="noopener">GenomeVault</a> · privacy-preserving genomics on a Z₂×Z₂ + HDC + reference-pool stack; 99.978% accuracy at 30 MB / 5.81 µs.
-            <a href="https://github.com/rohanvinaik/Yami" target="_blank" rel="noopener">Yami</a> · the Wayfinder thesis applied to chess: 6 cheap signals, interference pattern <em>is</em> the move.
+            <a href="https://github.com/rohanvinaik/Yami" target="_blank" rel="noopener">Yami</a> · chess read as a story on the Genesis lineage — recognition, not tree search.
           </div>
         </div>
         <div class="approach-item">
@@ -759,14 +759,14 @@
           <div class="paper-item__summary">Fingerprint language models from API responses alone—95.8% accuracy with 256 calls.</div>
         </a>
 
-        <a href="#" class="paper-item paper-item--link">
+        <a href="https://github.com/rohanvinaik/PoT_Experiments" target="_blank" rel="noopener" class="paper-item paper-item--link">
           <div class="paper-item__title">Proof-of-Training</div>
-          <div class="paper-item__summary">Verify model training provenance without revealing weights—30x faster than baseline.</div>
+          <div class="paper-item__summary">Verify model identity through behavior on cryptographically pre-committed challenges—without revealing weights.</div>
         </a>
 
-        <a href="#" class="paper-item paper-item--link">
+        <a href="https://github.com/rohanvinaik/GenomeVault" target="_blank" rel="noopener" class="paper-item paper-item--link">
           <div class="paper-item__title">GenomeVault</div>
-          <div class="paper-item__summary">DNA storage with semantic query—40x compression, nanosecond lookups, privacy through geometry.</div>
+          <div class="paper-item__summary">Compute on a genome without ever holding it—privacy, security, and utility at once, on a laptop.</div>
         </a>
 
         <a href="papers/orthogonal-ternary-projection.html" class="paper-item paper-item--link">
@@ -856,7 +856,7 @@
 
         <p>Independent researcher. Cambridge, MA. The work has no institutional scaffolding behind it; it's also reproducible from a laptop, which is part of the bet.</p>
 
-        <p>The legibility infrastructure — peer-reviewed papers, talks, citations — is mostly downstream of work that hasn't been written up yet. The Lean proofs compile, the Kaggle medals are real, the metrics reproduce, but the formal write-ups that make the work portable across institutions are the next thing. If you find a piece of the work that interests you, email me. That's the fastest path.</p>
+        <p>The legibility infrastructure — peer-reviewed papers, talks, citations — is mostly downstream of work that hasn't been written up yet. The Lean proofs compile, the competition results are real, the metrics reproduce, but the formal write-ups that make the work portable across institutions are the next thing. If you find a piece of the work that interests you, email me. That's the fastest path.</p>
 
         <div class="contact-links">
           <a href="https://github.com/rohanvinaik" target="_blank" rel="noopener">GitHub</a>
