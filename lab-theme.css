@@ -372,6 +372,27 @@ a:hover {
 .mb-md { margin-bottom: var(--space-md); }
 .mb-lg { margin-bottom: var(--space-lg); }
 
+/* Reading pages share the console palette and typeface. */
+:root {
+  --bg-primary:#1a1a1a; --bg-secondary:#222; --bg-tertiary:#292929;
+  --text-primary:#e0e0e0; --text-secondary:#b0b0b0; --text-muted:#999;
+  --border:#383838; --border-subtle:#303030;
+  --accent-biology:#00ffff; --accent-ai:#00ffff; --accent-theory:#00ffff; --accent-link:#00ffff;
+  --font-sans:var(--font-mono);
+}
+[data-theme="clinical"] {
+  --bg-primary:#fff; --bg-secondary:#f5f5f5; --bg-tertiary:#eee;
+  --text-primary:#1a1a1a; --text-secondary:#444; --text-muted:#666;
+  --border:#ddd; --border-subtle:#eee;
+  --accent-biology:#006d83; --accent-ai:#006d83; --accent-theory:#006d83; --accent-link:#006d83;
+}
+*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+.paper-main,.essay-main{min-width:0;overflow-wrap:anywhere}
+.paper-table{display:block;max-width:100%;overflow-x:auto}
+.architecture-block{max-width:100%;overflow-x:auto}
+@media(max-width:700px){body{flex-direction:column}.paper-main{width:100%;max-width:100%}}
+@media print{:root{--bg-primary:#fff;--bg-secondary:#fff;--text-primary:#000;--text-secondary:#222;--text-muted:#444;--border:#ccc}}
+
 /* ============================================
    PRINT
    ============================================ */

@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="360" height="360" viewBox="0 0 200 200">
+  <rect width="200" height="200" rx="24" fill="#FFFFFF"/>
+  <rect width="200" height="200" rx="24" fill="none" stroke="#E9E5DF" stroke-width="2"/>
+  <!-- ears -->
+  <path d="M50 70 C40 50, 60 40, 70 60 L70 90 Z" fill="#F3D6B8"/>
+  <path d="M150 70 C160 50, 140 40, 130 60 L130 90 Z" fill="#F3D6B8"/>
+  <!-- head -->
+  <circle cx="100" cy="105" r="45" fill="#FFE9D6" stroke="#E9E5DF"/>
+  <!-- eyes -->
+  <circle cx="85" cy="100" r="5" fill="#2B2B2B"/>
+  <circle cx="115" cy="100" r="5" fill="#2B2B2B"/>
+  <!-- nose -->
+  <ellipse cx="100" cy="115" rx="6" ry="4" fill="#2B2B2B"/>
+  <!-- smile -->
+  <path d="M88 125 Q100 135 112 125" stroke="#2B2B2B" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <!-- tongue -->
+  <path d="M97 126 q3 10 6 0" stroke="#E97A7A" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <!-- collar -->
+  <rect x="72" y="132" width="56" height="10" rx="5" fill="#3A7BD5" opacity="0.9"/>
+</svg>

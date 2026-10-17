@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rohan Vinaik</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <!-- Theme -->
+  <link rel="stylesheet" href="lab-theme.css?v=2026-05-01">
+  <link rel="stylesheet" href="research-graph-v2.css?v=2026-05-01">
+
+  <style>
+    /* ============================================
+       LAYOUT: Sidebar + Main Content
+       ============================================ */
+    html, body {
+      max-width: 100vw;
+      overflow-x: hidden;
+    }
+    body {
+      display: flex;
+      min-height: 100vh;
+    }
+    /* Prevent any descendant from forcing horizontal scroll on the page itself.
+       The research graph has its own internal horizontal scroll. */
+    .main {
+      max-width: calc(100vw - 260px);
+      overflow-x: hidden;
+    }
+
+    /* Mission Control Sidebar */
+    .sidebar {
+      position: fixed;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 260px;
+      background: var(--bg-secondary);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      font-family: var(--font-mono);
+      z-index: 100;
+    }
+
+    .sidebar__header {
+      padding: var(--space-lg) var(--space-md);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .sidebar__name {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: var(--space-xs);
+    }
+
+    .sidebar__path {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .sidebar__nav {
+      padding: var(--space-md);
+      flex: 1;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      padding: var(--space-sm) var(--space-sm);
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all var(--transition-fast);
+      text-decoration: none;
+      border: none;
+      background: none;
+      width: 100%;
+      text-align: left;
+    }
+
+    .nav-item:hover {
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+    }
+
+    .nav-item.active {
+      color: var(--text-primary);
+      font-weight: 500;
+    }
+
+    .nav-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      border: 1.5px solid var(--text-muted);
+      transition: all var(--transition-fast);
+    }
+
+    .nav-item.active .nav-dot {
+      background: var(--text-primary);
+      border-color: var(--text-primary);
+    }
+
+    .sidebar__footer {
+      padding: var(--space-md);
+      border-top: 1px solid var(--border);
+      font-size: 0.65rem;
+    }
+
+    .coherence-display {
+      color: var(--text-muted);
+      margin-bottom: var(--space-sm);
+      letter-spacing: 0.03em;
+    }
+
+    .sidebar__links {
+      display: flex;
+      gap: var(--space-sm);
+    }
+
+    .sidebar__links a,
+    .sidebar__links button {
+      color: var(--text-muted);
+      text-decoration: none;
+      border-bottom: none;
+    }
+
+    .sidebar__links a:hover,
+    .sidebar__links button:hover {
+      color: var(--text-primary);
+    }
+
+    .theme-toggle-btn {
+      background: none;
+      border: none;
+      font-family: var(--font-mono);
+      font-size: inherit;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 0;
+    }
+
+    /* Main Content Area */
+    .main {
+      margin-left: 260px;
+      flex: 1;
+      min-height: 100vh;
+    }
+
+    /* ============================================
+       HERO: Above content, not overlapping
+       ============================================ */
+    .hero-section {
+      height: 50vh;
+      min-height: 350px;
+      max-height: 500px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-secondary);
+    }
+
+    .hero-container {
+      width: 100%;
+      height: 100%;
+      position: relative;
+    }
+
+    .hero-canvas {
+      display: block;
+      cursor: crosshair;
+    }
+
+    .hero-overlay {
+      position: absolute;
+      bottom: var(--space-lg);
+      left: 50%;
+      transform: translateX(-50%);
+      text-align: center;
+      pointer-events: none;
+      width: 80%;
+      max-width: 600px;
+    }
+
+    .hero-promise {
+      font-family: var(--font-mono);
+      font-size: 1rem;
+      color: var(--text-primary);
+      margin-bottom: var(--space-xs);
+      letter-spacing: 0.02em;
+    }
+
+    .hero-evidence {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      letter-spacing: 0.03em;
+    }
+
+    /* ============================================
+       CHAPTERS: Content sections
+       ============================================ */
+    .chapter {
+      min-height: 80vh;
+      padding: var(--space-xl) var(--space-xl);
+      border-bottom: 1px solid var(--border);
+      max-width: 1200px;
+    }
+
+    .chapter:last-child {
+      border-bottom: none;
+    }
+
+    .chapter__header {
+      margin-bottom: var(--space-lg);
+    }
+
+    .chapter__title {
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin-bottom: var(--space-xs);
+      letter-spacing: -0.01em;
+    }
+
+    .chapter__subtitle {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      letter-spacing: 0.03em;
+    }
+
+    /* Chapter-specific content */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: var(--space-md);
+      margin: var(--space-lg) 0;
+    }
+
+    .metric-card {
+      background: var(--bg-primary);
+      border: 1px solid var(--border);
+      padding: var(--space-md);
+    }
+
+    .metric-value {
+      font-family: var(--font-mono);
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      letter-spacing: -0.02em;
+    }
+
+    .metric-label {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      margin-top: var(--space-xs);
+      line-height: 1.4;
+    }
+
+    .project-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: var(--space-md);
+    }
+
+    .project-card {
+      background: var(--bg-primary);
+      border: 1px solid var(--border);
+      padding: var(--space-md);
+      transition: border-color 0.15s ease;
+    }
+
+    .project-card:hover {
+      border-color: var(--text-secondary);
+    }
+
+    .project-card__domain {
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      margin-right: var(--space-xs);
+    }
+
+    .project-card__domain--biology { background: var(--accent-biology); }
+    .project-card__domain--ai { background: var(--accent-ai); }
+    .project-card__domain--theory { background: var(--accent-theory); }
+
+    .project-card__title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-bottom: var(--space-xs);
+    }
+
+    .project-card__meta {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      margin-bottom: var(--space-sm);
+      letter-spacing: 0.03em;
+    }
+
+    .project-card__description {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      margin-bottom: var(--space-sm);
+      line-height: 1.5;
+    }
+
+    .project-card__papers {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      padding-top: var(--space-sm);
+      border-top: 1px solid var(--border);
+    }
+
+    .project-card__papers a {
+      color: var(--text-secondary);
+      margin-right: var(--space-md);
+    }
+
+    .project-card__papers a:hover {
+      color: var(--text-primary);
+    }
+
+    .approach-list {
+      max-width: 600px;
+    }
+
+    .approach-item {
+      padding: var(--space-md) 0;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .approach-item:last-child {
+      border-bottom: none;
+    }
+
+    .approach-item__title {
+      font-family: var(--font-mono);
+      font-size: 0.9rem;
+      color: var(--text-primary);
+      margin-bottom: var(--space-xs);
+    }
+
+    .approach-item__description {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+    }
+
+    /* Paper Feed */
+    .paper-feed-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--space-lg);
+      flex-wrap: wrap;
+      gap: var(--space-md);
+    }
+
+    .paper-feed-controls {
+      display: flex;
+      gap: var(--space-md);
+      align-items: center;
+    }
+
+    .paper-feed-controls select,
+    .paper-feed-controls button {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      padding: var(--space-xs) var(--space-sm);
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      color: var(--text-primary);
+      cursor: pointer;
+    }
+
+    .paper-feed-controls select:hover,
+    .paper-feed-controls button:hover {
+      border-color: var(--text-primary);
+    }
+
+    /* Paper Items - Simplified (Winston: title + one sentence) */
+    .paper-item {
+      display: block;
+      padding: var(--space-sm) 0;
+      border-bottom: 1px solid var(--border);
+      text-decoration: none;
+    }
+
+    .paper-item:last-child {
+      border-bottom: none;
+    }
+
+    .paper-item--link {
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .paper-item--link:hover {
+      padding-left: var(--space-sm);
+    }
+
+    .paper-item--link:hover .paper-item__title {
+      color: var(--text-primary);
+    }
+
+    .paper-item__title {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--text-primary);
+      line-height: 1.4;
+    }
+
+    .paper-item__summary {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      line-height: 1.4;
+      margin-top: 2px;
+    }
+
+    /* About section */
+    .about-content {
+      max-width: 600px;
+    }
+
+    .about-content p {
+      margin-bottom: var(--space-md);
+    }
+
+    .contact-links {
+      display: flex;
+      gap: var(--space-lg);
+      margin-top: var(--space-lg);
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+    }
+
+    .contact-links a {
+      color: var(--text-primary);
+    }
+
+    /* ============================================
+       RESPONSIVE
+       ============================================ */
+    /* Tighten the sidebar earlier so content has more room on laptop widths. */
+    @media (max-width: 1024px) {
+      .sidebar {
+        width: 200px;
+      }
+      .main {
+        margin-left: 200px;
+        max-width: calc(100vw - 200px);
+      }
+      .chapter {
+        padding: var(--space-lg) var(--space-lg);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        width: 48px;
+        padding: var(--space-sm);
+      }
+
+      .sidebar__header,
+      .sidebar__footer,
+      .nav-item span {
+        display: none;
+      }
+
+      .sidebar__nav {
+        padding: var(--space-sm) 0;
+      }
+
+      .nav-item {
+        justify-content: center;
+        padding: var(--space-md) 0;
+      }
+
+      .main {
+        margin-left: 48px;
+        max-width: calc(100vw - 48px);
+      }
+
+      .chapter {
+        padding: var(--space-md) var(--space-md);
+      }
+
+      /* Hero text scales to viewport */
+      .hero-promise {
+        font-size: 0.85rem;
+      }
+      .hero-evidence {
+        font-size: 0.65rem;
+      }
+    }
+
+    /* Generic safety net — prevent any element from being wider than its container */
+    .chapter > * {
+      max-width: 100%;
+    }
+    .metric-card,
+    .project-card,
+    .approach-item {
+      min-width: 0;
+    }
+  </style>
+</head>
+<body>
+  <!-- Start in light mode (default) -->
+
+  <!-- Mission Control Sidebar -->
+  <nav class="sidebar">
+    <div class="sidebar__header">
+      <div class="sidebar__name">ROHAN VINAIK</div>
+      <div class="sidebar__path" id="terminal-path">rohan@personal ~/home</div>
+    </div>
+
+    <div class="sidebar__nav">
+      <a href="#home" class="nav-item active" data-chapter="home">
+        <span class="nav-dot"></span>
+        <span>HOME</span>
+      </a>
+      <a href="#approach" class="nav-item" data-chapter="approach">
+        <span class="nav-dot"></span>
+        <span>APPROACH</span>
+      </a>
+      <a href="#work" class="nav-item" data-chapter="work">
+        <span class="nav-dot"></span>
+        <span>WORK</span>
+      </a>
+      <a href="#papers" class="nav-item" data-chapter="papers">
+        <span class="nav-dot"></span>
+        <span>PAPERS</span>
+      </a>
+      <a href="#essays" class="nav-item" data-chapter="essays">
+        <span class="nav-dot"></span>
+        <span>ESSAYS</span>
+      </a>
+      <a href="#about" class="nav-item" data-chapter="about">
+        <span class="nav-dot"></span>
+        <span>ABOUT</span>
+      </a>
+    </div>
+
+    <div class="sidebar__footer">
+      <div class="coherence-display" id="coherence-display">coherence: 0.00</div>
+      <div class="sidebar__links">
+        <a href="https://github.com/rohanvinaik" target="_blank" rel="noopener">github</a>
+        <a href="mailto:rohanpvinaik@gmail.com">email</a>
+        <button class="theme-toggle-btn" id="theme-toggle" title="Toggle theme">theme</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="main">
+    <!-- Persistent Hero -->
+    <section class="hero-section">
+      <div class="hero-container">
+        <canvas id="hero-canvas" class="hero-canvas"></canvas>
+        <div class="hero-overlay">
+          <div class="hero-promise">Find the geometry. Navigate it.</div>
+          <div class="hero-evidence">Four working systems. One paradigm. On a laptop.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Chapter 1: Home -->
+    <section class="chapter" id="home">
+      <div class="chapter__header">
+        <h1 class="chapter__title">Geometric navigation, across domains</h1>
+        <p class="chapter__subtitle">modelatlas // wayfinder // lintgate // wesker</p>
+      </div>
+
+      <div class="about-content" style="max-width: 720px; margin-bottom: var(--space-lg);">
+        <p style="font-size: 0.95rem; line-height: 1.75; color: var(--text-secondary);">
+          If you've ever wondered why proving a theorem in Lean takes 671B parameters and a datacenter — or tried to find the right model on HuggingFace and given up — or asked how many tests it actually takes to fully specify a program — you're in the right place.
+        </p>
+        <p style="font-size: 0.95rem; line-height: 1.75; color: var(--text-secondary);">
+          I build systems where structure does the work that scale usually gets credit for. Same principle across domains: find the geometry, navigate it, let cheap search handle the rest.
+        </p>
+      </div>
+
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <div class="metric-value">29,657</div>
+          <div class="metric-label"><strong>ModelAtlas</strong> — semantic search over HuggingFace, &lt;100ms, no GPU.</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value">63%</div>
+          <div class="metric-label"><strong>Wayfinder</strong> — random Mathlib sample, single pass, 22M-param encoder, on a laptop.</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value">100%</div>
+          <div class="metric-label"><strong>LintGate</strong> — mutation kill on a 30K-model codebase. DO-178C Level A. 118 tools.</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value">100–500&times;</div>
+          <div class="metric-label"><strong>Wesker</strong> — faster than mutmut / cosmic-ray. 1,770 lines, zero deps.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Chapter 2: Approach -->
+    <section class="chapter" id="approach">
+      <div class="chapter__header">
+        <h2 class="chapter__title">Approach</h2>
+        <p class="chapter__subtitle">how structure does the work</p>
+      </div>
+
+      <div class="approach-list">
+        <div class="approach-item">
+          <div class="approach-item__title">Choose the right encoding</div>
+          <div class="approach-item__description">When the representation honors the problem's natural structure, answers emerge from geometry rather than search.</div>
+        </div>
+        <div class="approach-item">
+          <div class="approach-item__title">Satisfy, don't optimize</div>
+          <div class="approach-item__description">Biology navigates constraint landscapes. Systems that find valid regions outperform those chasing global optima.</div>
+        </div>
+        <div class="approach-item">
+          <div class="approach-item__title">Let physics compute</div>
+          <div class="approach-item__description">Hyperdimensional vectors, constraint surfaces, topological features. The substrate does the heavy lifting.</div>
+        </div>
+        <div class="approach-item">
+          <div class="approach-item__title">Verify without opening</div>
+          <div class="approach-item__description">Mathematical guarantees about systems you can't see inside. Behavioral signatures, not internal inspection.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Chapter 3: Work -->
+    <section class="chapter" id="work">
+      <div class="chapter__header">
+        <h2 class="chapter__title">Work</h2>
+        <p class="chapter__subtitle">projects and publications</p>
+      </div>
+
+      <!-- Research Graph -->
+      <div id="research-graph-container" style="height: 520px; margin-bottom: var(--space-lg); overflow: visible;"></div>
+
+      <h3 style="margin-top: var(--space-xl); margin-bottom: var(--space-md);">The four pillars</h3>
+      <p style="font-size: 0.85rem; color: var(--text-secondary); max-width: 680px; margin-bottom: var(--space-lg); line-height: 1.7;">
+        One paradigm — geometric navigation through a constrained space — instantiated four times across model search, theorem proving, code specification, and mutation testing. Same encoding move, different domain.
+      </p>
+
+      <div class="project-grid">
+        <div class="project-card">
+          <span class="project-card__domain project-card__domain--ai"></span>
+          <h3 class="project-card__title">ModelAtlas</h3>
+          <div class="project-card__meta">ml-model-search // semantic anchors // no gpu</div>
+          <p class="project-card__description">Google for HuggingFace's 800K models. 29,657 indexed, 166 semantic anchors, &lt;100ms queries on a SQLite file — zero neural inference at query time.</p>
+          <div class="project-card__papers">
+            <a href="https://github.com/rohanvinaik/ModelAtlas" target="_blank" rel="noopener">github</a>
+          </div>
+        </div>
+
+        <div class="project-card">
+          <span class="project-card__domain project-card__domain--ai"></span>
+          <h3 class="project-card__title">Wayfinder</h3>
+          <div class="project-card__meta">lean 4 // proof compiler // 22m params</div>
+          <p class="project-card__description">Proof compiler for Lean 4. 63% of a 2,000-theorem random Mathlib sample in one pass on commodity hardware; 28% requires no trained model at all. Matches DeepSeek-Prover-V2 (671B, datacenter) on AIME-from-MiniF2F-test, on a laptop.</p>
+          <div class="project-card__papers">
+            <a href="https://github.com/rohanvinaik/Wayfinder" target="_blank" rel="noopener">github</a>
+          </div>
+        </div>
+
+        <div class="project-card">
+          <span class="project-card__domain project-card__domain--theory"></span>
+          <h3 class="project-card__title">LintGate</h3>
+          <div class="project-card__meta">specification compiler // mc/dc // mutation</div>
+          <p class="project-card__description">Specification compiler. 100% mutation kill on a 30K-model codebase, MC/DC verification-capable, DO-178C Level A. Debugging drops to zero under supervision. The question it answers: <em>how many tests does it take to fully specify a program?</em></p>
+          <div class="project-card__papers">
+            <a href="https://github.com/rohanvinaik/LintGate" target="_blank" rel="noopener">github</a>
+          </div>
+        </div>
+
+        <div class="project-card">
+          <span class="project-card__domain project-card__domain--theory"></span>
+          <h3 class="project-card__title">Wesker</h3>
+          <div class="project-card__meta">mutation testing // python ast // zero deps</div>
+          <p class="project-card__description">In-process AST mutation testing for Python — 100–500x faster than mutmut or cosmic-ray. ~1,770 lines, zero dependencies. Mutation testing has been "too expensive to use" for 48 years; Wesker restructures the computation.</p>
+          <div class="project-card__papers">
+            <a href="https://github.com/rohanvinaik/Wesker" target="_blank" rel="noopener">github</a>
+          </div>
+        </div>
+      </div>
+
+      <h3 style="margin-top: var(--space-xl); margin-bottom: var(--space-md);">Earlier work</h3>
+      <p style="font-size: 0.85rem; color: var(--text-secondary); max-width: 680px; margin-bottom: var(--space-lg); line-height: 1.7;">
+        The four pillars grew out of three research threads, plus a set of applied projects. Each is its own working artifact; together they're the lineage that produced the paradigm.
+      </p>
+
+      <div class="approach-list" style="max-width: 720px;">
+        <div class="approach-item">
+          <div class="approach-item__title">Verification — can we identify a model through behavior alone?</div>
+          <div class="approach-item__description">
+            <a href="https://github.com/rohanvinaik/PoT_Experiments" target="_blank" rel="noopener">PoT_Experiments</a> · cryptographic model identity via behavioral fingerprints, 90.9% on a Mac for ~$0.50 of electricity.
+            <a href="https://github.com/rohanvinaik/REV" target="_blank" rel="noopener">REV</a> · neural-network "restriction sites" — verify 70B models in 3–4 GB of memory.
+            <a href="https://github.com/rohanvinaik/HBT_Validator" target="_blank" rel="noopener">HBT_Validator</a> · hyperdimensional fingerprints capturing architectural lineage (Behavioral Holography, 95.8% with 256 API calls).
+          </div>
+        </div>
+        <div class="approach-item">
+          <div class="approach-item__title">Grounding — can we explain what a model knows, and why it's wrong?</div>
+          <div class="approach-item__description">
+            <a href="https://github.com/rohanvinaik/semantic_probing" target="_blank" rel="noopener">semantic_probing</a> · 62 NSM primitives, Hadamard-orthogonal, 100% routing precision, 273µs per query, no training.
+            <a href="https://github.com/rohanvinaik/sparse-wiki-grounding" target="_blank" rel="noopener">sparse-wiki-grounding</a> · typed knowledge links with explicit reasoning chains — when an LLM hallucinates, this tells you <em>why</em> and <em>who actually did</em> the misattributed thing.
+          </div>
+        </div>
+        <div class="approach-item">
+          <div class="approach-item__title">Alignment — can we guarantee what a system won't do?</div>
+          <div class="approach-item__description">
+            <a href="https://github.com/rohanvinaik/orthogonal-validators" target="_blank" rel="noopener">orthogonal-validators</a> · structurally independent decompositions; 0% error rate on auto-accepted outputs.
+            <a href="https://github.com/rohanvinaik/negative-learning" target="_blank" rel="noopener">negative-learning</a> · Minsky's censors and suppressors — 22x more sample-efficient than positive examples.
+            <a href="https://github.com/rohanvinaik/experience-memory" target="_blank" rel="noopener">experience-memory</a> · O(1) fix lookup for recurring errors, ~1.6µs retrieval, no gradient descent.
+          </div>
+        </div>
+        <div class="approach-item">
+          <div class="approach-item__title">Applied</div>
+          <div class="approach-item__description">
+            <a href="https://github.com/rohanvinaik/ShortcutForge" target="_blank" rel="noopener">ShortcutForge</a> · natural-language compiler for Apple Shortcuts; LLM output as untrusted intermediate code.
+            <a href="https://github.com/rohanvinaik/GenomeVault" target="_blank" rel="noopener">GenomeVault</a> · privacy-preserving genomics on a Z₂×Z₂ + HDC + reference-pool stack; 99.978% accuracy at 30 MB / 5.81 µs.
+            <a href="https://github.com/rohanvinaik/Yami" target="_blank" rel="noopener">Yami</a> · the Wayfinder thesis applied to chess: 6 cheap signals, interference pattern <em>is</em> the move.
+          </div>
+        </div>
+        <div class="approach-item">
+          <div class="approach-item__title">Foundations</div>
+          <div class="approach-item__description">
+            Kanerva (hyperdimensional computing) · Wierzbicka (semantic primitives) · Minsky (censors, suppressors, K-lines) · Collins &amp; Loftus (spreading activation) · Winston (near-miss learning).
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- Chapter 4: Papers -->
+    <section class="chapter" id="papers">
+      <div class="chapter__header">
+        <h2 class="chapter__title">Papers</h2>
+        <p class="chapter__subtitle">publications and paper feed</p>
+      </div>
+
+      <!-- Publications: Title + One Sentence (Winston principle) -->
+      <h3 style="margin-bottom: var(--space-md);">Publications</h3>
+      <div class="publications-list" style="margin-bottom: var(--space-xl);">
+
+        <a href="papers/behavioral-holography.html" class="paper-item paper-item--link">
+          <div class="paper-item__title">Behavioral Holography</div>
+          <div class="paper-item__summary">Fingerprint language models from API responses alone—95.8% accuracy with 256 calls.</div>
+        </a>
+
+        <a href="#" class="paper-item paper-item--link">
+          <div class="paper-item__title">Proof-of-Training</div>
+          <div class="paper-item__summary">Verify model training provenance without revealing weights—30x faster than baseline.</div>
+        </a>
+
+        <a href="#" class="paper-item paper-item--link">
+          <div class="paper-item__title">GenomeVault</div>
+          <div class="paper-item__summary">DNA storage with semantic query—40x compression, nanosecond lookups, privacy through geometry.</div>
+        </a>
+
+        <a href="papers/orthogonal-ternary-projection.html" class="paper-item paper-item--link">
+          <div class="paper-item__title">Orthogonal Ternary Projection</div>
+          <div class="paper-item__summary">DNA is not base-4, it's base-2²—zeros encode orthogonality, not absence.</div>
+        </a>
+
+        <a href="papers/coec-framework.html" class="paper-item paper-item--link">
+          <div class="paper-item__title">COEC Framework</div>
+          <div class="paper-item__summary">Computation as trajectory through constrained state space—formalizes 9 computational classes.</div>
+        </a>
+
+        <a href="papers/ontological-framework.html" class="paper-item paper-item--link">
+          <div class="paper-item__title">An Ontological Framework for Meaning</div>
+          <div class="paper-item__summary">How meaning, knowledge, and intelligence emerge from constraints, topology, and intention.</div>
+        </a>
+
+        <a href="papers/narrative-ethics.html" class="paper-item paper-item--link">
+          <div class="paper-item__title">Beyond Binary Ethics</div>
+          <div class="paper-item__summary">Machines as philosophical mirrors—narrative learning as ethical development.</div>
+        </a>
+
+      </div>
+
+      <!-- Paper Feed -->
+      <h3 style="margin-bottom: var(--space-md);">Reading</h3>
+      <div class="paper-feed-header">
+        <div class="paper-feed-meta" style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-muted);">
+          <span id="total-papers">--</span> papers · <span id="last-updated">--</span>
+        </div>
+        <div class="paper-feed-controls">
+          <select id="topic-filter">
+            <option value="all">All</option>
+            <option value="hdc">HDC</option>
+            <option value="genomics">Genomics</option>
+            <option value="ai-security">AI Security</option>
+            <option value="tda">TDA</option>
+            <option value="theory">Theory</option>
+          </select>
+          <select id="count-select">
+            <option value="5">5</option>
+            <option value="10">10</option>
+            <option value="20">20</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="feed-status" style="display: none; padding: var(--space-sm); margin-bottom: var(--space-md); border: 1px solid var(--border); font-family: var(--font-mono); font-size: 0.75rem;">
+        <span id="status-message"></span>
+      </div>
+
+      <div id="papers-container">
+        <div style="text-align: center; padding: var(--space-xl); color: var(--text-muted); font-size: 0.85rem;">
+          Loading paper feed...
+        </div>
+      </div>
+    </section>
+
+    <!-- Chapter 5: Essays -->
+    <section class="chapter" id="essays">
+      <div class="chapter__header">
+        <h2 class="chapter__title">Essays</h2>
+        <p class="chapter__subtitle">long-form writing &amp; arguments</p>
+      </div>
+
+      <div class="publications-list" style="max-width: 760px;">
+
+        <a href="essays/privacy-utility-genomics.html" class="paper-item paper-item--link">
+          <div class="paper-item__title">The Privacy–Utility Tradeoff in Genomics Is Not a Tradeoff</div>
+          <div class="paper-item__summary">A pacing constraint on genomic medicine, the structural reason it persists, and a testable experiment to dissolve it. <span style="color: var(--text-muted); font-family: var(--font-mono); font-size: 0.7rem;">May 2026 · Astera Essay Competition</span></div>
+        </a>
+
+      </div>
+    </section>
+
+    <!-- Chapter 6: About -->
+    <section class="chapter" id="about">
+      <div class="chapter__header">
+        <h2 class="chapter__title">About</h2>
+        <p class="chapter__subtitle">the person behind the patterns</p>
+      </div>
+
+      <div class="about-content">
+        <p>I'm a biochemist who taught himself formal methods. Same move shows up in everything I build: find the geometry of the problem, navigate it, let cheap search handle the rest. The four pillars above are that move done four times — different domains, same paradigm.</p>
+
+        <p>The substrate is the lever. DNA hands you orthogonal binary structure for free if you encode it right. HuggingFace's 800K models cluster by anchor signature if you stop trying to embed them. Theorem space has navigable structure if you stop trying to predict the next token. Code specification has minimum complexity if you stop measuring coverage and start measuring the program directly.</p>
+
+        <p>Independent researcher. Cambridge, MA. The work has no institutional scaffolding behind it; it's also reproducible from a laptop, which is part of the bet.</p>
+
+        <p>The legibility infrastructure — peer-reviewed papers, talks, citations — is mostly downstream of work that hasn't been written up yet. The Lean proofs compile, the Kaggle medals are real, the metrics reproduce, but the formal write-ups that make the work portable across institutions are the next thing. If you find a piece of the work that interests you, email me. That's the fastest path.</p>
+
+        <div class="contact-links">
+          <a href="https://github.com/rohanvinaik" target="_blank" rel="noopener">GitHub</a>
+          <a href="mailto:rohanpvinaik@gmail.com">Email</a>
+          <a href="#essays">Essays</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Scripts -->
+  <script src="hero.js?v=2026-05-01"></script>
+  <script src="graph-data.js?v=2026-05-01"></script>
+  <script src="research-graph-v2.js?v=2026-05-01"></script>
+  <script src="paper-feed.js?v=2026-05-01"></script>
+  <script>
+    // Initialize hero with chapter change callback
+    // Using IntersectionObserver for chapter detection (more accurate than scroll %)
+    const canvas = document.getElementById('hero-canvas');
+    const hero = new AsciiHero(canvas, {
+      starCount: 180,
+      starOpacity: 0.15,
+      motifParticleCount: 1800,
+      particleSize: 1.6,
+      baseCoherence: 0.2,
+      maxCoherence: 0.98,
+      coherenceRadius: 180,
+      breathingSpeed: 0.06,
+      dotColor: '#1a1a1a',
+      backgroundColor: '#fafafa',
+      autoChapterDetection: false, // Using IntersectionObserver instead
+      onChapterChange: updateNavigation,
+      // Six chapters; each maps to a research-aligned particle motif.
+      // home/papers reuse encoding (DNA/hypervector compression).
+      // approach uses constraints (energy landscape), work uses network
+      // (semantic connections), essays/about use emergence (order from noise).
+      chapters: [
+        { id: 'home',     start: 0.00, pattern: 'encoding'    },
+        { id: 'approach', start: 0.16, pattern: 'constraints' },
+        { id: 'work',     start: 0.32, pattern: 'network'     },
+        { id: 'papers',   start: 0.50, pattern: 'encoding'    },
+        { id: 'essays',   start: 0.68, pattern: 'emergence'   },
+        { id: 'about',    start: 0.84, pattern: 'emergence'   }
+      ]
+    });
+
+    // Navigation elements
+    const navItems = document.querySelectorAll('.nav-item');
+    const terminalPath = document.getElementById('terminal-path');
+    const coherenceDisplay = document.getElementById('coherence-display');
+
+    // Update navigation when chapter changes
+    function updateNavigation(event) {
+      // Update active nav item
+      navItems.forEach(item => {
+        if (item.dataset.chapter === event.current) {
+          item.classList.add('active');
+        } else {
+          item.classList.remove('active');
+        }
+      });
+
+      // Update terminal path
+      terminalPath.textContent = `rohan@personal ~/${event.current}`;
+    }
+
+    // Navigation click handling
+    navItems.forEach(item => {
+      item.addEventListener('click', (e) => {
+        e.preventDefault();
+        const targetId = item.getAttribute('href').slice(1);
+        const targetSection = document.getElementById(targetId);
+        if (targetSection) {
+          targetSection.scrollIntoView({ behavior: 'smooth' });
+        }
+      });
+    });
+
+    // Update coherence display
+    setInterval(() => {
+      coherenceDisplay.textContent = `coherence: ${hero.getCoherence().toFixed(2)}`;
+    }, 100);
+
+    // Intersection Observer for chapter detection (backup to scroll-based)
+    const chapters = document.querySelectorAll('.chapter');
+    const observerOptions = {
+      root: null,
+      rootMargin: '-40% 0px -40% 0px',
+      threshold: 0
+    };
+
+    const chapterObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const chapterId = entry.target.id;
+          hero.setChapter(chapterId);
+        }
+      });
+    }, observerOptions);
+
+    chapters.forEach(chapter => chapterObserver.observe(chapter));
+
+    // Theme toggle
+    const themeToggle = document.getElementById('theme-toggle');
+    let isDarkMode = false;
+
+    themeToggle.addEventListener('click', () => {
+      isDarkMode = !isDarkMode;
+      if (isDarkMode) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        hero.config.dotColor = '#ffffff';
+        hero.config.backgroundColor = '#141414';
+      } else {
+        document.documentElement.removeAttribute('data-theme');
+        hero.config.dotColor = '#1a1a1a';
+        hero.config.backgroundColor = '#fafafa';
+      }
+    });
+
+    // Initialize research graph (v2 - lab aesthetic)
+    if (typeof GRAPH_DATA !== 'undefined' && document.getElementById('research-graph-container')) {
+      const graph = new ResearchGraphV2('research-graph-container', GRAPH_DATA);
+    }
+
+    // Initialize paper feed
+    if (typeof PaperFeed !== 'undefined') {
+      const paperFeed = new PaperFeed();
+      // Trigger initial load since we're not using section activation pattern
+      setTimeout(() => {
+        paperFeed.initialized = true;
+        paperFeed.loadPapers();
+      }, 500);
+    }
+  </script>
+</body>
+</html>
