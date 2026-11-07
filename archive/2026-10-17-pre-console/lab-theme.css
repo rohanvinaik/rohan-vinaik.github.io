@@ -1,0 +1,387 @@
+/* ============================================
+   LAB THEME - "Thinking Machines" Aesthetic
+   Swiss design, ASCII as texture, white background
+   ============================================ */
+
+/* ============================================
+   CSS VARIABLES (Light Mode - Default)
+   ============================================ */
+:root {
+  /* Core palette */
+  --bg-primary: #ffffff;
+  --bg-secondary: #fafafa;
+  --bg-tertiary: #f5f5f5;
+  --text-primary: #0a0a0a;
+  --text-secondary: #555555;
+  --text-muted: #888888;
+  --border: #e0e0e0;
+  --border-subtle: #f0f0f0;
+
+  /* Dot/particle colors */
+  --dot-color: #1a1a1a;
+  --dot-color-subtle: #cccccc;
+
+  /* Soft accent colors (for domain distinction) */
+  --accent-biology: #2d5a27;
+  --accent-ai: #1e3a5f;
+  --accent-theory: #4a3663;
+  --accent-link: #1a1a1a;
+
+  /* Typography */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', 'SF Mono', 'Fira Code', monospace;
+
+  /* Spacing */
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 2rem;
+  --space-xl: 4rem;
+  --space-xxl: 8rem;
+
+  /* Animation */
+  --transition-fast: 0.15s ease;
+  --transition-medium: 0.3s ease;
+  --transition-slow: 0.6s ease;
+}
+
+/* ============================================
+   DARK MODE (Inverted)
+   ============================================ */
+[data-theme="dark"] {
+  --bg-primary: #0a0a0a;
+  --bg-secondary: #141414;
+  --bg-tertiary: #1a1a1a;
+  --text-primary: #f5f5f5;
+  --text-secondary: #999999;
+  --text-muted: #666666;
+  --border: #2a2a2a;
+  --border-subtle: #1a1a1a;
+
+  --dot-color: #f5f5f5;
+  --dot-color-subtle: #333333;
+
+  --accent-biology: #4a8f42;
+  --accent-ai: #3a7fc9;
+  --accent-theory: #7a5fa3;
+  --accent-link: #f5f5f5;
+}
+
+/* ============================================
+   RESET
+   ============================================ */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* ============================================
+   BASE STYLES
+   ============================================ */
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.6;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ============================================
+   TYPOGRAPHY
+   ============================================ */
+
+/* Headings: Clean sans-serif */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--text-primary);
+}
+
+h1 {
+  font-size: 2.5rem;
+  letter-spacing: -0.02em;
+  margin-bottom: var(--space-lg);
+}
+
+h2 {
+  font-size: 1.75rem;
+  letter-spacing: -0.01em;
+  margin-bottom: var(--space-md);
+}
+
+h3 {
+  font-size: 1.25rem;
+  margin-bottom: var(--space-sm);
+}
+
+p {
+  margin-bottom: var(--space-md);
+  color: var(--text-secondary);
+}
+
+/* Monospace for texture/data */
+.mono, code, pre, .data {
+  font-family: var(--font-mono);
+}
+
+code {
+  background: var(--bg-secondary);
+  padding: 0.15em 0.4em;
+  border-radius: 3px;
+  font-size: 0.9em;
+}
+
+pre {
+  background: var(--bg-secondary);
+  padding: var(--space-md);
+  border-radius: 4px;
+  overflow-x: auto;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  border: 1px solid var(--border-subtle);
+}
+
+pre code {
+  background: none;
+  padding: 0;
+}
+
+/* ============================================
+   HERO CONTAINER (Tinker-style)
+   ============================================ */
+.hero-container {
+  height: 40vh;
+  min-height: 300px;
+  max-height: 500px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-canvas {
+  display: block;
+  cursor: crosshair;
+}
+
+/* Coherence indicator */
+.coherence-indicator {
+  position: absolute;
+  bottom: var(--space-md);
+  right: var(--space-md);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  opacity: 0.5;
+}
+
+/* ============================================
+   LAYOUT
+   ============================================ */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--space-lg);
+}
+
+.container--narrow {
+  max-width: 800px;
+}
+
+.section {
+  padding: var(--space-xl) 0;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.section:last-child {
+  border-bottom: none;
+}
+
+/* ============================================
+   GRID (Swiss-style)
+   ============================================ */
+.grid {
+  display: grid;
+  gap: var(--space-lg);
+}
+
+.grid--2col {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.grid--3col {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+@media (max-width: 768px) {
+  .grid--2col,
+  .grid--3col {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ============================================
+   CARDS (Research items, etc.)
+   ============================================ */
+.card {
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  padding: var(--space-md);
+  transition: border-color var(--transition-fast);
+}
+
+.card:hover {
+  border-color: var(--text-muted);
+}
+
+.card__title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: var(--space-xs);
+}
+
+.card__meta {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-bottom: var(--space-sm);
+}
+
+.card__description {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+/* ============================================
+   LINKS
+   ============================================ */
+a {
+  color: var(--accent-link);
+  text-decoration: none;
+  border-bottom: 1px solid var(--border);
+  transition: border-color var(--transition-fast);
+}
+
+a:hover {
+  border-color: var(--text-primary);
+}
+
+/* Navigation links */
+.nav-link {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  border-bottom: none;
+  padding: var(--space-xs) var(--space-sm);
+  transition: background var(--transition-fast);
+}
+
+.nav-link:hover {
+  background: var(--bg-secondary);
+}
+
+/* ============================================
+   DOMAIN COLORS (for research categories)
+   ============================================ */
+.domain--biology {
+  --domain-color: var(--accent-biology);
+}
+
+.domain--ai {
+  --domain-color: var(--accent-ai);
+}
+
+.domain--theory {
+  --domain-color: var(--accent-theory);
+}
+
+.domain-indicator {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--domain-color, var(--text-muted));
+  margin-right: var(--space-xs);
+}
+
+/* ============================================
+   ASCII/DOT TEXTURE ELEMENTS
+   ============================================ */
+.dot-border {
+  border: 1px dotted var(--border);
+}
+
+.ascii-box {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  line-height: 1;
+  white-space: pre;
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+@media (max-width: 768px) {
+  html {
+    font-size: 14px;
+  }
+
+  h1 {
+    font-size: 2rem;
+  }
+
+  .hero-container {
+    height: 30vh;
+    min-height: 250px;
+  }
+
+  .container {
+    padding: 0 var(--space-md);
+  }
+}
+
+/* ============================================
+   UTILITIES
+   ============================================ */
+.text-muted {
+  color: var(--text-muted);
+}
+
+.text-secondary {
+  color: var(--text-secondary);
+}
+
+.text-center {
+  text-align: center;
+}
+
+.mt-sm { margin-top: var(--space-sm); }
+.mt-md { margin-top: var(--space-md); }
+.mt-lg { margin-top: var(--space-lg); }
+.mb-sm { margin-bottom: var(--space-sm); }
+.mb-md { margin-bottom: var(--space-md); }
+.mb-lg { margin-bottom: var(--space-lg); }
+
+/* ============================================
+   PRINT
+   ============================================ */
+@media print {
+  body {
+    background: white;
+    color: black;
+  }
+
+  .hero-container {
+    display: none;
+  }
+}

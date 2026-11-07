@@ -1,0 +1,857 @@
+{
+  "nodes": [
+    {
+      "id": "coec",
+      "title": "COEC",
+      "subtitle": "Constraint-Oriented Emergent Computation",
+      "description": "Constraint-Oriented Emergent Computation.",
+      "type": "theory",
+      "status": "foundation",
+      "tags": [],
+      "position": {
+        "x": 25,
+        "y": 40
+      },
+      "repo": null,
+      "group": "foundation",
+      "color": "#a78bfa"
+    },
+    {
+      "id": "spec-complexity",
+      "title": "SPEC COMPLEXITY",
+      "subtitle": "Five-Field Identification",
+      "description": "The formal work on behavioral specification.",
+      "type": "theory",
+      "status": "foundation",
+      "tags": [],
+      "position": {
+        "x": 525,
+        "y": 40
+      },
+      "repo": null,
+      "group": "foundation",
+      "color": "#a78bfa"
+    },
+    {
+      "id": "gse",
+      "title": "GSE",
+      "subtitle": "Geometric Semantic Encoding",
+      "description": "Geometric Semantic Encoding / Orthogonal Ternary Projection.",
+      "type": "theory",
+      "status": "foundation",
+      "tags": [],
+      "position": {
+        "x": 275,
+        "y": 40
+      },
+      "repo": null,
+      "group": "foundation",
+      "color": "#a78bfa"
+    },
+    {
+      "id": "mentalatlas",
+      "title": "MENTALATLAS",
+      "subtitle": "Personal-wiki MCP",
+      "description": "Personal research knowledge graph.",
+      "type": "infrastructure",
+      "status": "foundation",
+      "tags": [],
+      "position": {
+        "x": 25,
+        "y": 190
+      },
+      "repo": "MentalAtlas",
+      "group": "foundation",
+      "color": "#a78bfa"
+    },
+    {
+      "id": "mneme",
+      "title": "MNEME",
+      "subtitle": "Cognitive event graph",
+      "description": "Cognitive event graph.",
+      "type": "infrastructure",
+      "status": "foundation",
+      "tags": [],
+      "position": {
+        "x": 275,
+        "y": 190
+      },
+      "repo": "Mneme",
+      "group": "foundation",
+      "color": "#a78bfa"
+    },
+    {
+      "id": "hdc-survey",
+      "title": "HDC SURVEY",
+      "subtitle": "Hypervector principles",
+      "description": "Vector-symbolic principles and models.",
+      "type": "theory",
+      "status": "foundation",
+      "tags": [],
+      "position": {
+        "x": 525,
+        "y": 190
+      },
+      "repo": null,
+      "group": "foundation",
+      "color": "#a78bfa"
+    },
+    {
+      "id": "modelatlas",
+      "title": "MODELATLAS",
+      "subtitle": "Coordinate system for HuggingFace",
+      "description": "Semantic navigation through model catalogs.",
+      "type": "tools",
+      "status": "bench",
+      "tags": [],
+      "position": {
+        "x": 25,
+        "y": 340
+      },
+      "repo": "ModelAtlas",
+      "group": "bench",
+      "color": "#00ffff"
+    },
+    {
+      "id": "wayfinder",
+      "title": "WAYFINDER",
+      "subtitle": "Proof compiler for Lean 4",
+      "description": "Proof search as navigation.",
+      "type": "ai-security",
+      "status": "bench",
+      "tags": [],
+      "position": {
+        "x": 275,
+        "y": 340
+      },
+      "repo": "Wayfinder",
+      "group": "bench",
+      "color": "#00ffff"
+    },
+    {
+      "id": "lintgate",
+      "title": "LINTGATE",
+      "subtitle": "Specification compiler",
+      "description": "Earlier specification-compiler work.",
+      "type": "tools",
+      "status": "record",
+      "tags": [],
+      "position": {
+        "x": 275,
+        "y": 1240
+      },
+      "repo": "LintGate",
+      "group": "record",
+      "color": "#d3a15f"
+    },
+    {
+      "id": "wesker",
+      "title": "WESKER",
+      "subtitle": "In-process AST mutation testing",
+      "description": "Mutation engine underneath Detective.",
+      "type": "tools",
+      "status": "bench",
+      "tags": [],
+      "position": {
+        "x": 525,
+        "y": 340
+      },
+      "repo": "Wesker",
+      "group": "bench",
+      "color": "#00ffff"
+    },
+    {
+      "id": "pot",
+      "title": "PoT",
+      "subtitle": "Proof-of-Training",
+      "description": "Earlier behavioral model-identity work.",
+      "type": "ai-security",
+      "status": "record",
+      "tags": [],
+      "position": {
+        "x": 25,
+        "y": 940
+      },
+      "repo": "PoT_Experiments",
+      "group": "record",
+      "color": "#d3a15f"
+    },
+    {
+      "id": "rev",
+      "title": "REV",
+      "subtitle": "Restriction-enzyme verification",
+      "description": "Memory-bounded model verification.",
+      "type": "ai-security",
+      "status": "record",
+      "tags": [],
+      "position": {
+        "x": 275,
+        "y": 940
+      },
+      "repo": null,
+      "group": "record",
+      "color": "#d3a15f"
+    },
+    {
+      "id": "hbt",
+      "title": "HBT",
+      "subtitle": "Holographic Behavioral Twin",
+      "description": "Behavioral fingerprints and model identity.",
+      "type": "ai-security",
+      "status": "record",
+      "tags": [],
+      "position": {
+        "x": 525,
+        "y": 940
+      },
+      "repo": "HBT_Validator",
+      "group": "record",
+      "color": "#d3a15f"
+    },
+    {
+      "id": "semantic-probing",
+      "title": "SEM PROBING",
+      "subtitle": "62 NSM primitives via Hadamard",
+      "description": "Semantic primitives via orthogonal representations.",
+      "type": "theory",
+      "status": "record",
+      "tags": [],
+      "position": {
+        "x": 775,
+        "y": 940
+      },
+      "repo": "semantic_probing",
+      "group": "record",
+      "color": "#d3a15f"
+    },
+    {
+      "id": "negative-learning",
+      "title": "NEG LEARNING",
+      "subtitle": "Censors and suppressors",
+      "description": "Exclusions, censors, and suppressors.",
+      "type": "ai-security",
+      "status": "record",
+      "tags": [],
+      "position": {
+        "x": 25,
+        "y": 1090
+      },
+      "repo": "negative-learning",
+      "group": "record",
+      "color": "#d3a15f"
+    },
+    {
+      "id": "genomevault",
+      "title": "GENOMEVAULT",
+      "subtitle": "Privacy-preserving genomics",
+      "description": "Privacy-preserving genomics; the ternary geometry’s origin.",
+      "type": "bio-crypto",
+      "status": "bench",
+      "tags": [],
+      "position": {
+        "x": 275,
+        "y": 490
+      },
+      "repo": "GenomeVault",
+      "group": "bench",
+      "color": "#00ffff"
+    },
+    {
+      "id": "shortcutforge",
+      "title": "SHORTCUTFORGE",
+      "subtitle": "Apple Shortcuts compiler",
+      "description": "Natural language compiled into Apple Shortcuts.",
+      "type": "tools",
+      "status": "bench",
+      "tags": [],
+      "position": {
+        "x": 25,
+        "y": 790
+      },
+      "repo": "ShortcutForge",
+      "group": "bench",
+      "color": "#00ffff"
+    },
+    {
+      "id": "yami",
+      "title": "YAMI",
+      "subtitle": "Chess as a Genesis story",
+      "description": "Chess rendered as event sentences and read through Genesis.",
+      "type": "exploratory",
+      "status": "bench",
+      "tags": [],
+      "position": {
+        "x": 775,
+        "y": 490
+      },
+      "repo": "Yami",
+      "group": "bench",
+      "color": "#00ffff"
+    },
+    {
+      "id": "vintageoptics",
+      "title": "VINTAGEOPTICS",
+      "subtitle": "Optical aberration correction",
+      "description": "Optical aberration correction.",
+      "type": "tools",
+      "status": "record",
+      "tags": [],
+      "position": {
+        "x": 275,
+        "y": 790
+      },
+      "repo": "VintageOptics",
+      "group": "record",
+      "color": "#d3a15f"
+    },
+    {
+      "id": "audhd",
+      "title": "AUDHD",
+      "subtitle": "Genetic architecture",
+      "description": "Earlier genetic-architecture research.",
+      "type": "biology",
+      "status": "record",
+      "tags": [],
+      "position": {
+        "x": 525,
+        "y": 790
+      },
+      "repo": null,
+      "group": "record",
+      "color": "#d3a15f"
+    },
+    {
+      "id": "detective",
+      "title": "Detective",
+      "subtitle": "Behavioral specification",
+      "description": "Wesker supplies the mutants; Detective derives and checks what would pin behavior.",
+      "repo": "Detective",
+      "group": "bench",
+      "status": "bench",
+      "type": "Programs",
+      "tags": [],
+      "position": {
+        "x": 775,
+        "y": 340
+      },
+      "color": "#00ffff"
+    },
+    {
+      "id": "uroboros",
+      "title": "Uroboros",
+      "subtitle": "Repository crawler",
+      "description": "Runs Detective across a codebase, preserving behavior and splitting at proven seams.",
+      "repo": "Uroboros",
+      "group": "bench",
+      "status": "bench",
+      "type": "Programs",
+      "tags": [],
+      "position": {
+        "x": 25,
+        "y": 490
+      },
+      "color": "#00ffff"
+    },
+    {
+      "id": "measuringagi",
+      "title": "MeasuringAGI",
+      "subtitle": "Metacognitive fingerprint",
+      "description": "Continues the earlier behavioral model-identity line.",
+      "repo": "MeasuringAGI",
+      "group": "bench",
+      "status": "bench",
+      "type": "Models",
+      "tags": [],
+      "position": {
+        "x": 525,
+        "y": 490
+      },
+      "color": "#00ffff"
+    },
+    {
+      "id": "triagegeist",
+      "title": "TriageGeist",
+      "subtitle": "Triage and abstention",
+      "description": "An explicit boundary around automatic triage decisions.",
+      "repo": "triagegeist",
+      "group": "bench",
+      "status": "bench",
+      "type": "Triage",
+      "tags": [],
+      "position": {
+        "x": 25,
+        "y": 640
+      },
+      "color": "#00ffff"
+    },
+    {
+      "id": "peitho",
+      "title": "Peitho",
+      "subtitle": "Decision and explanation",
+      "description": "The decision and its explanation are the same object.",
+      "repo": "Peitho",
+      "group": "bench",
+      "status": "bench",
+      "type": "Retail",
+      "tags": [],
+      "position": {
+        "x": 275,
+        "y": 640
+      },
+      "color": "#00ffff"
+    },
+    {
+      "id": "ephemeris",
+      "title": "Ephemeris",
+      "subtitle": "Certified error",
+      "description": "A structure-preserving surrogate with a certificate on its error.",
+      "repo": "Ephemeris",
+      "group": "bench",
+      "status": "bench",
+      "type": "Chaos",
+      "tags": [],
+      "position": {
+        "x": 525,
+        "y": 640
+      },
+      "color": "#00ffff"
+    },
+    {
+      "id": "ansatz",
+      "title": "Ansatz",
+      "subtitle": "One operation, many equations",
+      "description": "Generalizes the operation used in Ephemeris.",
+      "repo": "Ansatz",
+      "group": "bench",
+      "status": "bench",
+      "type": "Chaos",
+      "tags": [],
+      "position": {
+        "x": 775,
+        "y": 640
+      },
+      "color": "#00ffff"
+    },
+    {
+      "id": "regenesis",
+      "title": "Regenesis",
+      "subtitle": "Story understanding",
+      "description": "The story-understanding engine used by Yami. GSE supplies its scale.",
+      "repo": null,
+      "group": "foundation",
+      "status": "foundation",
+      "type": "Foundation",
+      "tags": [],
+      "position": {
+        "x": 775,
+        "y": 40
+      },
+      "color": "#a78bfa"
+    },
+    {
+      "id": "sparse-wiki",
+      "title": "Sparse Wiki Grounding",
+      "subtitle": "Typed knowledge links",
+      "description": "Semantic grounding in the earlier research record.",
+      "repo": "sparse-wiki-grounding",
+      "group": "record",
+      "status": "record",
+      "type": "Foundation",
+      "tags": [],
+      "position": {
+        "x": 275,
+        "y": 1090
+      },
+      "color": "#d3a15f"
+    },
+    {
+      "id": "validators",
+      "title": "Orthogonal Validators",
+      "subtitle": "Independent decompositions",
+      "description": "Independent views of the same object.",
+      "repo": "orthogonal-validators",
+      "group": "record",
+      "status": "record",
+      "type": "Foundation",
+      "tags": [],
+      "position": {
+        "x": 525,
+        "y": 1090
+      },
+      "color": "#d3a15f"
+    },
+    {
+      "id": "experience",
+      "title": "Experience Memory",
+      "subtitle": "Recurring errors",
+      "description": "Memory in the semantic foundations record.",
+      "repo": "experience-memory",
+      "group": "record",
+      "status": "record",
+      "type": "Foundation",
+      "tags": [],
+      "position": {
+        "x": 775,
+        "y": 1090
+      },
+      "color": "#d3a15f"
+    },
+    {
+      "id": "semantic-graph",
+      "title": "Semantic Knowledge Graph",
+      "subtitle": "Semantic foundations",
+      "description": "The earlier semantic knowledge graph.",
+      "repo": "semantic_knowledge_graph",
+      "group": "record",
+      "status": "record",
+      "type": "Foundation",
+      "tags": [],
+      "position": {
+        "x": 25,
+        "y": 1240
+      },
+      "color": "#d3a15f"
+    }
+  ],
+  "connections": [
+    {
+      "from": "coec",
+      "to": "spec-complexity",
+      "label": "σ(P,μ) as constraint measure",
+      "type": "informs",
+      "kind": "conceptual",
+      "source": "https://rohanv.me/graph-data.js"
+    },
+    {
+      "from": "coec",
+      "to": "gse",
+      "label": "orthogonal projection",
+      "type": "informs",
+      "kind": "conceptual",
+      "source": "https://rohanv.me/graph-data.js"
+    },
+    {
+      "from": "spec-complexity",
+      "to": "gse",
+      "label": "shared structural lens",
+      "type": "informs",
+      "kind": "conceptual",
+      "source": "https://rohanv.me/graph-data.js"
+    },
+    {
+      "from": "coec",
+      "to": "mentalatlas",
+      "label": "constraint geometry",
+      "type": "informs",
+      "kind": "conceptual",
+      "source": "https://rohanv.me/graph-data.js"
+    },
+    {
+      "from": "spec-complexity",
+      "to": "lintgate",
+      "label": "formalizes",
+      "type": "informs",
+      "kind": "conceptual",
+      "source": "https://rohanv.me/graph-data.js"
+    },
+    {
+      "from": "gse",
+      "to": "modelatlas",
+      "label": "OTP coordinate system",
+      "type": "informs",
+      "kind": "conceptual",
+      "source": "https://rohanv.me/graph-data.js"
+    },
+    {
+      "from": "gse",
+      "to": "wayfinder",
+      "label": "navigational encoding",
+      "type": "informs",
+      "kind": "conceptual",
+      "source": "https://rohanv.me/graph-data.js"
+    },
+    {
+      "from": "hdc-survey",
+      "to": "modelatlas",
+      "label": "hypervector primitives",
+      "type": "informs",
+      "kind": "conceptual",
+      "source": "https://rohanv.me/graph-data.js"
+    },
+    {
+      "from": "hdc-survey",
+      "to": "genomevault",
+      "label": "hypervector primitives",
+      "type": "informs",
+      "kind": "conceptual",
+      "source": "https://rohanv.me/graph-data.js"
+    },
+    {
+      "from": "hdc-survey",
+      "to": "hbt",
+      "label": "hypervector primitives",
+      "type": "informs",
+      "kind": "conceptual",
+      "source": "https://rohanv.me/graph-data.js"
+    },
+    {
+      "from": "mentalatlas",
+      "to": "mneme",
+      "label": "shared vault, separate DB",
+      "type": "parallels",
+      "kind": "conceptual",
+      "source": "https://rohanv.me/graph-data.js"
+    },
+    {
+      "from": "mentalatlas",
+      "to": "wayfinder",
+      "label": "anchor extraction",
+      "type": "serves",
+      "kind": "conceptual",
+      "source": "https://rohanv.me/graph-data.js"
+    },
+    {
+      "from": "mentalatlas",
+      "to": "modelatlas",
+      "label": "anchor extraction",
+      "type": "serves",
+      "kind": "conceptual",
+      "source": "https://rohanv.me/graph-data.js"
+    },
+    {
+      "from": "wayfinder",
+      "to": "lintgate",
+      "label": "specification / skeleton pattern",
+      "type": "parallels",
+      "kind": "conceptual",
+      "source": "https://rohanv.me/graph-data.js"
+    },
+    {
+      "from": "wayfinder",
+      "to": "modelatlas",
+      "label": "shared paradigm: navigate, don't predict",
+      "type": "parallels",
+      "kind": "conceptual",
+      "source": "https://rohanv.me/graph-data.js"
+    },
+    {
+      "from": "lintgate",
+      "to": "wesker",
+      "label": "extracted from",
+      "type": "iteration",
+      "kind": "conceptual",
+      "source": "https://rohanv.me/graph-data.js"
+    },
+    {
+      "from": "pot",
+      "to": "hbt",
+      "label": "evolved approach",
+      "type": "iteration",
+      "kind": "conceptual",
+      "source": "https://rohanv.me/graph-data.js"
+    },
+    {
+      "from": "rev",
+      "to": "hbt",
+      "label": "memory bounding",
+      "type": "technology",
+      "kind": "conceptual",
+      "source": "https://rohanv.me/graph-data.js"
+    },
+    {
+      "from": "hbt",
+      "to": "wayfinder",
+      "label": "behavioral signature → proof signature",
+      "type": "informs",
+      "kind": "conceptual",
+      "source": "https://rohanv.me/graph-data.js"
+    },
+    {
+      "from": "semantic-probing",
+      "to": "modelatlas",
+      "label": "NSM primitive bank",
+      "type": "informs",
+      "kind": "conceptual",
+      "source": "https://rohanv.me/graph-data.js"
+    },
+    {
+      "from": "negative-learning",
+      "to": "lintgate",
+      "label": "failure-shaped specification",
+      "type": "informs",
+      "kind": "conceptual",
+      "source": "https://rohanv.me/graph-data.js"
+    },
+    {
+      "from": "lintgate",
+      "to": "shortcutforge",
+      "label": "spec compiler pattern",
+      "type": "parallels",
+      "kind": "conceptual",
+      "source": "https://rohanv.me/graph-data.js"
+    },
+    {
+      "from": "gse",
+      "to": "vintageoptics",
+      "label": "HDC over lens optics",
+      "type": "informs",
+      "kind": "conceptual",
+      "source": "https://rohanv.me/graph-data.js"
+    },
+    {
+      "from": "genomevault",
+      "to": "audhd",
+      "label": "genomic infrastructure",
+      "type": "technology",
+      "kind": "conceptual",
+      "source": "https://rohanv.me/graph-data.js"
+    },
+    {
+      "to": "detective",
+      "label": "mutation engine",
+      "kind": "documented",
+      "source": "https://github.com/rohanvinaik/Detective#readme",
+      "from": "wesker"
+    },
+    {
+      "to": "uroboros",
+      "label": "drives the behavioral loop",
+      "kind": "documented",
+      "source": "https://github.com/rohanvinaik/Uroboros#readme",
+      "from": "detective"
+    },
+    {
+      "to": "measuringagi",
+      "label": "behavioral-identity line continues",
+      "kind": "documented",
+      "source": "https://github.com/rohanvinaik/rohanvinaik#readme",
+      "from": "pot"
+    },
+    {
+      "to": "measuringagi",
+      "label": "behavioral-identity line continues",
+      "kind": "documented",
+      "source": "https://github.com/rohanvinaik/rohanvinaik#readme",
+      "from": "rev"
+    },
+    {
+      "to": "measuringagi",
+      "label": "behavioral-identity line continues",
+      "kind": "documented",
+      "source": "https://github.com/rohanvinaik/rohanvinaik#readme",
+      "from": "hbt"
+    },
+    {
+      "to": "regenesis",
+      "label": "story understanding at scale",
+      "kind": "documented",
+      "source": "https://github.com/rohanvinaik/Yami#readme",
+      "from": "gse"
+    },
+    {
+      "to": "yami",
+      "label": "reads rendered chess events",
+      "kind": "documented",
+      "source": "https://github.com/rohanvinaik/Yami#readme",
+      "from": "regenesis"
+    },
+    {
+      "to": "ansatz",
+      "label": "instance zero → general operation",
+      "kind": "documented",
+      "source": "https://github.com/rohanvinaik/Ansatz#readme",
+      "from": "ephemeris"
+    },
+    {
+      "to": "ansatz",
+      "label": "engine face of the same operation",
+      "kind": "documented",
+      "source": "https://github.com/rohanvinaik/Ansatz#readme",
+      "from": "wayfinder"
+    },
+    {
+      "to": "ansatz",
+      "label": "theoretical account of the operation",
+      "kind": "documented",
+      "source": "https://github.com/rohanvinaik/Ansatz#readme",
+      "from": "coec"
+    }
+  ],
+  "domains": [
+    {
+      "id": "theory",
+      "name": "Theoretical Foundation",
+      "color": "#a78bfa"
+    },
+    {
+      "id": "infrastructure",
+      "name": "Personal-Knowledge Infrastructure",
+      "color": "#fb923c"
+    },
+    {
+      "id": "tools",
+      "name": "Tools / Flagship Systems",
+      "color": "#fbbf24"
+    },
+    {
+      "id": "ai-security",
+      "name": "Verification & Alignment",
+      "color": "#f97316"
+    },
+    {
+      "id": "bio-crypto",
+      "name": "Privacy-Preserving Biology",
+      "color": "#22d3ee"
+    },
+    {
+      "id": "biology",
+      "name": "Computational Biology",
+      "color": "#4ade80"
+    },
+    {
+      "id": "exploratory",
+      "name": "Exploratory Research",
+      "color": "#ec4899"
+    }
+  ],
+  "rows": [
+    {
+      "title": "FOUNDATIONS",
+      "y": 15
+    },
+    {
+      "title": "KNOWLEDGE & REPRESENTATION",
+      "y": 165
+    },
+    {
+      "title": "PROGRAMS · PROOFS · MODELS",
+      "y": 315
+    },
+    {
+      "title": "THE CURRENT BENCH",
+      "y": 465
+    },
+    {
+      "title": "TRIAGE · RETAIL · CHAOS",
+      "y": 615
+    },
+    {
+      "title": "TOOLS & EARLIER APPLICATIONS",
+      "y": 765
+    },
+    {
+      "title": "BEHAVIORAL IDENTITY / THE RECORD",
+      "y": 915
+    },
+    {
+      "title": "SEMANTIC FOUNDATIONS / THE RECORD",
+      "y": 1065
+    },
+    {
+      "title": "THE EARLIER SPECIFICATION WORK",
+      "y": 1215
+    }
+  ],
+  "width": 1020,
+  "height": 1390
+}
